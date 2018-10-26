@@ -45,7 +45,7 @@
     
     <title>
         
-            归档 | 
+            Redis-FAQ | 
         
         Anonymous&#39;Blog
     </title>
@@ -83,6 +83,9 @@
         <style id="style_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("style_css","/css/style.min.css?MKetZV3cUTfDxvMffaOezg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
 
         
+            
+                <style id="prettify_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("prettify_css","/css/prettify.min.css?zp8STOU9v89XWFEnN+6YmQ==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+                <style id="prettify_theme"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("prettify_theme","/css/prettify/github-v2.min.css?AfzKxt++K+/lhZBlSjnxwg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
             
         
 
@@ -219,7 +222,7 @@
     <!-- WebAPP Icons -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Anonymous&#39;Blog">
-    <meta name="msapplication-starturl" content="www.oppoo.club/archives/">
+    <meta name="msapplication-starturl" content="www.oppoo.club/2018/10/26/Redis-FAQ/">
     <meta name="msapplication-navbutton-color" content="#0097A7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Anonymous&#39;Blog">
@@ -234,13 +237,16 @@
     
 
     <!-- The Open Graph protocol -->
-    <meta property="og:url" content="www.oppoo.club/archives/">
+    <meta property="og:url" content="www.oppoo.club/2018/10/26/Redis-FAQ/">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="归档 | Anonymous&#39;Blog">
+    <meta property="og:title" content="Redis-FAQ | Anonymous&#39;Blog">
     <meta property="og:image" content="http://anonymous-1253692322.cosbj.myqcloud.com/sun-symbol-128.png">
     <meta property="og:description" content="吉林大学15届软件工程">
     
 
+    
+        <meta property="article:published_time" content="Fri Oct 26 2018 15:38:59 GMT+0800">
+        <meta property="article:modified_time" content="Fri Oct 26 2018 15:41:43 GMT+0000">
     
 
     <!-- The Twitter Card protocol -->
@@ -248,13 +254,43 @@
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="www.oppoo.club/archives/index.html" />
+        <link rel="canonical" href="www.oppoo.club/2018/10/26/Redis-FAQ/index.html" />
     
 
     <!-- Structured-data for SEO -->
     
         
 
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "www.oppoo.club/2018/10/26/Redis-FAQ/index.html",
+    "headline": "Redis-FAQ",
+    "datePublished": "Fri Oct 26 2018 15:38:59 GMT+0800",
+    "dateModified": "Fri Oct 26 2018 15:41:43 GMT+0000",
+    "author": {
+        "@type": "Person",
+        "name": "Anonymous Hu",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://anonymous-1253692322.cosbj.myqcloud.com/sun.png"
+        },
+        "description": "欢迎访问Anonymous' Blog"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "Anonymous&#39;Blog",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "http://anonymous-1253692322.cosbj.myqcloud.com/sun-symbol-128.png"
+        }
+    },
+    "keywords": "",
+    "description": "吉林大学15届软件工程",
+}
+</script>
 
 
     
@@ -297,602 +333,260 @@
                         </button>
                     
 
-                    <!-- Index Module -->
-<div class="material-index mdl-grid">
-    
-    <div class="locate-thumbnail-symbol"></div>
+                    <!-- Post TOC -->
 
-    <!-- Pin on top -->
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
+    
+    <button id="post-toc-trigger-btn"
+        class="mdl-button mdl-js-button mdl-button--icon">
+        <i class="material-icons">format_list_numbered</i>
+    </button>
+
+    <ul class="post-toc-wrap mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect" for="post-toc-trigger-btn" style="max-height:80vh; overflow-y:scroll;">
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis和其他的KV数据库有什么不同"><span class="post-toc-number">1.</span> <span class="post-toc-text">Redis和其他的KV数据库有什么不同</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis内存占用情况怎么样"><span class="post-toc-number">2.</span> <span class="post-toc-text">Redis内存占用情况怎么样</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis以后打算出基于磁盘的版本吗，我想创建一个比内存更大的数据集"><span class="post-toc-number">3.</span> <span class="post-toc-text">Redis以后打算出基于磁盘的版本吗，我想创建一个比内存更大的数据集</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis和基于磁盘的数据库一起用怎么样"><span class="post-toc-number">4.</span> <span class="post-toc-text">Redis和基于磁盘的数据库一起用怎么样</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#如何降低Redis的内存占用？"><span class="post-toc-number">5.</span> <span class="post-toc-text">如何降低Redis的内存占用？</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis用尽内存了会发生什么？"><span class="post-toc-number">6.</span> <span class="post-toc-text">Redis用尽内存了会发生什么？</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis磁盘镜像备份是Atomic的吗？"><span class="post-toc-number">7.</span> <span class="post-toc-text">Redis磁盘镜像备份是Atomic的吗？</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis是单线程的，如何充分利用CPU？"><span class="post-toc-number">8.</span> <span class="post-toc-text">Redis是单线程的，如何充分利用CPU？</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis-key上限是多少？Hash，List，Set成员上限是多少"><span class="post-toc-number">9.</span> <span class="post-toc-text">Redis key上限是多少？Hash，List，Set成员上限是多少</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#为什么我的从服务器key数量和主服务器key数量不一致？"><span class="post-toc-number">10.</span> <span class="post-toc-text">为什么我的从服务器key数量和主服务器key数量不一致？</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis名字的含义是什么？"><span class="post-toc-number">11.</span> <span class="post-toc-text">Redis名字的含义是什么？</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis分片的好处"><span class="post-toc-number">12.</span> <span class="post-toc-text">Redis分片的好处</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#什么是Redis主从架构"><span class="post-toc-number">13.</span> <span class="post-toc-text">什么是Redis主从架构</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis分区的实现方式"><span class="post-toc-number">14.</span> <span class="post-toc-text">Redis分区的实现方式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis-Cluster"><span class="post-toc-number">15.</span> <span class="post-toc-text">Redis Cluster</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis-为何要尽量避免大Key？"><span class="post-toc-number">16.</span> <span class="post-toc-text">Redis 为何要尽量避免大Key？</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redos持久化策略：RDB和AOF"><span class="post-toc-number">17.</span> <span class="post-toc-text">Redos持久化策略：RDB和AOF</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Redis实现分布式锁"><span class="post-toc-number">18.</span> <span class="post-toc-text">Redis实现分布式锁</span></a></li></ol>
+    </ul>
     
 
-    <!-- Normal Post -->
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
     
         
             <!-- Random Thumbnail -->
             <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
 
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2018/10/26/Docker-publish-test/">Hello World</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            Welcome to Hexo
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2018/10/26/Docker-publish-test/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 26, 2018</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2018/10/26/hello-world/">Hello World</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            Welcome to Hexo
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2018/10/26/hello-world/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 26, 2018</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2018/10/26/HTTP状态码简介/">HTTP状态码简介</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            我想尽量用通俗易懂的文字解析HTTP各种状态码的含义
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2018/10/26/HTTP状态码简介/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 26, 2018</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2018/10/26/Redis-FAQ/">Redis-FAQ</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            简单翻译Redis官网的FAQ以及部分自己总结的问题
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2018/10/26/Redis-FAQ/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 26, 2018</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/11/03/小论计算机Encoding/">小论计算机Encoding</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/11/03/小论计算机Encoding/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>11月 03, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/10/15/for-与while-true-的困惑/">for(;;)与while(true)的困惑</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用wh...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/10/15/for-与while-true-的困惑/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 15, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/10/06/Java跨平台究竟能跨哪些平台/">Java跨平台究竟能跨哪些平台</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            众所周知，Java跨平台的一直被众多Java程序员们津津乐道，“一次编写，到处运行”的设想着实令人心动，虽然带来不少性能上的问题，但这并不妨碍大家对...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/10/06/Java跨平台究竟能跨哪些平台/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 06, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/09/30/Ubuntu-16-04下安装Java-9/">Ubuntu 16.04下安装Java 9</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            1 ...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/09/30/Ubuntu-16-04下安装Java-9/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>9月 30, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/09/30/Linux下如何挂载访问Windows8磁盘/">Linux下如何挂载访问Windows8磁盘</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            Error mounting /dev/sda5 at/media原因：微软为Win8加入了快速启动功能，...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/09/30/Linux下如何挂载访问Windows8磁盘/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>9月 30, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/09/30/Linux部署jsp连接SQLite数据库遇到的几个错误/">Linux部署jsp连接SQLite数据库遇到的几个错误</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/09/30/Linux部署jsp连接SQLite数据库遇到的几个错误/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>9月 30, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-
-    
-    <!-- Index nav -->
-        <nav class="material-nav mdl-cell mdl-cell--12-col">
-            <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="extend next" rel="next" href="/archives/page/2/"><button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"><i class="material-icons" role="presentation">arrow_forward</i></button></a>
-        </nav>
-    
-
-    
-        <script type="text/ls-javascript" id="thumbnail-script">
-    var randomNum;
-
-    var locatePost = $('.locate-thumbnail-symbol').next();
-    for(var i = 0; i < 10; i++) {
-        randomNum = Math.floor(Math.random() * 19 + 1);
-
-        locatePost.children('.post_thumbnail-random').attr('id', 'random_thumbnail-'+randomNum);
-        locatePost.children('.post_thumbnail-random').attr('data-original', 'http://anonymous-1253692322.cosbj.myqcloud.com/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').attr('data-original', 'http://anonymous-1253692322.cosbj.myqcloud.com/random/material-' + randomNum + '.png');
     $('.post_thumbnail-random').addClass('lazy');
-
-        locatePost = locatePost.next();
-    }
 </script>
 
+        
+    
+            <p class="article-headline-p">
+                Redis-FAQ
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>Anonymous Hu</strong>
+        <span>10月 26, 2018</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+
+    <!-- Tags (bookmark) -->
+    
+
+    <!-- Share -->
+    
+        <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=Redis-FAQ&url=www.oppoo.club/2018/10/26/Redis-FAQ/index.html&pic=www.oppoo.club/img/favicon.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=Redis-FAQ&url=www.oppoo.club/2018/10/26/Redis-FAQ/index.html&via=Anonymous Hu" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=www.oppoo.club/2018/10/26/Redis-FAQ/index.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+        <a class="post_share-link" href="http://connect.qq.com/widget/shareqq/index.html?site=Anonymous&#39;Blog&title=Redis-FAQ&summary=吉林大学15届软件工程&pics=www.oppoo.club/img/favicon.png&url=www.oppoo.club/2018/10/26/Redis-FAQ/index.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 QQ
+            </li>
+        </a>
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
     
 </div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <p>简单翻译Redis官网的FAQ以及部分自己总结的问题<br><a href="https://redis.io/topics/faq" target="_blank" rel="noopener">官网FAQ地址</a></p>
+<h3 id="Redis和其他的KV数据库有什么不同"><a href="#Redis和其他的KV数据库有什么不同" class="headerlink" title="Redis和其他的KV数据库有什么不同"></a>Redis和其他的KV数据库有什么不同</h3><p>1 Redis支持额外的数据结构<br>2 Redis是纯基于内存的</p>
+<h3 id="Redis内存占用情况怎么样"><a href="#Redis内存占用情况怎么样" class="headerlink" title="Redis内存占用情况怎么样"></a>Redis内存占用情况怎么样</h3><p>空的Redis ——  3MB<br>一百万小KV数据——85MB</p>
+<h3 id="Redis以后打算出基于磁盘的版本吗，我想创建一个比内存更大的数据集"><a href="#Redis以后打算出基于磁盘的版本吗，我想创建一个比内存更大的数据集" class="headerlink" title="Redis以后打算出基于磁盘的版本吗，我想创建一个比内存更大的数据集"></a>Redis以后打算出基于磁盘的版本吗，我想创建一个比内存更大的数据集</h3><p>不会，我们始终专注内存，不忘初心，我们的口号是：“data served from memory, disk used for storage. ”；如果你觉得内存不够的话可以考虑下Redis集群；另外有些组织的魔改版本好像支持磁盘存储，但我们官方不会支持</p>
+<h3 id="Redis和基于磁盘的数据库一起用怎么样"><a href="#Redis和基于磁盘的数据库一起用怎么样" class="headerlink" title="Redis和基于磁盘的数据库一起用怎么样"></a>Redis和基于磁盘的数据库一起用怎么样</h3><p>很Nice，大家一般都是这么用的：大量频繁的小数据写入Redis，大对象写SQL入DB；还有一种用法就是，从DB中复制出来保存Copy在内存中</p>
+<h3 id="如何降低Redis的内存占用？"><a href="#如何降低Redis的内存占用？" class="headerlink" title="如何降低Redis的内存占用？"></a>如何降低Redis的内存占用？</h3><p>1 使用32的Redis？？<br>2 善用Redis数据结构，内部有优化，比独立的几个KV会更省空间</p>
+<h3 id="Redis用尽内存了会发生什么？"><a href="#Redis用尽内存了会发生什么？" class="headerlink" title="Redis用尽内存了会发生什么？"></a>Redis用尽内存了会发生什么？</h3><p>1 Redis可能会被Linux kernel OOM kill 掉，报错崩溃或者是开始慢下来<br>2 你可以在配置文件中设置一个内存limit，当到达这个值后，Redis就会进入Read-only模式，拒绝写操作<br>3 在使用Redis作为LRU 缓存时可以设置达到limit移除一些key</p>
+<h3 id="Redis磁盘镜像备份是Atomic的吗？"><a href="#Redis磁盘镜像备份是Atomic的吗？" class="headerlink" title="Redis磁盘镜像备份是Atomic的吗？"></a>Redis磁盘镜像备份是Atomic的吗？</h3><p>是的，备份进程只会在server没有执行命令的时候执行</p>
+<h3 id="Redis是单线程的，如何充分利用CPU？"><a href="#Redis是单线程的，如何充分利用CPU？" class="headerlink" title="Redis是单线程的，如何充分利用CPU？"></a>Redis是单线程的，如何充分利用CPU？</h3><p>1 CPU并不是Redis的瓶颈，瓶颈往往来自于IO和内存，现在一个CPU已经很够用了，每秒可以处理一百万个请求，多线程反而会带来并发安全、线程切换等问题<br>2 但现在其实也有用到多线程，不过只干点小活，如：后台删除，拒绝命令等<br>3 Redis 4.0我们开始尝试让Redis更加的多线程化，拭目以待吧</p>
+<h3 id="Redis-key上限是多少？Hash，List，Set成员上限是多少"><a href="#Redis-key上限是多少？Hash，List，Set成员上限是多少" class="headerlink" title="Redis key上限是多少？Hash，List，Set成员上限是多少"></a>Redis key上限是多少？Hash，List，Set成员上限是多少</h3><p>2^32 ； 2^32</p>
+<h3 id="为什么我的从服务器key数量和主服务器key数量不一致？"><a href="#为什么我的从服务器key数量和主服务器key数量不一致？" class="headerlink" title="为什么我的从服务器key数量和主服务器key数量不一致？"></a>为什么我的从服务器key数量和主服务器key数量不一致？</h3><p>因为Master在删除key时只是标记删除，会等后来的key来覆盖它，而在写入RDB时是不会把这些写过去的，但DBSZIE命令还会把它们算在里面，在逻辑上它的数量其实还是一样的</p>
+<h3 id="Redis名字的含义是什么？"><a href="#Redis名字的含义是什么？" class="headerlink" title="Redis名字的含义是什么？"></a>Redis名字的含义是什么？</h3><p>REmote DIctionary Server</p>
+<h3 id="Redis分片的好处"><a href="#Redis分片的好处" class="headerlink" title="Redis分片的好处"></a>Redis分片的好处</h3><p>1 增大Redis总内存<br>2 将Redis扩展到多</p>
+<h3 id="什么是Redis主从架构"><a href="#什么是Redis主从架构" class="headerlink" title="什么是Redis主从架构"></a>什么是Redis主从架构</h3><p>Description :  将Redis服务器搭建成一主一从，或一主多从，主服务器负责写，从服务器负责读，读写分离提高性能，同时如果Master宕机，可以选举一位Slave成为新的Master，从而保证整个系统的稳定性，避免单点故障，甚至引起缓存击穿，缓存雪崩等问题</p>
+<p>主从从架构：Slave slaveof Slave 形成一条链，缓解多个Slave同时同步于Master带来的压力</p>
+<p>从库只读：可设置</p>
+<h3 id="Redis分区的实现方式"><a href="#Redis分区的实现方式" class="headerlink" title="Redis分区的实现方式"></a>Redis分区的实现方式</h3><p>1 客户端分区，客户端判断好该去哪个机器上读取<br>2 代理分区：所有的请求都访问Proxy，然后Proxy给你返回结果，分片对Client不可见，Proxy内部帮你判断去哪台机器并完成请求 ；常见应用方式：Redis中间件，如：Twemproxy<br>3 路由分区：随机访问某个Redis，然后它帮你重定向到你该去的地方；Redis-Cluster</p>
+<h3 id="Redis-Cluster"><a href="#Redis-Cluster" class="headerlink" title="Redis Cluster"></a>Redis Cluster</h3><p>Redis Cluster是官方给出的集群实现<br>数据分片实现：哈希槽，CRC16对16384取模决定Key会被放置到哪个节点；后台维护一个值范围与节点的对应表，增加或减少节点时修改表中节点对应范围即可；使用路由分区算法<br>一致性：Master处理完写命令后异步复制到子节点上（为了及时响应），存在一个时间滞后，因此不能保证数据的强一致性；另外网络分区时也会导致写丢失<br>大致架构：路由分区+哈希槽+主从</p>
+<h3 id="Redis-为何要尽量避免大Key？"><a href="#Redis-为何要尽量避免大Key？" class="headerlink" title="Redis 为何要尽量避免大Key？"></a>Redis 为何要尽量避免大Key？</h3><p>1 大Key会导致数据堆积在单一分片上，导致内存过大，响应变慢，不能充分利用集群的优势<br>2 由于单线程限制，单一Key在存取时会阻塞其他操作，导致Redis无法及时响应</p>
+<h3 id="Redos持久化策略：RDB和AOF"><a href="#Redos持久化策略：RDB和AOF" class="headerlink" title="Redos持久化策略：RDB和AOF"></a>Redos持久化策略：RDB和AOF</h3><p>RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失<br>AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多</p>
+<h3 id="Redis实现分布式锁"><a href="#Redis实现分布式锁" class="headerlink" title="Redis实现分布式锁"></a>Redis实现分布式锁</h3><p>SETNX key val 加锁：如果key存在，set key val return 1 ,else return 0<br>DELETE key 解锁：删除key<br>expire：用于加锁时设置，超时自动释放锁，防止永久锁</p>
+
+        
+    
+
+    
+</div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zMzkzOS8xMDQ3NA">
+	<script type="text/ls-javascript" id="livere-comment-js">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+       if (typeof LivereTower === 'function') { return; }
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+</div>
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+        <a href="/2018/10/26/HTTP状态码简介/" id="post_nav-newer" class="prev-content">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_back</i>
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            新篇
+        </a>
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2017/11/03/小论计算机Encoding/" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
 
 
                     
@@ -1202,6 +896,10 @@ It will not impact the appearance and can give developers a lot of support :)
 <!-- Import prettify js  -->
 
     
+        
+            <script>lsloader.load("prettify_js","/js/prettify.min.js?WN07fivHQSMKWy7BmHBB6w==", true)</script>
+        
+    
 
 
 
@@ -1214,6 +912,11 @@ It will not impact the appearance and can give developers a lot of support :)
     });
 
     
+        
+            $(function() {
+                $('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+                prettyPrint();
+                })
         
     
     

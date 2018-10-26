@@ -45,7 +45,7 @@
     
     <title>
         
-            归档 | 
+            HTTP状态码简介 | 
         
         Anonymous&#39;Blog
     </title>
@@ -83,6 +83,9 @@
         <style id="style_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("style_css","/css/style.min.css?MKetZV3cUTfDxvMffaOezg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
 
         
+            
+                <style id="prettify_css"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("prettify_css","/css/prettify.min.css?zp8STOU9v89XWFEnN+6YmQ==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
+                <style id="prettify_theme"></style><script>if(typeof window.lsLoadCSSMaxNums === "undefined")window.lsLoadCSSMaxNums = 0;window.lsLoadCSSMaxNums++;lsloader.load("prettify_theme","/css/prettify/github-v2.min.css?AfzKxt++K+/lhZBlSjnxwg==",function(){if(typeof window.lsLoadCSSNums === "undefined")window.lsLoadCSSNums = 0;window.lsLoadCSSNums++;if(window.lsLoadCSSNums == window.lsLoadCSSMaxNums)document.documentElement.style.display="";}, false)</script>
             
         
 
@@ -219,7 +222,7 @@
     <!-- WebAPP Icons -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Anonymous&#39;Blog">
-    <meta name="msapplication-starturl" content="www.oppoo.club/archives/">
+    <meta name="msapplication-starturl" content="www.oppoo.club/2018/10/26/HTTP状态码简介/">
     <meta name="msapplication-navbutton-color" content="#0097A7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Anonymous&#39;Blog">
@@ -234,13 +237,16 @@
     
 
     <!-- The Open Graph protocol -->
-    <meta property="og:url" content="www.oppoo.club/archives/">
+    <meta property="og:url" content="www.oppoo.club/2018/10/26/HTTP状态码简介/">
     <meta property="og:type" content="blog">
-    <meta property="og:title" content="归档 | Anonymous&#39;Blog">
+    <meta property="og:title" content="HTTP状态码简介 | Anonymous&#39;Blog">
     <meta property="og:image" content="http://anonymous-1253692322.cosbj.myqcloud.com/sun-symbol-128.png">
     <meta property="og:description" content="吉林大学15届软件工程">
     
 
+    
+        <meta property="article:published_time" content="Fri Oct 26 2018 15:42:51 GMT+0800">
+        <meta property="article:modified_time" content="Fri Oct 26 2018 15:43:07 GMT+0000">
     
 
     <!-- The Twitter Card protocol -->
@@ -248,13 +254,43 @@
 
     <!-- Add canonical link for SEO -->
     
-        <link rel="canonical" href="www.oppoo.club/archives/index.html" />
+        <link rel="canonical" href="www.oppoo.club/2018/10/26/HTTP状态码简介/index.html" />
     
 
     <!-- Structured-data for SEO -->
     
         
 
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": "www.oppoo.club/2018/10/26/HTTP状态码简介/index.html",
+    "headline": "HTTP状态码简介",
+    "datePublished": "Fri Oct 26 2018 15:42:51 GMT+0800",
+    "dateModified": "Fri Oct 26 2018 15:43:07 GMT+0000",
+    "author": {
+        "@type": "Person",
+        "name": "Anonymous Hu",
+        "image": {
+            "@type": "ImageObject",
+            "url": "http://anonymous-1253692322.cosbj.myqcloud.com/sun.png"
+        },
+        "description": "欢迎访问Anonymous' Blog"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "Anonymous&#39;Blog",
+        "logo": {
+            "@type":"ImageObject",
+            "url": "http://anonymous-1253692322.cosbj.myqcloud.com/sun-symbol-128.png"
+        }
+    },
+    "keywords": "",
+    "description": "吉林大学15届软件工程",
+}
+</script>
 
 
     
@@ -297,602 +333,464 @@
                         </button>
                     
 
-                    <!-- Index Module -->
-<div class="material-index mdl-grid">
-    
-    <div class="locate-thumbnail-symbol"></div>
+                    <!-- Post TOC -->
 
-    <!-- Pin on top -->
+    
+    <!-- Back Button -->
+    <!--
+    <div class="material-back" id="backhome-div" tabindex="0">
+        <a class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+           href="#" onclick="window.history.back();return false;"
+           target="_self"
+           role="button"
+           data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">arrow_back</i>
+            <span class="mdl-button__ripple-container">
+                <span class="mdl-ripple"></span>
+            </span>
+        </a>
+    </div>
+    -->
+
+
+    <!-- Left aligned menu below button -->
+    
     
 
-    <!-- Normal Post -->
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
+
+
+
+<!-- Layouts -->
+
+    <!-- Post Module -->
+    <div class="material-post_container">
+
+        <div class="material-post mdl-grid">
+            <div class="mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col">
+
+                <!-- Post Header(Thumbnail & Title) -->
+                
+    <!-- Paradox Post Header -->
     
         
             <!-- Random Thumbnail -->
             <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
+            <script type="text/ls-javascript" id="post-thumbnail-script">
+    var randomNum = Math.floor(Math.random() * 19 + 1);
 
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2018/10/26/Docker-publish-test/">Hello World</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            Welcome to Hexo
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2018/10/26/Docker-publish-test/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 26, 2018</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2018/10/26/hello-world/">Hello World</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            Welcome to Hexo
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2018/10/26/hello-world/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 26, 2018</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2018/10/26/HTTP状态码简介/">HTTP状态码简介</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            我想尽量用通俗易懂的文字解析HTTP各种状态码的含义
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2018/10/26/HTTP状态码简介/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 26, 2018</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2018/10/26/Redis-FAQ/">Redis-FAQ</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            简单翻译Redis官网的FAQ以及部分自己总结的问题
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2018/10/26/Redis-FAQ/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 26, 2018</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/11/03/小论计算机Encoding/">小论计算机Encoding</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/11/03/小论计算机Encoding/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>11月 03, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/10/15/for-与while-true-的困惑/">for(;;)与while(true)的困惑</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用wh...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/10/15/for-与while-true-的困惑/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 15, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/10/06/Java跨平台究竟能跨哪些平台/">Java跨平台究竟能跨哪些平台</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            众所周知，Java跨平台的一直被众多Java程序员们津津乐道，“一次编写，到处运行”的设想着实令人心动，虽然带来不少性能上的问题，但这并不妨碍大家对...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/10/06/Java跨平台究竟能跨哪些平台/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>10月 06, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/09/30/Ubuntu-16-04下安装Java-9/">Ubuntu 16.04下安装Java 9</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            1 ...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/09/30/Ubuntu-16-04下安装Java-9/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>9月 30, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/09/30/Linux下如何挂载访问Windows8磁盘/">Linux下如何挂载访问Windows8磁盘</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            Error mounting /dev/sda5 at/media原因：微软为Win8加入了快速启动功能，...
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/09/30/Linux下如何挂载访问Windows8磁盘/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>9月 30, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-        
-            
-                <!-- Paradox Thumbnail -->
-                <div class="post_entry-module mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col fade out">
-    <!-- Post Thumbnail -->
-    
-        
-            <!-- Random Thumbnail -->
-            <div class="post_thumbnail-random mdl-card__media mdl-color-text--grey-50">
-        
-    
-
-        <!-- Post Title -->
-        <p class="article-headline-p"><a href="/2017/09/30/Linux部署jsp连接SQLite数据库遇到的几个错误/">Linux部署jsp连接SQLite数据库遇到的几个错误</a></p>
-    </div>
-
-    <!-- Post Excerpt -->
-    <div class="mdl-color-text--grey-600 mdl-card__supporting-text post_entry-content">
-        
-            
-        
-        &nbsp;&nbsp;&nbsp;
-        <span>
-            <a href="/2017/09/30/Linux部署jsp连接SQLite数据库遇到的几个错误/" target="_self">阅读全文</a>
-        </span>
-    </div>
-    <!-- Post_entry Info-->
-    <div id="post_entry-info">
-        <div id="post_entry-left-info" class="mdl-card__supporting-text meta mdl-color-text--grey-600 ">
-            <!-- Author Avatar -->
-            <div id="author-avatar">
-                <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Anonymous Hu's avatar">
-            </div>
-            <div>
-                <strong>Anonymous Hu</strong>
-                <span>9月 30, 2017</span>
-            </div>
-        </div>
-        <div id="post_entry-right-info">
-          
-
-            
-
-            
-
-            <!-- Post Views -->
-            <span class="post_entry-views">
-            </span>
-        </div>
-    </div>
-</div>
-
-            
-            
-        
-    
-
-    
-    <!-- Index nav -->
-        <nav class="material-nav mdl-cell mdl-cell--12-col">
-            <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="extend next" rel="next" href="/archives/page/2/"><button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"><i class="material-icons" role="presentation">arrow_forward</i></button></a>
-        </nav>
-    
-
-    
-        <script type="text/ls-javascript" id="thumbnail-script">
-    var randomNum;
-
-    var locatePost = $('.locate-thumbnail-symbol').next();
-    for(var i = 0; i < 10; i++) {
-        randomNum = Math.floor(Math.random() * 19 + 1);
-
-        locatePost.children('.post_thumbnail-random').attr('id', 'random_thumbnail-'+randomNum);
-        locatePost.children('.post_thumbnail-random').attr('data-original', 'http://anonymous-1253692322.cosbj.myqcloud.com/random/material-' + randomNum + '.png');
+    $('.post_thumbnail-random').attr('data-original', 'http://anonymous-1253692322.cosbj.myqcloud.com/random/material-' + randomNum + '.png');
     $('.post_thumbnail-random').addClass('lazy');
-
-        locatePost = locatePost.next();
-    }
 </script>
 
+        
+    
+            <p class="article-headline-p">
+                HTTP状态码简介
+            </p>
+        </div>
+
+
+
+
+
+                
+                    <!-- Paradox Post Info -->
+                    <div class="mdl-color-text--grey-700 mdl-card__supporting-text meta">
+
+    <!-- Author Avatar -->
+    <div id="author-avatar">
+        <img src="http://anonymous-1253692322.cosbj.myqcloud.com/sun.png" width="44px" height="44px" alt="Author Avatar"/>
+    </div>
+    <!-- Author Name & Date -->
+    <div>
+        <strong>Anonymous Hu</strong>
+        <span>10月 26, 2018</span>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <!-- Favorite -->
+    <!--
+        <button id="article-functions-like-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon btn-like">
+            <i class="material-icons" role="presentation">favorite</i>
+            <span class="visuallyhidden">favorites</span>
+        </button>
+    -->
+
+    <!-- Qrcode -->
+    
+
+    <!-- Tags (bookmark) -->
+    
+
+    <!-- Share -->
+    
+        <button id="article-fuctions-share-button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+    <i class="material-icons" role="presentation">share</i>
+    <span class="visuallyhidden">share</span>
+</button>
+<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="article-fuctions-share-button">
+    
+
+    
+
+    <!-- Share Weibo -->
+    
+        <a class="post_share-link" href="http://service.weibo.com/share/share.php?appkey=&title=HTTP状态码简介&url=www.oppoo.club/2018/10/26/HTTP状态码简介/index.html&pic=www.oppoo.club/img/favicon.png&searchPic=false&style=simple" target="_blank">
+            <li class="mdl-menu__item">
+                分享到微博
+            </li>
+        </a>
+    
+
+    <!-- Share Twitter -->
+    
+        <a class="post_share-link" href="https://twitter.com/intent/tweet?text=HTTP状态码简介&url=www.oppoo.club/2018/10/26/HTTP状态码简介/index.html&via=Anonymous Hu" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Twitter
+            </li>
+        </a>
+    
+
+    <!-- Share Facebook -->
+    
+        <a class="post_share-link" href="https://www.facebook.com/sharer/sharer.php?u=www.oppoo.club/2018/10/26/HTTP状态码简介/index.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 Facebook
+            </li>
+        </a>
+    
+
+    <!-- Share Google+ -->
+    
+
+    <!-- Share LinkedIn -->
+    
+
+    <!-- Share QQ -->
+    
+        <a class="post_share-link" href="http://connect.qq.com/widget/shareqq/index.html?site=Anonymous&#39;Blog&title=HTTP状态码简介&summary=吉林大学15届软件工程&pics=www.oppoo.club/img/favicon.png&url=www.oppoo.club/2018/10/26/HTTP状态码简介/index.html" target="_blank">
+            <li class="mdl-menu__item">
+                分享到 QQ
+            </li>
+        </a>
+    
+
+    <!-- Share Telegram -->
+    
+</ul>
+
     
 </div>
+
+                
+
+                <!-- Post Content -->
+                <div id="post-content" class="mdl-color-text--grey-700 mdl-card__supporting-text fade out">
+    
+        <p>我想尽量用通俗易懂的文字解析HTTP各种状态码的含义<br><a href="https://www.rfc-editor.org/rfc/rfc6585.txt" target="_blank" rel="noopener">https://www.rfc-editor.org/rfc/rfc6585.txt</a></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">状态码</th>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">含义</th>
+<th style="text-align:center">RFC原文定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">100</td>
+<td style="text-align:center">Continue</td>
+<td style="text-align:center">服务端已收到请求头，同意接受，响应100让客户端继续发送请求Body</td>
+</tr>
+<tr>
+<td style="text-align:center">101</td>
+<td style="text-align:center">Switching Protocol</td>
+<td style="text-align:center">客户端在发起请求时希望采用某种协议以获得更好的特性，但不确定服务端是否支持，故采用兼容版本协议发起请求并在请求头的Upgrade中声明欲使用的协议，如果服务端同意更换则回复101状态码，并在响应头中指明接下来采用的协议(因为请求头的Upgrade中可能有多个协议名)</td>
+</tr>
+<tr>
+<td style="text-align:center">102</td>
+<td style="text-align:center">Processing</td>
+<td style="text-align:center">不明</td>
+</tr>
+<tr>
+<td style="text-align:center">200</td>
+<td style="text-align:center">OK</td>
+<td style="text-align:center">请求成功，一切正常</td>
+</tr>
+<tr>
+<td style="text-align:center">201</td>
+<td style="text-align:center">Created</td>
+<td style="text-align:center">请求已经被实现，而且有一个新的资源已经依据请求的需要而建立，且其 URI 已经随Location 头信息返回。假如需要的资源无法及时建立的话，应当返回 ‘202 Accepted’。</td>
+</tr>
+<tr>
+<td style="text-align:center">202</td>
+<td style="text-align:center">Accepted</td>
+<td style="text-align:center">服务器已接受，随后处理，异步接受</td>
+</tr>
+<tr>
+<td style="text-align:center">203</td>
+<td style="text-align:center">Non-authoritatice Information</td>
+<td style="text-align:center">提示客户端：内容拿到了，但代理可能做了点修改：非权威版</td>
+</tr>
+<tr>
+<td style="text-align:center">204</td>
+<td style="text-align:center">No Content</td>
+<td style="text-align:center">不要惊讶，你请求成功了，但确实没有东西返回</td>
+</tr>
+<tr>
+<td style="text-align:center">205</td>
+<td style="text-align:center">Reset Content</td>
+<td style="text-align:center">与204一样为空内容，指示客户端重置文档：如表单</td>
+</tr>
+<tr>
+<td style="text-align:center">206</td>
+<td style="text-align:center">Partial Content</td>
+<td style="text-align:center">断点下载得以实现的关键，如果请求文件较大，可加入Range请求头申明下载字节范围，而服务器如果接受则响应206Partial Content，并在请求头中加入Content-Range表明响应的文件字节范围，客户端则可通过多次修改Range范围发起请求并合并文件，从而达到多线程下载、断点续传的效果</td>
+</tr>
+<tr>
+<td style="text-align:center">207</td>
+<td style="text-align:center">Mutil-Status</td>
+<td style="text-align:center">响应是一个XML文档，并且会包含多个独立的状态码</td>
+</tr>
+<tr>
+<td style="text-align:center">208</td>
+<td style="text-align:center">Already Imported</td>
+<td style="text-align:center">已经报告？</td>
+</tr>
+<tr>
+<td style="text-align:center">226</td>
+<td style="text-align:center">IM Used</td>
+</tr>
+<tr>
+<td style="text-align:center">300</td>
+<td style="text-align:center">Mutil Choices</td>
+<td style="text-align:center">多个地址可供重定向</td>
+</tr>
+<tr>
+<td style="text-align:center">301</td>
+<td style="text-align:center">Moved Permanently</td>
+<td style="text-align:center">永久重定向</td>
+</tr>
+<tr>
+<td style="text-align:center">302</td>
+<td style="text-align:center">Moved temporarily</td>
+<td style="text-align:center">临时重定向，与301的区别：301是永久的可以被缓存，而302则不可，对应到搜索引擎上，搜索引擎可以直接保留跳转后的地址，而302具有不确定性则只能保持原地址，故此存在302劫持的问题</td>
+</tr>
+<tr>
+<td style="text-align:center">303</td>
+<td style="text-align:center">See Other</td>
+<td style="text-align:center">303与307为HTTP1.1中对HTTP1.0中302的细化，因为302规范与浏览器厂商实现存在偏差，故在HTTP1.1中分成两个，区别体现在303允许对所有请求方法进行自动重定向，而307则只允许HEAD和GET自动重定向，而PSOT等非等幂方法则需要用户确认，因为请求的条件可能需要变化</td>
+</tr>
+<tr>
+<td style="text-align:center">304</td>
+<td style="text-align:center">Not Modified</td>
+<td style="text-align:center">未修改，直接用之前缓存的即可   重定向到缓存</td>
+</tr>
+<tr>
+<td style="text-align:center">305</td>
+<td style="text-align:center">Use Proxy</td>
+<td style="text-align:center">使用代理，附上代理地址</td>
+</tr>
+<tr>
+<td style="text-align:center">306</td>
+<td style="text-align:center">SwitchProxy</td>
+<td style="text-align:center">已废弃</td>
+</tr>
+<tr>
+<td style="text-align:center">307</td>
+<td style="text-align:center">TemporaryRedirect</td>
+<td style="text-align:center">见303</td>
+</tr>
+<tr>
+<td style="text-align:center">400</td>
+<td style="text-align:center">Bad Request</td>
+<td style="text-align:center">请求语法错误</td>
+</tr>
+<tr>
+<td style="text-align:center">401</td>
+<td style="text-align:center">Unauthorized</td>
+<td style="text-align:center">请登录</td>
+</tr>
+<tr>
+<td style="text-align:center">402</td>
+<td style="text-align:center">Payment Required</td>
+<td style="text-align:center">请付钱</td>
+</tr>
+<tr>
+<td style="text-align:center">403</td>
+<td style="text-align:center">Forbidden</td>
+<td style="text-align:center">禁止访问，不告诉你为啥</td>
+</tr>
+<tr>
+<td style="text-align:center">404</td>
+<td style="text-align:center">Not Found</td>
+<td style="text-align:center">资源不存在</td>
+</tr>
+<tr>
+<td style="text-align:center">405</td>
+<td style="text-align:center">Method Not Allowed</td>
+<td style="text-align:center">方法不允许（可能只支持GET or POST），可用OPTION方法发起请求，server会在response的Allow中申明允许的method</td>
+</tr>
+<tr>
+<td style="text-align:center">406</td>
+<td style="text-align:center">Not Acceptable</td>
+<td style="text-align:center">不支持你Accept头中的类型（SpringMVC中有实现）</td>
+</tr>
+<tr>
+<td style="text-align:center">407</td>
+<td style="text-align:center">Proxy Authentication Required</td>
+<td style="text-align:center">请去代理登录</td>
+</tr>
+<tr>
+<td style="text-align:center">408</td>
+<td style="text-align:center">Request Timeout</td>
+<td style="text-align:center">超时</td>
+</tr>
+<tr>
+<td style="text-align:center">409</td>
+<td style="text-align:center">Conflict  </td>
+</tr>
+<tr>
+<td style="text-align:center">410</td>
+<td style="text-align:center">Gone</td>
+<td style="text-align:center">不同于404,410表示永久移除，而404则不确定</td>
+</tr>
+<tr>
+<td style="text-align:center">411</td>
+<td style="text-align:center">Length Required</td>
+<td style="text-align:center">需要加入长度字段</td>
+</tr>
+<tr>
+<td style="text-align:center">412</td>
+<td style="text-align:center">Precondition Failed</td>
+</tr>
+<tr>
+<td style="text-align:center">413</td>
+<td style="text-align:center">Request Entity Too Large</td>
+<td style="text-align:center">参数过长</td>
+</tr>
+<tr>
+<td style="text-align:center">414</td>
+<td style="text-align:center">URI Too Long</td>
+<td style="text-align:center">URI太长，可能是跳转黑洞</td>
+</tr>
+<tr>
+<td style="text-align:center">415</td>
+<td style="text-align:center">Unsupported Media Type</td>
+</tr>
+<tr>
+<td style="text-align:center">417</td>
+<td style="text-align:center">Expectation Failed</td>
+<td style="text-align:center">满足不了期望</td>
+</tr>
+<tr>
+<td style="text-align:center">426</td>
+<td style="text-align:center">Upgrade Required</td>
+<td style="text-align:center">表示客户端要升级协议了</td>
+</tr>
+<tr>
+<td style="text-align:center">500</td>
+<td style="text-align:center">Interbal Server Error</td>
+<td style="text-align:center">服务器内部错误，一般是服务端程序错误</td>
+</tr>
+<tr>
+<td style="text-align:center">501</td>
+<td style="text-align:center">Not Implemented</td>
+<td style="text-align:center">未实现，服务器不支持请求的功能，无法完成请求</td>
+</tr>
+<tr>
+<td style="text-align:center">502</td>
+<td style="text-align:center">Bad Gateway</td>
+<td style="text-align:center">一般</td>
+</tr>
+<tr>
+<td style="text-align:center">503</td>
+<td style="text-align:center">Service Unavailable</td>
+<td style="text-align:center">临时维护</td>
+</tr>
+<tr>
+<td style="text-align:center">504</td>
+<td style="text-align:center">Gateway Timeout</td>
+<td style="text-align:center">类502，上游超时</td>
+</tr>
+<tr>
+<td style="text-align:center">505</td>
+<td style="text-align:center">HTTP Version Not Supported</td>
+<td style="text-align:center">服务器不支持请求的HTTP协议的版本，无法完成处理</td>
+</tr>
+</tbody>
+</table>
+
+        
+    
+
+    
+</div>
+
+
+                
+
+                <!-- Post Comments -->
+                
+                    
+    <!-- 使用 来必力 -->
+<div id="livere-comment">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC8zMzkzOS8xMDQ3NA">
+	<script type="text/ls-javascript" id="livere-comment-js">
+   (function(d, s) {
+       var j, e = d.getElementsByTagName(s)[0];
+       if (typeof LivereTower === 'function') { return; }
+       j = d.createElement(s);
+       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+       j.async = true;
+       e.parentNode.insertBefore(j, e);
+   })(document, 'script');
+	</script>
+</div>
+</div>
+<style>
+    #livere-comment{
+        background-color: #eee;
+        padding: 2pc;
+    }
+</style>
+
+                
+            </div>
+
+            <!-- Post Prev & Next Nav -->
+            <nav class="material-nav mdl-color-text--grey-50 mdl-cell mdl-cell--12-col">
+    <!-- Prev Nav -->
+    
+        <a href="/2018/10/26/hello-world/" id="post_nav-newer" class="prev-content">
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_back</i>
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            新篇
+        </a>
+    
+
+    <!-- Section Spacer -->
+    <div class="section-spacer"></div>
+
+    <!-- Next Nav -->
+    
+        <a href="/2018/10/26/Redis-FAQ/" id="post_nav-older" class="next-content">
+            旧篇
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-color--white mdl-color-text--grey-900" role="presentation">
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </a>
+    
+</nav>
+
+        </div>
+    </div>
+
 
 
                     
@@ -1202,6 +1100,10 @@ It will not impact the appearance and can give developers a lot of support :)
 <!-- Import prettify js  -->
 
     
+        
+            <script>lsloader.load("prettify_js","/js/prettify.min.js?WN07fivHQSMKWy7BmHBB6w==", true)</script>
+        
+    
 
 
 
@@ -1214,6 +1116,11 @@ It will not impact the appearance and can give developers a lot of support :)
     });
 
     
+        
+            $(function() {
+                $('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+                prettyPrint();
+                })
         
     
     
