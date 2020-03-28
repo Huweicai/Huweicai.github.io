@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Orianna</title>
+    <link>https://example.com/posts/</link>
+    <description>Recent content in Posts on Orianna</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Sun, 16 Dec 2018 00:09:52 +0800</lastBuildDate>
+    
+	<atom:link href="https://example.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>My First Post</title>
+      <link>https://example.com/posts/my-first-post/</link>
+      <pubDate>Sun, 16 Dec 2018 00:09:52 +0800</pubDate>
+      
+      <guid>https://example.com/posts/my-first-post/</guid>
+      <description>我自横刀向天笑 啦啦爱啦啦靓</description>
+    </item>
+    
+  </channel>
+</rss>

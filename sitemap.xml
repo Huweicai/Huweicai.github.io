@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://example.com/blog/</loc>
+    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/blog/2018-12/my-first-post/</loc>
+    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/my-first-post/</loc>
+    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/post/my-first-post/</loc>
+    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/posts/my-first-post/</loc>
+    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/</loc>
+    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/posts/</loc>
+    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/post/</loc>
+    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/categories/</loc>
+  </url>
+  
+  <url>
+    <loc>https://example.com/series/</loc>
+  </url>
+  
+  <url>
+    <loc>https://example.com/tags/</loc>
+  </url>
+  
+</urlset>
