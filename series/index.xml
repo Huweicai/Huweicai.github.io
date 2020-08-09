@@ -6,9 +6,19 @@
     <description>Recent content in Series on Orianna</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
+    <lastBuildDate>Thu, 09 Apr 2020 01:27:11 +0800</lastBuildDate>
     
 	<atom:link href="https://Huweicai.github.io/series/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Example</title>
+      <link>https://Huweicai.github.io/series/example/</link>
+      <pubDate>Thu, 09 Apr 2020 01:27:11 +0800</pubDate>
+      
+      <guid>https://Huweicai.github.io/series/example/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>

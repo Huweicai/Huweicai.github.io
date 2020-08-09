@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sci on Orianna</title>
+    <link>https://Huweicai.github.io/categories/sci/</link>
+    <description>Recent content in Sci on Orianna</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Thu, 09 Apr 2020 01:27:11 +0800</lastBuildDate>
+    
+	<atom:link href="https://Huweicai.github.io/categories/sci/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>颜色是如何呈现的</title>
+      <link>https://Huweicai.github.io/%E9%A2%9C%E8%89%B2%E6%98%AF%E5%A6%82%E4%BD%95%E5%91%88%E7%8E%B0%E7%9A%84/</link>
+      <pubDate>Thu, 09 Apr 2020 01:27:11 +0800</pubDate>
+      
+      <guid>https://Huweicai.github.io/%E9%A2%9C%E8%89%B2%E6%98%AF%E5%A6%82%E4%BD%95%E5%91%88%E7%8E%B0%E7%9A%84/</guid>
+      <description>现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？ 人眼如何感知色彩 众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，颜色的本质就是电磁波的频率，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。 人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，</description>
+    </item>
+    
+  </channel>
+</rss>

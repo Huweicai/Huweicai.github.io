@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>pprof on Orianna</title>
+    <link>https://Huweicai.github.io/tags/pprof/</link>
+    <description>Recent content in pprof on Orianna</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Fri, 29 May 2020 19:58:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://Huweicai.github.io/tags/pprof/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Golang 如何排查协程泄漏问题</title>
+      <link>https://Huweicai.github.io/golang-%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%E5%8D%8F%E7%A8%8B%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Fri, 29 May 2020 19:58:00 +0800</pubDate>
+      
+      <guid>https://Huweicai.github.io/golang-%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%E5%8D%8F%E7%A8%8B%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98/</guid>
+      <description>背景 周所周知，内存泄漏是一个很严重的问题，会导致系统运行占用资源越来越多，无法释放，直至崩溃。所幸 Go 语言是一门 具有垃圾回收的语言，能大大降低遇到内存泄漏的概率，而我们今天要说的是另外一个棘手的问题：协程泄漏。 协程泄漏：顾名思义就是出现了应该释放而没有被释放的协程，导致系统协程数量一直上升。不像对象回收需要引用计数、三色标记等手段，协程的回收是相当简单的，等待协程将代码从头到尾执行完毕之后这一块儿空</description>
+    </item>
+    
+  </channel>
+</rss>

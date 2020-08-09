@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>java on Orianna</title>
+    <link>https://Huweicai.github.io/tags/java/</link>
+    <description>Recent content in java on Orianna</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Mon, 20 May 2019 23:47:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://Huweicai.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Java跨平台究竟能跨哪些平台</title>
+      <link>https://Huweicai.github.io/java%E8%B7%A8%E5%B9%B3%E5%8F%B0%E7%A9%B6%E7%AB%9F%E8%83%BD%E8%B7%A8%E5%93%AA%E4%BA%9B%E5%B9%B3%E5%8F%B0/</link>
+      <pubDate>Mon, 20 May 2019 23:47:00 +0800</pubDate>
+      
+      <guid>https://Huweicai.github.io/java%E8%B7%A8%E5%B9%B3%E5%8F%B0%E7%A9%B6%E7%AB%9F%E8%83%BD%E8%B7%A8%E5%93%AA%E4%BA%9B%E5%B9%B3%E5%8F%B0/</guid>
+      <description>众所周知，Java跨平台的一直被众多Java程序员们津津乐道，“一次编写，到处运行”的设想着实令人心动，虽然会带来一定性能上的问题，但这并不妨碍大家对Java的喜爱，既然都说Java能跨平台，Java 也并不是凭空就能跑在任何机器上，这是不现实的，需要官方针对对应的平台，编译一套对应平台包括 Java 虚拟机（Java Runtime Environment 简称 JRE）在内的 Java 开发工具集（Java Develop Kit，简称 JDK），这样我们编写的 Java 代码才算</description>
+    </item>
+    
+    <item>
+      <title>for{;;}与while(true)的困惑</title>
+      <link>https://Huweicai.github.io/for%E4%B8%8Ewhiletrue%E7%9A%84%E5%9B%B0%E6%83%91/</link>
+      <pubDate>Sun, 04 Mar 2018 21:47:00 +0800</pubDate>
+      
+      <guid>https://Huweicai.github.io/for%E4%B8%8Ewhiletrue%E7%9A%84%E5%9B%B0%E6%83%91/</guid>
+      <description>最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序： public class Test2 { public void whileTest() { int i = 0; while (true) { i++; } } public</description>
+    </item>
+    
+  </channel>
+</rss>

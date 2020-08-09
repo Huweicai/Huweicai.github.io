@@ -3,55 +3,118 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://Huweicai.github.io/blog/</loc>
-    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
+    <loc>https://Huweicai.github.io/tags/go/</loc>
+    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://Huweicai.github.io/blog/2018-12/my-first-post/</loc>
-    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://Huweicai.github.io/my-first-post/</loc>
-    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://Huweicai.github.io/post/my-first-post/</loc>
-    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://Huweicai.github.io/posts/my-first-post/</loc>
-    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
+    <loc>https://Huweicai.github.io/golang-%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%E5%8D%8F%E7%A8%8B%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98/</loc>
+    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://Huweicai.github.io/</loc>
-    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
+    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://Huweicai.github.io/posts/</loc>
-    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://Huweicai.github.io/post/</loc>
-    <lastmod>2018-12-16T00:09:52+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://Huweicai.github.io/categories/</loc>
-  </url>
-  
-  <url>
-    <loc>https://Huweicai.github.io/series/</loc>
+    <loc>https://Huweicai.github.io/tags/pprof/</loc>
+    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://Huweicai.github.io/tags/</loc>
+    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/categories/</loc>
+    <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/series/example/</loc>
+    <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/categories/sci/</loc>
+    <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/series/</loc>
+    <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/tags/yuv/</loc>
+    <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/tags/%E5%9B%BE%E5%83%8F/</loc>
+    <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/%E9%A2%9C%E8%89%B2%E6%98%AF%E5%A6%82%E4%BD%95%E5%91%88%E7%8E%B0%E7%9A%84/</loc>
+    <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/tags/redis/</loc>
+    <lastmod>2020-01-04T22:43:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/redis-faq/</loc>
+    <lastmod>2020-01-04T22:43:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/golang-%E5%A4%9A%E8%B7%AF%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5-switch-%E8%AF%AD%E6%B3%95%E8%AF%A6%E8%A7%A3/</loc>
+    <lastmod>2020-01-02T12:09:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/tags/%E5%8A%9E%E5%85%AC%E6%95%88%E7%8E%87/</loc>
+    <lastmod>2019-07-02T08:47:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/%E5%9C%A8%E7%BA%BF-markdown-%E8%BD%AC-pdf-%E5%B7%A5%E5%85%B7%E8%AF%84%E6%B5%8B/</loc>
+    <lastmod>2019-07-02T08:47:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/tags/java/</loc>
+    <lastmod>2019-05-20T23:47:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/java%E8%B7%A8%E5%B9%B3%E5%8F%B0%E7%A9%B6%E7%AB%9F%E8%83%BD%E8%B7%A8%E5%93%AA%E4%BA%9B%E5%B9%B3%E5%8F%B0/</loc>
+    <lastmod>2019-05-20T23:47:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/tags/jvm/</loc>
+    <lastmod>2019-05-20T23:47:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/%E5%B0%8F%E8%AE%BA%E8%AE%A1%E7%AE%97%E6%9C%BAencoding/</loc>
+    <lastmod>2018-05-26T12:47:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</loc>
+    <lastmod>2018-05-26T12:47:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://Huweicai.github.io/for%E4%B8%8Ewhiletrue%E7%9A%84%E5%9B%B0%E6%83%91/</loc>
+    <lastmod>2018-03-04T21:47:00+08:00</lastmod>
   </url>
   
 </urlset>

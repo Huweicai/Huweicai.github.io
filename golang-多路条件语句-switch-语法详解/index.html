@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="Switch 是 Go 语言中一种多路条件语句，一般搭配 case 语句使用。 执行逻辑 一个 switch case 条件结构如下所示： switch simpleStatement; condition { case expression1,expression2: statements case expression3: statements default: statements } 和 if 语句类似，switch 语句也可以在条件语句之前执行一段简短的表达式（可以用于很方便的控制变量的作用域），switch case 开始执行时，会先执行这一个表达式（空也算一种），然后计算出条件语句的值，接着按从上到下，从左到右的顺序一个一个的执行 case 语句的条件表达式，如果值相等的话就会进入执行 case 条件">
+  
+  <meta property="og:title" content="Golang 多路条件语句 Switch 语法详解&#34;" />
+<meta property="og:description" content="Switch 是 Go 语言中一种多路条件语句，一般搭配 case 语句使用。 执行逻辑 一个 switch case 条件结构如下所示： switch simpleStatement; condition { case expression1,expression2: statements case expression3: statements default: statements } 和 if 语句类似，switch 语句也可以在条件语句之前执行一段简短的表达式（可以用于很方便的控制变量的作用域），switch case 开始执行时，会先执行这一个表达式（空也算一种），然后计算出条件语句的值，接着按从上到下，从左到右的顺序一个一个的执行 case 语句的条件表达式，如果值相等的话就会进入执行 case 条件" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://Huweicai.github.io/golang-%E5%A4%9A%E8%B7%AF%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5-switch-%E8%AF%AD%E6%B3%95%E8%AF%A6%E8%A7%A3/" />
+<meta property="article:published_time" content="2020-01-02T12:09:00+08:00" />
+<meta property="article:modified_time" content="2020-01-02T12:09:00+08:00" />
+
+
+  <title>
+  
+       Golang 多路条件语句 Switch 语法详解&#34; | Orianna 
+  
+  </title>
+
+  <link rel="canonical" href="https://Huweicai.github.io/golang-%E5%A4%9A%E8%B7%AF%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5-switch-%E8%AF%AD%E6%B3%95%E8%AF%A6%E8%A7%A3/">
+
+  
+  
+
+  
+  <link href="https://Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://Huweicai.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://Huweicai.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://Huweicai.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://Huweicai.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://Huweicai.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://Huweicai.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://Huweicai.github.io">
+          
+        <img class="avatar" src="https://Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://Huweicai.github.io">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://Huweicai.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://Huweicai.github.io/moment/" >Moment  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://Huweicai.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://Huweicai.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://Huweicai.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://Huweicai.github.io">
+          
+            <img class="pull-right avatar avatar-md" src="https://Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://Huweicai.github.io">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Orianna</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/you" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:huweicai@outlook.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="container pr-5">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">Golang 多路条件语句 Switch 语法详解&#34;</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Jan 2, 2020</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>3 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>Switch 是 Go 语言中一种多路条件语句，一般搭配 case 语句使用。</p>
+<h1 id="执行逻辑">执行逻辑</h1>
+<p>一个 switch case 条件结构如下所示：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="k">switch</span> <span class="nx">simpleStatement</span><span class="p">;</span> <span class="nx">condition</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="nx">expression1</span><span class="p">,</span><span class="nx">expression2</span><span class="p">:</span>
+		<span class="nx">statements</span>
+	<span class="k">case</span> <span class="nx">expression3</span><span class="p">:</span>
+		<span class="nx">statements</span>
+	<span class="k">default</span><span class="p">:</span>
+		<span class="nx">statements</span>
+	<span class="p">}</span>
+</code></pre></div><p>和 if 语句类似，switch 语句也可以在条件语句之前执行一段简短的表达式（可以用于很方便的控制变量的作用域），switch case 开始执行时，会先执行这一个表达式（空也算一种），然后计算出条件语句的值，接着按从上到下，从左到右的顺序一个一个的执行 case 语句的条件表达式，如果值相等的话就会进入执行 case 条件下对应的语句。
+如果所有的 case 条件都没有能匹配上的话，然后就会尝试执行 default 下对应的逻辑。</p>
+<h1 id="case-条件合并">case 条件合并</h1>
+<p>如果有时候多个 case 条件对应的处理逻辑是一样的话，Go 语言中的 case 条件是可以合并的，多个条件用逗号分隔，判断顺序是从左到右。</p>
+<pre><code>func main()  {
+	switch runtime.GOOS {
+	case &quot;linux&quot;,&quot;darwin&quot; :
+		println(&quot;unix环境&quot;)
+	case &quot;windows&quot;:
+		println(&quot;windows环境&quot;)
+	}
+}
+</code></pre><h1 id="支持的类型">支持的类型</h1>
+<p>不像 Java 只支持整型进行判断（其他类型都是通过转化成整型实现的），Go 里的 switch 的参数是一个表达式，支持任何类型进行比较，甚至 switch 的条件还可以是一个空的，这个时候等价于 switch true，可以用于简化多个 if 条件的场景。</p>
+<pre><code>func price(weight int) int  {
+	if weight &gt; 10 {
+		return 100
+	} else if weight &gt; 8 {
+		return 110
+	} else if weight &gt; 5 {
+		return 120
+	} else {
+		return 150
+	}
+}
+</code></pre><p>比如上方这个多重 if else 判断逻辑就可以用下方这个无参数的 switch case 语句替代：</p>
+<pre><code>func price(weight int) int  {
+	switch  {
+	case weight&gt;10:
+		return 100
+	case weight&gt;8:
+		return 110
+	case weight&gt;5:
+		return 120
+	default:
+		return 150
+	}
+}
+
+</code></pre><h1 id="隐式-break--fallthrough">隐式 break &amp; fallthrough</h1>
+<p>Go 语言中匹配到一个 case 条件执行完对应的逻辑之后就会跳出这个 switch 语句，等价于每个 case 处理逻辑之后都加了一个隐式的 break 语句。如果不想要隐式退出的话可以使用 fallthrough 语句来继续下一个 case 的处理逻辑。
+隐式 break：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span>  <span class="p">{</span>
+	<span class="k">switch</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">GOOS</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="s">&#34;linux&#34;</span><span class="p">,</span><span class="s">&#34;darwin&#34;</span> <span class="p">:</span>
+		<span class="nb">println</span><span class="p">(</span><span class="s">&#34;unix环境&#34;</span><span class="p">)</span>
+	<span class="k">case</span> <span class="s">&#34;windows&#34;</span><span class="p">:</span>
+		<span class="nb">println</span><span class="p">(</span><span class="s">&#34;window环境&#34;</span><span class="p">)</span>
+	<span class="k">default</span><span class="p">:</span>
+		<span class="nb">println</span><span class="p">(</span><span class="s">&#34;什么都不是&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>输出：</p>
+<pre><code>windows环境
+</code></pre><p>强行 fallthrough：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span>  <span class="p">{</span>
+	<span class="k">switch</span> <span class="nx">runtime</span><span class="p">.</span><span class="nx">GOOS</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="s">&#34;linux&#34;</span><span class="p">,</span><span class="s">&#34;darwin&#34;</span> <span class="p">:</span>
+		<span class="nb">println</span><span class="p">(</span><span class="s">&#34;unix环境&#34;</span><span class="p">)</span>
+		<span class="k">fallthrough</span>
+	<span class="k">case</span> <span class="s">&#34;windows&#34;</span><span class="p">:</span>
+		<span class="nb">println</span><span class="p">(</span><span class="s">&#34;windows环境&#34;</span><span class="p">)</span>
+		<span class="k">fallthrough</span> <span class="c1">// 会继续执行下一个语句
+</span><span class="c1"></span>	<span class="k">default</span><span class="p">:</span>
+		<span class="nb">println</span><span class="p">(</span><span class="s">&#34;什么都不是&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>输出：</p>
+<pre><code>windows环境
+什么都不是
+</code></pre><p>不过这一点就和很多其他编程语言正好相反，比如：Java、C++。Java 和 C++ 中的 switch case 都是隐式 fallthrough，而break 则需要显示调用，这两种方式各有利弊吧，还是看不同的使用场景，不过  Java 12 中也加入了对于隐式 break 的支持。
+另外 Go 语言中也是可以显示调用 break 提前跳出的，用法和循环语句中的 break 是一样的，也可以加标签指定跳出具体哪一段逻辑。
+break 显式跳出：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">x</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">}</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">x</span> <span class="p">{</span>
+		<span class="k">switch</span>  <span class="p">{</span>
+		<span class="k">case</span> <span class="nx">i</span><span class="p">&gt;</span><span class="mi">0</span> <span class="p">:</span>
+			<span class="k">if</span> <span class="nx">i</span> <span class="p">&gt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">3</span> <span class="p">{</span>
+				<span class="k">break</span>
+			<span class="p">}</span>
+			<span class="nb">println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>输出：</p>
+<pre><code>1
+3
+4
+5
+</code></pre><p>指定标签跳出 for 循环：</p>
+<pre><code>func main() {
+	x := []int{1,2,3,4,5}
+	a:
+	for _, i := range x {
+		switch  {
+		case i&gt;0 :
+			if i &gt; 1 &amp;&amp; i &lt; 3 {
+				break a
+			}
+			println(i)
+		}
+	}
+}
+</code></pre><p>输出：</p>
+<pre><code>1
+</code></pre><h1 id="type-switch">Type Switch</h1>
+<p>Go 语言中的 switch 条件还可以是一种类型，这个特性在一个变量可能是多种类型时非常有用，虽然也可以 if else 加上类型断言来实现：</p>
+<pre><code>func main() {
+	i := interface{}(123)
+	if _,ok := i.(int);ok{
+		println(&quot;int&quot;)
+	}else if _,ok := i.(int64);ok {
+		println(&quot;int64&quot;)
+	}else if _,ok := i.(string);ok {
+		println(&quot;string&quot;)
+	}
+}
+</code></pre><p>但是用 Type Switch 的话代码会更简洁一些，比如上面的逻辑用 Type Switch 重写：</p>
+<pre><code>func main() {
+	i := interface{}(123)
+	switch i.(type) {
+	case int:
+		println(&quot;int&quot;)
+	case int64:
+		println(&quot;int64&quot;)
+	case float64:
+		println(&quot;float64&quot;)
+	}
+}
+</code></pre><p>输出：</p>
+<pre><code>int
+</code></pre><p>（注：这里 123 是 int 类型而不是 int64，因为在申明变量时并没有指定具体类型，编译器会自行推导类型，而 int 是无类型整形的默认类型。）
+同时 Type Switch 可以给赋值给一个变量，这个变量在不同的 case 中会变成对应 case 条件的类型（在合并了 case 语句之后会失效）</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">i</span> <span class="kd">interface</span><span class="p">{}</span>
+	<span class="k">switch</span> <span class="nx">x</span> <span class="o">:=</span> <span class="nx">i</span><span class="p">.(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="kt">error</span><span class="p">:</span>
+		<span class="nx">x</span><span class="p">.</span><span class="nf">Error</span><span class="p">()</span>
+	<span class="k">case</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Stringer</span><span class="p">:</span>
+		<span class="nx">x</span><span class="p">.</span><span class="nf">String</span><span class="p">()</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://Huweicai.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://Huweicai.github.io/tags/go" role="button">go </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://Huweicai.github.io/%E5%9C%A8%E7%BA%BF-markdown-%E8%BD%AC-pdf-%E5%B7%A5%E5%85%B7%E8%AF%84%E6%B5%8B/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>在线 Markdown 转 PDF 工具评测</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://Huweicai.github.io/redis-faq/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>Redis FAQ</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/you " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:huweicai@outlook.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://Huweicai.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://Huweicai.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://Huweicai.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
