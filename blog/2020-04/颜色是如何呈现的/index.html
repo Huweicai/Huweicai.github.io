@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？ 人眼如何感知色彩 众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，颜色的本质就是电磁波的频率，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。 人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，">
+  
+  <meta property="og:title" content="颜色是如何呈现的" />
+<meta property="og:description" content="现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？ 人眼如何感知色彩 众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，颜色的本质就是电磁波的频率，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。 人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://Huweicai.github.io/blog/2020-04/%E9%A2%9C%E8%89%B2%E6%98%AF%E5%A6%82%E4%BD%95%E5%91%88%E7%8E%B0%E7%9A%84/" />
+<meta property="article:published_time" content="2020-04-09T01:27:11+08:00" />
+<meta property="article:modified_time" content="2020-04-09T01:27:11+08:00" />
+
+
+
+  <title>
+  
+       颜色是如何呈现的 | Orianna 
+  
+  </title>
+
+  <link rel="canonical" href="https://Huweicai.github.io/blog/2020-04/%E9%A2%9C%E8%89%B2%E6%98%AF%E5%A6%82%E4%BD%95%E5%91%88%E7%8E%B0%E7%9A%84/">
+
+  
+  
+
+  
+  <link href="https://Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://Huweicai.github.io/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://Huweicai.github.io/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://Huweicai.github.io/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://Huweicai.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://Huweicai.github.io/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://Huweicai.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://Huweicai.github.io">
+          
+        <img class="avatar" src="https://Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://Huweicai.github.io">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://Huweicai.github.io/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://Huweicai.github.io/moment/" >Moment  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://Huweicai.github.io/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://Huweicai.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://Huweicai.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://Huweicai.github.io">
+          
+            <img class="pull-right avatar avatar-md" src="https://Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://Huweicai.github.io">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Orianna</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/you" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:huweicai@outlook.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="container pr-5">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://Huweicai.github.io/categories/sci"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Sci </a></li>
+      
+    
+    
+      
+        <li><a href="https://Huweicai.github.io/series/example"><i class="fas fa-bookmark pr-1" aria-hidden="true"></i>Example</a></li>
+      
+    
+  </ul>
+
+  <div class="px-4 post-heading">颜色是如何呈现的</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Apr 9, 2020</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>5 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？</p>
+<h1 id="人眼如何感知色彩">人眼如何感知色彩</h1>
+<p>众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，<strong>颜色的本质就是电磁波的频率</strong>，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/8145046-6a1f17fa1249bd85.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="电磁波谱"></p>
+<p>人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，而视锥细胞则负责感受光的色彩。</p>
+<h2 id="视锥细胞">视锥细胞</h2>
+<p>人类眼睛中有三种对不同电磁波频率敏感的视锥细胞，分别是 <strong>Small</strong> <strong>Mediam</strong> <strong>Long</strong>，所有的颜色就是对这三种细胞不同强度刺激的组合结果，比如：</p>
+<ul>
+<li>黄色就是同时刺激 M 细胞和 L 细胞的结果</li>
+<li>同时刺激三种细胞时，我们就会得到白色</li>
+<li>如果都没有刺激，那就是黑色</li>
+</ul>
+<p>这三种基本的光就是我们通常意义上所说的三原色，通过这三种原色，基于同时用540nm 和 570 nm 波长的光刺激锥状细胞在人类大脑看来大约等价于用 560nm光刺激的原理我们可以模拟出任意颜色的效果。不过这种等价只基于人类成立，鸡只有两种视锥细胞，而皮皮虾则有足足十六对，人类眼中相同的颜色在其他生物眼中可能差异非常大，不过这并不重要，只要能骗过我们的大脑就行，这种原理就是我们现代彩色显示器的理论基础。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/8145046-0b9e6f300e0494d7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="视锥细胞敏感频率"></p>
+<p>M 细胞和 L 细胞依赖的光敏色素蛋白基因编码于 X 染色体上，这会导致这两种细胞无法正常运转，即我们通常意义上说的红绿色盲症，另外它还是一种隐性遗传病，所以患这种病的男性会比较多。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/8145046-30e7649fc642b6c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="红绿色盲世界模拟"></p>
+<p>还有一种全色色盲症，即三种视锥细胞全无法正常工作，此时依靠视杆细胞维持视觉运行，只能看到黑白的世界。</p>
+<h1 id="色彩表示方式">色彩表示方式</h1>
+<h2 id="rgb">RGB</h2>
+<p>利用按一定强度刺激人眼三种锥细胞即可等效模拟出颜色效果的原理，当前几乎所有的彩色显示器全部是使用的 RGB 颜色模型来渲染色彩。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/8145046-e438245d86002d6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="RGB Example"></p>
+<p>具体传输时我们一般是用三个数字表示一个彩色像素点，对应其：Red Green Blue 的比例，例如：</p>
+<ul>
+<li>0 0 0 代表黑色，没有光</li>
+<li>1 1 1 代表白色，三种光混合</li>
+<li>0 0 255 纯蓝色</li>
+<li>255 255 0 黄色</li>
+</ul>
+<h3 id="rgbw">RGBW</h3>
+<p>考虑到白光是一种非常常见的颜色，而在 RGB 模型下显示白光时需要三种光全力运作，少数显示器出于省电考虑加入了 White：白色灯，在需要显示白色时只需亮起白灯一个即可，达到省电的效果。所以这也是说为什么黑色的背景可以省电的原理，黑色时一个灯都不需要亮，不过只有 OLED （Organic Light Emitting Display）这种每个像素点单独发光的显示技术才可以，对于像 LCD （Liquid Crystal Display）这种使用一块背光板通过遮罩来调整光大小的技术来说什么颜色耗电量都是一样的。</p>
+<h3 id="yuv">YUV</h3>
+<p>YUV色彩模型使用 Y 亮度，U 色度，V 浓度来表示颜色。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/8145046-eded6e927ca9b097.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="YUV亮度模型"></p>
+<p>同样的 UV 分量，Y 不同时效果如下：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/8145046-081aa1adc58f780f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<p>这种格式不同于 RGB 的地方在于，在缺失了 UV 只有 Y 值时，也能进行显示，不过看到的图像就是黑白图像，所以这种格式刚开始被提出用于黑白电视到彩色电视的过渡。</p>
+<p>另外人类眼中的视杆细胞比视锥细胞多很多，所以相对于色彩的变化，人眼要对亮度的变化更加敏感，利用这种特性，可以让多个 UV 分量共用一个 Y 分量，在基本保持色彩还原度的前提下尽可能的压缩空间，根据不同的采样率，常见的 YUV 格式有这几种：</p>
+<ul>
+<li>4:4:4 完全采样，Y:UV = 1:1</li>
+<li>4:2:2 2:1的水平取样，垂直完全采样，Y:UV = 2:1</li>
+<li>4:2:0 垂直与水平均为 2:1 采样，Y:UV =4:1</li>
+</ul>
+<p>在 RGB 格式下，四个像素点存储需要的空间为：4 * 3 = 12B，而使用 YUV420P 格式则只需要 4 * 1 + 1 + 1 = 8B，可以节约三分之一的空间，这是一个非常可观的数字，所以 YUV 格式基本也是网络传输的首选颜色编码格式。
+不过基于现代显示器的工作原理，YUV 格式很明显是无法直接被显示器渲染的，需要转化成 RGB 格式才可以，以 YUV444 格式为例，可以通过 NTSC 给出的如下公式在这两种格式之间进行换算：</p>
+<pre><code>Y = ( (  66 * R + 129 * G +  25 * B + 128) &gt;&gt; 8) +  16
+U = ( ( -38 * R -  74 * G + 112 * B + 128) &gt;&gt; 8) + 128
+V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
+</code></pre><p>公式看的头大也不要紧，只需要知道，RGB 和 YUV 以及下方的 CMYK 都是可以互相换算的就可以。</p>
+<h2 id="cmyk">CMYK</h2>
+<p>不同于 RGB 这一套基于光源自身发光的颜色编码体系，我们现实世界中看到的很多东西其实是并不能发光的，然而我们又有自由组合色彩的需求，比如：彩印。利用色料的三原色混色原理，加上黑色油墨，共计四种颜色混合叠加，形成所谓“全彩印刷”，这种颜色编码方式就是 CMYK：</p>
+<ul>
+<li>C：Cyan ＝ 青色</li>
+<li>M：Magenta ＝ 洋红</li>
+<li>Y：Yellow ＝ 黄色</li>
+<li>K：blacK ＝ 黑色</li>
+</ul>
+<p>CMYK 和 RGB 之间也是可以互相转换的，在我们打印 RGB 图片的时候就会发生这个转换过程：
+<img src="https://upload-images.jianshu.io/upload_images/8145046-94c223a4837d320f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
+<h2 id="hslhsv">HSL(HSV)</h2>
+<p>RGB 编码方式虽然可以很好的完成自然颜色到显示器展示的映射，然而这种模式是基于光源的角度出发的，对于人类来说并不友好。HSL 模型在1978年由埃爾維·雷·史密斯提出，它是一种 RGB 的非线性映射：</p>
+<ul>
+<li>H: Hue，色调</li>
+<li>S: Saturation, 饱和度</li>
+<li>L: Lightness，亮度
+<img src="https://upload-images.jianshu.io/upload_images/8145046-ad5ba1f0b9aa3a72.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+<p>这个模型以人类更加熟悉的方式封装了颜色的特性：什么颜色？深浅如何？明暗如何？
+所以这也是在颜色调整的人机交互界面上所使用的最为广泛的模型，例如：Photoshop，显示器色彩调整，Windows颜色选择器等。</p>
+<p>参考链接：
+<a href="https://www.ixueshu.com/document/6f6ebb7bc153a6a89a4103ed4acdcdd2318947a18e7f9386.html">https://www.ixueshu.com/document/6f6ebb7bc153a6a89a4103ed4acdcdd2318947a18e7f9386.html</a>
+<a href="https://zh.wikipedia.org/wiki/%E5%BD%A9%E8%89%B2%E8%A7%86%E8%A7%89">https://zh.wikipedia.org/wiki/%E5%BD%A9%E8%89%B2%E8%A7%86%E8%A7%89</a>
+<a href="https://zh.wikipedia.org/zh-sg/%E8%A7%86%E6%9D%86%E7%BB%86%E8%83%9E">https://zh.wikipedia.org/zh-sg/%E8%A7%86%E6%9D%86%E7%BB%86%E8%83%9E</a>
+<a href="https://www.fourcc.org/yuv.php">https://www.fourcc.org/yuv.php</a>
+<a href="https://www.lg.com/us/experience-tvs/oled-tv/oled-vs-lcd">https://www.lg.com/us/experience-tvs/oled-tv/oled-vs-lcd</a></p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://Huweicai.github.io/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://Huweicai.github.io/tags/yuv" role="button">yuv </a></li>
+      
+    
+      <li><a href="https://Huweicai.github.io/tags/%E5%9B%BE%E5%83%8F" role="button">图像 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://Huweicai.github.io/blog/2020-01/redis-faq/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Redis FAQ</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://Huweicai.github.io/blog/2020-05/golang-%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%E5%8D%8F%E7%A8%8B%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>Golang 如何排查协程泄漏问题</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/you " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:huweicai@outlook.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://Huweicai.github.io/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://Huweicai.github.io/js/main.js"></script>
+
+
+
+  
+  <script src="https://Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://Huweicai.github.io/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://Huweicai.github.io/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
