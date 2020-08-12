@@ -2,93 +2,93 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Anonymous&#39; Blog</title>
-    <link>https://Huweicai.github.io/tags/</link>
+    <link>https://huweicai.com/tags/</link>
     <description>Recent content in Tags on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
     <lastBuildDate>Fri, 29 May 2020 19:58:00 +0800</lastBuildDate>
     
-	<atom:link href="https://Huweicai.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://huweicai.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Go</title>
-      <link>https://Huweicai.github.io/tags/go/</link>
+      <link>https://huweicai.com/tags/go/</link>
       <pubDate>Fri, 29 May 2020 19:58:00 +0800</pubDate>
       
-      <guid>https://Huweicai.github.io/tags/go/</guid>
+      <guid>https://huweicai.com/tags/go/</guid>
       <description></description>
     </item>
     
     <item>
       <title>pprof</title>
-      <link>https://Huweicai.github.io/tags/pprof/</link>
+      <link>https://huweicai.com/tags/pprof/</link>
       <pubDate>Fri, 29 May 2020 19:58:00 +0800</pubDate>
       
-      <guid>https://Huweicai.github.io/tags/pprof/</guid>
+      <guid>https://huweicai.com/tags/pprof/</guid>
       <description></description>
     </item>
     
     <item>
       <title>yuv</title>
-      <link>https://Huweicai.github.io/tags/yuv/</link>
+      <link>https://huweicai.com/tags/yuv/</link>
       <pubDate>Thu, 09 Apr 2020 01:27:11 +0800</pubDate>
       
-      <guid>https://Huweicai.github.io/tags/yuv/</guid>
+      <guid>https://huweicai.com/tags/yuv/</guid>
       <description></description>
     </item>
     
     <item>
       <title>图像</title>
-      <link>https://Huweicai.github.io/tags/%E5%9B%BE%E5%83%8F/</link>
+      <link>https://huweicai.com/tags/%E5%9B%BE%E5%83%8F/</link>
       <pubDate>Thu, 09 Apr 2020 01:27:11 +0800</pubDate>
       
-      <guid>https://Huweicai.github.io/tags/%E5%9B%BE%E5%83%8F/</guid>
+      <guid>https://huweicai.com/tags/%E5%9B%BE%E5%83%8F/</guid>
       <description></description>
     </item>
     
     <item>
       <title>redis</title>
-      <link>https://Huweicai.github.io/tags/redis/</link>
+      <link>https://huweicai.com/tags/redis/</link>
       <pubDate>Sat, 04 Jan 2020 22:43:00 +0800</pubDate>
       
-      <guid>https://Huweicai.github.io/tags/redis/</guid>
+      <guid>https://huweicai.com/tags/redis/</guid>
       <description></description>
     </item>
     
     <item>
       <title>办公效率</title>
-      <link>https://Huweicai.github.io/tags/%E5%8A%9E%E5%85%AC%E6%95%88%E7%8E%87/</link>
+      <link>https://huweicai.com/tags/%E5%8A%9E%E5%85%AC%E6%95%88%E7%8E%87/</link>
       <pubDate>Tue, 02 Jul 2019 08:47:11 +0800</pubDate>
       
-      <guid>https://Huweicai.github.io/tags/%E5%8A%9E%E5%85%AC%E6%95%88%E7%8E%87/</guid>
+      <guid>https://huweicai.com/tags/%E5%8A%9E%E5%85%AC%E6%95%88%E7%8E%87/</guid>
       <description></description>
     </item>
     
     <item>
       <title>java</title>
-      <link>https://Huweicai.github.io/tags/java/</link>
+      <link>https://huweicai.com/tags/java/</link>
       <pubDate>Mon, 20 May 2019 23:47:00 +0800</pubDate>
       
-      <guid>https://Huweicai.github.io/tags/java/</guid>
+      <guid>https://huweicai.com/tags/java/</guid>
       <description></description>
     </item>
     
     <item>
       <title>jvm</title>
-      <link>https://Huweicai.github.io/tags/jvm/</link>
+      <link>https://huweicai.com/tags/jvm/</link>
       <pubDate>Mon, 20 May 2019 23:47:00 +0800</pubDate>
       
-      <guid>https://Huweicai.github.io/tags/jvm/</guid>
+      <guid>https://huweicai.com/tags/jvm/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>操作系统&#34;</title>
-      <link>https://Huweicai.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+      <title>操作系统</title>
+      <link>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
       <pubDate>Sat, 26 May 2018 12:47:11 +0800</pubDate>
       
-      <guid>https://Huweicai.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</guid>
+      <guid>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</guid>
       <description></description>
     </item>
     

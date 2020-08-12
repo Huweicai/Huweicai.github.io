@@ -2,30 +2,30 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Anonymous&#39; Blog</title>
-    <link>https://Huweicai.github.io/categories/</link>
+    <link>https://huweicai.com/categories/</link>
     <description>Recent content in Categories on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
     <lastBuildDate>Fri, 29 May 2020 19:58:00 +0800</lastBuildDate>
     
-	<atom:link href="https://Huweicai.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://huweicai.com/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Go</title>
-      <link>https://Huweicai.github.io/categories/go/</link>
+      <link>https://huweicai.com/categories/go/</link>
       <pubDate>Fri, 29 May 2020 19:58:00 +0800</pubDate>
       
-      <guid>https://Huweicai.github.io/categories/go/</guid>
+      <guid>https://huweicai.com/categories/go/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Sci</title>
-      <link>https://Huweicai.github.io/categories/sci/</link>
+      <link>https://huweicai.com/categories/sci/</link>
       <pubDate>Thu, 09 Apr 2020 01:27:11 +0800</pubDate>
       
-      <guid>https://Huweicai.github.io/categories/sci/</guid>
+      <guid>https://huweicai.com/categories/sci/</guid>
       <description></description>
     </item>
     
