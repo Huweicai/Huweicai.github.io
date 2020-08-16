@@ -8,11 +8,6 @@
   </url>
   
   <url>
-    <loc>https://huweicai.com/blog/</loc>
-    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/categories/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
   </url>
@@ -64,6 +59,11 @@
   
   <url>
     <loc>https://huweicai.com/blog/2020-04/%E9%A2%9C%E8%89%B2%E6%98%AF%E5%A6%82%E4%BD%95%E5%91%88%E7%8E%B0%E7%9A%84/</loc>
+    <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/%E9%A2%9C%E8%89%B2%E6%98%AF%E5%A6%82%E4%BD%95%E5%91%88%E7%8E%B0%E7%9A%84/</loc>
     <lastmod>2020-04-09T01:27:11+08:00</lastmod>
   </url>
   
@@ -125,6 +125,16 @@
   <url>
     <loc>https://huweicai.com/blog/2018-03/for%E4%B8%8Ewhiletrue%E7%9A%84%E5%9B%B0%E6%83%91/</loc>
     <lastmod>2018-03-04T21:47:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/blog/</loc>
+    <lastmod>2018-01-06T02:15:26+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/about/</loc>
+    <priority>0</priority>
   </url>
   
 </urlset>

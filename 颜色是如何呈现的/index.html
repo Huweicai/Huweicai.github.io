@@ -7,15 +7,14 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="背景 周所周知，内存泄漏是一个很严重的问题，会导致系统运行占用资源越来越多，无法释放，直至崩溃。所幸 Go 语言是一门 具有垃圾回收的语言，能大大降低遇到内存泄漏的概率，而我们今天要说的是另外一个棘手的问题：协程泄漏。 协程泄漏：顾名思义就是出现了应该释放而没有被释放的协程，导致系统协程数量一直上升。不像对象回收需要引用计数、三色标记等手段，协程的回收是相当简单的，等待协程将代码从头到尾执行完毕之后这一块儿空">
+  <meta name="description" content="现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？ 人眼如何感知色彩 众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，颜色的本质就是电磁波的频率，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。 人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，">
   
-  <meta property="og:title" content="Golang 如何排查协程泄漏问题" />
-<meta property="og:description" content="背景 周所周知，内存泄漏是一个很严重的问题，会导致系统运行占用资源越来越多，无法释放，直至崩溃。所幸 Go 语言是一门 具有垃圾回收的语言，能大大降低遇到内存泄漏的概率，而我们今天要说的是另外一个棘手的问题：协程泄漏。 协程泄漏：顾名思义就是出现了应该释放而没有被释放的协程，导致系统协程数量一直上升。不像对象回收需要引用计数、三色标记等手段，协程的回收是相当简单的，等待协程将代码从头到尾执行完毕之后这一块儿空" />
+  <meta property="og:title" content="颜色是如何呈现的" />
+<meta property="og:description" content="现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？ 人眼如何感知色彩 众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，颜色的本质就是电磁波的频率，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。 人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/blog/2020-05/golang-%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%E5%8D%8F%E7%A8%8B%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98/" />
-<meta property="article:published_time" content="2020-05-29T19:58:00+08:00" />
-<meta property="article:modified_time" content="2020-05-29T19:58:00+08:00" />
-
+<meta property="og:url" content="https://huweicai.com/%E9%A2%9C%E8%89%B2%E6%98%AF%E5%A6%82%E4%BD%95%E5%91%88%E7%8E%B0%E7%9A%84/" />
+<meta property="article:published_time" content="2020-04-09T01:27:11+08:00" />
+<meta property="article:modified_time" content="2020-04-09T01:27:11+08:00" />
 
   
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
@@ -29,11 +28,11 @@
 
   <title>
   
-       Golang 如何排查协程泄漏问题 | Anonymous&#39; Blog 
+       颜色是如何呈现的 | Anonymous&#39; Blog 
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/blog/2020-05/golang-%E5%A6%82%E4%BD%95%E6%8E%92%E6%9F%A5%E5%8D%8F%E7%A8%8B%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98/">
+  <link rel="canonical" href="https://huweicai.com/%E9%A2%9C%E8%89%B2%E6%98%AF%E5%A6%82%E4%BD%95%E5%91%88%E7%8E%B0%E7%9A%84/">
 
   
   
@@ -295,27 +294,19 @@
           <div class="post-header text-center" >
   <ul class="post-meta li-x">
     
-      
-        <li><a href="https://huweicai.com/categories/go"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Go </a></li>
-      
-    
-    
-      
-        <li><a href="https://huweicai.com/series/go"><i class="fas fa-bookmark pr-1" aria-hidden="true"></i>Go</a></li>
-      
     
   </ul>
 
-  <div class="px-4 post-heading">Golang 如何排查协程泄漏问题</div>
+  <div class="px-4 post-heading">颜色是如何呈现的</div>
 
   <ul class="post-meta li-x mt-1">
     
-      <li>May 29, 2020</li>
+      <li>Apr 9, 2020</li>
     
 
     
       <li class="middot"></li>
-      <li>3 minutes read</li>
+      <li>5 minutes read</li>
     
   </ul>
   
@@ -324,52 +315,80 @@
 
 
           <div class="post-content markdown">
-            <h2 id="背景">背景</h2>
-<p>周所周知，内存泄漏是一个很严重的问题，会导致系统运行占用资源越来越多，无法释放，直至崩溃。所幸 Go 语言是一门 具有垃圾回收的语言，能大大降低遇到内存泄漏的概率，而我们今天要说的是另外一个棘手的问题：协程泄漏。</p>
-<p><strong>协程泄漏</strong>：顾名思义就是出现了应该释放而没有被释放的协程，导致系统协程数量一直上升。不像对象回收需要引用计数、三色标记等手段，协程的回收是相当简单的，等待协程将代码从头到尾执行完毕之后这一块儿空间就会自动回收，通常协程泄漏问题都是因为某段代码卡住了，陷入了死循环或者再等待一个不可能的条件等原因。</p>
-<p>那么具体如何定位到到底是哪里出了问题呢，具体就要用到 Go 官方提供的性能分析工具了：<strong>pprof</strong>。</p>
-<h2 id="pprof">pprof</h2>
-<p>pprof 具体在 Go 语言中的实现是在包：<strong>runtime/pprof</strong> 中，提供了诸如内存分析、CPU分析、锁分析等函数供调用，调用这个库之后会将性能数据以 protobuffer 这种二进制序列化格式导出。同时考虑到这一个库较为底层，Go 官方在 <strong>runtime/pprof</strong> 上包装提供了一个更加易用的库：<strong>net/http/pprof</strong>，提供了一种通过 HTTP 协议和性能数据交互的能力。除了性能数据的抓取工具，Golang 也提供了官方的性能数据分析工具：<strong>go tool pprof</strong>，下面我们将基于这些工具进行一次协程泄漏问题的排查。</p>
-<h2 id="制造协程泄漏">制造协程泄漏</h2>
-<p>http.pprof 会在 init 的时候注册一些路由到 <strong>http.DefaultServeMux</strong> 上，所以要使用这个库，我们要做的只需要引入这个包，并且使用 DefaultServeMux 监控一个端口即可，具体的话调用：<strong>http.ListenAndServe</strong> 时 handler 传空即可，传空的时候会默认使用 DefaultServeMux 来处理。</p>
-<p>一下是一个协程泄漏的例子，分别在第 11 行和 14 行泄漏了 1000 个协程。</p>
-<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;net/http&#34;</span>
-	<span class="nx">_</span> <span class="s">&#34;net/http/pprof&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-			<span class="k">select</span> <span class="p">{}</span> <span class="c1">// 泄漏了 1000 个协程
-</span><span class="c1"></span>		<span class="p">}()</span>
-		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-			<span class="k">select</span> <span class="p">{}</span> <span class="c1">// 泄漏了 1000 个协程
-</span><span class="c1"></span>		<span class="p">}()</span>
-	<span class="p">}</span>
-        
-        <span class="c1">// 启动一个 pprof http server
-</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:7899&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
-	<span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><p>下面我们把这个服务跑起来：<code>go run pprof.go</code></p>
-<h2 id="分析泄漏问题">分析泄漏问题</h2>
-<p>我们先打开协程 Debug 的地址，我的服务监听在本地 7899 端口，所以地址是：http://127.0.0.1:7899/debug/pprof/goroutine?debug=1，通过这个我们已经可以很明显看到，我们的问题就发生在 pprof.go 11 行和 14 行这里，泄漏了 2000 个协程，那么我们就重点去排查这一段代码即可。</p>
-<p>这个页面很简单，可读性不高，不过当程序内存状态很复杂的时候，可以考虑配合可视化工具使用。
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001928.png" alt="image.png"></p>
-<p>输入命令：<code>go tool pprof -http=:8001 http://127.0.0.1:7899/debug/pprof/goroutine\?debug\=1</code>
-在本地 8001 端口启动一个 HTTP 可视化分析工具，打开 http://127.0.0.1:8001/ui/ 地址，我们就能更直观的看到所有的协程启动的情况：
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001905.png" alt="协程分析"></p>
-<p>同时这个可视化分析工具还支持火焰图、类 TOP 图表等格式进行分析，点击左上角 VIEW 切换即可：
-<img src="https://upload-images.jianshu.io/upload_images/8145046-d854541556b74c67.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="火焰图"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001900.png" alt="类 TOP 图表"></p>
-<h2 id="总结">总结</h2>
-<p>pprof 可以很方便帮助我们排查协程泄漏问题，同时这套工具能干的不止如此，几乎所有在程序性能上遇到的问题都可以使用其进行分析，想了解其他功能的话可以参考以下官方文章进行进一步的学习：
-<a href="https://blog.golang.org/pprof">https://blog.golang.org/pprof</a>
-<a href="https://github.com/google/pprof/blob/master/doc/README.md">https://github.com/google/pprof/blob/master/doc/README.md</a></p>
+            <p>现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？</p>
+<h1 id="人眼如何感知色彩">人眼如何感知色彩</h1>
+<p>众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，<strong>颜色的本质就是电磁波的频率</strong>，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001733.png" alt="电磁波谱"></p>
+<p>人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，而视锥细胞则负责感受光的色彩。</p>
+<h2 id="视锥细胞">视锥细胞</h2>
+<p>人类眼睛中有三种对不同电磁波频率敏感的视锥细胞，分别是 <strong>Small</strong> <strong>Mediam</strong> <strong>Long</strong>，所有的颜色就是对这三种细胞不同强度刺激的组合结果，比如：</p>
+<ul>
+<li>黄色就是同时刺激 M 细胞和 L 细胞的结果</li>
+<li>同时刺激三种细胞时，我们就会得到白色</li>
+<li>如果都没有刺激，那就是黑色</li>
+</ul>
+<p>这三种基本的光就是我们通常意义上所说的三原色，通过这三种原色，基于同时用540nm 和 570 nm 波长的光刺激锥状细胞在人类大脑看来大约等价于用 560nm光刺激的原理我们可以模拟出任意颜色的效果。不过这种等价只基于人类成立，鸡只有两种视锥细胞，而皮皮虾则有足足十六对，人类眼中相同的颜色在其他生物眼中可能差异非常大，不过这并不重要，只要能骗过我们的大脑就行，这种原理就是我们现代彩色显示器的理论基础。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001738.png" alt="视锥细胞敏感频率"></p>
+<p>M 细胞和 L 细胞依赖的光敏色素蛋白基因编码于 X 染色体上，这会导致这两种细胞无法正常运转，即我们通常意义上说的红绿色盲症，另外它还是一种隐性遗传病，所以患这种病的男性会比较多。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001743.png" alt="红绿色盲世界模拟"></p>
+<p>还有一种全色色盲症，即三种视锥细胞全无法正常工作，此时依靠视杆细胞维持视觉运行，只能看到黑白的世界。</p>
+<h1 id="色彩表示方式">色彩表示方式</h1>
+<h2 id="rgb">RGB</h2>
+<p>利用按一定强度刺激人眼三种锥细胞即可等效模拟出颜色效果的原理，当前几乎所有的彩色显示器全部是使用的 RGB 颜色模型来渲染色彩。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001753.png" alt="RGB Example"></p>
+<p>具体传输时我们一般是用三个数字表示一个彩色像素点，对应其：Red Green Blue 的比例，例如：</p>
+<ul>
+<li>0 0 0 代表黑色，没有光</li>
+<li>1 1 1 代表白色，三种光混合</li>
+<li>0 0 255 纯蓝色</li>
+<li>255 255 0 黄色</li>
+</ul>
+<h3 id="rgbw">RGBW</h3>
+<p>考虑到白光是一种非常常见的颜色，而在 RGB 模型下显示白光时需要三种光全力运作，少数显示器出于省电考虑加入了 White：白色灯，在需要显示白色时只需亮起白灯一个即可，达到省电的效果。所以这也是说为什么黑色的背景可以省电的原理，黑色时一个灯都不需要亮，不过只有 OLED （Organic Light Emitting Display）这种每个像素点单独发光的显示技术才可以，对于像 LCD （Liquid Crystal Display）这种使用一块背光板通过遮罩来调整光大小的技术来说什么颜色耗电量都是一样的。</p>
+<h3 id="yuv">YUV</h3>
+<p>YUV色彩模型使用 Y 亮度，U 色度，V 浓度来表示颜色。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001805.png" alt="YUV亮度模型"></p>
+<p>同样的 UV 分量，Y 不同时效果如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001813.png" alt=""></p>
+<p>这种格式不同于 RGB 的地方在于，在缺失了 UV 只有 Y 值时，也能进行显示，不过看到的图像就是黑白图像，所以这种格式刚开始被提出用于黑白电视到彩色电视的过渡。</p>
+<p>另外人类眼中的视杆细胞比视锥细胞多很多，所以相对于色彩的变化，人眼要对亮度的变化更加敏感，利用这种特性，可以让多个 UV 分量共用一个 Y 分量，在基本保持色彩还原度的前提下尽可能的压缩空间，根据不同的采样率，常见的 YUV 格式有这几种：</p>
+<ul>
+<li>4:4:4 完全采样，Y:UV = 1:1</li>
+<li>4:2:2 2:1的水平取样，垂直完全采样，Y:UV = 2:1</li>
+<li>4:2:0 垂直与水平均为 2:1 采样，Y:UV =4:1</li>
+</ul>
+<p>在 RGB 格式下，四个像素点存储需要的空间为：4 * 3 = 12B，而使用 YUV420P 格式则只需要 4 * 1 + 1 + 1 = 8B，可以节约三分之一的空间，这是一个非常可观的数字，所以 YUV 格式基本也是网络传输的首选颜色编码格式。
+不过基于现代显示器的工作原理，YUV 格式很明显是无法直接被显示器渲染的，需要转化成 RGB 格式才可以，以 YUV444 格式为例，可以通过 NTSC 给出的如下公式在这两种格式之间进行换算：</p>
+<pre><code>Y = ( (  66 * R + 129 * G +  25 * B + 128) &gt;&gt; 8) +  16
+U = ( ( -38 * R -  74 * G + 112 * B + 128) &gt;&gt; 8) + 128
+V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
+</code></pre><p>公式看的头大也不要紧，只需要知道，RGB 和 YUV 以及下方的 CMYK 都是可以互相换算的就可以。</p>
+<h2 id="cmyk">CMYK</h2>
+<p>不同于 RGB 这一套基于光源自身发光的颜色编码体系，我们现实世界中看到的很多东西其实是并不能发光的，然而我们又有自由组合色彩的需求，比如：彩印。利用色料的三原色混色原理，加上黑色油墨，共计四种颜色混合叠加，形成所谓“全彩印刷”，这种颜色编码方式就是 CMYK：</p>
+<ul>
+<li>C：Cyan ＝ 青色</li>
+<li>M：Magenta ＝ 洋红</li>
+<li>Y：Yellow ＝ 黄色</li>
+<li>K：blacK ＝ 黑色</li>
+</ul>
+<p>CMYK 和 RGB 之间也是可以互相转换的，在我们打印 RGB 图片的时候就会发生这个转换过程：
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001821.png" alt=""></p>
+<h2 id="hslhsv">HSL(HSV)</h2>
+<p>RGB 编码方式虽然可以很好的完成自然颜色到显示器展示的映射，然而这种模式是基于光源的角度出发的，对于人类来说并不友好。HSL 模型在1978年由埃爾維·雷·史密斯提出，它是一种 RGB 的非线性映射：</p>
+<ul>
+<li>H: Hue，色调</li>
+<li>S: Saturation, 饱和度</li>
+<li>L: Lightness，亮度
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001829.png" alt=""></li>
+</ul>
+<p>这个模型以人类更加熟悉的方式封装了颜色的特性：什么颜色？深浅如何？明暗如何？
+所以这也是在颜色调整的人机交互界面上所使用的最为广泛的模型，例如：Photoshop，显示器色彩调整，Windows颜色选择器等。</p>
+<p>参考链接：
+<a href="https://www.ixueshu.com/document/6f6ebb7bc153a6a89a4103ed4acdcdd2318947a18e7f9386.html">https://www.ixueshu.com/document/6f6ebb7bc153a6a89a4103ed4acdcdd2318947a18e7f9386.html</a>
+<a href="https://zh.wikipedia.org/wiki/%E5%BD%A9%E8%89%B2%E8%A7%86%E8%A7%89">https://zh.wikipedia.org/wiki/%E5%BD%A9%E8%89%B2%E8%A7%86%E8%A7%89</a>
+<a href="https://zh.wikipedia.org/zh-sg/%E8%A7%86%E6%9D%86%E7%BB%86%E8%83%9E">https://zh.wikipedia.org/zh-sg/%E8%A7%86%E6%9D%86%E7%BB%86%E8%83%9E</a>
+<a href="https://www.fourcc.org/yuv.php">https://www.fourcc.org/yuv.php</a>
+<a href="https://www.lg.com/us/experience-tvs/oled-tv/oled-vs-lcd">https://www.lg.com/us/experience-tvs/oled-tv/oled-vs-lcd</a></p>
 
           </div>
 
@@ -383,10 +402,10 @@
   <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
   <div class="tags-sm">
     
-      <li><a href="https://huweicai.com/tags/go" role="button">Go </a></li>
+      <li><a href="https://huweicai.com/tags/yuv" role="button">yuv </a></li>
       
     
-      <li><a href="https://huweicai.com/tags/pprof" role="button">pprof </a></li>
+      <li><a href="https://huweicai.com/tags/%E5%9B%BE%E5%83%8F" role="button">图像 </a></li>
       
     
   </div>
@@ -402,10 +421,10 @@
           <div class="row pt-3">
             <div class="col-md-6">
               
-                <a href=https://huweicai.com/blog/2020-04/%E9%A2%9C%E8%89%B2%E6%98%AF%E5%A6%82%E4%BD%95%E5%91%88%E7%8E%B0%E7%9A%84/ class="post-meta">Previous
+                <a href=https://huweicai.com/%E5%B0%8F%E8%AE%BA%E8%AE%A1%E7%AE%97%E6%9C%BAencoding/ class="post-meta">Previous
                   <div class="pt-2 pb-5 d-flex">
                     <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
-                    <span>颜色是如何呈现的</span>
+                    <span>小论计算机Encoding</span>
                   </div>
                 </a>
               
@@ -457,8 +476,8 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e8%83%8c%e6%99%af">
-												 背景
+						 					<a class="nav-link" href="#%e4%ba%ba%e7%9c%bc%e5%a6%82%e4%bd%95%e6%84%9f%e7%9f%a5%e8%89%b2%e5%bd%a9">
+												 人眼如何感知色彩
 											</a>
 										</li>
 						 
@@ -476,11 +495,37 @@
 								
 									<ul class="nav">
 								
+									<ul class="nav">
+								
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#pprof">
-												 pprof
+						 					<a class="nav-link" href="#%e8%a7%86%e9%94%a5%e7%bb%86%e8%83%9e">
+												 视锥细胞
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%89%b2%e5%bd%a9%e8%a1%a8%e7%a4%ba%e6%96%b9%e5%bc%8f">
+												 色彩表示方式
 											</a>
 										</li>
 						 
@@ -498,15 +543,19 @@
 								
 									<ul class="nav">
 								
+									<ul class="nav">
+								
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%88%b6%e9%80%a0%e5%8d%8f%e7%a8%8b%e6%b3%84%e6%bc%8f">
-												 制造协程泄漏
+						 					<a class="nav-link" href="#rgb">
+												 RGB
 											</a>
 										</li>
 						 
 								
+								
+									</ul>
 								
 									</ul>
 								
@@ -520,15 +569,23 @@
 								
 									<ul class="nav">
 								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%88%86%e6%9e%90%e6%b3%84%e6%bc%8f%e9%97%ae%e9%a2%98">
-												 分析泄漏问题
+						 					<a class="nav-link" href="#rgbw">
+												 RGBW
 											</a>
 										</li>
 						 
 								
+								
+									</ul>
+								
+									</ul>
 								
 									</ul>
 								
@@ -542,15 +599,75 @@
 								
 									<ul class="nav">
 								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
-												 总结
+						 					<a class="nav-link" href="#yuv">
+												 YUV
 											</a>
 										</li>
 						 
 								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#cmyk">
+												 CMYK
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#hslhsv">
+												 HSL(HSV)
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
 								
 									</ul>
 								
