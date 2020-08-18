@@ -7,14 +7,14 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="乱码问题一直是最让人心烦的一类问题，因为不知从何而来，由何而起，只能一处一处的改编码，运气好了就改成功了，运气不好就继续试，有时候明明把所有能改的地方全改成UTF-8了，却仍然无济于事，着实叫人抓狂。这一切都要从1946年的那个春天说起。 在第一计算机台诞生的时候，那个时候还只有0和1，慢慢的，科学家们厌倦了只有0和1的世界，所以他们就聚在一起开了个会，讨论了讨论，决定按特定的方式将人类语言映射到0">
+  <meta name="description" content="简单翻译Redis官网的FAQ以及部分自己总结的问题 官网FAQ地址 Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。 而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留">
   
-  <meta property="og:title" content="小论计算机Encoding" />
-<meta property="og:description" content="乱码问题一直是最让人心烦的一类问题，因为不知从何而来，由何而起，只能一处一处的改编码，运气好了就改成功了，运气不好就继续试，有时候明明把所有能改的地方全改成UTF-8了，却仍然无济于事，着实叫人抓狂。这一切都要从1946年的那个春天说起。 在第一计算机台诞生的时候，那个时候还只有0和1，慢慢的，科学家们厌倦了只有0和1的世界，所以他们就聚在一起开了个会，讨论了讨论，决定按特定的方式将人类语言映射到0" />
+  <meta property="og:title" content="Redis FAQ" />
+<meta property="og:description" content="简单翻译Redis官网的FAQ以及部分自己总结的问题 官网FAQ地址 Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。 而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/%E5%B0%8F%E8%AE%BA%E8%AE%A1%E7%AE%97%E6%9C%BAencoding/" />
-<meta property="article:published_time" content="2018-05-26T12:47:11+08:00" />
-<meta property="article:modified_time" content="2018-05-26T12:47:11+08:00" />
+<meta property="og:url" content="https://huweicai.com/redis-faq/" />
+<meta property="article:published_time" content="2020-01-04T22:43:00+08:00" />
+<meta property="article:modified_time" content="2020-01-04T22:43:00+08:00" />
 
   
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
@@ -28,11 +28,11 @@
 
   <title>
   
-       小论计算机Encoding | Anonymous&#39; Blog 
+       Redis FAQ | Anonymous&#39; Blog 
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/%E5%B0%8F%E8%AE%BA%E8%AE%A1%E7%AE%97%E6%9C%BAencoding/">
+  <link rel="canonical" href="https://huweicai.com/redis-faq/">
 
   
   
@@ -292,16 +292,16 @@
     
   </ul>
 
-  <div class="px-4 post-heading">小论计算机Encoding</div>
+  <div class="px-4 post-heading">Redis FAQ</div>
 
   <ul class="post-meta li-x mt-1">
     
-      <li>May 26, 2018</li>
+      <li>Jan 4, 2020</li>
     
 
     
       <li class="middot"></li>
-      <li>6 minutes read</li>
+      <li>5 minutes read</li>
     
   </ul>
   
@@ -310,48 +310,75 @@
 
 
           <div class="post-content markdown">
-            <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812151553.png" alt="image.png"></p>
-<p>乱码问题一直是最让人心烦的一类问题，因为不知从何而来，由何而起，只能一处一处的改编码，运气好了就改成功了，运气不好就继续试，有时候明明把所有能改的地方全改成UTF-8了，却仍然无济于事，着实叫人抓狂。这一切都要从1946年的那个春天说起。
-在第一计算机台诞生的时候，那个时候还只有0和1，慢慢的，科学家们厌倦了只有0和1的世界，所以他们就聚在一起开了个会，讨论了讨论，决定按特定的方式将人类语言映射到0和1的序列上，于是他们定了个标准，规定大家都这么干，叫美国标准信息码，就是我们熟知的ASCII。可是天真的美帝国主义，以为计算机只会存在于英语世界中，也没想过我们社会主义程序员也能有用上计算机的一天，所以他们的ASCII码里就没有我们中文，但这是后话了，因为还有一拨人比我们先用上计算机——欧洲程序员。因为欧洲有很多像希腊字母之类的非英文字母，所以他们为了能让整个欧洲正常用上计算机，所以就也弄了一套标准，叫：ISO-xxxx。</p>
-<blockquote>
-<p>ASCII 码使用指定的7 位或8 位二进制数组合来表示128 或256 种可能的字符。标准ASCII 码也叫基础ASCII码，使用7 位二进制数（剩下的1位二进制为0）来表示所有的大写和小写字母，数字0 到9、标点符号， 以及在美式英语中使用的特殊控制字符。其中：</p>
-</blockquote>
-<blockquote>
-<p>ISO 8859-1编码启用了从128到255的字符，被称为”扩展字符集”。属于单字节编码，应用于拉丁文系列。显然，ISO 8859-1最多能表示的字符范围是0-255（编码范围是0x00-0xFF），其中0x00-0x7F之间完全和ASCII一致，因此向下兼容ASCII。除ASCII收录的字符外，ISO-8859-1收录的字符还包括西欧语言、希腊语、泰语、阿拉伯语、希伯来语对应的文字符号。欧元符号等出现的比较晚，没有被收录在ISO 8859-1当中。</p>
-</blockquote>
-<p>后来随着计算机在世界的普及度越来越高，越来越多地区的人们想要用自己的语言使用计算机，所以就诞生了各种各样的编码方式，其中就包括我们中国的GB系列国家标准信息交换码。</p>
-<blockquote>
-<p>GB系列编码定义了中文汉字、标点的编码。按照GB系列编码，在一段文本中，如果一个字节是0～127，那么这个字节的含义同ASCII编码，否则，这个字节和下一个字节共同组成汉字（或是GB编码定义的其他字符）。因此，GB系列编码向下兼容ASCII，也就是说，如果一段用GB编码文本里的所有字符都在ASCII中有定义，那么这段编码和ASCII编码完全一样。GB编码早期收录的汉字不足一万个，基本满足日常使用需求，但不包含一些生僻的字，后来在一个个新版本中加进去。最早的GB编码是GB2312，后来有GBK，最新的是GB18030，加入了一些国内少数民族的文字，一些生僻字被编到4个字节，每扩展一次都完全保留之前版本的编码，所以每个新版本都向下兼容。</p>
-</blockquote>
-<p>此时，终于有有识之士意识到了混乱的编码给人们网上冲浪带来的不便以及程序bug，所以就有人想用一种编码表示全世界所有的文字，然后就有了Unicode。</p>
-<blockquote>
-<p>Unicode是Unicode.org制定的编码标准，目前得到了绝大部分操作系统和编程语言的支持。Unicode.org官方对Unicode的定义是：Unicode provides a unique number for every character。可见，Unicode所做的是为每个字符定义了一个相应的数字表示。比如，&ldquo;a&quot;的Unicode值是0x0061,“一”的Unicde值是0x4E00，这是最简单的情况，每个字符用2个字节表示。
-Unicode是最统一的编码，可以用来表示所有语言的字符，而且是定长双字节（如果考虑辅助平面，也有四字节的）编码，包括英文字母在内，都以双字节表示，所以它是不兼容ISO 8859-1编码的。不过，相对于ISO 8859-1中所编码的字符来说，Unicode编码只是在前面增加了一个全0字节，例如字母a的Unicode编码为&quot;00 61&rdquo;。和GB2312/GBK等非定长编码相比，定长编码便于计算机处理，而Unicode又可以用来表示所有字符，所以在很多软件内部是使用Unicode编码来处理的，比如java。
-Unicode的编码空间从U+0000到U+10FFFF，共有1,112,064个码位（code point）可用来映射字符. Unicode的编码空间可以划分为17个平面（plane），每个平面包含216（65,536）个码位。17个平面的码位可表示为从U+xx0000到U+xxFFFF， 其中xx表示十六进制值从00(16) 到10(16)，共计17个平面。第一个平面称为基本多语言平面（Basic Multilingual Plane, BMP），或称第零平面（Plane 0），码位从U+0000至U+FFFF，包含了最常用的字符。其他平面称为辅助平面(Supplementary Planes)。
-对于在Unicode基本多语言平面定义的字符（无论是拉丁字母、汉字或其他文字或符号），一律使用2字节储存，但是从U+D800到U+DFFF之间的码位区段是永久保留不映射到任何Unicode字符的。而在辅助平面定义的字符，即从U+010000到U+10FFFF的码位，则（UTF-16的做法是）以代理对（surrogate pair）的形式，将其拆分成两个2字节（位于0xD800-0xDFFF区段）共4字节的值来储存。进行代理对映射的方法本文就不深入讨论了，有兴趣的可以自行搜索。</p>
-</blockquote>
-<p>但是Unicode占用空间确实有点大，比如说每个英文字符要占用两个字节，但第一个字节其实全部都是零，所以大家就又对Unicode继续编码，然后UTF系列编码方式就诞生了，常见的有utf-8、utf-16等。</p>
-<blockquote>
-<p>UTF-8以字节为单位对Unicode进行编码。从Unicode到UTF-8的编码方式如下：
-Unicode编码(十六进制)　
-UTF-8 字节流(二进制)
-000000-00007F
-0xxxxxxx
-000080-0007FF
-110xxxxx 10xxxxxx
-000800-00FFFF
-1110xxxx 10xxxxxx 10xxxxxx
-010000-1FFFFF	11110xxx10xxxxxx10xxxxxx10xxxxxx
-UTF-8的特点是对不同范围的字符使用不同长度的编码。对于0x00-0x7F之间的字符，UTF-8编码与ASCII编码完全相同。UTF-8编码的最大长度是6个字节。从上表可以看出，6字节模板有31个x，即可以容纳31位二进制数字。Unicode的最大码位0x7FFFFFFF也只有31位。</p>
-</blockquote>
-<blockquote>
-<p><a href="https://baike.baidu.com/item/UTF-16">UTF-16</a>编码以16位无符号整数为单位。我们把Unicode
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812151604.jpeg" alt="unicode">
-编码记作U。编码规则如下：
-如果U&lt;0x10000，U的UTF-16编码就是U对应的16位无符号整数（为书写简便，下文将16位无符号整数记作WORD）。
-如果U≥0x10000，我们先计算U'=U-0x10000，然后将U&rsquo;写成二进制形式：yyyy yyyy yyxx xxxx xxxx，U的UTF-16编码（二进制）就是：110110yyyyyyyyyy 110111xxxxxxxxxx。</p>
-</blockquote>
-<p>随着将来网络带宽和存储容量的提升，大家都无所谓的用上了万国码，可能以后的程序员们就只能在历史书中见到困扰了他们先辈数十年的乱码问题了吧。</p>
+            <p>简单翻译Redis官网的FAQ以及部分自己总结的问题
+<a href="https://redis.io/topics/faq">官网FAQ地址</a></p>
+<h3 id="redos持久化策略rdb和aof">Redos持久化策略：RDB和AOF</h3>
+<p>RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。
+AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。</p>
+<p>而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留 AOF 日志，在快照之前的日志就可以删除了，这样既节省了空间，同时又能加快恢复速度，还能保证解决的数据持久可靠性。</p>
+<h3 id="redis和其他的kv数据库有什么不同">Redis和其他的KV数据库有什么不同</h3>
+<p>1 Redis支持额外的数据结构
+2 Redis是纯基于内存的</p>
+<h3 id="redis内存占用情况怎么样">Redis内存占用情况怎么样</h3>
+<p>空的Redis ——  3MB
+一百万小KV数据——85MB</p>
+<h3 id="redis以后打算出基于磁盘的版本吗我想创建一个比内存更大的数据集">Redis以后打算出基于磁盘的版本吗，我想创建一个比内存更大的数据集</h3>
+<p>不会，我们始终专注内存，不忘初心，我们的口号是：“data served from memory, disk used for storage. ”；如果你觉得内存不够的话可以考虑下Redis集群；另外有些组织的魔改版本好像支持磁盘存储，但我们官方不会支持</p>
+<h3 id="redis和基于磁盘的数据库一起用怎么样">Redis和基于磁盘的数据库一起用怎么样</h3>
+<p>很Nice，大家一般都是这么用的：大量频繁的小数据写入Redis，大对象写SQL入DB；还有一种用法就是，从DB中复制出来保存Copy在内存中</p>
+<h3 id="如何降低redis的内存占用">如何降低Redis的内存占用？</h3>
+<p>1 使用32的Redis？？
+2 善用Redis数据结构，内部有优化，比独立的几个KV会更省空间</p>
+<h3 id="redis用尽内存了会发生什么">Redis用尽内存了会发生什么？</h3>
+<p>1 Redis可能会被Linux kernel OOM kill 掉，报错崩溃或者是开始慢下来
+2 你可以在配置文件中设置一个内存limit，当到达这个值后，Redis就会进入Read-only模式，拒绝写操作
+3 在使用Redis作为LRU 缓存时可以设置达到limit移除一些key</p>
+<h3 id="redis磁盘镜像备份是atomic的吗">Redis磁盘镜像备份是Atomic的吗？</h3>
+<p>是的，备份进程只会在server没有执行命令的时候执行</p>
+<h3 id="redis是单线程的如何充分利用cpu">Redis是单线程的，如何充分利用CPU？</h3>
+<p>1 CPU并不是Redis的瓶颈，瓶颈往往来自于IO和内存，现在一个CPU已经很够用了，每秒可以处理一百万个请求，多线程反而会带来并发安全、线程切换等问题
+2 但现在其实也有用到多线程，不过只干点小活，如：后台删除，拒绝命令等
+3 Redis 4.0我们开始尝试让Redis更加的多线程化，拭目以待吧</p>
+<h3 id="redis-key上限是多少hashlistset成员上限是多少">Redis key上限是多少？Hash，List，Set成员上限是多少</h3>
+<p>2^32 ； 2^32</p>
+<h3 id="为什么我的从服务器key数量和主服务器key数量不一致">为什么我的从服务器key数量和主服务器key数量不一致？</h3>
+<p>因为Master在删除key时只是标记删除，会等后来的key来覆盖它，而在写入RDB时是不会把这些写过去的，但DBSZIE命令还会把它们算在里面，在逻辑上它的数量其实还是一样的</p>
+<h3 id="redis名字的含义是什么">Redis名字的含义是什么？</h3>
+<p>REmote DIctionary Server</p>
+<h3 id="redis分片的好处">Redis分片的好处</h3>
+<p>1 增大Redis总内存
+2 将Redis扩展到多</p>
+<h3 id="什么是redis主从架构">什么是Redis主从架构</h3>
+<p>Description :  将Redis服务器搭建成一主一从，或一主多从，主服务器负责写，从服务器负责读，读写分离提高性能，同时如果Master宕机，可以选举一位Slave成为新的Master，从而保证整个系统的稳定性，避免单点故障，甚至引起缓存击穿，缓存雪崩等问题</p>
+<p>主从从架构：Slave slaveof Slave 形成一条链，缓解多个Slave同时同步于Master带来的压力</p>
+<p>从库只读：可设置</p>
+<h3 id="redis分区的实现方式">Redis分区的实现方式</h3>
+<p>1 客户端分区，客户端判断好该去哪个机器上读取
+2 代理分区：所有的请求都访问Proxy，然后Proxy给你返回结果，分片对Client不可见，Proxy内部帮你判断去哪台机器并完成请求 ；常见应用方式：Redis中间件，如：Twemproxy
+3 路由分区：随机访问某个Redis，然后它帮你重定向到你该去的地方；Redis-Cluster</p>
+<h3 id="redis-cluster">Redis Cluster</h3>
+<p>Redis Cluster是官方给出的集群实现
+数据分片实现：哈希槽，CRC16对16384取模决定Key会被放置到哪个节点；后台维护一个值范围与节点的对应表，增加或减少节点时修改表中节点对应范围即可；使用路由分区算法
+一致性：Master处理完写命令后异步复制到子节点上（为了及时响应），存在一个时间滞后，因此不能保证数据的强一致性；另外网络分区时也会导致写丢失
+大致架构：路由分区+哈希槽+主从</p>
+<h3 id="redis-为何要尽量避免大key">Redis 为何要尽量避免大Key？</h3>
+<p>1 大Key会导致数据堆积在单一分片上，导致内存过大，响应变慢，不能充分利用集群的优势
+2 由于单线程限制，单一Key在存取时会阻塞其他操作，导致Redis无法及时响应</p>
+<h3 id="redis-一般多大的-key-叫大-key">Redis 一般多大的 Key 叫大 Key？</h3>
+<p>在我们团队的实践中，一般满足如下任一条件的 Key 会视为大 Key：</p>
+<ol>
+<li>普通 KV 类型 Value 大于 10KB</li>
+<li>集合类型 Key 中 元素个数大于5000</li>
+<li>集合类型 Key 整体 value 大于10MB(10<em>1000</em>1000)</li>
+</ol>
+<p>具体也看对应的机器性能和业务类型，不同场景可以适当调整标准。</p>
+<h3 id="redis实现分布式锁">Redis实现分布式锁</h3>
+<p>SETNX key val 加锁：如果key存在，set key val return 1 ,else return 0
+DELETE key 解锁：删除key
+expire：用于加锁时设置，超时自动释放锁，防止永久锁</p>
+<h3 id="什么是-on-命令">什么是 O(n) 命令</h3>
+<p>我们知道 redis 正常查找一个 Key 的时间复杂度是 O(1) 的，而也存在一下命令时间复杂度和 Key 的数量是成正比的：
+hgetall、lrange、smembers、zrange、sinter、keys 等，这些命令对性能的影响是很大的，我们在生产环境中要尽量避开这些命令</p>
 
           </div>
 
@@ -365,7 +392,7 @@ UTF-8的特点是对不同范围的字符使用不同长度的编码。对于0x0
   <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
   <div class="tags-sm">
     
-      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
+      <li><a href="https://huweicai.com/tags/redis" role="button">redis </a></li>
       
     
   </div>
@@ -381,10 +408,10 @@ UTF-8的特点是对不同范围的字符使用不同长度的编码。对于0x0
           <div class="row pt-3">
             <div class="col-md-6">
               
-                <a href=https://huweicai.com/for%E4%B8%8Ewhiletrue%E7%9A%84%E5%9B%B0%E6%83%91/ class="post-meta">Previous
+                <a href=https://huweicai.com/golang-%E5%A4%9A%E8%B7%AF%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5-switch-%E8%AF%AD%E6%B3%95%E8%AF%A6%E8%A7%A3/ class="post-meta">Previous
                   <div class="pt-2 pb-5 d-flex">
                     <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
-                    <span>for{;;}与while(true)的困惑</span>
+                    <span>Golang 多路条件语句 Switch 语法详解&#34;</span>
                   </div>
                 </a>
               
@@ -392,10 +419,10 @@ UTF-8的特点是对不同范围的字符使用不同长度的编码。对于0x0
             
             <div class="col-md-6 text-right" >
               
-                <a href=https://huweicai.com/java%E8%B7%A8%E5%B9%B3%E5%8F%B0%E7%A9%B6%E7%AB%9F%E8%83%BD%E8%B7%A8%E5%93%AA%E4%BA%9B%E5%B9%B3%E5%8F%B0/ class="post-meta">Next
+                <a href=https://huweicai.com/%E9%A2%9C%E8%89%B2%E6%98%AF%E5%A6%82%E4%BD%95%E5%91%88%E7%8E%B0%E7%9A%84/ class="post-meta">Next
                   <div class="pt-2 pb-5 flex-reverse">
                     <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>Java跨平台究竟能跨哪些平台</span>
+                    <span>颜色是如何呈现的</span>
                   </div>
                 </a>
               

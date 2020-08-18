@@ -13,10 +13,10 @@
     
     <item>
       <title>Java跨平台究竟能跨哪些平台</title>
-      <link>https://huweicai.com/blog/2019-05/java%E8%B7%A8%E5%B9%B3%E5%8F%B0%E7%A9%B6%E7%AB%9F%E8%83%BD%E8%B7%A8%E5%93%AA%E4%BA%9B%E5%B9%B3%E5%8F%B0/</link>
+      <link>https://huweicai.com/java%E8%B7%A8%E5%B9%B3%E5%8F%B0%E7%A9%B6%E7%AB%9F%E8%83%BD%E8%B7%A8%E5%93%AA%E4%BA%9B%E5%B9%B3%E5%8F%B0/</link>
       <pubDate>Mon, 20 May 2019 23:47:00 +0800</pubDate>
       
-      <guid>https://huweicai.com/blog/2019-05/java%E8%B7%A8%E5%B9%B3%E5%8F%B0%E7%A9%B6%E7%AB%9F%E8%83%BD%E8%B7%A8%E5%93%AA%E4%BA%9B%E5%B9%B3%E5%8F%B0/</guid>
+      <guid>https://huweicai.com/java%E8%B7%A8%E5%B9%B3%E5%8F%B0%E7%A9%B6%E7%AB%9F%E8%83%BD%E8%B7%A8%E5%93%AA%E4%BA%9B%E5%B9%B3%E5%8F%B0/</guid>
       <description>众所周知，Java跨平台的一直被众多Java程序员们津津乐道，“一次编写，到处运行”的设想着实令人心动，虽然会带来一定性能上的问题，但这并不妨碍大家对Java的喜爱，既然都说Java能跨平台，Java 也并不是凭空就能跑在任何机器上，这是不现实的，需要官方针对对应的平台，编译一套对应平台包括 Java 虚拟机（Java Runtime Environment 简称 JRE）在内的 Java 开发工具集（Java Develop Kit，简称 JDK），这样我们编写的 Java 代码才算</description>
     </item>
     
