@@ -5,136 +5,190 @@
   <url>
     <loc>https://huweicai.com/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/categories/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/go/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/series/go/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/categories/go/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/troubleshotting-goroutine-leeking/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/troubleshotting-goroutine-leeking/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/pprof/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/series/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/yuv/</loc>
     <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/%E5%9B%BE%E5%83%8F/</loc>
     <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/how-color-present/</loc>
     <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/how-color-present/</loc>
     <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/redis/</loc>
     <lastmod>2020-01-04T22:43:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/redis-faq/</loc>
     <lastmod>2020-01-04T22:43:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/go-switch/</loc>
     <lastmod>2020-01-02T12:09:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/%E5%8A%9E%E5%85%AC%E6%95%88%E7%8E%87/</loc>
     <lastmod>2019-07-02T08:47:11+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/web-markdown-to-pdf-utils/</loc>
     <lastmod>2019-07-02T08:47:11+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/java/</loc>
     <lastmod>2019-05-20T23:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/java-platforms/</loc>
     <lastmod>2019-05-20T23:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/jvm/</loc>
     <lastmod>2019-05-20T23:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/computer-encodings/</loc>
     <lastmod>2018-05-26T12:47:11+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/computer-encodings/</loc>
     <lastmod>2018-05-26T12:47:11+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</loc>
     <lastmod>2018-05-26T12:47:11+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/confusion-betwwen-forwhiletrue/</loc>
     <lastmod>2018-03-04T21:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/blog/</loc>
     <lastmod>2018-01-06T02:15:26+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <url>
