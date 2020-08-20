@@ -301,7 +301,7 @@
 
     
       <li class="middot"></li>
-      <li>2 minutes read</li>
+      <li>One minute read</li>
     
   </ul>
   
@@ -327,39 +327,13 @@
         }
     }
 }
-</code></pre><p>通过IDEA的jclasslib插件查看到的字节码如下：
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001838.png" alt="while"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001842.png" alt="for">
-观察可以发现他们的字节码是一模一样的，所以这两种无限循环的实现方式在Java中其实是没有任何却别的，所以在源码中大量出现的for(;;)可能只是Doung Lea 先生的个人代码习惯。因此想用何种方式实现就全看个人喜好吧。</p>
-<p>注：但在某些语言中这两者可能是有区别的：在c语言中for(;;)指令较少，没有判断跳转，更能够节省内存</p>
-<p>for{;;}与while(true)的困惑
-同步滚动：
-title: for(;;)与while(true)的困惑
-date: 2017-11-23 14:22:09</p>
-<p>最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。
-我编写了如下的程序：</p>
-<p>public class Test2 {
-public void whileTest() {
-int i = 0;
-while (true) {
-i++;
-}
-}</p>
-<pre><code>public void forTest() {
-    int i = 0;
-    for (; ; ) {
-        i++;
-    }
-}
-</code></pre>
-<p>}
-通过IDEA的jclasslib插件查看到的字节码如下：</p>
-<p>while
-while
-for
-for</p>
+</code></pre><p>通过IDEA的jclasslib插件查看到的字节码如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001838.png" alt="while"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001842.png" alt="for"></p>
 <p>观察可以发现他们的字节码是一模一样的，所以这两种无限循环的实现方式在Java中其实是没有任何却别的，所以在源码中大量出现的for(;;)可能只是Doung Lea 先生的个人代码习惯。因此想用何种方式实现就全看个人喜好吧。</p>
-<p>注：但在某些语言中这两者可能是有区别的：在c语言中for(;;)指令较少，没有判断跳转，更能够节省内存</p>
+<blockquote>
+<p>但在某些语言中这两者可能是有区别的：在c语言中for(;;)指令较少，没有判断跳转，更能够节省内存</p>
+</blockquote>
 
           </div>
 
