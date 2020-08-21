@@ -7,14 +7,13 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序： public class Test2 { public void whileTest() { int i = 0; while (true) { i&#43;&#43;; } } public">
+  <meta name="description" content="[Be myself. Love the wonderful world. Do the right things and be a better man.]">
   
-  <meta property="og:title" content="for{;;}与while(true)的困惑" />
-<meta property="og:description" content="最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序： public class Test2 { public void whileTest() { int i = 0; while (true) { i&#43;&#43;; } } public" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/confusion-betwwen-forwhiletrue/" />
-<meta property="article:published_time" content="2018-03-04T21:47:00+08:00" />
-<meta property="article:modified_time" content="2018-03-04T21:47:00+08:00" />
+  <meta property="og:title" content="计算机网络" />
+<meta property="og:description" content="[Be myself. Love the wonderful world. Do the right things and be a better man.]" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" />
+
 
   
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
@@ -28,11 +27,11 @@
 
   <title>
   
-       for{;;}与while(true)的困惑 | Anonymous&#39; Blog 
+       计算机网络 | Anonymous&#39; Blog 
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/confusion-betwwen-forwhiletrue/">
+  <link rel="canonical" href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">
 
   
   
@@ -60,6 +59,8 @@
 
 
   
+  
+  <link href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.xml" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
   
 
   <style type="text/css">
@@ -254,6 +255,8 @@
             
     
             
+                <a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.xml"><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+            
 
             
         </div>
@@ -271,136 +274,119 @@
     
 
     
+<main class="post-main-wrapper px-5">
   
-  <main class="post-main-wrapper">
+  <div class="row">
     
-    
-    <div class="row">
-
+    <div class="col-md-3">
+      
+      
       
 
+
+
+
+
+
       
-      <div class="container pr-5">
       
 
+  
+
+
+
+
+
+  <hr>
+  
+    <div class="post-meta">
+      <div class="mb-2">
+        <a href="https://huweicai.com/tags/">
+          <span class="font-weight-bold text-uppercase post-meta">
+            <i class="fas fa-tags pr-1" aria-hidden="true"></i> 
+            Featured Tags
+          </span>
+        </a>
+      </div>
+
+      <div class="li-x post-meta tags-md" style="margin-left: -8px;">
         
-        <div class="z-depth-1  post-wrapper white-bg single-post">
-
-          <div class="post-header text-center" >
-  <ul class="post-meta li-x">
-    
-    
-  </ul>
-
-  <div class="px-4 post-heading">for{;;}与while(true)的困惑</div>
-
-  <ul class="post-meta li-x mt-1">
-    
-      <li>Mar 4, 2018</li>
-    
+        
+        
+            <li><a href="https://huweicai.com/tags/ethernet" role="button"><span>ethernet (1)</span></a></li>
+          
+        
+            <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (1)</span></a></li>
+          
+        
+      </div>
+    </div>
 
     
-      <li class="middot"></li>
-      <li>One minute read</li>
-    
-  </ul>
   
 
-</div>
 
-
-          <div class="post-content markdown">
-            <p>最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。
-我编写了如下的程序：</p>
-<pre><code>public class Test2 {
-    public void whileTest() {
-        int i = 0;
-        while (true) {
-            i++;
-        }
-    }
-
-    public void forTest() {
-        int i = 0;
-        for (; ; ) {
-            i++;
-        }
-    }
-}
-</code></pre><p>通过IDEA的jclasslib插件查看到的字节码如下：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001838.png" alt="while"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001842.png" alt="for"></p>
-<p>观察可以发现他们的字节码是一模一样的，所以这两种无限循环的实现方式在Java中其实是没有任何却别的，所以在源码中大量出现的for(;;)可能只是Doung Lea 先生的个人代码习惯。因此想用何种方式实现就全看个人喜好吧。</p>
-<blockquote>
-<p>但在某些语言中这两者可能是有区别的：在c语言中for(;;)指令较少，没有判断跳转，更能够节省内存</p>
-</blockquote>
-
-          </div>
-
-          
-          <div class="row">
-            <div class="col-md-8">
-            
-              <div class="mb-5">
-                
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/java" role="button">java </a></li>
       
+
+
+
+
+
+
+  
+
+
+    </div>
     
-  </div>
+
+    
+    
+    <div class="col-md-9 mt-3">
+      <ul>
+        <div class="div-x">
+            <div class='post-heading'>
+  
+      计算机网络
+  
 </div>
+
+            
+            
+              <div class="px-2 middot"></div>
+              <div>
+                One post
               </div>
             
-            </div>
-            
           </div>
+      
           
-
-          
-          <div class="row pt-3">
-            <div class="col-md-6">
-              
-                <a href=https://huweicai.com/who-network-capture-analysis/ class="post-meta">Previous
-                  <div class="pt-2 pb-5 d-flex">
-                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
-                    <span>完整网络请求包自底向上分析</span>
-                  </div>
-                </a>
-              
-            </div>
-            
-            <div class="col-md-6 text-right" >
-              
-                <a href=https://huweicai.com/computer-encodings/ class="post-meta">Next
-                  <div class="pt-2 pb-5 flex-reverse">
-                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>小论计算机Encoding</span>
-                  </div>
-                </a>
-              
-            </div>
-          </div>
-
-          
-
-        </div>
+      </ul>
+      <ul>
         
+            
+        
+        
+            
+                <li class="post-item no-bullet">
+                    <span class="date">0001.1</span>
+                </li>
+                
+                    <li class="post-item">
+    
+    <span class="meta"><time datetime='0001-01-01T00:00:00Z'>Jan 1, 0001</time></span>
+    
+    <a href="https://huweicai.com/who-network-capture-analysis/"><span>完整网络请求包自底向上分析</span></a>
+</li>
 
-      </div>
-      
-
-      
-
+                
+            
+        
+      </ul>
     </div>
     
-
-
-  </main>
-  
-
+    
+  </div>
+</main> 
 
     
     
@@ -442,6 +428,8 @@
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
+    
+        <a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.xml"><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
     
 
     

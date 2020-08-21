@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="现在我们发送了一个 HTTP 请求，我们都知道网络是分层的？HTTP 请求包发出的时候会一层一层往下叠加头部知道最终变成物理信号在网线上传输，那么最终的网络包到底是长什么样呢？我们今天就来实践探查一下。 先在服务器上起了一个简单的 HTTP 服务： python -m SimpleHTTPServer 8001 然后在客户端发起一个无参数的 GET 请求访问其根目录： curl -v http://110.89.228.110:8001 同时我们用 WireShark 抓包，完整的从网卡出去的一个包是长这样的一串二进制流： 11110000000110000110000000100110000100101010000111101110000100000100000100010000000111010010000111111100000011001110000101111000000011111000000000010000000000000000000010001010000000000000000000000000000100001110000000000000000000000000000010000000000000000000000010000000000000001100000000111010000111101100000110000000000101010000000000000010000000001000000011101100000010110010000111001000000011101010000110010000000000001110000000111110000010000010000000000100000011101010000111000100000110100110000100100010000101100000000111110100000111111110000100000000000000110000000000010000000000000110000010011010000001000110000000000000000000000000000000000010000000000010000000010000000000010100000001011000000111111010000011000010000110001110000100101010000011010110000010101010000100100010000010001110000010001010000010101000000001000000000001011110000001000000000010010000000010101000000010101000000010100000000001011110000001100010000001011100000001100010000000011010000000010100000010010000000011011110000011100110000011101000000001110100000001000000000001100010000001100010000001110000000001011100000001110000000001110010000001011100000001100100000001100100000001110000000001011100000001100010000001100010000001101110000001110100000001110000000001100000000001100000000001100010000000011010000000010100000010101010000011100110000011001010000011100100000001011010000010000010000011001110000011001010000011011100000011101000000001110100000001000000000011000110000011101010000011100100000011011000000001011110000001101110000001011100000001101100000001101000000001011100000001100010000000011010000000010100000010000010000011000110000011000110000011001010000011100000000011101000000001110100000001000000000001010100000001011110000001010100000000011010000000010100000000011010000000010100000 这串二进制流就是要在网线上传输的原始信号，如果">
+  
+  <meta property="og:title" content="完整网络请求包自底向上分析" />
+<meta property="og:description" content="现在我们发送了一个 HTTP 请求，我们都知道网络是分层的？HTTP 请求包发出的时候会一层一层往下叠加头部知道最终变成物理信号在网线上传输，那么最终的网络包到底是长什么样呢？我们今天就来实践探查一下。 先在服务器上起了一个简单的 HTTP 服务： python -m SimpleHTTPServer 8001 然后在客户端发起一个无参数的 GET 请求访问其根目录： curl -v http://110.89.228.110:8001 同时我们用 WireShark 抓包，完整的从网卡出去的一个包是长这样的一串二进制流： 11110000000110000110000000100110000100101010000111101110000100000100000100010000000111010010000111111100000011001110000101111000000011111000000000010000000000000000000010001010000000000000000000000000000100001110000000000000000000000000000010000000000000000000000010000000000000001100000000111010000111101100000110000000000101010000000000000010000000001000000011101100000010110010000111001000000011101010000110010000000000001110000000111110000010000010000000000100000011101010000111000100000110100110000100100010000101100000000111110100000111111110000100000000000000110000000000010000000000000110000010011010000001000110000000000000000000000000000000000010000000000010000000010000000000010100000001011000000111111010000011000010000110001110000100101010000011010110000010101010000100100010000010001110000010001010000010101000000001000000000001011110000001000000000010010000000010101000000010101000000010100000000001011110000001100010000001011100000001100010000000011010000000010100000010010000000011011110000011100110000011101000000001110100000001000000000001100010000001100010000001110000000001011100000001110000000001110010000001011100000001100100000001100100000001110000000001011100000001100010000001100010000001101110000001110100000001110000000001100000000001100000000001100010000000011010000000010100000010101010000011100110000011001010000011100100000001011010000010000010000011001110000011001010000011011100000011101000000001110100000001000000000011000110000011101010000011100100000011011000000001011110000001101110000001011100000001101100000001101000000001011100000001100010000000011010000000010100000010000010000011000110000011000110000011001010000011100000000011101000000001110100000001000000000001010100000001011110000001010100000000011010000000010100000000011010000000010100000 这串二进制流就是要在网线上传输的原始信号，如果" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/who-network-capture-analysis/" />
+
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-175035126-1');
+</script>
+
+  <title>
+  
+       完整网络请求包自底向上分析 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/who-network-capture-analysis/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://huweicai.com/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">完整网络请求包自底向上分析</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Jan 1, 0001</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>16 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>现在我们发送了一个 HTTP 请求，我们都知道网络是分层的？HTTP 请求包发出的时候会一层一层往下叠加头部知道最终变成物理信号在网线上传输，那么最终的网络包到底是长什么样呢？我们今天就来实践探查一下。</p>
+<p>先在服务器上起了一个简单的 HTTP 服务：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">python -m SimpleHTTPServer <span class="m">8001</span>
+</code></pre></div><p>然后在客户端发起一个无参数的 GET 请求访问其根目录：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">curl -v http://110.89.228.110:8001
+</code></pre></div><p>同时我们用 WireShark 抓包，完整的从网卡出去的一个包是长这样的一串二进制流：</p>
+<pre><code>11110000000110000110000000100110000100101010000111101110000100000100000100010000000111010010000111111100000011001110000101111000000011111000000000010000000000000000000010001010000000000000000000000000000100001110000000000000000000000000000010000000000000000000000010000000000000001100000000111010000111101100000110000000000101010000000000000010000000001000000011101100000010110010000111001000000011101010000110010000000000001110000000111110000010000010000000000100000011101010000111000100000110100110000100100010000101100000000111110100000111111110000100000000000000110000000000010000000000000110000010011010000001000110000000000000000000000000000000000010000000000010000000010000000000010100000001011000000111111010000011000010000110001110000100101010000011010110000010101010000100100010000010001110000010001010000010101000000001000000000001011110000001000000000010010000000010101000000010101000000010100000000001011110000001100010000001011100000001100010000000011010000000010100000010010000000011011110000011100110000011101000000001110100000001000000000001100010000001100010000001110000000001011100000001110000000001110010000001011100000001100100000001100100000001110000000001011100000001100010000001100010000001101110000001110100000001110000000001100000000001100000000001100010000000011010000000010100000010101010000011100110000011001010000011100100000001011010000010000010000011001110000011001010000011011100000011101000000001110100000001000000000011000110000011101010000011100100000011011000000001011110000001101110000001011100000001101100000001101000000001011100000001100010000000011010000000010100000010000010000011000110000011000110000011001010000011100000000011101000000001110100000001000000000001010100000001011110000001010100000000011010000000010100000000011010000000010100000
+</code></pre><p>这串二进制流就是要在网线上传输的原始信号，如果是在电线上传输，那么那么 1 就是高电压，0 就是低电压，这就是最原始的电信号。二进制这种计数方式对于硬件设备而言相当友好，只需要找出一种物质的两种状态那么就能用来传输和存储数据，而对于人类而言就显得尤其眼花缭乱，我们现在将它转化成可读性相对较好的十六进制：</p>
+<pre><code>78 c3 13 95 f7 82 88 e9 fe 67 bc 7c 08 00 45 00 00 87 00 00 40 00 40 06 1d f6 c0 a8 01 04 76 59 e4 75 c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c fd 61 c7 95 6b 55 91 47 45 54 20 2f 20 48 54 54 50 2f 31 2e 31 0d 0a 48 6f 73 74 3a 20 31 31 38 2e 38 39 2e 32 32 38 2e 31 31 37 3a 38 30 30 31 0d 0a 55 73 65 72 2d 41 67 65 6e 74 3a 20 63 75 72 6c 2f 37 2e 36 34 2e 31 0d 0a 41 63 63 65 70 74 3a 20 2a 2f 2a 0d 0a 0d 0a 
+</code></pre><p>接下来我们一步一步分析这些值的含义。</p>
+<h2 id="ethernet">Ethernet</h2>
+<p>首先整个协议栈的最底层是以太网协议，标准定义于 <a href="https://ieeexplore.ieee.org/document/8457469">IEEE 802.3</a>，具体以太网帧的格式是这样的：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001714.png" alt="image.png"></p>
+<p>在我们抓到的包中，前八个字节的前导码和帧开始符已经被网卡过滤掉了所以我们抓不到。</p>
+<p>接着就是 6 个字节 48 位的 MAC 目标地址：<code>78 c3 13 95 f7 82</code> ，这是我家路由器的网卡 MAC 地址。</p>
+<p>然后是 MAC 源地址：<code> 88 e9 fe 67 bc 7c</code>，这是我 Mac 的 MAC。网卡的 MAC 地址是全球唯一的，在出厂时就已经确定了，MAC 地址总共 6 个字节，48位，前 24 位代表厂商 ID ，由 IEEE （电子电气工程师协会）分配，后 24 位则由厂家自行分配，内部确认唯一即可。</p>
+<p>可以在 <a href="https://regauth.standards.ieee.org/">IEEE 官网网站</a>上 查到注册的厂商信息，我家路由器的 MAC 地址前六位是：<code> 78 c3 13</code>，在官网上搜可以搜到，这个地址是分给了中国移动，注册地址在北京宣武门，我家的路由器也确实是移动的。
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001701.png" alt="image.png"></p>
+<p>现在移除了两个 MAC 地址之后，我们还剩这些字节：</p>
+<pre><code>08 00 45 00 00 87 00 00 40 00 40 06 1d f6 c0 a8 01 04 76 59 e4 75 c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c fd 61 c7 95 6b 55 91 47 45 54 20 2f 20 48 54 54 50 2f 31 2e 31 0d 0a 48 6f 73 74 3a 20 31 31 38 2e 38 39 2e 32 32 38 2e 31 31 37 3a 38 30 30 31 0d 0a 55 73 65 72 2d 41 67 65 6e 74 3a 20 63 75 72 6c 2f 37 2e 36 34 2e 31 0d 0a 41 63 63 65 70 74 3a 20 2a 2f 2a 0d 0a 0d 0a 
+</code></pre><p>我们继续分析以太网协议，下面是两个字节的以太网帧类型，表明了该帧封装了何种协议，常见取值如下：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>协议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0800</td>
+<td>IPv4</td>
+</tr>
+<tr>
+<td>0806</td>
+<td>ARP</td>
+</tr>
+<tr>
+<td>86DD</td>
+<td>IPv6</td>
+</tr>
+<tr>
+<td>88CC</td>
+<td>LLDP</td>
+</tr>
+<tr>
+<td>8035</td>
+<td>RARP</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>我们的帧类型：<code> 0800</code> 是一个 IPv4 的封装帧，后面的冗余校验也和前导码一样，已经被网卡删掉了，所以捕获不到，以太网的头部就已经全部抽离了，我们继续分析下一层协议：IPv4。</p>
+<h2 id="ipv4">IPv4</h2>
+<p>IPv4 协议最新的规范定义于：<a href="https://tools.ietf.org/html/rfc791">RFC 791</a>，包格式如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001007.png" alt="image-20200812000253235"></p>
+<p>因为 IP 头部的字段很多都是复用一个字节的，所以我们需要把十六进制转成 2 进制来分析，先取头 32 位，也就是 8 个 十六进制数字：</p>
+<pre><code>45 		   00       00       87
+01000101 00000000 00000000 10000111
+</code></pre><p>头三位：<code>0100</code>  代表 IP 协议的版本号，这里是代表 IPv4。</p>
+<p>然后首部长度的参数是 4 字节，所以首部共有 <code>0101 = 5 * 4  = 20</code> 个字节，第 8 - 13 位当初设计上是用来区分服务类型的，但是并没有使用，所以一般情况下用不到，不过有些特殊的协议会去自己利用这一块空间。</p>
+<p>第 14 到 15 位 是显式拥塞通告，通常下 TCP/IP 网络是通过丢包来作为发生拥塞的信号的，显然这个信号并不一定准确，所以 2001年 <a href="https://tools.ietf.org/html/rfc3168">RFC 3168</a> 加入了对于显式拥塞通知（<strong>Explicit Congestion Notification</strong>，简称<strong>ECN</strong>）的支持，通过把这两个位置为  <code> 11</code> 来表示发生了拥塞，ECN 字段详细说明如下：</p>
+<table>
+<thead>
+<tr>
+<th align="center">00</th>
+<th align="center">不支持 ECN 的传输，Not ECT(Non ECN-Capable Transport)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><strong>10</strong></td>
+<td align="center"><strong>支持 ECN 的传输，ECT(0)</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>01</strong></td>
+<td align="center"><strong>支持 ECN 的传输，ECT(1)</strong></td>
+</tr>
+<tr>
+<td align="center"><strong>11</strong></td>
+<td align="center"><strong>发生拥塞</strong></td>
+</tr>
+</tbody>
+</table>
+<p>我们这里 <code> 00</code>代表不支持 ECN。</p>
+<p>这 32 位中剩下 16 位代表整个报文总长度，单位是字节，包括首部 + 内容：<code> 00000000 10000111</code>，转换成十进制也就是 135 字节，这个字段主要用来分隔开 IP 包。总长度是 16 位，由此我们也不难算出一个 IP 包的最大大小为：2^16-1 = 65535 字节。</p>
+<p>我们都知道一个以太网的工作方式是：载波多路复用/冲突检测（CSMA/CD），在想发送一个帧之前会先侦听其他节点是否在发送包，如果已经被占用的会就会等待，所以如果如果一次性传输的包很大的话，和 Java 几乎没人用的 Serial GC 一样，虽然吞吐量很大，但是导致网络的延迟很不稳定，这对于延迟敏感型应用而言是非常致命，理论上包越小，延迟越低，考虑到 Ethernet + IP + TCP 的首部也是一笔很大的开销，总不能一个包里面 Header 就占了一半吧，<strong>综合延迟和传输效率最后敲定默认 MTU 是 1500 字节</strong>。</p>
+<p>在 mac 系统可以通过 <code>networksetup -getMTU + 网卡接口</code>查看对应网卡上的 MTU，比如我的电脑就是 1500 字节：</p>
+<pre><code>#networksetup -getMTU en0
+
+Active MTU: 1500 (Current Setting: 1500)
+</code></pre><p>既然以太网有 MTU 的限制，要么 IP 协议把这个限制透传给上层，要么就自己屏蔽这个细节，IPv4 选择了通过分片重组的方式来向上层的传输层协议提供传输任意包大小的能力。</p>
+<p>接下的这四个字节：<code>00 00 40 00 </code> 32位：<code>0000 0000 0000 0000 0100 0000 0000 0000</code>，就是用来进行分片控制的，格式如下：</p>
+<table>
+<thead>
+<tr>
+<th>长度</th>
+<th>16</th>
+<th>1</th>
+<th>1</th>
+<th>1</th>
+<th>13</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>内容</td>
+<td>ID，标志一系列分片的包</td>
+<td>0，保留位，必须是0</td>
+<td>DF，是否允许分片；0 表示可分片；1表示不允许分片，可以用来检测 MTU 的大小</td>
+<td>MF：是否还有分片；0 表示是最后一个分片；1 表示后面还有分片</td>
+<td>Offset：偏移量，表明第一个包在整个数据报中是第多少个字节</td>
+</tr>
+</tbody>
+</table>
+<p>当发送一个超过 MTU 的报文时，把报文拆成大小小于 MTU，MF =1 具有相同 ID 的 IP 报文，同时设置好对应的序号，然后将最后一个报文的 MF 置成 1 表明这个大包传输完成。同时理论上这里使用递增的序号这种相对值会相对于偏移量这种绝对值而言能省下很多空间，这里主要是考虑到中间的小路由器可能会再次将一个包继续分片，相对值所相对的那个值发生改变之后，之后所以的包都会受影响。本来是 1 2 3 三个包，1 号包又分片了，那对应的 2 和 3 的序号也要改，如果用偏移量这种绝对值就没有这个烦恼。</p>
+<p>虽然 IP 协议这里提供了分片的能力，但是很明显分片会带来大量的计算负担，很影响性能，所以尽量发小于 MTU 的包来提高负载，比如 TCP协议会尽量让最大段大小（Max Segment Size）等于 MTU - IP 头部长度 - TCP 头部，来避免分片同时最大化提高吞吐率。</p>
+<p>我们捕获的这个包这里：<code>0000 0000 0000 0000 0100 0000 0000 0000</code>就很好的实践了这个不分片的原则，<code> ID=0 0=0 DF = 1，MF = 0，Offset = 0</code>。</p>
+<p>我们现在还剩下这些字节：</p>
+<pre><code>40 06 1d f6 c0 a8 01 04 76 59 e4 75 c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c fd 61 c7 95 6b 55 91 47 45 54 20 2f 20 48 54 54 50 2f 31 2e 31 0d 0a 48 6f 73 74 3a 20 31 31 38 2e 38 39 2e 32 32 38 2e 31 31 37 3a 38 30 30 31 0d 0a 55 73 65 72 2d 41 67 65 6e 74 3a 20 63 75 72 6c 2f 37 2e 36 34 2e 31 0d 0a 41 63 63 65 70 74 3a 20 2a 2f 2a 0d 0a 0d 0a 
+</code></pre><p>接下来的 4 个字节分别是：</p>
+<p>TTL：<code>0x40</code> =  64，代表了这个包的存活时间，还剩 64 s，这个数值在时间流逝了一秒或者经过一个路由之后会减一，到达到 0 路由器会丢弃这个包，用来避免报文永生于互联网（比如陷入了环路），traceroute 和 ping 这两个工具都有依赖这个特性。</p>
+<p>上层协议：<code>0x06 = 6</code>，代表 TCP，这个字段最初是在 <a href="https://tools.ietf.org/html/rfc790">RFC 790</a> 中写死了 20 个，后面改成了由 <a href="https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml">IANA</a> 维护，现在已经分配了 143 个，还能用一段时间， 常见取值如下：</p>
+<table>
+<thead>
+<tr>
+<th>取值</th>
+<th>协议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>ICMP</td>
+</tr>
+<tr>
+<td>6</td>
+<td>TCP</td>
+</tr>
+<tr>
+<td>17</td>
+<td>UDP</td>
+</tr>
+</tbody>
+</table>
+<p>首部校验和：<code>1d f6</code>，这是对 IP 头部字段做一个简单的校验，如果校验和算出来的值不匹配的话说明传输链路中可能出了问题，这个包就会被丢弃。这里只校验了头部，内容的校验是留给上层自己去实现的。</p>
+<p>下面的字节分别是 32 位的来源地址和 32 位的目标地址，用来表明这个包从哪儿去，到哪儿来，我们这里的目标地址是：<code> c0 a8 01 04</code></p>
+<p>，我们通常为了可读性会把 IP 地址分字节转化成十进制然后用 . 符号连接来表示，这里我们的目标地址就是：192.168.1.4，这里就是我们的路由器通过 DHCP 协议下发给我这台电脑的局域网 IP，出了路由器这个局域网之后，它会做一次网络地址转换（Network Address Translation：NAT），转成上一层网络中路由器对应的 IP。我们的目标地址则是：<code> 76 59 e4 75</code>：110.89.228.110，我们远端服务器的地址。</p>
+<p>IP 地址的长度是 32 位，所以最大的 IP 数量即 <code>2 ^ 32 -1 = 4294967295</code>，42亿个，全球光是人口数量就有 70 亿人，有的人可能还有好几个设备，互联网 IP 数量还是严重不足的，所以最近 IPv6 协议也是越来约普及了，地址长度达到了 128 位，至少在未来的很长一段时间内都可以不用再担心地址资源不够用的问题了。</p>
+<p>IP 协议的定义里还有一个选项字段，不过很少被使用，至此网络层的协议头部就已经全部剥离了，下面我们来继续进行传输层的报文分析。</p>
+<h2 id="tcp">TCP</h2>
+<p>这是我们现在剩余的数据流：<code>c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c fd 61 c7 95 6b 55 91 47 45 54 20 2f 20 48 54 54 50 2f 31 2e 31 0d 0a 48 6f 73 74 3a 20 31 31 38 2e 38 39 2e 32 32 38 2e 31 31 37 3a 38 30 30 31 0d 0a 55 73 65 72 2d 41 67 65 6e 74 3a 20 63 75 72 6c 2f 37 2e 36 34 2e 31 0d 0a 41 63 63 65 70 74 3a 20 2a 2f 2a 0d 0a 0d 0a</code>，还有 115 个字节，根据网络层 IPv4 头部的第 72 到第 79 位的协议类型我们得知这是一个 TCP 协议的包，下面我们就基于 TCP 的协议规范：<a href="https://tools.ietf.org/html/rfc793">RFC 793</a> 来逐位的进行分析。</p>
+<p>TCP 的头部格式如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200813013333.png" alt="image-20200813010547774"></p>
+<p>首先一开始是 16 位的源端口和 16 位的目的端口，转化成十进制分别是：</p>
+<pre><code>c8 07 -&gt; 51207
+1f 41 -&gt; 8001
+</code></pre><p>端口是 TCP 协议用于标识上层应用的一个 ID，长度是 16 位因此一台机器的最大端口值就是 <code>2^16-1 = 65535</code>，不过这并不意味着这台机器的最大 TCP 连接数量就只有 65535，因为同一个端口可以为多个客户端提供服务。</p>
+<p>端口号也不是随便用哪个都行，<strong><a href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml">互联网号码分配局</a></strong> (Internet Assigned Numbers Authority: IANA)对这六万多个端口划分成了三段：</p>
+<ul>
+<li>
+<p>0-1023：公认端口，为了更好的为应用层提供服务，IANA 为许多著名的应用层协议分配了默认端口，方便用户只填主机号就能建立连接。</p>
+<p>常见的公认端口有：</p>
+<table>
+<thead>
+<tr>
+<th align="center">协议</th>
+<th align="center">端口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">ftp</td>
+<td align="center">21</td>
+</tr>
+<tr>
+<td align="center">ssh</td>
+<td align="center">22</td>
+</tr>
+<tr>
+<td align="center">smtp</td>
+<td align="center">25</td>
+</tr>
+<tr>
+<td align="center">http</td>
+<td align="center">80</td>
+</tr>
+<tr>
+<td align="center">bgp</td>
+<td align="center">179</td>
+</tr>
+<tr>
+<td align="center">ldap</td>
+<td align="center">389</td>
+</tr>
+<tr>
+<td align="center">https/quic</td>
+<td align="center">443</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>1024-49151：用户自用，一般操作系统会随机在其中选择可用端口。</p>
+</li>
+<li>
+<p>49152-65535：保留端口，一般不推荐使用，因为用户端口也很够用了。</p>
+</li>
+</ul>
+<p>通过端口可以知道是在为哪个应用提供服务，但 TCP 向应用层提供的是一个有连接，可靠的传输协议，可靠性就要求 TCP 包不能丢包、不能乱序，这一点主要是通过序列号和确认号这两个字段来实现的。</p>
+<p>序列号代表当前这个包的第一个字节的序号，不过为了避免TCP预测攻击，序号会从一个随机数而不是 0 开始，这是一个环形数组，到达上限之后又会溢出从头开始，所以一个 TCP 连接理论上来发送的数据量是无限的，并不会受到这个字段的限制。</p>
+<p>只要每个包都打上了序号，那么就算 IP 包到达的顺序不一也可以再根据序号排列，这是可靠性的重要保障。</p>
+<p>确认号（ACK），我觉得叫期望号更合适一点，是期望收到的下一个字节的序号，即已收到字节长度 + 1。</p>
+<p>为了保证不丢包，TCP 会对每一个发送的包进行确认，如果超过一段时间（超时重传时间：Retransmission TimeOut：RTO）没有确认就会重传，同时超时的重传通常都是比较保守的，还有一种显示的现象会触发重传：3次重复的期望（ACK），我一直在给你发新的包，四号，五号都过去了，但是你一直问我第三号包什么时候来，都连问三次了，那肯定是丢在路上了，我马上重发一个。</p>
+<p>在我们的包中，序列号是：<code>02 75 e2 d3：41280211</code>，确认号是：<code>91 b0 fa ff: 2444294911</code>。</p>
+<p>接下来的 16 位得拆开字节来看：</p>
+<pre><code>	80 18
+		|
+转化为 2 进制
+		|
+1000 0000 0001 1000
+</code></pre><p>开始四个位是代表头部长度，不过有的地方直译为数据偏移，其实很拗口，头部长度的单位是 4 字节，除了最基本的 5 个4字节之外，后面还可以追加很多的选项，我们这里的长度是：1000 = 8，代表追加了 3 个 4字节的选项，这个我们后面再分析。</p>
+<p>下面三个位目前是保留着还未被启用，RFC 793 刚开始定的时候有六个保留位，不过后面的协议优化迭代逐步启用了三个。之后紧接着是九个启用中的标志位，下面我们来逐位分析。</p>
+<ul>
+<li>NS: ECN-nonce，显式拥塞通知（Explicit Congestion Notification），这个是和 IP 层的 ECN 一样，主动表示发生了网络拥塞的信号。</li>
+<li>CWR: Congestion Window Reduced，这个是配合 ECN 标志位使用的，用来通知发送者拥塞窗口已经调小。</li>
+<li>ECE：ECN-Echo，这个标志位主要是用 TCP 连接在握手的时候用来协商两端是否都支持显示拥塞控制。</li>
+<li>URG: Urgent Pointer field significant，代表存在于选项中的紧急指针字段已经启用，需要尽快处理这些数据，不过使用的范围不广。</li>
+<li>ACK: Acknowledgment field significant，代表 ACK 字段有效。</li>
+<li>PSH: Push Function，用于将缓冲区内的所有数据全部发送，不再等待，同时对端在收到 PSH 标志时，应立即将数据全部递交给上层应用处理，不用再等待数据合并提交。PSH 标志位和 TCP_NoDelay 选项的区别在于，PSH 是 TCP 报文中的字段，对端也会做出对应的响应，而 TCP_NoDelay 只是内核的一个参数，用于在当前应用中关闭 Nagle 算法。</li>
+<li>RST: Reset，用于重置当前连接，一般用于拒绝连接，或者出现错误时指示重建连接。</li>
+<li>SYN: Synchronize sequence numbers，同步序列号，用于建立连接并同步序列号。</li>
+<li>FIN: Finish, 用于关闭连接，表明没有数据要发送了。</li>
+</ul>
+<p>在我们的包中，这九个标志位分别是：000011000，ACK =  1，PSH = 1，代表 ACK 字段是生效的，同时需要对端尽快处理这个包，PSH 这个标志位主要是 curl 这个工具设置的逻辑，同时 curl 还打开了 TCP_NoDelay，因为它也只发这一个报文，不会再有后面其他的输入了。</p>
+<p>下面 16 位是窗口大小：0x0803 = 2051，单位是字节，表明自身能处理的数据的多少，我们所熟知的滑动窗口协议就是通过这个字段实现的。16 位大小意味着最多只能处理 2^16-1 = 65535 个字节，这在 TCP 制定的 1981 年可能还很大，计算机性能在摩尔定律的预言下每一年都在飞速发展，很快 65KB 就显得有点不够用了，所以在 1988 年 RFC 1072 中，加入了滑动窗口拓展因子选项的支持，在握手时双方协商都支持滑动窗口拓展因子选项时，在之后的数据传输过程中，窗口的实际大小会等于 = 窗口大小字段的值 * 拓展因子。</p>
+<p>我查看了当时的握手记录，我们这台机器的拓展因子大小为：64，而对端大小为 128，因此本机的实际窗口大小为：2051 * 64 = 131264 字节。</p>
+<p>我们继续往后面看，接下来是 16 位校验和：<code>4d 23</code> ，我们在分析 IP 头部字段的时候就有提到，IP 协议只对于头部进行了校验，具体传输内容的验证是留给上层协议自己去选择要不要做的。而 TCP 提供的是可靠的传输，所以这个校验和在计算时不仅囊括了头部，也包括了传输内容。</p>
+<p>然后 16 位是紧急指针，指向需要高优处理的数据的最后一个字节的位置，我们这里 URG 标志位是 0，所以也就不存在紧急指针，这 16 位全是 0。</p>
+<p>最后面是 TCP 的选项字段，TCP 选项是不定长的，但是头部长度字段的单位是 32 位，因此需要保证整体位数是 32 的整数倍，所以需要发送端视情况填充。TCP 选项的格式：选项类型（1字节）- 选项长度（1字节）-选项内容（2字节），不过有的选项类型没有选项长度和内容，用来当标志位或者填充。TCP 选项也是受 <a href="https://www.iana.org/assignments/tcp-parameters/tcp-parameters.xhtml">IANA</a> 管理的，常见 TCP 类型如下：</p>
+<table>
+<thead>
+<tr>
+<th>类型值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>填充，无意义</td>
+</tr>
+<tr>
+<td>2</td>
+<td>最大报文段长度（Maximum Segment Size，MSS），用于在建立连接时像对端表明自身能接收的最大报文大小，一般设置为 MTU - 40 (IP + TCP 首部长度)，避免 IP 分片带来的性能损耗。</td>
+</tr>
+<tr>
+<td>3</td>
+<td>滑动窗口缩放因子，我们上文有提到，用于表达更大的滑动窗口大小，在建立连接时协商确认。</td>
+</tr>
+<tr>
+<td>4、5</td>
+<td>用于 SACK（Selective Acknowledgment），避免 TCP 累计确认机制在丢包频繁时带来的性能损耗，可以告知对端一个具体丢包的一个范围，而不只是一个开始的位置。</td>
+</tr>
+<tr>
+<td>8</td>
+<td>时间戳字段，用于计算 RTT，以及网速过快时区分同一序号包的新旧。</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>在我们捕获的报文中，头部长度是 8，而基本头部长度是 5，由此可知剩下还有 3 * 4 字节的内容是属于 TCP 选项的，它们是：</p>
+<pre><code> 01 01 08 0a 2c fd 61 c7 95 6b 55 91
+</code></pre><p>查看上面的 TCP 类型表可以得知前两个选项都是填充：01 01，而第三个选项是 8，代表时间戳选项，时间戳的详细格式我们可以在 IANA 上查到，这里就不详细展开了。</p>
+<p>好了，TCP 头部的解析就到此结束了，TCP 传输内容的长度没有在 TCP 头部直接加上，但是可以通过 IP 包长度- IP 头部大小 - TCP头部大小计算出来，135 - 20 - 8*4 =  83 字节，而我们现在正好还剩下 83 个字节的包没有解析，正好能对应上：</p>
+<pre><code>47 45 54 20 2f 20 48 54 54 50 2f 31 2e
+31 0d 0a 48 6f 73 74 3a 20 31 31 38 2e
+38 39 2e 32 32 38 2e 31 31 37 3a 38 30
+30 31 0d 0a 55 73 65 72 2d 41 67 65 6e
+74 3a 20 63 75 72 6c 2f 37 2e 36 34 2e
+31 0d 0a 41 63 63 65 70 74 3a 20 2a 2f
+2a 0d 0a 0d 0a
+</code></pre><h2 id="http">HTTP</h2>
+<p>下面就进入我们最上层的应用层协议：超文本传输协议（Hyper Text Transport Protocol: HTTP）的报文解析了。我们之前提到的协议都是基于字节和比特位的，这样能充分利用空间，提高传输效率，但作为一个应用层协议，HTTP 更多的是考虑的易用性，所以 HTTP 设计成了一个基于文本表示的协议，可读性和易用性。</p>
+<p>凡是涉及到二进制流转化成人类可读的文字时都会涉及到一个问题，二进制流该按什么规则映射到可读字符，这个过程就叫编码。HTTP 协议头部采样的是美国信息交换标准代码（American Starndard Code for Information Interchange : ASCII），这也是为什么 HTTP 头部不支持中文的原因。</p>
+<p>HTTP 是一种请求响应式协议，所以 HTTP 的报文也分成两种，请求报文和响应报文。这里我们发出的是一个请求报文，请求报文的格式是这样的：</p>
+<pre><code>Method Request-URI HTTP-Version
+Header-Name: Header-Value
+
+Body
+</code></pre><p>其中回车是 Linux 的回车格式：CRLF。
+Method 代表这次请求要对这个资源执行的操作，RFC 2616中定义了如下方法：</p>
+<ul>
+<li>GET：获取资源</li>
+<li>POST：将在 Body 中的内容提交到指定 URI 下成为一个新资源</li>
+<li>HEAD：只获取资源的头部信息</li>
+<li>PUT：将 Body 中的内容提交到 URI 指定的地方</li>
+<li>DELETE： 删除资源，删除失败返回 204 状态码</li>
+<li>TRACE: 让对端原样返回，用于测试、排查问题</li>
+<li>CONNECT: 用于建立 HTTP 连接通道</li>
+</ul>
+<p>有一个很有意思的地方是不像其他地方：域名、头部字段名都是不区分大小写的，请求方法需要严格区分大小写，具体原因我也不知道。</p>
+<p>而之后的 Request-URI 则描述了资源的地址，再接一个空格就是 HTTP 版本，目前有：HTTP/1.0、HTTP/1.1、HTTP/2.0 三个版本。</p>
+<p>再下面就是 HTTP 头部字段，头部字段之间通过 CRLF 分隔，而头部字段内部用冒号加空格分隔，是 HTTP 报文的一些元信息。头部中会有一个字段叫：Content-Length，这个字段以字节为单位指示了HTTP body 的长度，为 0 则代表没有 body。</p>
+<p>再看到我们的报文，按照 <a href="http://www.asciitable.com/">ASCII</a> 码表对照，我们的字节一一对应翻译成字符的话是这样的：</p>
+<pre><code>47 45 54 20 2f 20 48 54 54 50 2f 31 2e
+31 0d 0a 48 6f 73 74 3a 20 31 31 38 2e
+38 39 2e 32 32 38 2e 31 31 37 3a 38 30
+30 31 0d 0a 55 73 65 72 2d 41 67 65 6e
+74 3a 20 63 75 72 6c 2f 37 2e 36 34 2e
+31 0d 0a 41 63 63 65 70 74 3a 20 2a 2f
+2a 0d 0a 0d 0a
+
+G E T \b / \b H T T P / 1 .
+1 CR LF H o s t : \b 1 1 0 .
+8 9 . 2 2 8 . 1 1 0: 8 0
+0 1 CR LF U s e r - A g e n
+t : \b c u r l / 7 . 6 4 .
+1 CR LF A c c e p t : \b * /
+* CR LF CR LF
+</code></pre><p>可视化整理之后就是这样的：</p>
+<pre><code>GET / HTTP/1.1
+Host: 110.89.228.110:8001
+User-Agent: curl/7.64.1
+Accept: */*
+
+
+</code></pre><p>通过 HTTP/1.1 协议使用 GET 的请求方法像其根目录资源发起请求，Host 头部代表了请求资源所属的主机，而User-Agent头部则代表我这边使用的 HTTP 协议的客户端类型，使用的 curl 工具。Accept: * / * 代表客户端这边支持任何类型的资源。</p>
+<p>到这里这个包的解析就彻底结束了，之后它会顺着网线来到路由器，然后路由器拆开看了一眼 IP 头部又会根据它的路由表发给下一台路由器，直到最后送到对端服务器的手里。对端服务器会一层一层地拆包，最后我们的 python 代码会收到一个 纯粹的 HTTP 报文，它执行完对应的逻辑之后，就再封好 HTTP 响应报文，再调用操作系统的 API 把这个 HTTP 响应报文一层层的封装好又从网线送回来，整个庞大的互联网就是在这样不断地拆包封包中运行着，为人类的生活默默地做着贡献。</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/ethernet" role="button">Ethernet </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://huweicai.com/confusion-betwwen-forwhiletrue/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>for{;;}与while(true)的困惑</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ethernet">
+												 Ethernet
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ipv4">
+												 IPv4
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#tcp">
+												 TCP
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#http">
+												 HTTP
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+  
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
