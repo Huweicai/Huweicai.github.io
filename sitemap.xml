@@ -203,6 +203,30 @@
   </url>
   
   <url>
+    <loc>https://huweicai.com/tags/http/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/ip/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/tcp/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/who-network-capture-analysis/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://huweicai.com/who-network-capture-analysis/</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
