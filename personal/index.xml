@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Personals on Anonymous&#39; Blog</title>
+    <link>https://huweicai.com/personal/</link>
+    <description>Recent content in Personals on Anonymous&#39; Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Wed, 19 Aug 2020 19:58:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://huweicai.com/personal/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Go 知识点</title>
+      <link>https://huweicai.com/personal/go-%E7%9F%A5%E8%AF%86%E7%82%B9/</link>
+      <pubDate>Wed, 19 Aug 2020 19:58:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/personal/go-%E7%9F%A5%E8%AF%86%E7%82%B9/</guid>
+      <description>Pool go struct能不能比较 go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG go 反射实现原理 sync.Pool 实现原理 sync.Mutex / sync.RWMutex 实现原理 goroutine调度用了什么系统调用 什么是闭包 方法做为参数传递的时候是值传递还是引用传递？ Go Map 遍历顺序是固定的吗 不是，map 遍历并不保证遍历顺序的固定同时也不是有序的，如果需要一个有序的 map 的话，需要自己引入其他的空间自行排序：</description>
+    </item>
+    
+  </channel>
+</rss>

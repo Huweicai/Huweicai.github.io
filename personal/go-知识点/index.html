@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="Pool go struct能不能比较 go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG go 反射实现原理 sync.Pool 实现原理 sync.Mutex / sync.RWMutex 实现原理 goroutine调度用了什么系统调用 什么是闭包 方法做为参数传递的时候是值传递还是引用传递？ Go Map 遍历顺序是固定的吗 不是，map 遍历并不保证遍历顺序的固定同时也不是有序的，如果需要一个有序的 map 的话，需要自己引入其他的空间自行排序：">
+  
+  <meta property="og:title" content="Go 知识点" />
+<meta property="og:description" content="Pool go struct能不能比较 go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG go 反射实现原理 sync.Pool 实现原理 sync.Mutex / sync.RWMutex 实现原理 goroutine调度用了什么系统调用 什么是闭包 方法做为参数传递的时候是值传递还是引用传递？ Go Map 遍历顺序是固定的吗 不是，map 遍历并不保证遍历顺序的固定同时也不是有序的，如果需要一个有序的 map 的话，需要自己引入其他的空间自行排序：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/personal/go-%E7%9F%A5%E8%AF%86%E7%82%B9/" />
+<meta property="article:published_time" content="2020-08-19T19:58:00+08:00" />
+<meta property="article:modified_time" content="2020-08-19T19:58:00+08:00" />
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-175035126-1');
+</script>
+
+  <title>
+  
+       Go 知识点 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/personal/go-%E7%9F%A5%E8%AF%86%E7%82%B9/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://huweicai.com/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">Go 知识点</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Aug 19, 2020</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>4 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h2 id="pool">Pool</h2>
+<ul>
+<li>go struct能不能比较</li>
+<li>go defer 的实现原理</li>
+<li>select 多个条件满足时会走哪一个分支</li>
+<li>实现消息队列（多生产者，多消费者）</li>
+<li>go gc 算法</li>
+<li>go 协程调度模型：MPG</li>
+<li>go 反射实现原理</li>
+<li>sync.Pool 实现原理</li>
+<li>sync.Mutex / sync.RWMutex 实现原理</li>
+<li>goroutine调度用了什么系统调用</li>
+<li>什么是闭包</li>
+</ul>
+<h3 id="方法做为参数传递的时候是值传递还是引用传递">方法做为参数传递的时候是值传递还是引用传递？</h3>
+<h3 id="go-map-遍历顺序是固定的吗">Go Map 遍历顺序是固定的吗</h3>
+<p>不是，map 遍历并不保证遍历顺序的固定同时也不是有序的，如果需要一个有序的 map 的话，需要自己引入其他的空间自行排序：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">m</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="kt">string</span>
+<span class="kd">var</span> <span class="nx">keys</span> <span class="p">[]</span><span class="kt">int</span>
+<span class="k">for</span> <span class="nx">k</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">m</span> <span class="p">{</span>
+    <span class="nx">keys</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">sort</span><span class="p">.</span><span class="nf">Ints</span><span class="p">(</span><span class="nx">keys</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">k</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">keys</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Key:&#34;</span><span class="p">,</span> <span class="nx">k</span><span class="p">,</span> <span class="s">&#34;Value:&#34;</span><span class="p">,</span> <span class="nx">m</span><span class="p">[</span><span class="nx">k</span><span class="p">])</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="切片是如何扩容的">切片是如何扩容的</h3>
+<p>参考下面这个问题。</p>
+<h3 id="切片的实现原理">切片的实现原理</h3>
+<p>我们在创建切片时，会先创建一个数组，然后再通过 [:] 的方式转化为切片：</p>
+<pre><code>slice := []int{1, 2, 3} 
+
+的实现原理
+
+var vstat [3]int
+vstat[0] = 1
+vstat[1] = 2
+vstat[2] = 3
+var vauto *[3]int = new([3]int)
+*vauto = vstat
+slice := vauto[:]
+</code></pre><p>[:]是创建切片的最底层方法，其他方式都是它的语法糖。</p>
+<p>Go 语言中切片运行时是用这个结构体表示的：</p>
+<pre><code>type SliceHeader struct {
+   Data uintptr
+   Len  int
+   Cap  int
+}
+</code></pre><p>切片增长的逻辑如下，以 append 三个元素为例：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// append(slice, 1, 2, 3)
+</span><span class="c1"></span><span class="nx">ptr</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cap</span> <span class="o">:=</span> <span class="nx">slice</span>
+<span class="nx">newlen</span> <span class="o">:=</span> <span class="nx">len</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="k">if</span> <span class="nx">newlen</span> <span class="p">&gt;</span> <span class="nx">cap</span> <span class="p">{</span>
+    <span class="nx">ptr</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cap</span> <span class="p">=</span> <span class="nf">growslice</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="nx">newlen</span><span class="p">)</span>
+    <span class="nx">newlen</span> <span class="p">=</span> <span class="nx">len</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="p">}</span>
+<span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="p">)</span> <span class="p">=</span> <span class="mi">1</span>
+<span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">=</span> <span class="mi">2</span>
+<span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="p">=</span> <span class="mi">3</span>
+<span class="k">return</span> <span class="nf">makeslice</span><span class="p">(</span><span class="nx">ptr</span><span class="p">,</span> <span class="nx">newlen</span><span class="p">,</span> <span class="nx">cap</span><span class="p">)</span>
+</code></pre></div><p>如果 cap 够用，那么会直接在底层数组上赋值并右移，所以这里会存在一个 bug：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">a</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+	<span class="nx">b</span> <span class="o">:=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+	<span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> 
+	<span class="nb">println</span><span class="p">(</span><span class="nx">b</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+<span class="p">}</span>
+<span class="nx">最终输出</span><span class="err">：</span><span class="mi">4</span>
+
+<span class="k">go</span> <span class="nx">slice</span> <span class="nx">如果只基于</span> <span class="nx">cap</span> <span class="nx">够不够去判断要不要申请一个新数组的话</span><span class="err">，</span>
+<span class="nx">第四行</span> <span class="nx">a</span> <span class="nx">的</span> <span class="nx">len</span><span class="p">=</span><span class="mi">4</span><span class="err">，</span><span class="nx">cap</span><span class="p">=</span><span class="mi">8</span><span class="err">，</span><span class="nx">看起来是容量够用的</span><span class="err">，</span><span class="nx">会直接在底层数组往后追加</span><span class="err">，</span><span class="nx">而</span> <span class="nx">b</span> <span class="nx">和</span> <span class="nx">a</span> <span class="nx">指向的是同一个底层数组</span><span class="err">，</span><span class="nx">b</span> <span class="nx">append</span> <span class="nx">的值就会被覆盖</span><span class="err">。</span>
+</code></pre></div><p>当如果 cap 不够用的时候，就会触发切片的扩容机制：</p>
+<p>在容量小于 1024 时，会复制成双倍，当容量大于 1024 时，会一次扩 1/4，直到可以满足需求。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">growslice</span><span class="p">(</span><span class="nx">et</span> <span class="o">*</span><span class="nx">_type</span><span class="p">,</span> <span class="nx">old</span> <span class="nx">slice</span><span class="p">,</span> <span class="nx">cap</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">slice</span> <span class="p">{</span>
+	<span class="nx">newcap</span> <span class="o">:=</span> <span class="nx">old</span><span class="p">.</span><span class="nx">cap</span>
+	<span class="nx">doublecap</span> <span class="o">:=</span> <span class="nx">newcap</span> <span class="o">+</span> <span class="nx">newcap</span>
+	<span class="k">if</span> <span class="nx">cap</span> <span class="p">&gt;</span> <span class="nx">doublecap</span> <span class="p">{</span>
+		<span class="nx">newcap</span> <span class="p">=</span> <span class="nx">cap</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">old</span><span class="p">.</span><span class="nx">len</span> <span class="p">&lt;</span> <span class="mi">1024</span> <span class="p">{</span>
+			<span class="nx">newcap</span> <span class="p">=</span> <span class="nx">doublecap</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="k">for</span> <span class="mi">0</span> <span class="p">&lt;</span> <span class="nx">newcap</span> <span class="o">&amp;&amp;</span> <span class="nx">newcap</span> <span class="p">&lt;</span> <span class="nx">cap</span> <span class="p">{</span>
+				<span class="nx">newcap</span> <span class="o">+=</span> <span class="nx">newcap</span> <span class="o">/</span> <span class="mi">4</span>
+			<span class="p">}</span>
+			<span class="k">if</span> <span class="nx">newcap</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
+				<span class="nx">newcap</span> <span class="p">=</span> <span class="nx">cap</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+</code></pre></div><p>不过再初步确定了容量之后，还有一个逻辑：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">capmem</span> <span class="p">=</span> <span class="nf">roundupsize</span><span class="p">(</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">newcap</span><span class="p">))</span>
+<span class="nx">newcap</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">capmem</span> <span class="o">/</span> <span class="nx">et</span><span class="p">.</span><span class="nx">size</span><span class="p">)</span>
+</code></pre></div><p>会根据类型进行内存对齐，会在双倍的基础上再对容量根据最佳对齐值进行一定的向上取整。</p>
+<p>切片拷贝时会调用：memmove，将整块内存空间全部复制到新的地方，同时把源切片的 Len 复制给新的切片，而不是一个一个元素在 Go 代码层面的复制。</p>
+<h3 id="go-字符串实现原理">Go 字符串实现原理</h3>
+<p>字符串的实现其实和切片比较像，只是没有容量而已：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">StringHeader</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Data</span> <span class="kt">uintptr</span>
+	<span class="nx">Len</span>  <span class="kt">int</span>
+<span class="p">}</span>
+</code></pre></div><p>字符串的底层是一个只读的字节数组：[]byte，所以其实也不用担心字符串在传递时的性能开销。</p>
+<p>因为 string 是只读的，而字节数组是可以修改的，所以在和 []byte 相互转换时会通过：memmove 复制内存，所以我们最好尽量避免这两者之间的频繁转换。</p>
+<h3 id="go-map实现原理">Go Map实现原理</h3>
+<h3 id="长度不同的数组是同样的类型吗">长度不同的数组是同样的类型吗？</h3>
+<p>[2]int 和 [3]int 并不是一个类型，<code>reflect.TypeOf([3]int{}).String()</code> 的结果是：[3]int，长度也是数组的一个元信息。</p>
+<p>但它们的 Kind 是一样的，都是：array。</p>
+<h3 id="go-为什么使用-plan9-作为汇编语言">Go 为什么使用 Plan9 作为汇编语言？</h3>
+<p>因为 Go 的作者大部分以前都是搞 Plan9 的，他们在 Go 里重新启用了这种类似的汇编语法，微跨平台汇编语法，所有指令集通用的 ADD MOV JUMP PUSH 之类的指令在 Plan9 里相当于有了一个统一的指令名称，有的指令实在是只在某个指令集上有，那就没办法了，只能说能省一点力气是一点力气。</p>
+<p>编译为 Plan9 汇编之后，Go 实现了一个比较轻量的汇编器来真正将 Plan9 翻译成对应平台的机器码。</p>
+<p><a href="https://9p.io/sys/doc/asm.html">https://9p.io/sys/doc/asm.html</a></p>
+<h3 id="interface-之-eface-的实现">interface{} 之 eface 的实现</h3>
+<p>go 里的 interface 有两种，带方法的接口：iface，和不带方法的 eface，我们平常在处理任意类型时所用的参数类型： interface{} 就是 eface，eface 包括一个类型指针和一个指向真实数据的指针。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">eface</span> <span class="kd">struct</span> <span class="p">{</span> <span class="c1">// 16 bytes
+</span><span class="c1"></span>	<span class="nx">_type</span> <span class="o">*</span><span class="nx">_type</span>
+	<span class="nx">data</span>  <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="go-常见性能优化小点">Go 常见性能优化小点</h3>
+<p>推荐使用的运算符优先级：位运算 &gt; 加法 &gt; 乘法，比如 a*2 尽量用 a+a 实现。</p>
+<h3 id="判断如下代码返回的结果">判断如下代码返回的结果</h3>
+<pre><code>func main() {
+   println(ErrorA() == nil)
+   println(ErrorB() == nil)
+}
+
+func ErrorA() error {
+   return nil
+}
+
+func ErrorB() error {
+   var err *os.PathError
+   return err
+}
+</code></pre><p>返回的结果会是：true，false。</p>
+<p>因为 Go 里面 interface 由两个元素组成，Type 和 Value，Type 表示对象的具体类型，Value 指向对应的内存地址，只有当 Type 和 Value 都为空时，interface 才为空。</p>
+<p>而函数 B 中将 err 变量转换为了 error interface 返回的，而它的 Type 为 *os.PathError 不为空，所以判断是否为 nil 会返回否定的结果。</p>
+<p>而在方法 A 中，虽然 nil 也被转换成了 interface，但是它的 Type 就是 nil，所以能走到正常的逻辑。</p>
+<p>这也是为什么当代码中没有错误时推荐显示返回 nil 而不是空指针的原因了。</p>
+<h3 id="select-实现超时逻辑">select 实现超时逻辑</h3>
+<p>time.After 会在指定时间之后在返回的管道中发送当前时间，这样循环就会退出。</p>
+<p>time.After 封装了一下 timer.Timer，在计时结束之后就 Timer 对象就会被垃圾回收。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="k">for</span> <span class="p">{</span>
+  <span class="k">select</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">time</span><span class="p">.</span><span class="nf">After</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">):</span>
+  	<span class="k">break</span><span class="p">;</span>
+	<span class="k">default</span><span class="p">:</span>
+		<span class="c1">// do something
+</span><span class="c1"></span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#pool">
+												 Pool
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%96%b9%e6%b3%95%e5%81%9a%e4%b8%ba%e5%8f%82%e6%95%b0%e4%bc%a0%e9%80%92%e7%9a%84%e6%97%b6%e5%80%99%e6%98%af%e5%80%bc%e4%bc%a0%e9%80%92%e8%bf%98%e6%98%af%e5%bc%95%e7%94%a8%e4%bc%a0%e9%80%92">
+												 方法做为参数传递的时候是值传递还是引用传递？
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-map-%e9%81%8d%e5%8e%86%e9%a1%ba%e5%ba%8f%e6%98%af%e5%9b%ba%e5%ae%9a%e7%9a%84%e5%90%97">
+												 Go Map 遍历顺序是固定的吗
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%87%e7%89%87%e6%98%af%e5%a6%82%e4%bd%95%e6%89%a9%e5%ae%b9%e7%9a%84">
+												 切片是如何扩容的
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%87%e7%89%87%e7%9a%84%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 切片的实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-%e5%ad%97%e7%ac%a6%e4%b8%b2%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 Go 字符串实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-map%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 Go Map实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%95%bf%e5%ba%a6%e4%b8%8d%e5%90%8c%e7%9a%84%e6%95%b0%e7%bb%84%e6%98%af%e5%90%8c%e6%a0%b7%e7%9a%84%e7%b1%bb%e5%9e%8b%e5%90%97">
+												 长度不同的数组是同样的类型吗？
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-%e4%b8%ba%e4%bb%80%e4%b9%88%e4%bd%bf%e7%94%a8-plan9-%e4%bd%9c%e4%b8%ba%e6%b1%87%e7%bc%96%e8%af%ad%e8%a8%80">
+												 Go 为什么使用 Plan9 作为汇编语言？
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#interface-%e4%b9%8b-eface-%e7%9a%84%e5%ae%9e%e7%8e%b0">
+												 interface{} 之 eface 的实现
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-%e5%b8%b8%e8%a7%81%e6%80%a7%e8%83%bd%e4%bc%98%e5%8c%96%e5%b0%8f%e7%82%b9">
+												 Go 常见性能优化小点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%a4%e6%96%ad%e5%a6%82%e4%b8%8b%e4%bb%a3%e7%a0%81%e8%bf%94%e5%9b%9e%e7%9a%84%e7%bb%93%e6%9e%9c">
+												 判断如下代码返回的结果
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#select-%e5%ae%9e%e7%8e%b0%e8%b6%85%e6%97%b6%e9%80%bb%e8%be%91">
+												 select 实现超时逻辑
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+  
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

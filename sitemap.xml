@@ -4,7 +4,21 @@
   
   <url>
     <loc>https://huweicai.com/</loc>
-    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <lastmod>2020-08-19T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/personal/go-%E7%9F%A5%E8%AF%86%E7%82%B9/</loc>
+    <lastmod>2020-08-19T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/personal/</loc>
+    <lastmod>2020-08-19T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
