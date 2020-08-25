@@ -6,10 +6,19 @@
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 19 Aug 2020 19:58:00 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 20 Aug 2020 19:58:00 +0800</lastBuildDate>
     
 	<atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go 常见性能优化建议</title>
+      <link>https://huweicai.com/personal/go-performance-advice/</link>
+      <pubDate>Thu, 20 Aug 2020 19:58:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/personal/go-performance-advice/</guid>
+      <description>我们这边有的服务对性能比较敏感，在长时间 Go 语言开发实践中，积累了一些 Go 代码层面性能优化的点，在这里总结一下分享给大家。 使用加法而不是乘法</description>
+    </item>
     
     <item>
       <title>Go 知识点</title>
