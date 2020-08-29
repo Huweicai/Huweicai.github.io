@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>shell on Anonymous&#39; Blog</title>
+    <link>https://huweicai.com/tags/shell/</link>
+    <description>Recent content in shell on Anonymous&#39; Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Fri, 20 Mar 2020 19:58:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://huweicai.com/tags/shell/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>找出使用最频繁的Shell命令</title>
+      <link>https://huweicai.com/most-frequently-command/</link>
+      <pubDate>Fri, 20 Mar 2020 19:58:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/most-frequently-command/</guid>
+      <description>使用最频繁 TOP 10命令： history | awk &amp;#39;{map[$2]++} END { for (a in map )print map[ a ]&amp;#34; &amp;#34; map[ a ]/NR*100 &amp;#34;% &amp;#34; a }&amp;#39; | column -c3 -s &amp;#34; &amp;#34; -t |sort -nr | nl | head -n10 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面</description>
+    </item>
+    
+    <item>
+      <title>找出使用最频繁的Shell命令</title>
+      <link>https://huweicai.com/most-frequently-command/</link>
+      <pubDate>Fri, 20 Mar 2020 19:58:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/most-frequently-command/</guid>
+      <description>使用最频繁 TOP 10命令： history | awk &amp;#39;{map[$2]++} END { for (a in map )print map[ a ]&amp;#34; &amp;#34; map[ a ]/NR*100 &amp;#34;% &amp;#34; a }&amp;#39; | column -c3 -s &amp;#34; &amp;#34; -t |sort -nr | nl | head -n10 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面</description>
+    </item>
+    
+  </channel>
+</rss>

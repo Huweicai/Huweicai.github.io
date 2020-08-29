@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="使用最频繁 TOP 10命令： history | awk &#39;{map[$2]&#43;&#43;} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39; | column -c3 -s &#34; &#34; -t |sort -nr | nl | head -n10 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面">
+  
+  <meta property="og:title" content="找出使用最频繁的Shell命令" />
+<meta property="og:description" content="使用最频繁 TOP 10命令： history | awk &#39;{map[$2]&#43;&#43;} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39; | column -c3 -s &#34; &#34; -t |sort -nr | nl | head -n10 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/most-frequently-command/" />
+<meta property="article:published_time" content="2020-03-20T19:58:00+08:00" />
+<meta property="article:modified_time" content="2020-03-20T19:58:00+08:00" />
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-175035126-1');
+</script>
+
+  <title>
+  
+       找出使用最频繁的Shell命令 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/most-frequently-command/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://huweicai.com/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/blog/" >Blog  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides//raw_1515847341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">找出使用最频繁的Shell命令</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>Mar 20, 2020</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>5 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>使用最频繁 TOP 10命令：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span> <span class="p">|</span> column -c3 -s <span class="s2">&#34; &#34;</span> -t <span class="p">|</span>sort -nr <span class="p">|</span> nl <span class="p">|</span> head -n10
+</code></pre></div><p>先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。</p>
+<h2 id="shell">Shell</h2>
+<p>首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？</p>
+<p>Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种：</p>
+<ul>
+<li>
+<p>图形界面类：Graphical User Interface <strong>GUI</strong></p>
+<ul>
+<li>Windows Exploer</li>
+<li>GNOME：Unbuntu 17.0 所使用的GUI</li>
+<li>KDE</li>
+</ul>
+</li>
+<li>
+<p>命令行类：Comand Line Interface <strong>CLI</strong></p>
+<ul>
+<li>Windows CMD</li>
+<li>Windows Power Shell</li>
+<li>SH: Bourne Shell</li>
+<li>ZSH: Z Shell，Mac Catalina 版本后的默认 Shell</li>
+</ul>
+</li>
+</ul>
+<p>而狭义上的 shell 则是指 POSIX 制定的一种命令行解释器，有时候也指这种命令行解释器所解释的语言，就是我们通常意义上说的 shell 脚本。</p>
+<p>POSIX 是一系列操作系统接口的集合，主流的操作系统都有实现它。而 POSIX 给出的 shell 也是一个接口，具体的实现也是有很多种，比如：zsh、bash、fish等。</p>
+<p>在 GUI 系统里面，通常也会提供命令行的能力，提供这种能力的软件也就是我们锁熟知的：终端 Termial。</p>
+<h2 id="history">history</h2>
+<p>hisotry 是一条 shell 内置命令，用于列出所有的历史命令。内置命令则意味着和 ps curl chmod 等已一个单独的二进制文件形式存在的用户命令不同，history 是直接由 shell 内置实现的，我们用定位二进制文件位置的：whereis 来查找一下 hisotry，就会发现并不存在这个文件：<code>whereis history</code>。</p>
+<p>不过在 zsh 里面，我们可以用 which 查看 history 的实现：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">$which</span> <span class="nb">history</span>
+history: aliased to omz_history
+
+<span class="nv">$which</span> omz_history
+omz_history <span class="o">()</span> <span class="o">{</span>
+	zparseopts -E <span class="nv">c</span><span class="o">=</span>clear <span class="nv">l</span><span class="o">=</span>list
+	<span class="k">if</span> <span class="o">[[</span> -n <span class="s2">&#34;</span><span class="nv">$clear</span><span class="s2">&#34;</span> <span class="o">]]</span>
+	<span class="k">then</span>
+		<span class="nb">echo</span> -n &gt;<span class="p">|</span> <span class="s2">&#34;</span><span class="nv">$HISTFILE</span><span class="s2">&#34;</span>
+		<span class="nb">echo</span> History file deleted. Reload the session to see its effects. &gt;<span class="p">&amp;</span><span class="m">2</span>
+	<span class="k">elif</span> <span class="o">[[</span> -n <span class="s2">&#34;</span><span class="nv">$list</span><span class="s2">&#34;</span> <span class="o">]]</span>
+	<span class="k">then</span>
+		<span class="nb">builtin</span> <span class="nb">fc</span> <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span>
+	<span class="k">else</span>
+		<span class="nb">builtin</span> <span class="nb">fc</span> <span class="s2">&#34;</span><span class="nv">$@</span><span class="s2">&#34;</span> -l <span class="m">1</span>
+	<span class="k">fi</span>
+<span class="o">}</span>
+
+</code></pre></div><p>可以看到 history 在 zsh 中是omz_history的别名，而继续分析这个omz_history我们可以发现它只是函数，看到这个函数我们就可以大概理解了，history其实就是把 $HISTFILE 里的东西全部读出来处理一下而已。</p>
+<p>不过由于 hisotry 是每个 shell 内置的，各自的实现方式都有所不同，所以历史在不同的 shell 中是彼此不可见的。</p>
+<p>我们截取一下 history 的输出，大概是形如：序号+空格+命令这样的形式：</p>
+<pre><code>$history | head -10
+1 ls
+2 cd ../
+3 golint
+4 which ls
+...
+
+</code></pre><p>那么要找到使用最频繁的Shell命令，第一步肯定是把我用过哪些命令全部列出来，不加任何参数的 hisotry就可以实现这个事情。</p>
+<h2 id="awk">awk</h2>
+<p><a href="https://en.wikipedia.org/wiki/AWK"><code>awk</code></a> 是一个强大的文本处理工具，命名于三位创始人 Alfred Aho，Peter Weinberger, 和 Brian Kernighan的名字首字母。awk 按行处理文本，默认通过空格和TAB分隔变量，具有大量高级特性，已经复杂到可以称其为一门语言了。</p>
+<p>命令格式：<code>awk [参数] [脚本] [要处理的数据]</code>。</p>
+<p>一个简单的例子，让 history 命令不输出序号：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">history<span class="p">|</span> awk <span class="s1">&#39;{print $2}&#39;</span>
+
+
+</code></pre></div><p>通过 Linux 管道将 history 的输出传给 awk；</p>
+<p><a href="https://zh.wikipedia.org/wiki/AWK#print%E5%91%BD%E4%BB%A4">print</a> 是 awk 的一个内置命令，类似于 echo，用于输出文本；</p>
+<p>awk 是按行来处理文本的，而一行内则会默认根据空格和TAB分隔，$0 代表这一行的完整文本，而 $1 $2 则代表分隔后的第1、2个变量，可以通过 -F 来指定不同的分隔符。我们这里的 $1 是序号，而 $2 则是命令。</p>
+<p>awk 语法相当强大，甚至有一本书专门去介绍，想详细了解的话网上的其他资料应该也非常丰富，这里就不展开了。</p>
+<p>回到我们的目标，我们可以这样统计命令出现的频率：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span>
+</code></pre></div><ol>
+<li>遍历所有行，map[command]++ 命令每出现一次，对应 map 中的 key 就加一。$2 代表命令，而 [] 则是一种类似哈希表的语法，我们把这个类似为哈希表的变量命名为 map。</li>
+<li>END 表示在整个文件所有行处理完后才执行后面的逻辑</li>
+<li>从 map 中取出每个命令及其出现次数，除以总数得到频率。NR 代表总数，是 awk 中的一个内置变量，类似的内置变量还有：NF 当前行元素的个数、FS 指定的分隔符、FILENAME 文件名等。</li>
+</ol>
+<p>输出大概如下：</p>
+<pre><code>2 0.0182133% pwdttplay
+1 0.00910664% kpwd
+1 0.00910664% opt
+1205 10.9735% ttplay
+1 0.00910664% tpq
+140 1.27493% cat
+1 0.00910664% cttplay
+1 0.00910664% mak
+1 0.00910664% GA
+87 0.792278% man
+1 0.00910664% httptest
+6 0.0546398% source
+...
+</code></pre><p>现在我们不仅得到了使用过的历史命令而且还得到了它们的频率和次数，但现在它们还是无序的，不能直观的找到最频繁的那些命令，接下来我们需要排个序。</p>
+<h2 id="sort">sort</h2>
+<p>sort 是一个可以用于排序的命令，会将输入按照行进行排序，不过默认是按照字符顺序由小到大排序的。我们需要最大的那几个数在前面，所以可以使用 -r 参数让其降序排序，而按照字符顺序排序则会出现：10 比 2 小的问题，所以还需要一个参数：-n，来让其按照数字大小比较：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span><span class="p">|</span> sort -rn
+</code></pre></div><p>输出：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="m">606</span> 5.5141% <span class="nb">cd</span>
+<span class="m">475</span> 4.32211% go
+<span class="m">454</span> 4.13103% f
+<span class="m">364</span> 3.3121% curl
+<span class="m">361</span> 3.2848% ls
+<span class="m">358</span> 3.25751% git
+<span class="m">231</span> 2.10191% grep
+<span class="m">212</span> 1.92903% rm
+<span class="m">159</span> 1.44677% ping
+<span class="m">158</span> 1.43767% j
+<span class="m">153</span> 1.39217% dig
+<span class="m">140</span> 1.27389% etcdctl
+...
+</code></pre></div><h2 id="nl">nl</h2>
+<p>现在我们的输出虽然有次数了，但是没有明确的名次，不够直观，我们可以通过 nl（line numbering filter）命令给每一行加上序号：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span><span class="p">|</span> sort -rn <span class="p">|</span> nl
+</code></pre></div><p>输出：</p>
+<pre><code>     1	606 5.5141% cd
+     2	475 4.32211% go
+     3	454 4.13103% f
+     4	364 3.3121% curl
+     5	361 3.2848% ls
+     6	358 3.25751% git
+     7	231 2.10191% grep
+     8	212 1.92903% rm
+     9	159 1.44677% ping
+    10	158 1.43767% j
+    11	153 1.39217% dig
+    12	140 1.27389% etcdctl
+    ...
+</code></pre><h2 id="head">HEAD</h2>
+<p>大多数情况下，我们只关注 TOP 几的命令，而我们上面的输出几乎会打满整个终端，这个时候我们可以通过 head 命令来只查看前 N 行，head 默认输出前 10 行，可以通过 -n参数指定大小。</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span><span class="p">|</span> sort -rn <span class="p">|</span> nl <span class="p">|</span>head
+</code></pre></div><p>输出：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">     1	<span class="m">606</span> 5.5141% <span class="nb">cd</span>
+     2	<span class="m">475</span> 4.32211% go
+     3	<span class="m">454</span> 4.13103% f
+     4	<span class="m">364</span> 3.3121% curl
+     5	<span class="m">361</span> 3.2848% ls
+     6	<span class="m">358</span> 3.25751% git
+     7	<span class="m">231</span> 2.10191% grep
+     8	<span class="m">212</span> 1.92903% rm
+     9	<span class="m">159</span> 1.44677% ping
+    10	<span class="m">158</span> 1.43767% j
+</code></pre></div><h2 id="总结">总结</h2>
+<p>最终我们的脚本是这样的：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span><span class="p">|</span> sort -rn <span class="p">|</span> nl
+</code></pre></div><p>通过以上命令的组合，我们就可以成功的找出最频繁使用的shell命令，这个时候我们可以针对一些常用的命令做一些优化，来提高我的效率，比如我经常使用 grep -nr 来查找当前目录的文件，输的多了实在觉得很麻烦，我就把它做成了一个 iTerm 的快捷键，实现了一键输入。</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/linux" role="button">linux </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/shell" role="button">shell </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/redis-faq/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Redis FAQ</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://huweicai.com/how-color-present/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>颜色是如何呈现的</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#shell">
+												 Shell
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#history">
+												 history
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#awk">
+												 awk
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#sort">
+												 sort
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#nl">
+												 nl
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#head">
+												 HEAD
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+  
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

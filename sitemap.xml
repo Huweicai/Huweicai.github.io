@@ -31,6 +31,62 @@
   </url>
   
   <url>
+    <loc>https://huweicai.com/tags/ethernet/</loc>
+    <lastmod>2020-07-01T01:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/http/</loc>
+    <lastmod>2020-07-01T01:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/ip/</loc>
+    <lastmod>2020-07-01T01:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/</loc>
+    <lastmod>2020-07-01T01:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/tcp/</loc>
+    <lastmod>2020-07-01T01:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/who-network-capture-analysis/</loc>
+    <lastmod>2020-07-01T01:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <lastmod>2020-07-01T01:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/blog/</loc>
+    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://huweicai.com/categories/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
@@ -87,13 +143,6 @@
   </url>
   
   <url>
-    <loc>https://huweicai.com/tags/</loc>
-    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/tags/yuv/</loc>
     <lastmod>2020-04-09T01:27:11+08:00</lastmod>
     <changefreq>daily</changefreq>
@@ -117,6 +166,34 @@
   <url>
     <loc>https://huweicai.com/how-color-present/</loc>
     <lastmod>2020-04-09T01:27:11+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/linux/</loc>
+    <lastmod>2020-03-20T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/shell/</loc>
+    <lastmod>2020-03-20T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/most-frequently-command/</loc>
+    <lastmod>2020-03-20T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/most-frequently-command/</loc>
+    <lastmod>2020-03-20T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -206,55 +283,12 @@
   </url>
   
   <url>
-    <loc>https://huweicai.com/blog/</loc>
-    <lastmod>2018-01-06T02:15:26+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/about/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://huweicai.com/tags/ethernet/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/http/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/ip/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/tcp/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/who-network-capture-analysis/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/who-network-capture-analysis/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
