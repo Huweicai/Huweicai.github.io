@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="使用最频繁 TOP 10命令： history | awk &#39;{map[$2]&#43;&#43;} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39; | column -c3 -s &#34; &#34; -t |sort -nr | nl | head -n10 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面">
+  <meta name="description" content="使用最频繁 TOP 10命令： history | awk &#39;{map[$2]&#43;&#43;} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;| sort -rn | nl 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面类：Graphica">
   
   <meta property="og:title" content="找出使用最频繁的Shell命令" />
-<meta property="og:description" content="使用最频繁 TOP 10命令： history | awk &#39;{map[$2]&#43;&#43;} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39; | column -c3 -s &#34; &#34; -t |sort -nr | nl | head -n10 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面" />
+<meta property="og:description" content="使用最频繁 TOP 10命令： history | awk &#39;{map[$2]&#43;&#43;} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;| sort -rn | nl 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面类：Graphica" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/most-frequently-command/" />
 <meta property="article:published_time" content="2020-03-20T19:58:00+08:00" />
@@ -118,11 +118,6 @@
           <li class="nav-item ">
             <a class="nav-link" href="https://huweicai.com">Home</a>
           </li>
-             
-            <li class="nav-item ">
-              <a class="nav-link" href="https://huweicai.com/blog/" >Blog  </a>
-            </li>
-          
              
             <li class="nav-item ">
               <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
@@ -296,7 +291,7 @@
 
   <ul class="post-meta li-x mt-1">
     
-      <li>Mar 20, 2020</li>
+      <li>2020-03-20</li>
     
 
     
@@ -311,7 +306,7 @@
 
           <div class="post-content markdown">
             <p>使用最频繁 TOP 10命令：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span> <span class="p">|</span> column -c3 -s <span class="s2">&#34; &#34;</span> -t <span class="p">|</span>sort -nr <span class="p">|</span> nl <span class="p">|</span> head -n10
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span><span class="p">|</span> sort -rn <span class="p">|</span> nl
 </code></pre></div><p>先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。</p>
 <h2 id="shell">Shell</h2>
 <p>首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？</p>
@@ -337,7 +332,7 @@
 </ul>
 <p>而狭义上的 shell 则是指 POSIX 制定的一种命令行解释器，有时候也指这种命令行解释器所解释的语言，就是我们通常意义上说的 shell 脚本。</p>
 <p>POSIX 是一系列操作系统接口的集合，主流的操作系统都有实现它。而 POSIX 给出的 shell 也是一个接口，具体的实现也是有很多种，比如：zsh、bash、fish等。</p>
-<p>在 GUI 系统里面，通常也会提供命令行的能力，提供这种能力的软件也就是我们锁熟知的：终端 Termial。</p>
+<p>在 GUI 系统里面，通常也会提供命令行的能力，提供这种能力的软件也就是我们所熟知的：终端 Termial。</p>
 <h2 id="history">history</h2>
 <p>hisotry 是一条 shell 内置命令，用于列出所有的历史命令。内置命令则意味着和 ps curl chmod 等已一个单独的二进制文件形式存在的用户命令不同，history 是直接由 shell 内置实现的，我们用定位二进制文件位置的：whereis 来查找一下 hisotry，就会发现并不存在这个文件：<code>whereis history</code>。</p>
 <p>不过在 zsh 里面，我们可以用 which 查看 history 的实现：</p>
@@ -359,7 +354,7 @@ omz_history <span class="o">()</span> <span class="o">{</span>
 	<span class="k">fi</span>
 <span class="o">}</span>
 
-</code></pre></div><p>可以看到 history 在 zsh 中是omz_history的别名，而继续分析这个omz_history我们可以发现它只是函数，看到这个函数我们就可以大概理解了，history其实就是把 $HISTFILE 里的东西全部读出来处理一下而已。</p>
+</code></pre></div><p>可以看到 history 在 zsh 中是omz_history的别名，而继续分析这个omz_history我们可以发现它只是一个函数，看到这个函数我们就可以大概理解了，history其实就是把 $HISTFILE 这个文件里的东西全部读出来处理一下而已。</p>
 <p>不过由于 hisotry 是每个 shell 内置的，各自的实现方式都有所不同，所以历史在不同的 shell 中是彼此不可见的。</p>
 <p>我们截取一下 history 的输出，大概是形如：序号+空格+命令这样的形式：</p>
 <pre><code>$history | head -10
@@ -369,22 +364,26 @@ omz_history <span class="o">()</span> <span class="o">{</span>
 4 which ls
 ...
 
-</code></pre><p>那么要找到使用最频繁的Shell命令，第一步肯定是把我用过哪些命令全部列出来，不加任何参数的 hisotry就可以实现这个事情。</p>
+</code></pre><p>那么要找到使用最频繁的Shell命令，第一步肯定是把用过哪些命令全部列出来，不加任何参数的 hisotry就可以实现这个事情。</p>
 <h2 id="awk">awk</h2>
 <p><a href="https://en.wikipedia.org/wiki/AWK"><code>awk</code></a> 是一个强大的文本处理工具，命名于三位创始人 Alfred Aho，Peter Weinberger, 和 Brian Kernighan的名字首字母。awk 按行处理文本，默认通过空格和TAB分隔变量，具有大量高级特性，已经复杂到可以称其为一门语言了。</p>
 <p>命令格式：<code>awk [参数] [脚本] [要处理的数据]</code>。</p>
-<p>一个简单的例子，让 history 命令不输出序号：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">history<span class="p">|</span> awk <span class="s1">&#39;{print $2}&#39;</span>
-
+<p>一个简单的例子，history 输出时只输出命令本身，忽略序号和参数：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">$history</span><span class="p">|</span> awk <span class="s1">&#39;{print $2}&#39;</span>
+ls
+<span class="nb">cd</span>
+golint
+which
+...
 
 </code></pre></div><p>通过 Linux 管道将 history 的输出传给 awk；</p>
 <p><a href="https://zh.wikipedia.org/wiki/AWK#print%E5%91%BD%E4%BB%A4">print</a> 是 awk 的一个内置命令，类似于 echo，用于输出文本；</p>
-<p>awk 是按行来处理文本的，而一行内则会默认根据空格和TAB分隔，$0 代表这一行的完整文本，而 $1 $2 则代表分隔后的第1、2个变量，可以通过 -F 来指定不同的分隔符。我们这里的 $1 是序号，而 $2 则是命令。</p>
+<p>awk 是按行来处理文本的，而一行内则会默认根据空格和TAB分隔，$0 代表这一行的完整文本，而 $1 $2 则代表分隔后的第1、2个变量，可以通过 -F 来指定不同的分隔符。我们这里的 $1 是序号，而 $2 则是命令，后面还有各种命令对应的参数。</p>
 <p>awk 语法相当强大，甚至有一本书专门去介绍，想详细了解的话网上的其他资料应该也非常丰富，这里就不展开了。</p>
 <p>回到我们的目标，我们可以这样统计命令出现的频率：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span>
 </code></pre></div><ol>
-<li>遍历所有行，map[command]++ 命令每出现一次，对应 map 中的 key 就加一。$2 代表命令，而 [] 则是一种类似哈希表的语法，我们把这个类似为哈希表的变量命名为 map。</li>
+<li>遍历所有行，map[command]++ 命令每出现一次，对应 map 中的 key 就加一。$2 代表命令，而 [] 则是一种类似哈希表的语法，我们把这个类似哈希表的变量命名为 map。</li>
 <li>END 表示在整个文件所有行处理完后才执行后面的逻辑</li>
 <li>从 map 中取出每个命令及其出现次数，除以总数得到频率。NR 代表总数，是 awk 中的一个内置变量，类似的内置变量还有：NF 当前行元素的个数、FS 指定的分隔符、FILENAME 文件名等。</li>
 </ol>

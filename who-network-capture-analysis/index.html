@@ -13,7 +13,8 @@
 <meta property="og:description" content="我们都知道网络是分层的，HTTP 请求包发出的时候会一层一层往下叠加头部知道最终变成物理信号在网线上传输，那么最终的网络包到底是长什么样呢？我们今天就来实践探索一下。 先在服务器上起一个简单的 HTTP 服务： python -m SimpleHTTPServer 8001 然后在客户端发起一个无参数的 GET 请求访问其根目录： curl -v http://110.89.228.110:8001 同时我们用 WireShark 抓包，完整的从网卡出去的一个包是长这样的一串二进制流： 011110001100001100010011100101011111011110000010100010001110100111111110011001111011 110001111100000010000000000001000101000000000000000010000111000000000000000001000000 000000000100000000000110000111011111011011000000101010000000000100000100011101100101 100111100100011101011100100000000111000111110100000100000010011101011110001011010011 100100011011000011111010111111111000000000011000000010000000001101001101001000110000 000000000000000000010000000100001000000010100010110011111101011000011100011110010101 011010110101010110010001010001110100010101010100001000000010111100100000010010000101 010001010100010100000010111100110001001011100011000100001101000010100100100001101111 011100110111010000111010001000000011000100110001001110000010111000111000001110010010 111000110010001100100011100000101110001100010011000100110111001110100011100000110000 001100000011000100001101000010100101010101110011011001010111001000101101010000010110 011101100101011011100111010000111010001000000110001101110101011100100110110000101111 001101110010111000110110001101000010111000110001000011010000101001000001011000110110 001101100101011100000111010000111010001000000010101000101111001010100000110100001010 0000110100001010 这串二进制流就是要在网线上传输的原始信号，如果" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/who-network-capture-analysis/" />
-
+<meta property="article:published_time" content="2020-07-01T01:47:00+08:00" />
+<meta property="article:modified_time" content="2020-07-01T01:47:00+08:00" />
 
   
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
@@ -117,11 +118,6 @@
           <li class="nav-item ">
             <a class="nav-link" href="https://huweicai.com">Home</a>
           </li>
-             
-            <li class="nav-item ">
-              <a class="nav-link" href="https://huweicai.com/blog/" >Blog  </a>
-            </li>
-          
              
             <li class="nav-item ">
               <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
@@ -295,7 +291,7 @@
 
   <ul class="post-meta li-x mt-1">
     
-      <li>Jan 1, 0001</li>
+      <li>2020-07-01</li>
     
 
     
@@ -703,16 +699,16 @@ Accept: */*
           <div class="row pt-3">
             <div class="col-md-6">
               
+                <a href=https://huweicai.com/troubleshotting-goroutine-leeking/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Golang 如何排查协程泄漏问题</span>
+                  </div>
+                </a>
+              
             </div>
             
             <div class="col-md-6 text-right" >
-              
-                <a href=https://huweicai.com/confusion-betwwen-forwhiletrue/ class="post-meta">Next
-                  <div class="pt-2 pb-5 flex-reverse">
-                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>for{;;}与while(true)的困惑</span>
-                  </div>
-                </a>
               
             </div>
           </div>

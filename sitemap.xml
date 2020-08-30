@@ -3,13 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://huweicai.com/</loc>
-    <lastmod>2020-08-20T19:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/personal/go-performance-advice/</loc>
     <lastmod>2020-08-20T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
@@ -18,6 +11,13 @@
   
   <url>
     <loc>https://huweicai.com/personal/</loc>
+    <lastmod>2020-08-20T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/</loc>
     <lastmod>2020-08-20T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -80,13 +80,6 @@
   </url>
   
   <url>
-    <loc>https://huweicai.com/blog/</loc>
-    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/categories/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
@@ -109,13 +102,6 @@
   
   <url>
     <loc>https://huweicai.com/categories/go/</loc>
-    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/troubleshotting-goroutine-leeking/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -164,13 +150,6 @@
   </url>
   
   <url>
-    <loc>https://huweicai.com/how-color-present/</loc>
-    <lastmod>2020-04-09T01:27:11+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/tags/linux/</loc>
     <lastmod>2020-03-20T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
@@ -179,13 +158,6 @@
   
   <url>
     <loc>https://huweicai.com/tags/shell/</loc>
-    <lastmod>2020-03-20T19:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/most-frequently-command/</loc>
     <lastmod>2020-03-20T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -262,13 +234,6 @@
   </url>
   
   <url>
-    <loc>https://huweicai.com/computer-encodings/</loc>
-    <lastmod>2018-05-26T12:47:11+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</loc>
     <lastmod>2018-05-26T12:47:11+08:00</lastmod>
     <changefreq>daily</changefreq>
@@ -285,12 +250,6 @@
   <url>
     <loc>https://huweicai.com/about/</loc>
     <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/who-network-capture-analysis/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
   </url>
   
 </urlset>
