@@ -296,7 +296,7 @@
 
     
       <li class="middot"></li>
-      <li>6 minutes read</li>
+      <li>7 minutes read</li>
     
   </ul>
   
@@ -366,6 +366,7 @@ for ; hv1 &lt; hn; hv1++ {
 </code></pre></div><h3 id="切片是如何扩容的">切片是如何扩容的</h3>
 <p>参考下面这个问题。</p>
 <h3 id="切片的实现原理">切片的实现原理</h3>
+<p>Rob Pike 对于 slice 的定义：切片一种描述数组中的一个连续片段</p>
 <p>我们在创建切片时，会先创建一个数组，然后再通过 [:] 的方式转化为切片：</p>
 <pre><code>slice := []int{1, 2, 3} 
 
@@ -385,7 +386,7 @@ slice := vauto[:]
    Len  int
    Cap  int
 }
-</code></pre><p>切片增长的逻辑如下，以 append 三个元素为例：</p>
+</code></pre><p>指向底层数组第一个元素的指针，切片的长度和容量；切片是动态的，可以通过 append 来增加元素，append 的逻辑如下，以 append 三个元素为例：</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// append(slice, 1, 2, 3)
 </span><span class="c1"></span><span class="nx">ptr</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cap</span> <span class="o">:=</span> <span class="nx">slice</span>
 <span class="nx">newlen</span> <span class="o">:=</span> <span class="nx">len</span> <span class="o">+</span> <span class="mi">3</span>
@@ -432,7 +433,43 @@ slice := vauto[:]
 <span class="nx">newcap</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">capmem</span> <span class="o">/</span> <span class="nx">et</span><span class="p">.</span><span class="nx">size</span><span class="p">)</span>
 </code></pre></div><p>会根据类型进行内存对齐，会在双倍的基础上再对容量根据最佳对齐值进行一定的向上取整。</p>
 <p>切片拷贝时会调用：memmove，将整块内存空间全部复制到新的地方，同时把源切片的 Len 复制给新的切片，而不是一个一个元素在 Go 代码层面的复制。</p>
-<h3 id="go-字符串实现原理">Go 字符串实现原理</h3>
+<h3 id="空切片和-nil-有什么区别-a--int-a--nil">空切片和 nil 有什么区别： a := []int{} a := nil</h3>
+<p>我们可以通过 <code>*(\*reflect.SliceHeader)(unsafe.Pointer(&amp;slice))</code>显示的将切片转化为其底层数据结构，便于分析：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span> <span class="p">[]</span><span class="kt">int</span>
+	<span class="nx">b</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">c</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{}</span>
+	<span class="nx">aHeader</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">SliceHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">))</span>
+	<span class="nx">bHeader</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">SliceHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">b</span><span class="p">))</span>
+	<span class="nx">cHeader</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">SliceHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">c</span><span class="p">))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">aHeader</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">bHeader</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">cHeader</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">输出</span><span class="err">：</span>
+<span class="p">{</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">}</span>
+<span class="p">{</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">}</span>
+<span class="p">{</span><span class="mi">824634355400</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">}</span>
+</code></pre></div><p>我们分别用申明变量、显示赋值为 nil、初始化一个空切片的方式构造了三个切片，转化为底层数据结构在打印日志可以发现，前两种方式指向数组的指针其实并没有初始化，而第三种方式 Data 会指向一个数组，虽然它的长度为0。</p>
+<p>这个不同会导致前两者在 json 序列化的时候被序列化成：<code>null</code>，而空切片则会序列化为：<code>[]</code>：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span> <span class="p">[]</span><span class="kt">int</span>
+	<span class="nx">b</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">c</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{}</span>
+	<span class="nx">aBytes</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+	<span class="nx">bBytes</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+	<span class="nx">cBytes</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+	<span class="nb">println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">aBytes</span><span class="p">))</span>
+	<span class="nb">println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">bBytes</span><span class="p">))</span>
+	<span class="nb">println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">cBytes</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="nx">输出</span><span class="err">：</span>
+<span class="nx">null</span>
+<span class="nx">null</span>
+<span class="p">[]</span>
+</code></pre></div><h3 id="go-字符串实现原理">Go 字符串实现原理</h3>
 <p>字符串的实现其实和切片比较像，只是没有容量而已：</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">StringHeader</span> <span class="kd">struct</span> <span class="p">{</span>
 	<span class="nx">Data</span> <span class="kt">uintptr</span>
@@ -456,8 +493,7 @@ slice := vauto[:]
 <span class="p">}</span>
 
 <span class="nx">输出</span><span class="err">：</span><span class="nx">字符数</span><span class="err">：</span><span class="mi">10</span> <span class="nx">字节数</span><span class="err">：</span><span class="mi">30</span> <span class="nx">长度</span><span class="err">：</span><span class="mi">30</span>
-</code></pre></div><h3 id="go-map实现原理">Go Map实现原理</h3>
-<h3 id="长度不同的数组是同样的类型吗">长度不同的数组是同样的类型吗？</h3>
+</code></pre></div><h3 id="长度不同的数组是同样的类型吗">长度不同的数组是同样的类型吗？</h3>
 <p>[2]int 和 [3]int 并不是一个类型，<code>reflect.TypeOf([3]int{}).String()</code> 的结果是：[3]int，长度也是数组的一个元信息。</p>
 <p>但它们的 Kind 是一样的，都是：array。</p>
 <h3 id="go-为什么使用-plan9-作为汇编语言">Go 为什么使用 Plan9 作为汇编语言？</h3>
@@ -465,12 +501,17 @@ slice := vauto[:]
 <p>编译为 Plan9 汇编之后，Go 实现了一个比较轻量的汇编器来真正将 Plan9 翻译成对应平台的机器码。</p>
 <p><a href="https://9p.io/sys/doc/asm.html">https://9p.io/sys/doc/asm.html</a></p>
 <h3 id="interface-之-eface-的实现">interface{} 之 eface 的实现</h3>
-<p>go 里的 interface 有两种，带方法的接口：iface，和不带方法的 eface，我们平常在处理任意类型时所用的参数类型： interface{} 就是 eface，eface 包括一个类型指针和一个指向真实数据的指针。</p>
+<p>go 里的接口有两种，带方法的接口：iface，和不带方法的 eface，我们平常在处理任意类型时所用的参数类型，就是一种特殊的接口 interface{}，这个接口没有方法，所以所有的结构体都实现了它，由于 go 的接口是 duck type 的，所以任何结构体都可以传递到以 interface{} 为参数的方法中，这种传值方式跟：io.Reader 这种接口其实是一个性质。空的接口在 go 中做了特殊处理，interface{} 就是 eface，eface 包括一个类型指针和一个指向真实数据的指针。</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">eface</span> <span class="kd">struct</span> <span class="p">{</span> <span class="c1">// 16 bytes
 </span><span class="c1"></span>	<span class="nx">_type</span> <span class="o">*</span><span class="nx">_type</span>
 	<span class="nx">data</span>  <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
 <span class="p">}</span>
-</code></pre></div><h3 id="go-常见性能优化点">Go 常见性能优化点</h3>
+</code></pre></div><h3 id="go-反射的实现原理">Go 反射的实现原理</h3>
+<p><a href="">Go 反射的的三大定律</a>：</p>
+<ol>
+<li>反射</li>
+</ol>
+<h3 id="go-常见性能优化点">Go 常见性能优化点</h3>
 <h4 id="找到瓶颈点">找到瓶颈点</h4>
 <ul>
 <li>go tool pprof 分析内存</li>
@@ -528,6 +569,23 @@ func ErrorB() error {
 		<span class="c1">// do something
 </span><span class="c1"></span>  <span class="p">}</span>
 <span class="p">}</span>
+</code></pre></div><h3 id="go-map实现原理">Go Map实现原理</h3>
+<p>Go map 的底层数据结构是一个 hmap 结构体，定义于 runtime/map.go 文件中：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">hmap</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="c1">// Note: the format of the hmap is also encoded in cmd/compile/internal/gc/reflect.go.
+</span><span class="c1"></span>	<span class="c1">// Make sure this stays in sync with the compiler&#39;s definition.
+</span><span class="c1"></span>  <span class="nx">count</span>     <span class="kt">int</span> <span class="c1">// 数量，len() 返回的结果
+</span><span class="c1"></span>	<span class="nx">flags</span>     <span class="kt">uint8</span>
+	<span class="nx">B</span>         <span class="kt">uint8</span>  <span class="c1">// log_2 of # of buckets (can hold up to loadFactor * 2^B items)
+</span><span class="c1"></span>	<span class="nx">noverflow</span> <span class="kt">uint16</span> <span class="c1">// approximate number of overflow buckets; see incrnoverflow for details
+</span><span class="c1"></span>	<span class="nx">hash0</span>     <span class="kt">uint32</span> <span class="c1">// hash seed
+</span><span class="c1"></span>
+	<span class="nx">buckets</span>    <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// array of 2^B Buckets. may be nil if count==0.
+</span><span class="c1"></span>	<span class="nx">oldbuckets</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// previous bucket array of half the size, non-nil only when growing
+</span><span class="c1"></span>	<span class="nx">nevacuate</span>  <span class="kt">uintptr</span>        <span class="c1">// progress counter for evacuation (buckets less than this have been evacuated)
+</span><span class="c1"></span>
+	<span class="nx">extra</span> <span class="o">*</span><span class="nx">mapextra</span> <span class="c1">// optional fields
+</span><span class="c1"></span><span class="p">}</span>
 </code></pre></div>
           </div>
 
@@ -753,8 +811,8 @@ func ErrorB() error {
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#go-%e5%ad%97%e7%ac%a6%e4%b8%b2%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
-												 Go 字符串实现原理
+						 					<a class="nav-link" href="#%e7%a9%ba%e5%88%87%e7%89%87%e5%92%8c-nil-%e6%9c%89%e4%bb%80%e4%b9%88%e5%8c%ba%e5%88%ab-a--int-a--nil">
+												 空切片和 nil 有什么区别： a := []int{} a := nil
 											</a>
 										</li>
 						 
@@ -779,8 +837,8 @@ func ErrorB() error {
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#go-map%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
-												 Go Map实现原理
+						 					<a class="nav-link" href="#go-%e5%ad%97%e7%ac%a6%e4%b8%b2%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 Go 字符串实现原理
 											</a>
 										</li>
 						 
@@ -859,6 +917,32 @@ func ErrorB() error {
 										<li class="nav-item">
 						 					<a class="nav-link" href="#interface-%e4%b9%8b-eface-%e7%9a%84%e5%ae%9e%e7%8e%b0">
 												 interface{} 之 eface 的实现
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-%e5%8f%8d%e5%b0%84%e7%9a%84%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 Go 反射的实现原理
 											</a>
 										</li>
 						 
@@ -1087,6 +1171,32 @@ func ErrorB() error {
 										<li class="nav-item">
 						 					<a class="nav-link" href="#select-%e5%ae%9e%e7%8e%b0%e8%b6%85%e6%97%b6%e9%80%bb%e8%be%91">
 												 select 实现超时逻辑
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-map%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 Go Map实现原理
 											</a>
 										</li>
 						 

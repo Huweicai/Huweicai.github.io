@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="使用最频繁 TOP 10命令： history | awk &#39;{map[$2]&#43;&#43;} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;| sort -rn | nl 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面类：Graphica">
+  <meta name="description" content="使用最频繁 TOP 10命令： history | awk &#39;{map[$2]&#43;&#43;} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;| sort -rn | nl | head 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面类：Graphi">
   
   <meta property="og:title" content="找出使用最频繁的Shell命令" />
-<meta property="og:description" content="使用最频繁 TOP 10命令： history | awk &#39;{map[$2]&#43;&#43;} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;| sort -rn | nl 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面类：Graphica" />
+<meta property="og:description" content="使用最频繁 TOP 10命令： history | awk &#39;{map[$2]&#43;&#43;} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;| sort -rn | nl | head 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面类：Graphi" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/most-frequently-command/" />
 <meta property="article:published_time" content="2020-03-20T19:58:00+08:00" />
@@ -306,7 +306,7 @@
 
           <div class="post-content markdown">
             <p>使用最频繁 TOP 10命令：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span><span class="p">|</span> sort -rn <span class="p">|</span> nl
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span><span class="p">|</span> sort -rn <span class="p">|</span> nl <span class="p">|</span> head
 </code></pre></div><p>先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。</p>
 <h2 id="shell">Shell</h2>
 <p>首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？</p>
@@ -452,7 +452,7 @@ which
     10	<span class="m">158</span> 1.43767% j
 </code></pre></div><h2 id="总结">总结</h2>
 <p>最终我们的脚本是这样的：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span><span class="p">|</span> sort -rn <span class="p">|</span> nl
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="p">|</span> awk <span class="s1">&#39;{map[$2]++} END { for (a in map )print map[ a ]&#34; &#34; map[ a ]/NR*100 &#34;% &#34; a }&#39;</span><span class="p">|</span> sort -rn <span class="p">|</span> nl <span class="p">|</span>head
 </code></pre></div><p>通过以上命令的组合，我们就可以成功的找出最频繁使用的shell命令，这个时候我们可以针对一些常用的命令做一些优化，来提高我的效率，比如我经常使用 grep -nr 来查找当前目录的文件，输的多了实在觉得很麻烦，我就把它做成了一个 iTerm 的快捷键，实现了一键输入。</p>
 
           </div>
