@@ -296,7 +296,7 @@
 
     
       <li class="middot"></li>
-      <li>7 minutes read</li>
+      <li>12 minutes read</li>
     
   </ul>
   
@@ -586,6 +586,156 @@ func ErrorB() error {
 </span><span class="c1"></span>
 	<span class="nx">extra</span> <span class="o">*</span><span class="nx">mapextra</span> <span class="c1">// optional fields
 </span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><h3 id="go-变量初始化的执行顺序">Go 变量初始化的执行顺序</h3>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200902154225.png" alt="这里写图片描述"></p>
+<p>main 函数是系统的入口，从 main 函数所在的包开始初始化：</p>
+<p>**包之间：**一个包在初始化之前，会按照引入顺序先初始化其所依赖的的包，一直递归下去；</p>
+<p>**包内：**一个包内不同的文件之间会按照文件名字符顺序初始化：a.go &gt; b.go</p>
+<p>**文件内：**初始化按照字段类型顺序为：常量 -&gt; 变量 -&gt; init 函数</p>
+<p>**一种字段类型内：**按照申明顺序从上到下初始化</p>
+<h3 id="syncmutex-锁实现原理">sync.Mutex 锁实现原理</h3>
+<p>sync.Mutext 是 go 提供的一种同步原语，用于表达互斥，不过不推荐在业务中使用，应首通过沟通（管道+协程）来共享内存，而不是通过共享内存来沟通。</p>
+<p>Mutex 结构体如下，只有两个变量，非常简单：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Mutex</span> <span class="kd">struct</span> <span class="p">{</span>
+   <span class="nx">state</span> <span class="kt">int32</span>
+   <span class="nx">sema</span>  <span class="kt">uint32</span>
+<span class="p">}</span>
+</code></pre></div><p>state 字段是一个位图</p>
+<ul>
+<li>第 0 位表示是否加锁</li>
+<li>第 1 位表示是否已唤醒</li>
+<li>第 2 位表示是否为饥饿模式</li>
+<li>剩下的位则用于表示在这个 Mutex 上等待的 goroutine 数量</li>
+</ul>
+<p>sema 是一个信号量，配合 sleep 原语和 notify 原因使用，具体实现是协程调用 runtime_SemacquireMutex 用于在信号量上等待信号量大于0，runtime_Semrelease 则会唤醒在这个信号量上等待的协程。</p>
+<p>加锁的时候其实就是尝试将state的第一个位置成true，表示已经加锁，而解锁则是将其置回0再调用runtime_Semrelease唤醒等待的协程。</p>
+<p>不过之后的版本引入了饥饿模式，当有协程等待超过一毫秒之后，就会进入饥饿模式，所有占用CPU的协程不再尝试自旋获取锁，直接去等待队列尾端排队，锁会在释放后直接递交给等待队列中的第一个协程。当满足以下任一条件时就会退出饥饿模式：</p>
+<ul>
+<li>等待时间小于 1ms</li>
+<li>等待队列空了</li>
+</ul>
+<p>不过需要注意的是，go 的 Mutex 并没有额外去实现可重入的机制，所以当一个获取了锁再尝试去加锁时就会死锁。</p>
+<p>在 Java 里面有重量级锁和轻量级锁的概念，在 go 里面对应的则是在信号量上等待的饥饿模式和自旋空等的普通模式。</p>
+<p>而饥饿模式和普通模式的切换，则也是 go 在公平和性能中的一个权衡。</p>
+<h3 id="syncrwmutex-读写锁实现原理">sync.RWMutex 读写锁实现原理</h3>
+<p>RWMutex 提供的是一个读写锁的功能，同一时间可以有很多个读者在读，或者一个写者在写，适用于读多写少的场景；</p>
+<p>RWMutex 的实现和 Mutex 一样，也是基于信号量和atomic指令来实现的；</p>
+<p>数据结构：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">RWMutex</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">w</span>           <span class="nx">Mutex</span>  <span class="c1">// 写者锁
+</span><span class="c1"></span>	<span class="nx">writerSem</span>   <span class="kt">uint32</span> <span class="c1">// 写者信号量
+</span><span class="c1"></span>	<span class="nx">readerSem</span>   <span class="kt">uint32</span> <span class="c1">// 读者信号量
+</span><span class="c1"></span>	<span class="nx">readerCount</span> <span class="kt">int32</span>  <span class="c1">// 读者数量
+</span><span class="c1"></span>	<span class="nx">readerWait</span>  <span class="kt">int32</span>  <span class="c1">// 离开的写者数量
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">rwmutexMaxReaders</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">30</span> <span class="c1">// 最大的读者数量，2^30 = 1073741824
+</span></code></pre></div><p>大致的实现原理就是，读加锁时会先把读者数量加一，然后判断当前有没有协程尝试写入，没有的话就可以读了，如果有的话那么就会挂起，挂起是通过判断读者数量是否为负数来实现的，所以这里会限制读者数量不能超过rwmutexMaxReaders，这样才能保证读者数量能在尝试写入时一定能变成负值；在尝试加写锁时会先通过 Mutex 跟其他尝试写的协程竞争，然后才能进入临界区，进入之后就会把读者数量减去rwmutexMaxReaders变成负数，这样就不会有新增的读者，然后等待当前正在读的读者全部读完，最后一个读者读完之后会唤醒它，然后就可以开始写了，写者写完之后唤醒读者，大家你来我往，井井有条。</p>
+<h3 id="synccond条件变量">sync.Cond条件变量</h3>
+<p>Cond 是一个条件变量：</p>
+<ul>
+<li>Wait 等待</li>
+<li>Notify 唤醒一个等待的协程</li>
+<li>BroadCast 唤醒所有等待的协程</li>
+</ul>
+<p>不过这个库在 Go 显得有的有点鸡肋，管道既可以实现信号量的功能，而且还顺带可以传输数据，具体实现的话底层和锁依赖的信号量一样的。</p>
+<h3 id="syncwaitgroup-等待条件">sync.WaitGroup 等待条件</h3>
+<p>waitGroup 类似于 Java 里面的 CountDownLatch类，可以让一个协程等待其他协程任务的完成，拥有三个方法：</p>
+<ul>
+<li>Add 申明要等待的数量</li>
+<li>Done 完成了一个任务，Add( -1)</li>
+<li>Wait 等待</li>
+</ul>
+<p>底层实现也是通过 atomic 和信号量来实现的。</p>
+<p>一个没有 WaitGroup 的例子：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">wg</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+	<span class="nx">size</span> <span class="o">:=</span> <span class="mi">10</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">size</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">x</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nb">println</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+			<span class="nx">wg</span> <span class="o">&lt;-</span> <span class="kd">struct</span><span class="p">{}{}</span>
+		<span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">size</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="o">&lt;-</span><span class="nx">wg</span>
+	<span class="p">}</span>
+</code></pre></div><p>WaitGroup 版本：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">wg</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+	<span class="nx">size</span> <span class="o">:=</span> <span class="mi">10</span>
+	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">size</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">x</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nb">println</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+			<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+		<span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</code></pre></div><h3 id="synconce-实现原理">sync.Once 实现原理</h3>
+<p>sync.Once 数据结构：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Once</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">done</span> <span class="kt">uint32</span>
+	<span class="nx">m</span>    <span class="nx">Mutex</span>
+<span class="p">}</span>
+</code></pre></div><p>sync.Once 可以保证提交给它的方法无论被调用多少次也只会执行一次，这个其实就是一个经典的单例模式的解决方案，两步判断，实现原理如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadUint32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">o</span><span class="p">.</span><span class="nx">done</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span> <span class="c1">// 判断是否已经被执行过
+</span><span class="c1"></span>		<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="nx">o</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>	<span class="c1">// 加锁尝试初始化
+</span><span class="c1"></span><span class="k">defer</span> <span class="nx">o</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+<span class="k">if</span> <span class="nx">o</span><span class="p">.</span><span class="nx">done</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span> <span class="c1">// 在等待锁的时候已经被其他协程执行过了
+</span><span class="c1"></span>	<span class="k">return</span>
+<span class="p">}</span>
+ 
+<span class="nf">f</span><span class="p">()</span> <span class="c1">// 执行
+</span><span class="c1"></span><span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">o</span><span class="p">.</span><span class="nx">done</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">// 标记已完成
+</span></code></pre></div><h3 id="syncmap-实现原理">sync.Map 实现原理</h3>
+<p>Go 语言中自带的 map 出于性能考虑并不是线程安全的，go 1.9 加入了 sync.Map 来提供并发场景下哈希表的高性能解决方案，数据结构如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">mu</span> <span class="nx">Mutex</span>
+  	<span class="nx">read</span> <span class="nx">atomic</span><span class="p">.</span><span class="nx">Value</span> <span class="c1">// 只读数据
+</span><span class="c1"></span>  	<span class="nx">dirty</span> <span class="kd">map</span><span class="p">[</span><span class="kd">interface</span><span class="p">{}]</span><span class="o">*</span><span class="nx">entry</span> <span class="c1">// 动态数据
+</span><span class="c1"></span>  	<span class="nx">misses</span> <span class="kt">int</span>	<span class="c1">// 未命中的数量
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="c1">// read 的结构
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">readOnly</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">m</span>       <span class="kd">map</span><span class="p">[</span><span class="kd">interface</span><span class="p">{}]</span><span class="o">*</span><span class="nx">entry</span>
+	<span class="nx">amended</span> <span class="kt">bool</span>
+<span class="p">}</span>
+</code></pre></div><p>读取数据时会先从 read 中读取，read 中读不到才会尝试去 dirty 读，任何对 dirty 的操作都会加锁，来保证数据的安全。</p>
+<p>修改数据时会尝试 CAS 直接修改 read，因为 read 和 dirty 指向的数据：entry 其实是同一份，所以修改是会生效的。</p>
+<p>添加数据时则会直接添加到 dirty 中，数据添加后虽然没有在 read 里出现，但是还是会穿透查到 dirty 中来，但穿透次数频繁到一定程度后，就会把 dirty 升级为 read。</p>
+<p>因为 read 是只读的，所以不能直接删除，sync.Map 替换掉原有数据指向一个特殊的标记来表示数据已经被删除，同时会在 dirty 中删除这个 key，这样这个 key 就不会一直存在。</p>
+<p>sync.Map 的思想是用空间换时间，维护了一个只读的数据副本，对于读多写少的场景性能几乎和普通 map 一样，但是当写入和删除频繁时性能就比较差了，不过还是比用全局读写锁保护的map要好很多。</p>
+<p>Java 里面的 ConcurrentHashMap 的思路则是锁粒度细分，不过 Go 社区里面也有用这种思路实现的开源库：https://github.com/orcaman/concurrent-map。</p>
+<h3 id="go-timer-实现原理">go Timer 实现原理</h3>
+<p>首先如果让我们自己去实现一个 Timer 的话，我们可以计算出来要具体下一次调度的时间，然后 sleep 对应的时长就好了，但是如果创建了很多的 Timer 的话，这样的性能其实是比较差的，go 里面会有一个协程统一负责管理 timer 来执行我们上面这个操作，所有的 timer 会放在一个堆中进行管理，每次取堆顶的值来判断要 sleep 多久即可。</p>
+<h3 id="两个协程交替打印从1到100的数字">两个协程交替打印从1到100的数字</h3>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">goal</span> <span class="o">:=</span> <span class="mi">100</span>
+	<span class="nx">c</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="nx">done</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+	<span class="nx">c</span> <span class="o">&lt;-</span> <span class="mi">1</span> <span class="c1">// 启动信号
+</span><span class="c1"></span>
+	<span class="nx">run</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(</span><span class="nx">id</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">c</span> <span class="p">{</span>
+			<span class="nb">print</span><span class="p">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s">&#34;: &#34;</span><span class="p">)</span>
+			<span class="nb">println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nx">i</span> <span class="o">==</span> <span class="nx">goal</span> <span class="p">{</span>
+				<span class="nx">done</span> <span class="o">&lt;-</span> <span class="kd">struct</span><span class="p">{}{}</span>
+				<span class="k">return</span>
+			<span class="p">}</span>
+
+			<span class="nx">c</span> <span class="o">&lt;-</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="k">go</span> <span class="nf">run</span><span class="p">(</span><span class="s">&#34;1&#34;</span><span class="p">)</span>
+	<span class="k">go</span> <span class="nf">run</span><span class="p">(</span><span class="s">&#34;2&#34;</span><span class="p">)</span>
+
+	<span class="o">&lt;-</span><span class="nx">done</span>
+<span class="p">}</span>
 </code></pre></div>
           </div>
 
@@ -605,13 +755,6 @@ func ErrorB() error {
             </div>
             
             <div class="col-md-6 text-right" >
-              
-                <a href=https://huweicai.com/personal/go-performance-advice/ class="post-meta">Next
-                  <div class="pt-2 pb-5 flex-reverse">
-                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>Go 常见性能优化建议</span>
-                  </div>
-                </a>
               
             </div>
           </div>
@@ -1197,6 +1340,240 @@ func ErrorB() error {
 										<li class="nav-item">
 						 					<a class="nav-link" href="#go-map%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
 												 Go Map实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-%e5%8f%98%e9%87%8f%e5%88%9d%e5%a7%8b%e5%8c%96%e7%9a%84%e6%89%a7%e8%a1%8c%e9%a1%ba%e5%ba%8f">
+												 Go 变量初始化的执行顺序
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#syncmutex-%e9%94%81%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 sync.Mutex 锁实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#syncrwmutex-%e8%af%bb%e5%86%99%e9%94%81%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 sync.RWMutex 读写锁实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#synccond%e6%9d%a1%e4%bb%b6%e5%8f%98%e9%87%8f">
+												 sync.Cond条件变量
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#syncwaitgroup-%e7%ad%89%e5%be%85%e6%9d%a1%e4%bb%b6">
+												 sync.WaitGroup 等待条件
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#synconce-%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 sync.Once 实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#syncmap-%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 sync.Map 实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-timer-%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 go Timer 实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%a4%e4%b8%aa%e5%8d%8f%e7%a8%8b%e4%ba%a4%e6%9b%bf%e6%89%93%e5%8d%b0%e4%bb%8e1%e5%88%b0100%e7%9a%84%e6%95%b0%e5%ad%97">
+												 两个协程交替打印从1到100的数字
 											</a>
 										</li>
 						 
