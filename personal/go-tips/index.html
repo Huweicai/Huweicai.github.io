@@ -7,12 +7,12 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="Pool go struct能不能比较 go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG go 反射实现原理 sync.Pool 实现原理 sync.Mutex / sync.RWMutex 实现原理 goroutine调度用了什么系统调用 什么是闭包 for i 遍历和 for range 遍历有什么区别 后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。 for v1,v2 := range ha 遍历数组的实际运行格式： ha := a hv1 := 0 hn := len(ha) v1 := hv1 for ; hv1 &lt; hn; hv1&#43;&#43; { tmp := ha[hv1] v1, v2 := hv1, tmp ... }">
+  <meta name="description" content="Pool go struct能不能比较 go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG go 反射实现原理 sync.Pool 实现原理 goroutine调度用了什么系统调用 什么是闭包 for i 遍历和 for range 遍历有什么区别 后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。 for v1,v2 := range ha 遍历数组的实际运行格式： ha := a hv1 := 0 hn := len(ha) v1 := hv1 for ; hv1 &lt; hn; hv1&#43;&#43; { tmp := ha[hv1] v1, v2 := hv1, tmp ... } for hv1 := range h1 遍历">
   
-  <meta property="og:title" content="Go 知识点" />
-<meta property="og:description" content="Pool go struct能不能比较 go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG go 反射实现原理 sync.Pool 实现原理 sync.Mutex / sync.RWMutex 实现原理 goroutine调度用了什么系统调用 什么是闭包 for i 遍历和 for range 遍历有什么区别 后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。 for v1,v2 := range ha 遍历数组的实际运行格式： ha := a hv1 := 0 hn := len(ha) v1 := hv1 for ; hv1 &lt; hn; hv1&#43;&#43; { tmp := ha[hv1] v1, v2 := hv1, tmp ... }" />
+  <meta property="og:title" content="Go语言小知识" />
+<meta property="og:description" content="Pool go struct能不能比较 go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG go 反射实现原理 sync.Pool 实现原理 goroutine调度用了什么系统调用 什么是闭包 for i 遍历和 for range 遍历有什么区别 后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。 for v1,v2 := range ha 遍历数组的实际运行格式： ha := a hv1 := 0 hn := len(ha) v1 := hv1 for ; hv1 &lt; hn; hv1&#43;&#43; { tmp := ha[hv1] v1, v2 := hv1, tmp ... } for hv1 := range h1 遍历" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/personal/go-for-xuxiangzhen/" />
+<meta property="og:url" content="https://huweicai.com/personal/go-tips/" />
 <meta property="article:published_time" content="2020-08-19T19:58:00+08:00" />
 <meta property="article:modified_time" content="2020-08-19T19:58:00+08:00" />
 
@@ -28,11 +28,11 @@
 
   <title>
   
-       Go 知识点 | Anonymous&#39; Blog 
+       Go语言小知识 | Anonymous&#39; Blog 
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/personal/go-for-xuxiangzhen/">
+  <link rel="canonical" href="https://huweicai.com/personal/go-tips/">
 
   
   
@@ -287,7 +287,7 @@
     
   </ul>
 
-  <div class="px-4 post-heading">Go 知识点</div>
+  <div class="px-4 post-heading">Go语言小知识</div>
 
   <ul class="post-meta li-x mt-1">
     
@@ -315,7 +315,6 @@
 <li>go 协程调度模型：MPG</li>
 <li>go 反射实现原理</li>
 <li>sync.Pool 实现原理</li>
-<li>sync.Mutex / sync.RWMutex 实现原理</li>
 <li>goroutine调度用了什么系统调用</li>
 <li>什么是闭包</li>
 </ul>
@@ -434,7 +433,7 @@ slice := vauto[:]
 </code></pre></div><p>会根据类型进行内存对齐，会在双倍的基础上再对容量根据最佳对齐值进行一定的向上取整。</p>
 <p>切片拷贝时会调用：memmove，将整块内存空间全部复制到新的地方，同时把源切片的 Len 复制给新的切片，而不是一个一个元素在 Go 代码层面的复制。</p>
 <h3 id="空切片和-nil-有什么区别-a--int-a--nil">空切片和 nil 有什么区别： a := []int{} a := nil</h3>
-<p>我们可以通过 <code>*(\*reflect.SliceHeader)(unsafe.Pointer(&amp;slice))</code>显示的将切片转化为其底层数据结构，便于分析：</p>
+<p>我们可以通过 <code>*(*reflect.SliceHeader)(unsafe.Pointer(&amp;slice))</code>显示的将切片转化为其底层数据结构，便于分析：</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="kd">var</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span> <span class="p">[]</span><span class="kt">int</span>
 	<span class="nx">b</span> <span class="p">=</span> <span class="kc">nil</span>
@@ -494,7 +493,7 @@ slice := vauto[:]
 
 <span class="nx">输出</span><span class="err">：</span><span class="nx">字符数</span><span class="err">：</span><span class="mi">10</span> <span class="nx">字节数</span><span class="err">：</span><span class="mi">30</span> <span class="nx">长度</span><span class="err">：</span><span class="mi">30</span>
 </code></pre></div><h3 id="长度不同的数组是同样的类型吗">长度不同的数组是同样的类型吗？</h3>
-<p>[2]int 和 [3]int 并不是一个类型，<code>reflect.TypeOf([3]int{}).String()</code> 的结果是：[3]int，长度也是数组的一个元信息。</p>
+<p>不是；[2]int 和 [3]int 并不是一个类型，<code>reflect.TypeOf([3]int{}).String()</code> 的结果是：[3]int，长度也是数组的一个元信息。</p>
 <p>但它们的 Kind 是一样的，都是：array。</p>
 <h3 id="go-为什么使用-plan9-作为汇编语言">Go 为什么使用 Plan9 作为汇编语言？</h3>
 <p>因为 Go 的作者大部分以前都是搞 Plan9 的，他们在 Go 里重新启用了这种类似的汇编语法，微跨平台汇编语法，所有指令集通用的 ADD MOV JUMP PUSH 之类的指令在 Plan9 里相当于有了一个统一的指令名称，有的指令实在是只在某个指令集上有，那就没办法了，只能说能省一点力气是一点力气。</p>
@@ -507,11 +506,24 @@ slice := vauto[:]
 	<span class="nx">data</span>  <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
 <span class="p">}</span>
 </code></pre></div><h3 id="go-反射的实现原理">Go 反射的实现原理</h3>
-<p><a href="">Go 反射的的三大定律</a>：</p>
-<ol>
-<li>反射</li>
-</ol>
-<h3 id="go-常见性能优化点">Go 常见性能优化点</h3>
+<p><a href="">Go 反射的的三大定律</a></p>
+<p>反射的入口主要是两个方法：reflect.TypeOf 和 reflect.ValueOf，对应的它们的入参都是一个 interface{}，interface{} 内部会有两个变量，一个是 type，一个是指向原始数据的指针，而反射的两个方法就是分别获取的对应的这两个值。</p>
+<p>reflect.TypeOf:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">TypeOf</span><span class="p">(</span><span class="nx">i</span> <span class="kd">interface</span><span class="p">{})</span> <span class="nx">Type</span> <span class="p">{</span>
+	<span class="nx">eface</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">emptyInterface</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">))</span>
+	<span class="k">return</span> <span class="nf">toType</span><span class="p">(</span><span class="nx">eface</span><span class="p">.</span><span class="nx">typ</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>reflect.reflect.ValueOf:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">ValueOf</span><span class="p">(</span><span class="nx">i</span> <span class="kd">interface</span><span class="p">{})</span> <span class="nx">Value</span> <span class="p">{</span>
+	<span class="nx">e</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">emptyInterface</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">))</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">typ</span>
+	<span class="nx">f</span> <span class="o">:=</span> <span class="nf">flag</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">Kind</span><span class="p">())</span>
+	<span class="k">if</span> <span class="nf">ifaceIndir</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">f</span> <span class="o">|=</span> <span class="nx">flagIndir</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">Value</span><span class="p">{</span><span class="nx">t</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">word</span><span class="p">,</span> <span class="nx">f</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="go-常见性能优化点">Go 常见性能优化点</h3>
 <h4 id="找到瓶颈点">找到瓶颈点</h4>
 <ul>
 <li>go tool pprof 分析内存</li>
