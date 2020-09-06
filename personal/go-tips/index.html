@@ -721,7 +721,7 @@ func ErrorB() error {
 <p>因为 read 是只读的，所以不能直接删除，sync.Map 替换掉原有数据指向一个特殊的标记来表示数据已经被删除，同时会在 dirty 中删除这个 key，这样这个 key 就不会一直存在。</p>
 <p>sync.Map 的思想是用空间换时间，维护了一个只读的数据副本，对于读多写少的场景性能几乎和普通 map 一样，但是当写入和删除频繁时性能就比较差了，不过还是比用全局读写锁保护的map要好很多。</p>
 <p>Java 里面的 ConcurrentHashMap 的思路则是锁粒度细分，不过 Go 社区里面也有用这种思路实现的开源库：https://github.com/orcaman/concurrent-map。</p>
-<h3 id="go-timer-实现原理">go Timer 实现原理</h3>
+<h4 id="go-timer-实现原理">go Timer 实现原理</h4>
 <p>首先如果让我们自己去实现一个 Timer 的话，我们可以计算出来要具体下一次调度的时间，然后 sleep 对应的时长就好了，但是如果创建了很多的 Timer 的话，这样的性能其实是比较差的，go 里面会有一个协程统一负责管理 timer 来执行我们上面这个操作，所有的 timer 会放在一个堆中进行管理，每次取堆顶的值来判断要 sleep 多久即可。</p>
 <h3 id="两个协程交替打印从1到100的数字">两个协程交替打印从1到100的数字</h3>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
@@ -1555,6 +1555,8 @@ func ErrorB() error {
 								
 									<ul class="nav">
 								
+									<ul class="nav">
+								
 								
 
 										<li class="nav-item">
@@ -1564,6 +1566,8 @@ func ErrorB() error {
 										</li>
 						 
 								
+								
+									</ul>
 								
 									</ul>
 								
