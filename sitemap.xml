@@ -245,4 +245,10 @@
     <priority>0</priority>
   </url>
   
+  <url>
+    <loc>https://huweicai.com/personal/mysql-create-options/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
 </urlset>

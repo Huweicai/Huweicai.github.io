@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="MySQL建表选项 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过： select LAST_INSERT_ID(); 来获取 MySQL 自动生成的 ID。 在建表的时候，可以通过 AUTO_INCREMENT 指定自增开始的值： create table if not exists peoples ( id int primary key auto_increment, name varchar(40) null ) AUTO_INCREMENT = 13; AVG_ROW_LENGTH CHARACTER SET 可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据">
+  
+  <meta property="og:title" content="MySQL建表选项" />
+<meta property="og:description" content="MySQL建表选项 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过： select LAST_INSERT_ID(); 来获取 MySQL 自动生成的 ID。 在建表的时候，可以通过 AUTO_INCREMENT 指定自增开始的值： create table if not exists peoples ( id int primary key auto_increment, name varchar(40) null ) AUTO_INCREMENT = 13; AVG_ROW_LENGTH CHARACTER SET 可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/personal/mysql-create-options/" />
+
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-175035126-1');
+</script>
+
+  <title>
+  
+       MySQL建表选项 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/personal/mysql-create-options/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://huweicai.com/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides//raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="container pr-5">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">MySQL建表选项</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>0001-01-01</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>6 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h3 id="mysql建表选项">MySQL建表选项</h3>
+<h4 id="auto_increment">AUTO_INCREMENT</h4>
+<p>MySQL 一张表中可以指定一个字段为  auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">select</span> <span class="n">LAST_INSERT_ID</span><span class="p">();</span>
+</code></pre></div><p>来获取 MySQL 自动生成的 ID。</p>
+<p>在建表的时候，可以通过 AUTO_INCREMENT 指定自增开始的值：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> <span class="n">peoples</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span> <span class="n">auto_increment</span><span class="p">,</span>
+    <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">null</span>
+<span class="p">)</span> <span class="n">AUTO_INCREMENT</span> <span class="o">=</span> <span class="mi">13</span><span class="p">;</span>
+</code></pre></div><h4 id="avg_row_length">AVG_ROW_LENGTH</h4>
+<h4 id="character-set">CHARACTER SET</h4>
+<p>可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据库的也没有设置的，MySQL Server 的默认字符集是 utf8mb4。</p>
+<p>MySQL 目前支持的字符集，可以通过：SHOW CHARACTER SET 查看，我们可能用到的：ascii，gb2312，gbk，big5，utf16，utf8，utf8mb4 都是支持的。</p>
+<p>指定 people 表的字符集为 utf8mb4</p>
+<pre><code>create table if not exists people (
+    id int primary key auto_increment,
+    name varchar(40) null
+) character set = 'utf8mb4';
+</code></pre><p>一个表的默认字符集指定之后也是可以修改的：</p>
+<pre><code>ALTER TABLE people CONVERT TO CHARACTER SET 'utf8'; # 不需要emoji，从 utf8mb4 修改为 utf8
+</code></pre><p>可以通过查看建表语句来查看一个表的字符集：</p>
+<pre><code>SHOW CREATE TABLE people;
+
+输出：
+CREATE TABLE `people` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+</code></pre><p>可以看到字符集已经修改成功了。</p>
+<h4 id="checksum">CHECKSUM</h4>
+<p>1 表示需要 MySQL 为表维持一个校验和，以便于快速的发现数据受损，不过一定程度上会影响更新性能。</p>
+<h4 id="collate">COLLATE</h4>
+<p>指定使用哪个字符排序规则，这个是由于不同的字符在不同的文化语义中可以会有不同的顺序，同时也交给用户更多的选择，比如要不要区分大小写。</p>
+<p>每个字符集都会有一个默认的排序规则，以 utfmb4 为例，通过 <code>show collation where Chareset='utf8mb4'</code> 可以看到 utf8mb4 有七十多个字符排序规则，而我们可以看到它默认的字符序是utf8mb4_0900_ai_ci：</p>
+<p>SHOW CHARACTER SET where Charset= &lsquo;utf8mb4&rsquo;;</p>
+<p>输出：</p>
+<table>
+<thead>
+<tr>
+<th align="left">Charset</th>
+<th align="left">Description</th>
+<th align="left">Default collation</th>
+<th align="left">Maxlen</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">utf8mb4</td>
+<td align="left">UTF-8 Unicode</td>
+<td align="left">utf8mb4_0900_ai_ci</td>
+<td align="left">4</td>
+</tr>
+</tbody>
+</table>
+<p>ai 表示 accent insensitive，口音无关，比如：e, è, é, ê 会被视为一样的；</p>
+<p>ci 则代表 case insensitive，大小写无关，A 和 a 会被视为同样的字符，所以我们会看到非常神奇的一幕：</p>
+<p>执行：select &lsquo;A&rsquo; = &lsquo;a&rsquo;,&lsquo;A'= &lsquo;A&rsquo;,&lsquo;A&rsquo; = &lsquo;B&rsquo;;</p>
+<p>输出：</p>
+<table>
+<thead>
+<tr>
+<th align="left">&lsquo;A&rsquo; = &lsquo;a&rsquo;</th>
+<th align="left">&lsquo;A'= &lsquo;A&rsquo;</th>
+<th align="left">&lsquo;A&rsquo; = &lsquo;B&rsquo;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
+</tr>
+</tbody>
+</table>
+<p>所以 select * from table where string=&quot;xxx&rdquo; 的时候就要注意了，默认是不区分大小写的，可以临时指定使用其他的字符序，或者根据业务场景判断是否需要在建表的时候就把表的字符序就设置为大小写敏感的字符序，比如：utf8mb4_0900_as_cs 等包含 _cs 的字符序：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> <span class="n">people</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span> <span class="n">auto_increment</span><span class="p">,</span>
+    <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">null</span>
+<span class="p">)</span> <span class="nb">character</span> <span class="k">set</span> <span class="o">=</span> <span class="s1">&#39;utf8mb4&#39;</span> <span class="k">collate</span> <span class="o">=</span> <span class="s1">&#39;utf8mb4_0900_as_cs&#39;</span><span class="p">;</span>
+</code></pre></div><h3 id="comment">COMMENT</h3>
+<p>加个注释，方便日后维护，写注释是个好习惯，有的公司的 SQL 工单平台甚至会强制必须有注释。</p>
+<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> <span class="n">people</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span> <span class="n">auto_increment</span><span class="p">,</span>
+    <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">null</span>
+<span class="p">)</span> <span class="k">comment</span> <span class="s1">&#39;存储人物信息&#39;</span><span class="p">;</span>
+</code></pre></div><h4 id="compression">COMPRESSION</h4>
+<p>开启表压缩选项，只对 InnoDB 引擎有效，支持：Zlib 和 LZ4两种压缩算法，可以置成 None 关闭。</p>
+<h4 id="connection">CONNECTION</h4>
+<p>FEDERATED 引擎可以远程连接到其他数据库映射到本地，可以通过这个字段来指定对应远程数据库的连接字符串。</p>
+<h4 id="data--index-directory">(DATA | INDEX) DIRECTORY</h4>
+<p>InnoDB 引擎在建表的时候可以通过 DATA DIRECTORY 指定 .idb 文件的位置，这个特性在当前分区磁盘空间不足需要使用其他分区时会很有用。</p>
+<p>而 MyIsam 引擎不是聚簇的，它的数据和索引是分开的，所以不仅可以通过 DATA DIRECORY 指定生成的 .MYD 数据文件位置，还可以通过 INDEX DIRECOTRY 来指定生成的 .MYI索引文件。</p>
+<p>不过官网上特意申明了一个 bug，自己指定的文件目录不能包含 MySQL 文件目录，不然会报错：<code>Incorrect arguments to DATA DIRECTORY</code>。</p>
+<h4 id="delay_key_write">DELAY_KEY_WRITE</h4>
+<p>这个选项只对 MyISAM 生效，当 DELAY_KEY_WRITE置为1时，对MyISAM执行更新操作时，只更新磁盘中的数据，但是索引只更新内存，提升更新速度。如果 crash 之后也可以根据数据来修复索引。</p>
+<h4 id="encryption">ENCRYPTION</h4>
+<p>ENCRYPTION='Y&rsquo;代表开启表空间加密，&lsquo;N&rsquo;代表不开启，不过需要加载加密插件才可以。</p>
+<h4 id="engine">ENGINE</h4>
+<p>这应该是被使用最多的选项了，为要创建的这个表单独指定存储引擎。支持的引擎如下：</p>
+<table>
+<thead>
+<tr>
+<th>引擎</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>InnoDB</td>
+<td>支持事务、行锁、外键等高级特性，主键聚簇。具有良好的性能和可靠性。MySQL默认的存储引擎。</td>
+</tr>
+<tr>
+<td>MyISAM</td>
+<td>由ISAM（Indexed Sequential Access Metod）引擎改良，可移植性好，占用空间小，但是表级别的锁使得并发读写性能较差，适用于只有查询或者读多写少的场景，如：服务配置存储等。</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>又被叫做：Heap，数据存储在内存中，可靠性较低，一般用于临时表场景使用。另外 InnoDB 也支持内存缓存可以大量甚至全部数据载入内存，所以这个引擎使用场景越来越少了。</td>
+</tr>
+<tr>
+<td>CSV</td>
+<td>数据通过 CSV(Comma-Separated Values)的格式存储，可读性和可操作性非常好，但是由于数据未经过索引，性能很差，所以一般用于将其他表中的数据导过来用于与其他应用交互。</td>
+</tr>
+<tr>
+<td>Archive</td>
+<td>支持压缩，无索引，适用于存储大量冷门归档数据。</td>
+</tr>
+<tr>
+<td>Blackhole</td>
+<td>黑洞，不存储数据，查询也都会返回空。但这也并不代表这个引擎没有实际价值，它虽然不存储数据但是 binlog 还是会有，所以经常用于做为伪从库减轻主库压力或者记录binlog用。</td>
+</tr>
+<tr>
+<td>NDB</td>
+<td>全称Network DataBase，是一个分布式存储引擎。</td>
+</tr>
+<tr>
+<td>Merge</td>
+<td>可以用于将一系列 MyISM 抽象为一张表。</td>
+</tr>
+<tr>
+<td>Federated</td>
+<td>可以将其他远程数据的表映射到本地。</td>
+</tr>
+<tr>
+<td>Example</td>
+<td>主要是一个 demo，供开发人员学习如何开发一个存储引擎。</td>
+</tr>
+</tbody>
+</table>
+<p>各引擎支持的功能特性对比：</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>MyISAM</th>
+<th>Memory</th>
+<th>InnoDB</th>
+<th>Archive</th>
+<th>NDB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>B树索引</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>备份/恢复</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>分布式集群支持</strong></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>聚簇索引</strong></td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>数据压缩</strong></td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>数据缓存</strong></td>
+<td>No</td>
+<td>N/A</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>数据加密</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>外键</strong></td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>全文搜索（倒排）</strong></td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>地理空间数据</strong></td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>地理空间索引</strong></td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>散列索引</strong></td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>索引缓存</strong></td>
+<td>Yes</td>
+<td>N/A</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>锁粒度</strong></td>
+<td>Table</td>
+<td>Table</td>
+<td>Row</td>
+<td>Row</td>
+<td>Row</td>
+</tr>
+<tr>
+<td><strong>MVCC</strong></td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>冗余存储</strong> (note 1)</td>
+<td>Yes</td>
+<td>Limited</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>存储限制</strong></td>
+<td>256TB</td>
+<td>RAM</td>
+<td>64TB</td>
+<td>None</td>
+<td>384EB</td>
+</tr>
+<tr>
+<td><strong>T树索引</strong></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>事务</strong></td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>更新数据字典的统计信息</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<p>注：关于存储限制虽然上限都很高，但是将数据都存储在一个文件的引擎会受操作系统的文件大小限制（TB级别）。</p>
+<p>Example，创建一个 MyISAM 的表：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> <span class="n">people</span> <span class="p">(</span>
+    <span class="n">id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span> <span class="n">auto_increment</span><span class="p">,</span>
+    <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">null</span><span class="p">,</span>
+<span class="p">)</span> <span class="k">comment</span> <span class="s1">&#39;存储人物信息&#39;</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;myisam;
+</span></code></pre></div><h4 id="engine_attribute">ENGINE_ATTRIBUTE</h4>
+<p>保留字段，以后用于透传信息到引擎层。</p>
+<h4 id="insert_method">INSERT_METHOD</h4>
+<p>MERGE 存储引擎使用。</p>
+<p><strong>KEY_BLOCK_SIZE</strong></p>
+<p>指定压缩后的页大小，单位为 KB，不过MySQ不一定会按照设定的数字来运行。</p>
+<p>InnoDB的默认页大小为16KB，可以查看 innodb_page_size 变量：<code>show variables like 'innodb_page_size';</code></p>
+<p>所以压缩后的大小有：1KB、2KB、4KB、8KB这几个选项。</p>
+<h4 id="max_rows">MAX_ROWS</h4>
+<p>最大的行数，这个是给MySQL的优化建议，告诉它至少要能存这么多数据。</p>
+<h4 id="min_rows">MIN_ROWS</h4>
+<p>同最大行数，也是一个建议，告诉MySQL我至少要存这么多行数据。</p>
+<h4 id="pack_keys">PACK_KEYS</h4>
+<p>MyISAM专用参数，压缩索引。</p>
+<h4 id="password">PASSWORD</h4>
+<p>废弃了</p>
+<h4 id="row_format">ROW_FORMAT</h4>
+<h4 id="secondary_engine_attribute">SECONDARY_ENGINE_ATTRIBUTE</h4>
+<h4 id="stats_auto_recalc">STATS_AUTO_RECALC</h4>
+<h4 id="stats_persistent">STATS_PERSISTENT</h4>
+<h4 id="stats_sample_pages">STATS_SAMPLE_PAGES</h4>
+<h4 id="tablespace">TABLESPACE</h4>
+<h4 id="union">UNION</h4>
+<pre><code>[DEFAULT]  [=] collation_name
+  |  [=] 'string'
+  |  [=] {'ZLIB' | 'LZ4' | 'NONE'}
+  |  [=] 'connect_string'
+  | {DATA | INDEX}  [=] 'absolute path to directory'
+  |  [=] {0 | 1}
+  |  [=] {'Y' | 'N'}
+  |  [=] engine_name
+  |  [=] 'string'
+  |  [=] { NO | FIRST | LAST }
+  |  [=] value
+  |  [=] value
+  |  [=] value
+  |  [=] {0 | 1 | DEFAULT}
+  |  [=] {DEFAULT | DYNAMIC | FIXED | COMPRESSED | REDUNDANT | COMPACT}
+  | SECONDARY_ENGINE_ATTRIBUTE [=] 'string'
+  | STATS_AUTO_RECALC [=] {DEFAULT | 0 | 1}
+  | STATS_PERSISTENT [=] {DEFAULT | 0 | 1}
+  | STATS_SAMPLE_PAGES [=] value
+  | TABLESPACE tablespace_name [STORAGE {DISK | MEMORY}]
+  | UNION [=] (tbl_name[,tbl_name]...)
+</code></pre>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://huweicai.com/personal/go-tips/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>Go语言小知识</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+  
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

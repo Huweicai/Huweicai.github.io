@@ -110,5 +110,14 @@
       <description>最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序： public class Test2 { public void whileTest() { int i = 0; while (true) { i++; } } public</description>
     </item>
     
+    <item>
+      <title>MySQL建表选项</title>
+      <link>https://huweicai.com/personal/mysql-create-options/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://huweicai.com/personal/mysql-create-options/</guid>
+      <description>MySQL建表选项 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过： select LAST_INSERT_ID(); 来获取 MySQL 自动生成的 ID。 在建表的时候，可以通过 AUTO_INCREMENT 指定自增开始的值： create table if not exists peoples ( id int primary key auto_increment, name varchar(40) null ) AUTO_INCREMENT = 13; AVG_ROW_LENGTH CHARACTER SET 可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据</description>
+    </item>
+    
   </channel>
 </rss>
