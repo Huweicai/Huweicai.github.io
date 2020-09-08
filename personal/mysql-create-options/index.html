@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="MySQL建表选项 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过： select LAST_INSERT_ID(); 来获取 MySQL 自动生成的 ID。 在建表的时候，可以通过 AUTO_INCREMENT 指定自增开始的值： create table if not exists peoples ( id int primary key auto_increment, name varchar(40) null ) AUTO_INCREMENT = 13; AVG_ROW_LENGTH CHARACTER SET 可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据">
+  <meta name="description" content="MySQL 在建表时 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过： select LAST_INSERT_ID(); 来获取 MySQL 自动生成的 ID。 在建表的时候，可以通过 AUTO_INCREMENT 指定自增开始的值： create table if not exists peoples ( id int primary key auto_increment, name varchar(40) null ) AUTO_INCREMENT = 13; AVG_ROW_LENGTH CHARACTER SET 可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据库的也没">
   
   <meta property="og:title" content="MySQL建表选项" />
-<meta property="og:description" content="MySQL建表选项 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过： select LAST_INSERT_ID(); 来获取 MySQL 自动生成的 ID。 在建表的时候，可以通过 AUTO_INCREMENT 指定自增开始的值： create table if not exists peoples ( id int primary key auto_increment, name varchar(40) null ) AUTO_INCREMENT = 13; AVG_ROW_LENGTH CHARACTER SET 可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据" />
+<meta property="og:description" content="MySQL 在建表时 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过： select LAST_INSERT_ID(); 来获取 MySQL 自动生成的 ID。 在建表的时候，可以通过 AUTO_INCREMENT 指定自增开始的值： create table if not exists peoples ( id int primary key auto_increment, name varchar(40) null ) AUTO_INCREMENT = 13; AVG_ROW_LENGTH CHARACTER SET 可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据库的也没" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/personal/mysql-create-options/" />
 
@@ -295,7 +295,7 @@
 
     
       <li class="middot"></li>
-      <li>6 minutes read</li>
+      <li>7 minutes read</li>
     
   </ul>
   
@@ -304,7 +304,7 @@
 
 
           <div class="post-content markdown">
-            <h3 id="mysql建表选项">MySQL建表选项</h3>
+            <p>MySQL 在建表时</p>
 <h4 id="auto_increment">AUTO_INCREMENT</h4>
 <p>MySQL 一张表中可以指定一个字段为  auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过：</p>
 <div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">select</span> <span class="n">LAST_INSERT_ID</span><span class="p">();</span>
@@ -317,7 +317,7 @@
 </code></pre></div><h4 id="avg_row_length">AVG_ROW_LENGTH</h4>
 <h4 id="character-set">CHARACTER SET</h4>
 <p>可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据库的也没有设置的，MySQL Server 的默认字符集是 utf8mb4。</p>
-<p>MySQL 目前支持的字符集，可以通过：SHOW CHARACTER SET 查看，我们可能用到的：ascii，gb2312，gbk，big5，utf16，utf8，utf8mb4 都是支持的。</p>
+<p>MySQL 目前支持的字符集，可以通过：<code>SHOW CHARACTER SET</code> 查看，我们可能用到的：<code>ascii，gb2312，gbk，big5，utf16，utf8，utf8mb4</code> 等字符编码集都是支持的。</p>
 <p>指定 people 表的字符集为 utf8mb4</p>
 <pre><code>create table if not exists people (
     id int primary key auto_increment,
@@ -362,14 +362,14 @@ CREATE TABLE `people` (
 </table>
 <p>ai 表示 accent insensitive，口音无关，比如：e, è, é, ê 会被视为一样的；</p>
 <p>ci 则代表 case insensitive，大小写无关，A 和 a 会被视为同样的字符，所以我们会看到非常神奇的一幕：</p>
-<p>执行：select &lsquo;A&rsquo; = &lsquo;a&rsquo;,&lsquo;A'= &lsquo;A&rsquo;,&lsquo;A&rsquo; = &lsquo;B&rsquo;;</p>
+<p>执行：<code>select 'A' = 'a','A'= 'A','A' = 'B'</code>;</p>
 <p>输出：</p>
 <table>
 <thead>
 <tr>
-<th align="left">&lsquo;A&rsquo; = &lsquo;a&rsquo;</th>
-<th align="left">&lsquo;A'= &lsquo;A&rsquo;</th>
-<th align="left">&lsquo;A&rsquo; = &lsquo;B&rsquo;</th>
+<th align="left"><code>'A' = 'a'</code></th>
+<th align="left"><code>'A'= 'A'</code></th>
+<th align="left"><code>'A' = 'B'</code></th>
 </tr>
 </thead>
 <tbody>
@@ -380,7 +380,7 @@ CREATE TABLE `people` (
 </tr>
 </tbody>
 </table>
-<p>所以 select * from table where string=&quot;xxx&rdquo; 的时候就要注意了，默认是不区分大小写的，可以临时指定使用其他的字符序，或者根据业务场景判断是否需要在建表的时候就把表的字符序就设置为大小写敏感的字符序，比如：utf8mb4_0900_as_cs 等包含 _cs 的字符序：</p>
+<p>所以 <code>select * from table where string=&quot;xxx&quot;</code> 的时候就要注意了，默认是不区分大小写的，可以临时指定使用其他的字符序，或者根据业务场景判断是否需要在建表的时候就把表的字符序就设置为大小写敏感的字符序，比如：utf8mb4_0900_as_cs 等包含 _cs 的字符序：</p>
 <div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> <span class="n">people</span> <span class="p">(</span>
     <span class="n">id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span> <span class="n">auto_increment</span><span class="p">,</span>
     <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">null</span>
@@ -402,7 +402,7 @@ CREATE TABLE `people` (
 <h4 id="delay_key_write">DELAY_KEY_WRITE</h4>
 <p>这个选项只对 MyISAM 生效，当 DELAY_KEY_WRITE置为1时，对MyISAM执行更新操作时，只更新磁盘中的数据，但是索引只更新内存，提升更新速度。如果 crash 之后也可以根据数据来修复索引。</p>
 <h4 id="encryption">ENCRYPTION</h4>
-<p>ENCRYPTION='Y&rsquo;代表开启表空间加密，&lsquo;N&rsquo;代表不开启，不过需要加载加密插件才可以。</p>
+<p><code>ENCRYPTION='Y'</code>代表开启表空间加密，&lsquo;N&rsquo;代表不开启，不过需要加载加密插件才可以。</p>
 <h4 id="engine">ENGINE</h4>
 <p>这应该是被使用最多的选项了，为要创建的这个表单独指定存储引擎。支持的引擎如下：</p>
 <table>
@@ -653,34 +653,73 @@ CREATE TABLE `people` (
 <h4 id="password">PASSWORD</h4>
 <p>废弃了</p>
 <h4 id="row_format">ROW_FORMAT</h4>
+<p>行格式决定了数据在文件表空间中某一页的具体格式。</p>
+<p>InnoDB 有两种文件格式，早期为：Antelope，对应有两种行格式可选：Compact 和 Redundant，后面又新增了Barracuda格式，新增了 Compressed 和 Dynamic 两种格式。</p>
+<p>5.6及之前的版本默认的行格式都是 Compact，而 5.6 之后的 5.7 和 8.0 则设为了 Dynamic。</p>
+<p>Redundant 是早期的文件格式和早期MySQL版本兼容，在列的值小于 768 字节时会将数据直接存储在当前页中，超过才会存储至溢出页，这虽然能减少小字段的 IO，但是可能会导致 B+树节点太满，一个页中存不了多少行。</p>
+<p>Compact 相较于 Redundant 能减少 20% 的存储空间，对于溢出列的处理和 Redundant 一致。</p>
+<p>Dynamic 对于可变长列的存储更加智能，会综合考虑整行的大小来决定要不要把列存储在溢出页。</p>
+<p>Compressed 会对数据使用 zlib 压缩，能进一步减少空间占用。</p>
+<p>各种格式的特性对比：</p>
+<table>
+<thead>
+<tr>
+<th>行格式</th>
+<th>紧凑存储</th>
+<th>变长列完全溢出页存储</th>
+<th>大索引支持</th>
+<th>压缩</th>
+<th>支持的表空间类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>REDUNDANT</code></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>system, file-per-table, general</td>
+</tr>
+<tr>
+<td><code>COMPACT</code></td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>system, file-per-table, general</td>
+</tr>
+<tr>
+<td><code>DYNAMIC</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>system, file-per-table, general</td>
+</tr>
+<tr>
+<td><code>COMPRESSED</code></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>file-per-table, general</td>
+</tr>
+</tbody>
+</table>
 <h4 id="secondary_engine_attribute">SECONDARY_ENGINE_ATTRIBUTE</h4>
 <h4 id="stats_auto_recalc">STATS_AUTO_RECALC</h4>
+<p>是否自动重新计算 InnoDB 的表统计信息，设置为 1 会在表中数据变动超过 10% 触发，也可以关闭自动触发手动通过 ananyze table 触发。</p>
+<p>更准确的统计信息可以让执行计划优化的更好。</p>
 <h4 id="stats_persistent">STATS_PERSISTENT</h4>
+<p>是否开启统计信息，默认开启。</p>
 <h4 id="stats_sample_pages">STATS_SAMPLE_PAGES</h4>
+<p>统计信息的页面采样数量，更大准确，采样时间越久，默认 20 页。</p>
 <h4 id="tablespace">TABLESPACE</h4>
+<p>用于单独为这个表覆盖 INNODB_PER_FILE_TABLE ，可以让这个表单开一个表空间，或者所有表共用一个表空间。</p>
 <h4 id="union">UNION</h4>
-<pre><code>[DEFAULT]  [=] collation_name
-  |  [=] 'string'
-  |  [=] {'ZLIB' | 'LZ4' | 'NONE'}
-  |  [=] 'connect_string'
-  | {DATA | INDEX}  [=] 'absolute path to directory'
-  |  [=] {0 | 1}
-  |  [=] {'Y' | 'N'}
-  |  [=] engine_name
-  |  [=] 'string'
-  |  [=] { NO | FIRST | LAST }
-  |  [=] value
-  |  [=] value
-  |  [=] value
-  |  [=] {0 | 1 | DEFAULT}
-  |  [=] {DEFAULT | DYNAMIC | FIXED | COMPRESSED | REDUNDANT | COMPACT}
-  | SECONDARY_ENGINE_ATTRIBUTE [=] 'string'
-  | STATS_AUTO_RECALC [=] {DEFAULT | 0 | 1}
-  | STATS_PERSISTENT [=] {DEFAULT | 0 | 1}
-  | STATS_SAMPLE_PAGES [=] value
-  | TABLESPACE tablespace_name [STORAGE {DISK | MEMORY}]
-  | UNION [=] (tbl_name[,tbl_name]...)
-</code></pre>
+<p>Merge 存储引擎使用，用于将一系列 MyISAM 表联合成一个。</p>
+
           </div>
 
           
