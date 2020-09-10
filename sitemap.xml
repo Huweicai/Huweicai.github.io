@@ -185,6 +185,41 @@
   </url>
   
   <url>
+    <loc>https://huweicai.com/tags/innodb/</loc>
+    <lastmod>2019-11-13T00:13:31+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/mysql/</loc>
+    <lastmod>2019-11-13T00:13:31+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/mysql-create-options/</loc>
+    <lastmod>2019-11-13T00:13:31+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E5%AD%98%E5%82%A8/</loc>
+    <lastmod>2019-11-13T00:13:31+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
+    <lastmod>2019-11-13T00:13:31+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://huweicai.com/tags/%E5%8A%9E%E5%85%AC%E6%95%88%E7%8E%87/</loc>
     <lastmod>2019-07-02T08:47:11+08:00</lastmod>
     <changefreq>daily</changefreq>
@@ -243,12 +278,6 @@
   <url>
     <loc>https://huweicai.com/about/</loc>
     <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/personal/mysql-create-options/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
   </url>
   
 </urlset>

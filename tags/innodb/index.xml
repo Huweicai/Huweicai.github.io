@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>InnoDB on Anonymous&#39; Blog</title>
+    <link>https://huweicai.com/tags/innodb/</link>
+    <description>Recent content in InnoDB on Anonymous&#39; Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Wed, 13 Nov 2019 00:13:31 +0800</lastBuildDate>
+    
+	<atom:link href="https://huweicai.com/tags/innodb/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>MySQL建表选项</title>
+      <link>https://huweicai.com/mysql-create-options/</link>
+      <pubDate>Wed, 13 Nov 2019 00:13:31 +0800</pubDate>
+      
+      <guid>https://huweicai.com/mysql-create-options/</guid>
+      <description>这是一个很常见的 SQL 建表语句： CREATE TABLE `people` ( `id` int NOT NULL AUTO_INCREMENT, `name` varchar(40) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 SQL 建表语句结构如下： CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name (create_definition,...) [table_options] 我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一</description>
+    </item>
+    
+  </channel>
+</rss>

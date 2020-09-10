@@ -7,13 +7,14 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="MySQL 在建表时 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过： select LAST_INSERT_ID(); 来获取 MySQL 自动生成的 ID。 在建表的时候，可以通过 AUTO_INCREMENT 指定自增开始的值： create table if not exists peoples ( id int primary key auto_increment, name varchar(40) null ) AUTO_INCREMENT = 13; AVG_ROW_LENGTH CHARACTER SET 可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据库的也没">
+  <meta name="description" content="这是一个很常见的 SQL 建表语句： CREATE TABLE `people` ( `id` int NOT NULL AUTO_INCREMENT, `name` varchar(40) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 SQL 建表语句结构如下： CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name (create_definition,...) [table_options] 我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一">
   
   <meta property="og:title" content="MySQL建表选项" />
-<meta property="og:description" content="MySQL 在建表时 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过： select LAST_INSERT_ID(); 来获取 MySQL 自动生成的 ID。 在建表的时候，可以通过 AUTO_INCREMENT 指定自增开始的值： create table if not exists peoples ( id int primary key auto_increment, name varchar(40) null ) AUTO_INCREMENT = 13; AVG_ROW_LENGTH CHARACTER SET 可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据库的也没" />
+<meta property="og:description" content="这是一个很常见的 SQL 建表语句： CREATE TABLE `people` ( `id` int NOT NULL AUTO_INCREMENT, `name` varchar(40) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 SQL 建表语句结构如下： CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name (create_definition,...) [table_options] 我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/personal/mysql-create-options/" />
-
+<meta property="og:url" content="https://huweicai.com/mysql-create-options/" />
+<meta property="article:published_time" content="2019-11-13T00:13:31+08:00" />
+<meta property="article:modified_time" content="2019-11-13T00:13:31+08:00" />
 
   
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
@@ -31,7 +32,7 @@
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/personal/mysql-create-options/">
+  <link rel="canonical" href="https://huweicai.com/mysql-create-options/">
 
   
   
@@ -274,7 +275,7 @@
       
 
       
-      <div class="container pr-5">
+      <div class="col-md-10">
       
 
         
@@ -290,7 +291,7 @@
 
   <ul class="post-meta li-x mt-1">
     
-      <li>0001-01-01</li>
+      <li>2019-11-13</li>
     
 
     
@@ -304,7 +305,17 @@
 
 
           <div class="post-content markdown">
-            <p>MySQL 在建表时</p>
+            <p>这是一个很常见的 SQL 建表语句：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">people</span><span class="o">`</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">name</span><span class="o">`</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+  <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">)</span>
+<span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="k">DEFAULT</span> <span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8</span>
+</code></pre></div><p>SQL 建表语句结构如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="p">[</span><span class="k">TEMPORARY</span><span class="p">]</span> <span class="k">TABLE</span> <span class="p">[</span><span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span><span class="p">]</span> <span class="n">tbl_name</span>
+    <span class="p">(</span><span class="n">create_definition</span><span class="p">,...)</span>
+    <span class="p">[</span><span class="n">table_options</span><span class="p">]</span>
+</code></pre></div><p>我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照<a href="https://dev.mysql.com/doc/refman/8.0/en/create-table.html">MySQL官方文档</a>，我们一起来看看。</p>
 <h4 id="auto_increment">AUTO_INCREMENT</h4>
 <p>MySQL 一张表中可以指定一个字段为  auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过：</p>
 <div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">select</span> <span class="n">LAST_INSERT_ID</span><span class="p">();</span>
@@ -339,8 +350,8 @@ CREATE TABLE `people` (
 <p>1 表示需要 MySQL 为表维持一个校验和，以便于快速的发现数据受损，不过一定程度上会影响更新性能。</p>
 <h4 id="collate">COLLATE</h4>
 <p>指定使用哪个字符排序规则，这个是由于不同的字符在不同的文化语义中可以会有不同的顺序，同时也交给用户更多的选择，比如要不要区分大小写。</p>
-<p>每个字符集都会有一个默认的排序规则，以 utfmb4 为例，通过 <code>show collation where Chareset='utf8mb4'</code> 可以看到 utf8mb4 有七十多个字符排序规则，而我们可以看到它默认的字符序是utf8mb4_0900_ai_ci：</p>
-<p>SHOW CHARACTER SET where Charset= &lsquo;utf8mb4&rsquo;;</p>
+<p>每个字符集都会有一个默认的排序规则，以 utfmb4 为例，通过 <code>show collation where Chareset='utf8mb4'</code> 可以看到 utf8mb4 有七十多个字符排序规则，而我们可以看到它默认的字符序是<code>utf8mb4_0900_ai_ci</code>：</p>
+<p><code>SHOW CHARACTER SET where Charset= 'utf8mb4';</code></p>
 <p>输出：</p>
 <table>
 <thead>
@@ -380,12 +391,12 @@ CREATE TABLE `people` (
 </tr>
 </tbody>
 </table>
-<p>所以 <code>select * from table where string=&quot;xxx&quot;</code> 的时候就要注意了，默认是不区分大小写的，可以临时指定使用其他的字符序，或者根据业务场景判断是否需要在建表的时候就把表的字符序就设置为大小写敏感的字符序，比如：utf8mb4_0900_as_cs 等包含 _cs 的字符序：</p>
+<p>所以 <code>select * from table where string=&quot;xxx&quot;</code> 的时候就要注意了，默认是不区分大小写的，可以临时指定使用其他的字符序，或者根据业务场景判断是否需要在建表的时候就把表的字符序就设置为大小写敏感的字符序，比如：<code>utf8mb4_0900_as_cs</code> 等包含 _cs 的字符序：</p>
 <div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> <span class="n">people</span> <span class="p">(</span>
     <span class="n">id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span> <span class="n">auto_increment</span><span class="p">,</span>
     <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">null</span>
 <span class="p">)</span> <span class="nb">character</span> <span class="k">set</span> <span class="o">=</span> <span class="s1">&#39;utf8mb4&#39;</span> <span class="k">collate</span> <span class="o">=</span> <span class="s1">&#39;utf8mb4_0900_as_cs&#39;</span><span class="p">;</span>
-</code></pre></div><h3 id="comment">COMMENT</h3>
+</code></pre></div><h4 id="comment">COMMENT</h4>
 <p>加个注释，方便日后维护，写注释是个好习惯，有的公司的 SQL 工单平台甚至会强制必须有注释。</p>
 <div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> <span class="n">people</span> <span class="p">(</span>
     <span class="n">id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span> <span class="n">auto_increment</span><span class="p">,</span>
@@ -708,6 +719,7 @@ CREATE TABLE `people` (
 </tbody>
 </table>
 <h4 id="secondary_engine_attribute">SECONDARY_ENGINE_ATTRIBUTE</h4>
+<p>同 ENGINE_ATTRIBUTE。</p>
 <h4 id="stats_auto_recalc">STATS_AUTO_RECALC</h4>
 <p>是否自动重新计算 InnoDB 的表统计信息，设置为 1 会在表中数据变动超过 10% 触发，也可以关闭自动触发手动通过 ananyze table 触发。</p>
 <p>更准确的统计信息可以让执行计划优化的更好。</p>
@@ -726,6 +738,28 @@ CREATE TABLE `people` (
           <div class="row">
             <div class="col-md-8">
             
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/mysql" role="button">MySQL </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/innodb" role="button">InnoDB </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" role="button">数据库 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button">存储 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
             </div>
             
           </div>
@@ -735,14 +769,21 @@ CREATE TABLE `people` (
           <div class="row pt-3">
             <div class="col-md-6">
               
+                <a href=https://huweicai.com/web-markdown-to-pdf-utils/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>在线 Markdown 转 PDF 工具评测</span>
+                  </div>
+                </a>
+              
             </div>
             
             <div class="col-md-6 text-right" >
               
-                <a href=https://huweicai.com/personal/go-tips/ class="post-meta">Next
+                <a href=https://huweicai.com/go-switch/ class="post-meta">Next
                   <div class="pt-2 pb-5 flex-reverse">
                     <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>Go语言小知识</span>
+                    <span>Go 多路条件语句 Switch 语法详解</span>
                   </div>
                 </a>
               
@@ -758,6 +799,786 @@ CREATE TABLE `people` (
       
 
       
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#auto_increment">
+												 AUTO_INCREMENT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#avg_row_length">
+												 AVG_ROW_LENGTH
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#character-set">
+												 CHARACTER SET
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#checksum">
+												 CHECKSUM
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#collate">
+												 COLLATE
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#comment">
+												 COMMENT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#compression">
+												 COMPRESSION
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#connection">
+												 CONNECTION
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#data--index-directory">
+												 (DATA | INDEX) DIRECTORY
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#delay_key_write">
+												 DELAY_KEY_WRITE
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#encryption">
+												 ENCRYPTION
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#engine">
+												 ENGINE
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#engine_attribute">
+												 ENGINE_ATTRIBUTE
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#insert_method">
+												 INSERT_METHOD
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#max_rows">
+												 MAX_ROWS
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#min_rows">
+												 MIN_ROWS
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#pack_keys">
+												 PACK_KEYS
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#password">
+												 PASSWORD
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#row_format">
+												 ROW_FORMAT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#secondary_engine_attribute">
+												 SECONDARY_ENGINE_ATTRIBUTE
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#stats_auto_recalc">
+												 STATS_AUTO_RECALC
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#stats_persistent">
+												 STATS_PERSISTENT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#stats_sample_pages">
+												 STATS_SAMPLE_PAGES
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#tablespace">
+												 TABLESPACE
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#union">
+												 UNION
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
 
     </div>
     

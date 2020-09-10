@@ -387,6 +387,8 @@
 
   
 
+  
+
 
 
 
@@ -419,6 +421,9 @@
             <li><a href="https://huweicai.com/tags/http" role="button"><span>http (1)</span></a></li>
           
         
+            <li><a href="https://huweicai.com/tags/innodb" role="button"><span>innodb (1)</span></a></li>
+          
+        
             <li><a href="https://huweicai.com/tags/ip" role="button"><span>ip (1)</span></a></li>
           
         
@@ -426,6 +431,9 @@
           
         
             <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (1)</span></a></li>
+          
+        
+            <li><a href="https://huweicai.com/tags/mysql" role="button"><span>mysql (1)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/pprof" role="button"><span>pprof (1)</span></a></li>
@@ -449,7 +457,13 @@
             <li><a href="https://huweicai.com/tags/%E5%9B%BE%E5%83%8F" role="button"><span>图像 (1)</span></a></li>
           
         
+            <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button"><span>存储 (1)</span></a></li>
+          
+        
             <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button"><span>操作系统 (1)</span></a></li>
+          
+        
+            <li><a href="https://huweicai.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" role="button"><span>数据库 (1)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (1)</span></a></li>
@@ -580,6 +594,56 @@
 
             </div>
   
+            
+                <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/confusion-betwwen-forwhiletrue/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">for{;;}与while(true)的困惑</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2018-03-04</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>One minute read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序： public class Test2 { public void whileTest() { int i = 0; while (true) { i&#43;&#43;; } } public......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/java" role="button">java </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
+
             
                 <div class="post-wrapper white-bg post-card">
   
