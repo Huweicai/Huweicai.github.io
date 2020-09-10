@@ -296,7 +296,7 @@
 
     
       <li class="middot"></li>
-      <li>12 minutes read</li>
+      <li>13 minutes read</li>
     
   </ul>
   
@@ -723,6 +723,36 @@ func ErrorB() error {
 <p>Java 里面的 ConcurrentHashMap 的思路则是锁粒度细分，不过 Go 社区里面也有用这种思路实现的开源库：https://github.com/orcaman/concurrent-map。</p>
 <h4 id="go-timer-实现原理">go Timer 实现原理</h4>
 <p>首先如果让我们自己去实现一个 Timer 的话，我们可以计算出来要具体下一次调度的时间，然后 sleep 对应的时长就好了，但是如果创建了很多的 Timer 的话，这样的性能其实是比较差的，go 里面会有一个协程统一负责管理 timer 来执行我们上面这个操作，所有的 timer 会放在一个堆中进行管理，每次取堆顶的值来判断要 sleep 多久即可。</p>
+<h3 id="go-可比较性">go 可比较性</h3>
+<p>比较运算符：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="o">==</span>    <span class="nx">equal</span>
+<span class="o">!=</span>    <span class="nx">not</span> <span class="nx">equal</span>
+<span class="p">&lt;</span>     <span class="nx">less</span>
+<span class="o">&lt;=</span>    <span class="nx">less</span> <span class="nx">or</span> <span class="nx">equal</span>
+<span class="p">&gt;</span>     <span class="nx">greater</span>
+<span class="o">&gt;=</span>    <span class="nx">greater</span> <span class="nx">or</span> <span class="nx">equal</span>
+</code></pre></div><p>go 的比较都是基于值去比较的，结构体则会一个一个值的判断，而指针则会比较指针的内存地址，不过我们可以调用reflect.DeepEqual 来强行判断指向的值是否相等。</p>
+<p>但也并不是所有的类型都是可以比较的。</p>
+<p>不可以比较的类型：</p>
+<ul>
+<li>
+<p>切片：切片是引用类型， 如果只判断指针地址的话，没有太大意义并且会带来很大的困惑，而如果比较值的，因为是引用类型，会出现自身指向自身这种导致程序崩溃的情况，所以 go 团队干脆就没有实现这个了，Example：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">  <span class="c1">// 切片，自身指向自身，会 stack overflow
+</span><span class="c1"></span>  <span class="nx">a</span> <span class="o">:=</span> <span class="p">[]</span><span class="kd">interface</span><span class="p">{}{</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.0</span> <span class="p">}</span>
+  <span class="nx">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">a</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="c1">// 输出：fatal error: stack overflow
+</span><span class="c1"></span>  	
+  <span class="c1">// 而数组则不会
+</span><span class="c1"></span>  <span class="nx">b</span> <span class="o">:=</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.0</span> <span class="p">}</span>
+  <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">b</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="c1">// 输出：[1 [1 2]]
+</span></code></pre></div></li>
+<li>
+<p>map: map 和切片是一样的，也会出现循环引用的场景。</p>
+</li>
+</ul>
+<p>所有包含这两种类型的类型也仍然是不可比较的，比如切片的数组，包含有切片的结构体。</p>
+<p>另外 map 的 key 判断也是使用的 == 符号，所以也不能使用不可比较的类型做为 map 的 key。</p>
 <h3 id="两个协程交替打印从1到100的数字">两个协程交替打印从1到100的数字</h3>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="nx">goal</span> <span class="o">:=</span> <span class="mi">100</span>
@@ -1575,6 +1605,32 @@ func ErrorB() error {
 								
 								
 									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-%e5%8f%af%e6%af%94%e8%be%83%e6%80%a7">
+												 go 可比较性
+											</a>
+										</li>
+						 
+								
 								
 									</ul>
 								
