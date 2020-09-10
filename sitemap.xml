@@ -164,20 +164,6 @@
   </url>
   
   <url>
-    <loc>https://huweicai.com/tags/redis/</loc>
-    <lastmod>2020-01-04T22:43:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/redis-faq/</loc>
-    <lastmod>2020-01-04T22:43:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/go-switch/</loc>
     <lastmod>2020-01-02T12:09:00+08:00</lastmod>
     <changefreq>daily</changefreq>
@@ -250,6 +236,20 @@
   <url>
     <loc>https://huweicai.com/tags/jvm/</loc>
     <lastmod>2019-05-20T23:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/redis/</loc>
+    <lastmod>2019-01-04T22:43:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/redis-faq/</loc>
+    <lastmod>2019-01-04T22:43:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>

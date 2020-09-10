@@ -17,7 +17,7 @@
       <pubDate>Wed, 19 Aug 2020 19:58:00 +0800</pubDate>
       
       <guid>https://huweicai.com/personal/go-tips/</guid>
-      <description>Pool go struct能不能比较 go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG go 反射实现原理 sync.Pool 实现原理 goroutine调度用了什么系统调用 什么是闭包 for i 遍历和 for range 遍历有什么区别 后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。 for v1,v2 := range ha 遍历数组的实际运行格式： ha := a hv1 := 0 hn := len(ha) v1 := hv1 for ; hv1 &amp;lt; hn; hv1++ { tmp := ha[hv1] v1, v2 := hv1, tmp ... } for hv1 := range h1 遍历</description>
+      <description>Pool go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG sync.Pool 实现原理 goroutine调度用了什么系统调用 什么是闭包 for i 遍历和 for range 遍历有什么区别 后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。 for v1,v2 := range ha 遍历数组的实际运行格式： ha := a hv1 := 0 hn := len(ha) v1 := hv1 for ; hv1 &amp;lt; hn; hv1++ { tmp := ha[hv1] v1, v2 := hv1, tmp ... } for hv1 := range h1 遍历 channel 实际运行格式： ha := a hv1, hb := &amp;lt;-ha for ; hb !=</description>
     </item>
     
   </channel>

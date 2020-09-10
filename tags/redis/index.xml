@@ -6,7 +6,7 @@
     <description>Recent content in redis on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sat, 04 Jan 2020 22:43:00 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 04 Jan 2019 22:43:00 +0800</lastBuildDate>
     
 	<atom:link href="https://huweicai.com/tags/redis/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,10 +14,10 @@
     <item>
       <title>Redis FAQ</title>
       <link>https://huweicai.com/redis-faq/</link>
-      <pubDate>Sat, 04 Jan 2020 22:43:00 +0800</pubDate>
+      <pubDate>Fri, 04 Jan 2019 22:43:00 +0800</pubDate>
       
       <guid>https://huweicai.com/redis-faq/</guid>
-      <description>简单翻译Redis官网的FAQ以及部分自己总结的问题 官网FAQ地址 Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。 而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留</description>
+      <description>Redis 官网 FAQ 翻译以及部分自己生产实践总结的问题 官网FAQ地址 Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。 而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留 AOF 日志，在</description>
     </item>
     
   </channel>

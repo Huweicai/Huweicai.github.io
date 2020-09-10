@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="Pool go struct能不能比较 go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG go 反射实现原理 sync.Pool 实现原理 goroutine调度用了什么系统调用 什么是闭包 for i 遍历和 for range 遍历有什么区别 后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。 for v1,v2 := range ha 遍历数组的实际运行格式： ha := a hv1 := 0 hn := len(ha) v1 := hv1 for ; hv1 &lt; hn; hv1&#43;&#43; { tmp := ha[hv1] v1, v2 := hv1, tmp ... } for hv1 := range h1 遍历">
+  <meta name="description" content="Pool go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG sync.Pool 实现原理 goroutine调度用了什么系统调用 什么是闭包 for i 遍历和 for range 遍历有什么区别 后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。 for v1,v2 := range ha 遍历数组的实际运行格式： ha := a hv1 := 0 hn := len(ha) v1 := hv1 for ; hv1 &lt; hn; hv1&#43;&#43; { tmp := ha[hv1] v1, v2 := hv1, tmp ... } for hv1 := range h1 遍历 channel 实际运行格式： ha := a hv1, hb := &lt;-ha for ; hb !=">
   
   <meta property="og:title" content="Go语言小知识" />
-<meta property="og:description" content="Pool go struct能不能比较 go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG go 反射实现原理 sync.Pool 实现原理 goroutine调度用了什么系统调用 什么是闭包 for i 遍历和 for range 遍历有什么区别 后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。 for v1,v2 := range ha 遍历数组的实际运行格式： ha := a hv1 := 0 hn := len(ha) v1 := hv1 for ; hv1 &lt; hn; hv1&#43;&#43; { tmp := ha[hv1] v1, v2 := hv1, tmp ... } for hv1 := range h1 遍历" />
+<meta property="og:description" content="Pool go defer 的实现原理 select 多个条件满足时会走哪一个分支 实现消息队列（多生产者，多消费者） go gc 算法 go 协程调度模型：MPG sync.Pool 实现原理 goroutine调度用了什么系统调用 什么是闭包 for i 遍历和 for range 遍历有什么区别 后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。 for v1,v2 := range ha 遍历数组的实际运行格式： ha := a hv1 := 0 hn := len(ha) v1 := hv1 for ; hv1 &lt; hn; hv1&#43;&#43; { tmp := ha[hv1] v1, v2 := hv1, tmp ... } for hv1 := range h1 遍历 channel 实际运行格式： ha := a hv1, hb := &lt;-ha for ; hb !=" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/personal/go-tips/" />
 <meta property="article:published_time" content="2020-08-19T19:58:00+08:00" />
@@ -307,13 +307,11 @@
           <div class="post-content markdown">
             <h2 id="pool">Pool</h2>
 <ul>
-<li>go struct能不能比较</li>
 <li>go defer 的实现原理</li>
 <li>select 多个条件满足时会走哪一个分支</li>
 <li>实现消息队列（多生产者，多消费者）</li>
 <li>go gc 算法</li>
 <li>go 协程调度模型：MPG</li>
-<li>go 反射实现原理</li>
 <li>sync.Pool 实现原理</li>
 <li>goroutine调度用了什么系统调用</li>
 <li>什么是闭包</li>
@@ -753,6 +751,9 @@ func ErrorB() error {
 </ul>
 <p>所有包含这两种类型的类型也仍然是不可比较的，比如切片的数组，包含有切片的结构体。</p>
 <p>另外 map 的 key 判断也是使用的 == 符号，所以也不能使用不可比较的类型做为 map 的 key。</p>
+<p>复杂类型的可比较性的实现原理是，它的类型 _type 中会有一个 equal 方法：<code>func(unsafe.Pointer, unsafe.Pointer) bool</code>，如果为 nil，则代表这个类型是不可比较的。</p>
+<p>内置类型的 equal 方法实现于 <code>src/runtime/alg.go</code> 文件中。</p>
+<p>另外有一个特殊的地方，即使是 map slice 这种不能比较的类型，也是可以和 nil 判等的。</p>
 <h3 id="两个协程交替打印从1到100的数字">两个协程交替打印从1到100的数字</h3>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
 	<span class="nx">goal</span> <span class="o">:=</span> <span class="mi">100</span>

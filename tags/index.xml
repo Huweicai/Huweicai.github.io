@@ -111,15 +111,6 @@
     </item>
     
     <item>
-      <title>redis</title>
-      <link>https://huweicai.com/tags/redis/</link>
-      <pubDate>Sat, 04 Jan 2020 22:43:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/tags/redis/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>InnoDB</title>
       <link>https://huweicai.com/tags/innodb/</link>
       <pubDate>Wed, 13 Nov 2019 00:13:31 +0800</pubDate>
@@ -179,6 +170,15 @@
       <pubDate>Mon, 20 May 2019 23:47:00 +0800</pubDate>
       
       <guid>https://huweicai.com/tags/jvm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>redis</title>
+      <link>https://huweicai.com/tags/redis/</link>
+      <pubDate>Fri, 04 Jan 2019 22:43:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/tags/redis/</guid>
       <description></description>
     </item>
     

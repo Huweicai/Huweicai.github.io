@@ -7,14 +7,14 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="简单翻译Redis官网的FAQ以及部分自己总结的问题 官网FAQ地址 Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。 而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留">
+  <meta name="description" content="Redis 官网 FAQ 翻译以及部分自己生产实践总结的问题 官网FAQ地址 Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。 而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留 AOF 日志，在">
   
   <meta property="og:title" content="Redis FAQ" />
-<meta property="og:description" content="简单翻译Redis官网的FAQ以及部分自己总结的问题 官网FAQ地址 Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。 而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留" />
+<meta property="og:description" content="Redis 官网 FAQ 翻译以及部分自己生产实践总结的问题 官网FAQ地址 Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。 而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留 AOF 日志，在" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/redis-faq/" />
-<meta property="article:published_time" content="2020-01-04T22:43:00+08:00" />
-<meta property="article:modified_time" content="2020-01-04T22:43:00+08:00" />
+<meta property="article:published_time" content="2019-01-04T22:43:00+08:00" />
+<meta property="article:modified_time" content="2019-01-04T22:43:00+08:00" />
 
   
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
@@ -291,7 +291,7 @@
 
   <ul class="post-meta li-x mt-1">
     
-      <li>2020-01-04</li>
+      <li>2019-01-04</li>
     
 
     
@@ -305,60 +305,76 @@
 
 
           <div class="post-content markdown">
-            <p>简单翻译Redis官网的FAQ以及部分自己总结的问题
+            <p>Redis 官网 FAQ 翻译以及部分自己生产实践总结的问题
 <a href="https://redis.io/topics/faq">官网FAQ地址</a></p>
 <h3 id="redos持久化策略rdb和aof">Redos持久化策略：RDB和AOF</h3>
 <p>RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。
 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。</p>
 <p>而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留 AOF 日志，在快照之前的日志就可以删除了，这样既节省了空间，同时又能加快恢复速度，还能保证解决的数据持久可靠性。</p>
 <h3 id="redis和其他的kv数据库有什么不同">Redis和其他的KV数据库有什么不同</h3>
-<p>1 Redis支持额外的数据结构
-2 Redis是纯基于内存的</p>
+<ol>
+<li>Redis支持额外的数据结构</li>
+<li>Redis是纯基于内存的</li>
+</ol>
 <h3 id="redis内存占用情况怎么样">Redis内存占用情况怎么样</h3>
-<p>空的Redis ——  3MB
-一百万小KV数据——85MB</p>
+<p>空的Redis  ——  3MB
+一百万小KV数据 —— 85MB</p>
 <h3 id="redis以后打算出基于磁盘的版本吗我想创建一个比内存更大的数据集">Redis以后打算出基于磁盘的版本吗，我想创建一个比内存更大的数据集</h3>
-<p>不会，我们始终专注内存，不忘初心，我们的口号是：“data served from memory, disk used for storage. ”；如果你觉得内存不够的话可以考虑下Redis集群；另外有些组织的魔改版本好像支持磁盘存储，但我们官方不会支持</p>
+<p>不会，我们始终专注内存，不忘初心，我们的口号是：“data served from memory, disk used for storage. ”；如果你觉得内存不够的话可以考虑下Redis集群；另外有些组织的魔改版本好像支持磁盘存储，但我们官方不会支持。</p>
+<p>想要用支持磁盘的 KV 数据库的话，可以考虑 Level DB 和 Rocks DB。</p>
 <h3 id="redis和基于磁盘的数据库一起用怎么样">Redis和基于磁盘的数据库一起用怎么样</h3>
 <p>很Nice，大家一般都是这么用的：大量频繁的小数据写入Redis，大对象写SQL入DB；还有一种用法就是，从DB中复制出来保存Copy在内存中</p>
 <h3 id="如何降低redis的内存占用">如何降低Redis的内存占用？</h3>
-<p>1 使用32的Redis？？
-2 善用Redis数据结构，内部有优化，比独立的几个KV会更省空间</p>
+<ol>
+<li>使用32位的Redis？？</li>
+<li>善用Redis数据结构，内部有优化，比独立的几个KV会更省空间</li>
+</ol>
 <h3 id="redis用尽内存了会发生什么">Redis用尽内存了会发生什么？</h3>
-<p>1 Redis可能会被Linux kernel OOM kill 掉，报错崩溃或者是开始慢下来
-2 你可以在配置文件中设置一个内存limit，当到达这个值后，Redis就会进入Read-only模式，拒绝写操作
-3 在使用Redis作为LRU 缓存时可以设置达到limit移除一些key</p>
+<ol>
+<li>Redis可能会被Linux kernel OOM kill 掉，报错崩溃或者是开始慢下来</li>
+<li>你可以在配置文件中设置一个内存limit，当到达这个值后，Redis就会进入Read-only模式，拒绝写操作</li>
+<li>在使用Redis作为LRU 缓存时可以设置达到limit移除一些key</li>
+</ol>
 <h3 id="redis磁盘镜像备份是atomic的吗">Redis磁盘镜像备份是Atomic的吗？</h3>
 <p>是的，备份进程只会在server没有执行命令的时候执行</p>
-<h3 id="redis是单线程的如何充分利用cpu">Redis是单线程的，如何充分利用CPU？</h3>
-<p>1 CPU并不是Redis的瓶颈，瓶颈往往来自于IO和内存，现在一个CPU已经很够用了，每秒可以处理一百万个请求，多线程反而会带来并发安全、线程切换等问题
-2 但现在其实也有用到多线程，不过只干点小活，如：后台删除，拒绝命令等
-3 Redis 4.0我们开始尝试让Redis更加的多线程化，拭目以待吧</p>
+<h3 id="redis是单线程的为什么还能这么快如何充分利用cpu">Redis是单线程的，为什么还能这么快，如何充分利用CPU？</h3>
+<ol>
+<li>Redis的计算逻辑非常简单，是一个 IO 密集型服务。CPU并不是Redis的瓶颈，瓶颈往往来自于IO和内存，现在一个CPU已经很够用了，每秒可以处理一百万个请求，多线程反而会带来并发安全、线程切换等问题</li>
+<li>但现在其实也有用到多线程，不过只干点小活，如：后台删除，拒绝命令等</li>
+<li>Redis 4.0开始官方也在尝试让Redis更加的多线程化，拭目以待吧</li>
+<li>如果一个实例总是无法出分利用一台物理机的资源的话，可以部署多个实例将 Redis 集群化</li>
+</ol>
 <h3 id="redis-key上限是多少hashlistset成员上限是多少">Redis key上限是多少？Hash，List，Set成员上限是多少</h3>
 <p>2^32 ； 2^32</p>
 <h3 id="为什么我的从服务器key数量和主服务器key数量不一致">为什么我的从服务器key数量和主服务器key数量不一致？</h3>
 <p>因为Master在删除key时只是标记删除，会等后来的key来覆盖它，而在写入RDB时是不会把这些写过去的，但DBSZIE命令还会把它们算在里面，在逻辑上它的数量其实还是一样的</p>
-<h3 id="redis名字的含义是什么">Redis名字的含义是什么？</h3>
-<p>REmote DIctionary Server</p>
+<h3 id="redis名字的含义是什么redis为什么叫redis">Redis名字的含义是什么？Redis为什么叫Redis？</h3>
+<p>REmote DIctionary Server：远程映射表服务</p>
 <h3 id="redis分片的好处">Redis分片的好处</h3>
-<p>1 增大Redis总内存
-2 将Redis扩展到多</p>
+<ol>
+<li>增大Redis总内存</li>
+<li>将Redis扩展到多</li>
+</ol>
 <h3 id="什么是redis主从架构">什么是Redis主从架构</h3>
 <p>Description :  将Redis服务器搭建成一主一从，或一主多从，主服务器负责写，从服务器负责读，读写分离提高性能，同时如果Master宕机，可以选举一位Slave成为新的Master，从而保证整个系统的稳定性，避免单点故障，甚至引起缓存击穿，缓存雪崩等问题</p>
 <p>主从从架构：Slave slaveof Slave 形成一条链，缓解多个Slave同时同步于Master带来的压力</p>
 <p>从库只读：可设置</p>
 <h3 id="redis分区的实现方式">Redis分区的实现方式</h3>
-<p>1 客户端分区，客户端判断好该去哪个机器上读取
-2 代理分区：所有的请求都访问Proxy，然后Proxy给你返回结果，分片对Client不可见，Proxy内部帮你判断去哪台机器并完成请求 ；常见应用方式：Redis中间件，如：Twemproxy
-3 路由分区：随机访问某个Redis，然后它帮你重定向到你该去的地方；Redis-Cluster</p>
+<ol>
+<li>客户端分区，客户端判断好该去哪个机器上读取</li>
+<li>代理分区：所有的请求都访问Proxy，然后Proxy给你返回结果，分片对Client不可见，Proxy内部帮你判断去哪台机器并完成请求 ；常见应用方式：Redis中间件，如：Twemproxy</li>
+<li>路由分区：随机访问某个Redis，然后它帮你重定向到你该去的地方；Redis-Cluster</li>
+</ol>
 <h3 id="redis-cluster">Redis Cluster</h3>
 <p>Redis Cluster是官方给出的集群实现
 数据分片实现：哈希槽，CRC16对16384取模决定Key会被放置到哪个节点；后台维护一个值范围与节点的对应表，增加或减少节点时修改表中节点对应范围即可；使用路由分区算法
 一致性：Master处理完写命令后异步复制到子节点上（为了及时响应），存在一个时间滞后，因此不能保证数据的强一致性；另外网络分区时也会导致写丢失
 大致架构：路由分区+哈希槽+主从</p>
 <h3 id="redis-为何要尽量避免大key">Redis 为何要尽量避免大Key？</h3>
-<p>1 大Key会导致数据堆积在单一分片上，导致内存过大，响应变慢，不能充分利用集群的优势
-2 由于单线程限制，单一Key在存取时会阻塞其他操作，导致Redis无法及时响应</p>
+<ol>
+<li>大Key会导致数据堆积在单一分片上，导致内存过大，响应变慢，不能充分利用集群的优势</li>
+<li>由于单线程限制，单一Key在存取时会阻塞其他操作，导致Redis无法及时响应</li>
+</ol>
 <h3 id="redis-一般多大的-key-叫大-key">Redis 一般多大的 Key 叫大 Key？</h3>
 <p>在我们团队的实践中，一般满足如下任一条件的 Key 会视为大 Key：</p>
 <ol>
@@ -403,10 +419,10 @@ hgetall、lrange、smembers、zrange、sinter、keys 等，这些命令对性能
           <div class="row pt-3">
             <div class="col-md-6">
               
-                <a href=https://huweicai.com/go-switch/ class="post-meta">Previous
+                <a href=https://huweicai.com/computer-encodings/ class="post-meta">Previous
                   <div class="pt-2 pb-5 d-flex">
                     <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
-                    <span>Go 多路条件语句 Switch 语法详解</span>
+                    <span>小论计算机Encoding</span>
                   </div>
                 </a>
               
@@ -414,10 +430,10 @@ hgetall、lrange、smembers、zrange、sinter、keys 等，这些命令对性能
             
             <div class="col-md-6 text-right" >
               
-                <a href=https://huweicai.com/most-frequently-command/ class="post-meta">Next
+                <a href=https://huweicai.com/java-platforms/ class="post-meta">Next
                   <div class="pt-2 pb-5 flex-reverse">
                     <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>找出使用最频繁的Shell命令</span>
+                    <span>Java跨平台究竟能跨哪些平台</span>
                   </div>
                 </a>
               

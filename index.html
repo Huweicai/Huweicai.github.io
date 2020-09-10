@@ -826,24 +826,24 @@
             
                 <div class="post-wrapper white-bg post-card">
   
-  <a href="https://huweicai.com/redis-faq/">
+  <a href="https://huweicai.com/go-switch/">
     <div class="post-header text-center">
-      <div class="px-4 post-heading">Redis FAQ</div>
+      <div class="px-4 post-heading">Go 多路条件语句 Switch 语法详解</div>
       <ul class="post-meta li-x mt-1">
         
-          <li>2020-01-04</li>
+          <li>2020-01-02</li>
         
     
         
           <li class="middot"></li>
-          <li>5 minutes read</li>
+          <li>3 minutes read</li>
         
       </ul>
     </div>
     
 
     
-      简单翻译Redis官网的FAQ以及部分自己总结的问题 官网FAQ地址 Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。 而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留......
+      Switch 是 Go 语言中一种多路条件语句，一般搭配 case 语句使用。 执行逻辑 一个 switch case 条件结构如下所示： switch simpleStatement; condition { case expression1,expression2: statements case expression3: statements default: statements } 和 if 语句类似，switch 语句也可以在条件语句之前执行一段简短的表达式（可以用于很方便的控制变量的作用域），switch case 开始执行时，会先执行这一个表达式（空也算一种），然后计算出条件语句的值，接着按从上到下，从左到右的顺序一个一个的执行 case 语句的条件表达式，如果值相等的话就会进入执行 case 条件......
     
   </a>
 
@@ -852,6 +852,14 @@
   <div class="post-meta li-x mt-2 div-x">
     <div>
       
+        
+          <li><a href="https://huweicai.com/categories/go"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> Go </a></li>
+        
+      
+      
+        
+          <li><a href="https://huweicai.com/series/go"><i class="fas fa-bookmark pr-1" aria-hidden="true"></i>Go</a></li>
+        
       
     </div>
    
@@ -862,7 +870,7 @@
   <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
   <div class="tags-sm">
     
-      <li><a href="https://huweicai.com/tags/redis" role="button">redis </a></li>
+      <li><a href="https://huweicai.com/tags/go" role="button">Go </a></li>
       
     
   </div>
