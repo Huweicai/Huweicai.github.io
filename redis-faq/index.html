@@ -296,7 +296,7 @@
 
     
       <li class="middot"></li>
-      <li>5 minutes read</li>
+      <li>6 minutes read</li>
     
   </ul>
   
@@ -390,6 +390,58 @@ expire：用于加锁时设置，超时自动释放锁，防止永久锁</p>
 <h3 id="什么是-on-命令">什么是 O(n) 命令</h3>
 <p>我们知道 redis 正常查找一个 Key 的时间复杂度是 O(1) 的，而也存在一下命令时间复杂度和 Key 的数量是成正比的：
 hgetall、lrange、smembers、zrange、sinter、keys 等，这些命令对性能的影响是很大的，我们在生产环境中要尽量避开这些命令</p>
+<h3 id="redis-有哪些数据结构">Redis 有哪些数据结构</h3>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200913120554.jpeg" alt="img"></p>
+<p>支持五种数据结构类型的值：</p>
+<ul>
+<li>字符串
+<ul>
+<li>添加：set key value</li>
+<li>带过期时间的添加：setex key seconds value</li>
+<li>不存在才设置：setnx key value</li>
+<li>自增：incr key</li>
+<li>自减：decr key</li>
+<li>追加：append key value</li>
+<li>获取一个：get key</li>
+<li>获取多个：mget key1 key2</li>
+<li>删除：</li>
+</ul>
+</li>
+<li>链表: List
+<ul>
+<li>POP: lpop table</li>
+<li>PUSH: lpush table key1 key2</li>
+<li>获取第几个：lindex table index</li>
+</ul>
+</li>
+<li>集合: Set
+<ul>
+<li>添加：sadd table key</li>
+<li>求交集：sinter table1 table2</li>
+<li>求并集：sunion table1 table2</li>
+<li>判断是否存在：sismember table key</li>
+<li>全部取出：smembers table</li>
+<li>定向删除：srem talbe key1 key2</li>
+<li>随机删除：spop table key</li>
+</ul>
+</li>
+<li>有序集合: zset
+<ul>
+<li>添加：zdd table key score</li>
+<li>遍历：正序：zrange table minIndex maxIndex 反序：zrevrange</li>
+<li>删除：zrem table key</li>
+<li>查看：zscore table key</li>
+</ul>
+</li>
+<li>哈希表：hash
+<ul>
+<li>增：hset table key</li>
+<li>删：hdel table key</li>
+<li>查：hget table key</li>
+<li>遍历：hgetall table</li>
+</ul>
+</li>
+</ul>
 
           </div>
 
@@ -404,6 +456,9 @@ hgetall、lrange、smembers、zrange、sinter、keys 等，这些命令对性能
   <div class="tags-sm">
     
       <li><a href="https://huweicai.com/tags/redis" role="button">redis </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button">存储 </a></li>
       
     
   </div>
