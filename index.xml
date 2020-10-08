@@ -48,6 +48,15 @@
     </item>
     
     <item>
+      <title>进程线程协程的本质区别</title>
+      <link>https://huweicai.com/process-thread-goroutine/</link>
+      <pubDate>Tue, 17 Mar 2020 01:20:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/process-thread-goroutine/</guid>
+      <description>现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。 我们经常能在教科书上看到对于进程和线程的定义：进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。 广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充分利用硬件资源，而用户态线程实现简单上下文切换开销小，后者也被称</description>
+    </item>
+    
+    <item>
       <title>Go 多路条件语句 Switch 语法详解</title>
       <link>https://huweicai.com/go-switch/</link>
       <pubDate>Thu, 02 Jan 2020 12:09:00 +0800</pubDate>
@@ -108,6 +117,15 @@
       
       <guid>https://huweicai.com/confusion-betwwen-forwhiletrue/</guid>
       <description>最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序： public class Test2 { public void whileTest() { int i = 0; while (true) { i++; } } public</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</guid>
+      <description>全局 mheap -&amp;gt; mspan 列表 page 内存页面的最单元，大小为：_PageShift = 13;_PageSize = 1 &amp;lt;&amp;lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆。 type mheap struct { allspans []*mspan // all spans out there arenas [0]*[1 &amp;lt;&amp;lt; arenaL2Bits]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB mspan Go 内存分配的最基本单元，从 8KB 到 32KB 分为 67 个不同的类别 mcentral 相同大小的 mspan 会归类到一个 mcentral 中，内存不够时从 mheap 申请 mcache P 私有的小对象内存管理者，从 mcentral 申请新内存 https://tonybai.com/2020/03/10/visualizing-memory-management-in-golang/</description>
     </item>
     
   </channel>

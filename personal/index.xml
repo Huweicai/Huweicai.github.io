@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Personals on Anonymous&#39; Blog</title>
+    <link>https://huweicai.com/personal/</link>
+    <description>Recent content in Personals on Anonymous&#39; Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    
+	<atom:link href="https://huweicai.com/personal/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</guid>
+      <description>全局 mheap -&amp;gt; mspan 列表 page 内存页面的最单元，大小为：_PageShift = 13;_PageSize = 1 &amp;lt;&amp;lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆。 type mheap struct { allspans []*mspan // all spans out there arenas [0]*[1 &amp;lt;&amp;lt; arenaL2Bits]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB mspan Go 内存分配的最基本单元，从 8KB 到 32KB 分为 67 个不同的类别 mcentral 相同大小的 mspan 会归类到一个 mcentral 中，内存不够时从 mheap 申请 mcache P 私有的小对象内存管理者，从 mcentral 申请新内存 https://tonybai.com/2020/03/10/visualizing-memory-management-in-golang/</description>
+    </item>
+    
+  </channel>
+</rss>

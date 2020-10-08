@@ -20,5 +20,14 @@
       <description>使用最频繁 TOP 10命令： history | awk &amp;#39;{map[$2]++} END { for (a in map )print map[ a ]&amp;#34; &amp;#34; map[ a ]/NR*100 &amp;#34;% &amp;#34; a }&amp;#39;| sort -rn | nl | head 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面类：Graphi</description>
     </item>
     
+    <item>
+      <title>进程线程协程的本质区别</title>
+      <link>https://huweicai.com/process-thread-goroutine/</link>
+      <pubDate>Tue, 17 Mar 2020 01:20:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/process-thread-goroutine/</guid>
+      <description>现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。 我们经常能在教科书上看到对于进程和线程的定义：进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。 广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充分利用硬件资源，而用户态线程实现简单上下文切换开销小，后者也被称</description>
+    </item>
+    
   </channel>
 </rss>

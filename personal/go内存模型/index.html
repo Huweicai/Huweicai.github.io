@@ -7,13 +7,13 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="[好奇心探索世界 善意假设 做最酷的事情]">
+  <meta name="description" content="全局 mheap -&gt; mspan 列表 page 内存页面的最单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆。 type mheap struct { allspans []*mspan // all spans out there arenas [0]*[1 &lt;&lt; arenaL2Bits]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB mspan Go 内存分配的最基本单元，从 8KB 到 32KB 分为 67 个不同的类别 mcentral 相同大小的 mspan 会归类到一个 mcentral 中，内存不够时从 mheap 申请 mcache P 私有的小对象内存管理者，从 mcentral 申请新内存 https://tonybai.com/2020/03/10/visualizing-memory-management-in-golang/">
   
-  <meta property="og:title" content="Go" />
-<meta property="og:description" content="[好奇心探索世界 善意假设 做最酷的事情]" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://huweicai.com/series/go/" />
-<meta property="og:updated_time" content="2020-05-29T19:58:00+08:00" />
+  <meta property="og:title" content="" />
+<meta property="og:description" content="全局 mheap -&gt; mspan 列表 page 内存页面的最单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆。 type mheap struct { allspans []*mspan // all spans out there arenas [0]*[1 &lt;&lt; arenaL2Bits]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB mspan Go 内存分配的最基本单元，从 8KB 到 32KB 分为 67 个不同的类别 mcentral 相同大小的 mspan 会归类到一个 mcentral 中，内存不够时从 mheap 申请 mcache P 私有的小对象内存管理者，从 mcentral 申请新内存 https://tonybai.com/2020/03/10/visualizing-memory-management-in-golang/" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" />
+
 
   
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
@@ -27,11 +27,11 @@
 
   <title>
   
-       Go | Anonymous&#39; Blog 
+        | Anonymous&#39; Blog 
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/series/go/">
+  <link rel="canonical" href="https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">
 
   
   
@@ -59,8 +59,6 @@
 
 
   
-  
-  <link href="https://huweicai.com/series/go/index.xml" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
   
 
   <style type="text/css">
@@ -250,8 +248,6 @@
             
     
             
-                <a href="https://huweicai.com/series/go/index.xml"><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
-            
 
             
         </div>
@@ -269,197 +265,106 @@
     
 
     
-<main class="post-main-wrapper px-5">
   
-  <div class="row">
+  <main class="post-main-wrapper">
     
-    <div class="col-md-3">
-      
-      
-      
-
-  
-
-  
-
-
-
-
-
-  <hr>
-  
-    <div class="post-meta">
-      <div class="mb-2">
-        <a href="https://huweicai.com/categories/">
-          <span class="font-weight-bold text-uppercase post-meta">
-            <i class="fas fa-folder-open pr-1" aria-hidden="true"></i> 
-            Categories
-          </span>
-        </a>
-      </div>
-
-      <div class="li-x post-meta" style="margin-left: -8px;">
-        
-          
-          
-            
-            <li class="py-1">
-              <a href="https://huweicai.com/categories/go">
-                <span>Go (2)</span>
-              </a>
-            </li>           
-          
-        
-      </div>
-    </div>
-
     
-  
-
+    <div class="row">
 
       
+
+      
+      <div class="container pr-5">
       
 
-  
-
-  
-
-
-
-
-
-  <hr>
-  
-    <div class="post-meta">
-      <div class="mb-2">
-        <a href="https://huweicai.com/tags/">
-          <span class="font-weight-bold text-uppercase post-meta">
-            <i class="fas fa-tags pr-1" aria-hidden="true"></i> 
-            Featured Tags
-          </span>
-        </a>
-      </div>
-
-      <div class="li-x post-meta tags-md" style="margin-left: -8px;">
         
-        
-        
-            <li><a href="https://huweicai.com/tags/go" role="button"><span>go (3)</span></a></li>
-          
-        
-            <li><a href="https://huweicai.com/tags/pprof" role="button"><span>pprof (1)</span></a></li>
-          
-        
-      </div>
-    </div>
+        <div class="z-depth-1  post-wrapper white-bg single-post">
 
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
     
-  
-
-
-      
-  
-
-  
-
-
-
-
-
-
-
-  <hr>
-  
-    <div class="post-meta">
-      <div class="mb-2">
-        <a href="https://huweicai.com/series/">
-          <span class="font-weight-bold text-uppercase post-meta">
-            <i class="fas fa-bookmark pr-1" aria-hidden="true"></i> 
-            Recommend Series
-          </span>
-        </a>
-      </div>
-     
-      <div class="post-meta" >
-        
-          
-          
-            <li class="py-1"><a href="https://huweicai.com/series/go"><span>Go (2)</span></a></li>
-          
-        
-      </div>
     
-      
-    </div>
-  
+  </ul>
 
-  
+  <div class="px-4 post-heading"></div>
 
-
-    </div>
+  <ul class="post-meta li-x mt-1">
+    
+      <li>0001-01-01</li>
     
 
     
+      <li class="middot"></li>
+      <li>One minute read</li>
     
-    <div class="col-md-9 mt-3">
-      <ul>
-        <div class="div-x">
-            <div class='post-heading'>
+  </ul>
   
-      Go
-  
+
 </div>
 
+
+          <div class="post-content markdown">
+            <p>全局 mheap -&gt; mspan 列表</p>
+<h2 id="page">page</h2>
+<p>内存页面的最单元，大小为：<code>_PageShift      = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB</code></p>
+<h2 id="mheap">mheap</h2>
+<p>是一个全局唯一的对象，代表整个堆。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">mheap</span> <span class="kd">struct</span> <span class="p">{</span>
+   <span class="nx">allspans</span> <span class="p">[]</span><span class="o">*</span><span class="nx">mspan</span> <span class="c1">// all spans out there
+</span><span class="c1"></span>   <span class="nx">arenas</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">[</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="nx">arenaL2Bits</span><span class="p">]</span><span class="o">*</span><span class="nx">heapArena</span>
+   <span class="nx">central</span> <span class="p">[</span><span class="mi">134</span><span class="p">]</span><span class="kd">struct</span> <span class="p">{</span> <span class="c1">// 134 =  57 * 2，有 57 种大小类型的内存
+</span><span class="c1"></span>      <span class="nx">mcentral</span> <span class="nx">mcentral</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="arena">arena</h2>
+<p>每个 arena 64 MB</p>
+<h2 id="mspan">mspan</h2>
+<p>Go 内存分配的最基本单元，从 8KB 到 32KB 分为 67 个不同的类别</p>
+<h2 id="mcentral">mcentral</h2>
+<p>相同大小的 mspan 会归类到一个 mcentral 中，内存不够时从 mheap 申请</p>
+<h2 id="mcache">mcache</h2>
+<p>P 私有的小对象内存管理者，从 mcentral 申请新内存</p>
+<p><a href="https://tonybai.com/2020/03/10/visualizing-memory-management-in-golang/">https://tonybai.com/2020/03/10/visualizing-memory-management-in-golang/</a></p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
             
-            
-              <div class="px-2 middot"></div>
-              <div>
-                2 posts
-              </div>
+            </div>
             
           </div>
-      
           
-      </ul>
-      <ul>
-        
-            
-        
-        
-            
-                <li class="post-item no-bullet">
-                    <span class="date">2020.5</span>
-                </li>
-                
-                    <li class="post-item">
-    
-    <span class="meta"><time datetime='2020-05-29T19:58:00&#43;08:00'>2020-05-29</time></span>
-    
-    <a href="https://huweicai.com/troubleshotting-goroutine-leeking/"><span>Golang 如何排查协程泄漏问题</span></a>
-</li>
 
-                
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+            </div>
             
-                <li class="post-item no-bullet">
-                    <span class="date">2020.1</span>
-                </li>
-                
-                    <li class="post-item">
-    
-    <span class="meta"><time datetime='2020-01-02T12:09:00&#43;08:00'>2020-01-02</time></span>
-    
-    <a href="https://huweicai.com/go-switch/"><span>Go 多路条件语句 Switch 语法详解</span></a>
-</li>
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
 
-                
-            
+          
+
+        </div>
         
-      </ul>
+
+      </div>
+      
+
+      
+
     </div>
     
-    
-  </div>
-</main> 
+
+
+  </main>
+  
+
 
     
     
@@ -501,8 +406,6 @@
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
-    
-        <a href="https://huweicai.com/series/go/index.xml"><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
     
 
     
