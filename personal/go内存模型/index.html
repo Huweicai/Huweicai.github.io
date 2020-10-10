@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="全局 mheap -&gt; mspan 列表 page 内存页面的最单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆。 type mheap struct { allspans []*mspan // all spans out there arenas [0]*[1 &lt;&lt; arenaL2Bits]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB mspan Go 内存分配的最基本单元，从 8KB 到 32KB 分为 67 个不同的类别 mcentral 相同大小的 mspan 会归类到一个 mcentral 中，内存不够时从 mheap 申请 mcache P 私有的小对象内存管理者，从 mcentral 申请新内存 https://tonybai.com/2020/03/10/visualizing-memory-management-in-golang/">
+  <meta name="description" content="Go内存示意图 page 内存页面的最单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。 mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。 type mheap struct { allspans []*mspan // all spans out there arenas [1]*[4194304]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB // pagesPerArena = 8192 = 8 * 1024 // heapArenaBitmapBytes = 2097152 =">
   
   <meta property="og:title" content="" />
-<meta property="og:description" content="全局 mheap -&gt; mspan 列表 page 内存页面的最单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆。 type mheap struct { allspans []*mspan // all spans out there arenas [0]*[1 &lt;&lt; arenaL2Bits]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB mspan Go 内存分配的最基本单元，从 8KB 到 32KB 分为 67 个不同的类别 mcentral 相同大小的 mspan 会归类到一个 mcentral 中，内存不够时从 mheap 申请 mcache P 私有的小对象内存管理者，从 mcentral 申请新内存 https://tonybai.com/2020/03/10/visualizing-memory-management-in-golang/" />
+<meta property="og:description" content="Go内存示意图 page 内存页面的最单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。 mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。 type mheap struct { allspans []*mspan // all spans out there arenas [1]*[4194304]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB // pagesPerArena = 8192 = 8 * 1024 // heapArenaBitmapBytes = 2097152 =" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" />
 
@@ -304,28 +304,53 @@
 
 
           <div class="post-content markdown">
-            <p>全局 mheap -&gt; mspan 列表</p>
+            <h2 id="go内存示意图">Go内存示意图</h2>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201008190112.png" alt="img{512x368}"></p>
 <h2 id="page">page</h2>
-<p>内存页面的最单元，大小为：<code>_PageShift      = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB</code></p>
+<p>内存页面的最单元，大小为：<code>_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB</code></p>
 <h2 id="mheap">mheap</h2>
-<p>是一个全局唯一的对象，代表整个堆。</p>
+<p>是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。</p>
+<p>mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">mheap</span> <span class="kd">struct</span> <span class="p">{</span>
    <span class="nx">allspans</span> <span class="p">[]</span><span class="o">*</span><span class="nx">mspan</span> <span class="c1">// all spans out there
-</span><span class="c1"></span>   <span class="nx">arenas</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">[</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="nx">arenaL2Bits</span><span class="p">]</span><span class="o">*</span><span class="nx">heapArena</span>
+</span><span class="c1"></span>   <span class="nx">arenas</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">[</span><span class="mi">4194304</span><span class="p">]</span><span class="o">*</span><span class="nx">heapArena</span>
    <span class="nx">central</span> <span class="p">[</span><span class="mi">134</span><span class="p">]</span><span class="kd">struct</span> <span class="p">{</span> <span class="c1">// 134 =  57 * 2，有 57 种大小类型的内存
 </span><span class="c1"></span>      <span class="nx">mcentral</span> <span class="nx">mcentral</span>
    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div><h2 id="arena">arena</h2>
 <p>每个 arena 64 MB</p>
-<h2 id="mspan">mspan</h2>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// pagesPerArena = 8192 = 8 * 1024
+</span><span class="c1">// heapArenaBitmapBytes =  2097152 = 2 * 1024 * 1024
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">heapArena</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="c1">// bitmap stores the pointer/scalar bitmap for the words in
+</span><span class="c1"></span>	<span class="c1">// this arena. See mbitmap.go for a description. Use the
+</span><span class="c1"></span>	<span class="c1">// heapBits type to access this.
+</span><span class="c1"></span>	<span class="nx">bitmap</span> <span class="p">[</span><span class="nx">heapArenaBitmapBytes</span><span class="p">]</span><span class="kt">byte</span>
+	<span class="nx">spans</span> <span class="p">[</span><span class="nx">pagesPerArena</span><span class="p">]</span><span class="o">*</span><span class="nx">mspan</span> <span class="c1">// 页到 mspan 的映射
+</span><span class="c1"></span>	<span class="nx">pageInUse</span> <span class="p">[</span><span class="nx">pagesPerArena</span> <span class="o">/</span> <span class="mi">8</span><span class="p">]</span><span class="kt">uint8</span> <span class="c1">// bitmap 标记哪些页在使用中
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><h2 id="mspan">mspan</h2>
 <p>Go 内存分配的最基本单元，从 8KB 到 32KB 分为 67 个不同的类别</p>
-<h2 id="mcentral">mcentral</h2>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">mspan</span> <span class="kd">struct</span> <span class="p">{</span>
+   <span class="nx">next</span> <span class="o">*</span><span class="nx">mspan</span>     <span class="c1">// 用于在 mheap 上构建 mspan 链表
+</span><span class="c1"></span>   <span class="nx">prev</span> <span class="o">*</span><span class="nx">mspan</span>     <span class="c1">// 用于在 mheap 上构建 mspan 链表
+</span><span class="c1"></span>   <span class="nx">startAddr</span> <span class="kt">uintptr</span> <span class="c1">// 内存开始地址
+</span><span class="c1"></span>   <span class="nx">npages</span>    <span class="kt">uintptr</span> <span class="c1">// page 的数量
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><h2 id="mcentral">mcentral</h2>
 <p>相同大小的 mspan 会归类到一个 mcentral 中，内存不够时从 mheap 申请</p>
-<h2 id="mcache">mcache</h2>
-<p>P 私有的小对象内存管理者，从 mcentral 申请新内存</p>
-<p><a href="https://tonybai.com/2020/03/10/visualizing-memory-management-in-golang/">https://tonybai.com/2020/03/10/visualizing-memory-management-in-golang/</a></p>
-
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">mcentral</span> <span class="kd">struct</span> <span class="p">{</span>
+   <span class="nx">nonempty</span> <span class="nx">mSpanList</span> <span class="c1">// 使用中
+</span><span class="c1"></span>   <span class="nx">empty</span>    <span class="nx">mSpanList</span> <span class="c1">// 空闲列表
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><h2 id="mcache">mcache</h2>
+<p>P 私有的小对象内存管理者，从 mcentral 申请新内存。</p>
+<p>小对象（&lt; 32KB）会在 mcache 上申请，不用加锁，大对象则在 mheap 上直接分配。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">mcache</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">alloc</span> <span class="p">[</span><span class="nx">numSpanClasses134</span><span class="p">]</span><span class="o">*</span><span class="nx">mspan</span>
+<span class="p">}</span>
+</code></pre></div>
           </div>
 
           

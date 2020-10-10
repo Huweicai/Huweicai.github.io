@@ -324,7 +324,7 @@
     
 
     
-      全局 mheap -&gt; mspan 列表 page 内存页面的最单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆。 type mheap struct { allspans []*mspan // all spans out there arenas [0]*[1 &lt;&lt; arenaL2Bits]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB mspan Go 内存分配的最基本单元，从 8KB 到 32KB 分为 67 个不同的类别 mcentral 相同大小的 mspan 会归类到一个 mcentral 中，内存不够时从 mheap 申请 mcache P 私有的小对象内存管理者，从 mcentral 申请新内存 https://tonybai.com/2020/03/10/visualizing-memory-management-in-golang/......
+      Go内存示意图 page 内存页面的最单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。 mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。 type mheap struct { allspans []*mspan // all spans out there arenas [1]*[4194304]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB // pagesPerArena = 8192 = 8 * 1024 // heapArenaBitmapBytes = 2097152 =......
     
   </a>
 
