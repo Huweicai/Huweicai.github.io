@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="Go语言的不足 我在使用 Go 语言编程开发时发现的一些问题，记录： 没有泛型，写工具库时很不方便 Go 把错误当成一种函数返回值来处理自有其设计道理，但是一次只能只能处理一个错误则是语法上的不足 编译器不支持尾递归优化，这对于递归代码而言很不友好 strings 库不像 Java 那样直接支持正则 没有三目运算符 官方库提供的锁不支持重入 Go静态链接编译的做法会把二进制包撑的特别大，虽然这带来了较好的可移植性 使用首字母大小写这种隐式的做法来">
+  
+  <meta property="og:title" content="Go知识点杂记" />
+<meta property="og:description" content="Go语言的不足 我在使用 Go 语言编程开发时发现的一些问题，记录： 没有泛型，写工具库时很不方便 Go 把错误当成一种函数返回值来处理自有其设计道理，但是一次只能只能处理一个错误则是语法上的不足 编译器不支持尾递归优化，这对于递归代码而言很不友好 strings 库不像 Java 那样直接支持正则 没有三目运算符 官方库提供的锁不支持重入 Go静态链接编译的做法会把二进制包撑的特别大，虽然这带来了较好的可移植性 使用首字母大小写这种隐式的做法来" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/go-tips/" />
+<meta property="article:published_time" content="2019-04-05T23:55:00+08:00" />
+<meta property="article:modified_time" content="2019-04-05T23:55:00+08:00" /><meta property="og:see_also" content="https://huweicai.com/troubleshotting-goroutine-leeking/" /><meta property="og:see_also" content="https://huweicai.com/go-package-sync/" /><meta property="og:see_also" content="https://huweicai.com/go-switch/" />
+
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-175035126-1');
+</script>
+
+  <title>
+  
+       Go知识点杂记 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/go-tips/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://huweicai.com/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides//raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+      
+        <li><a href="https://huweicai.com/categories/go"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> go </a></li>
+      
+    
+    
+      
+        <li><a href="https://huweicai.com/series/go"><i class="fas fa-bookmark pr-1" aria-hidden="true"></i>go</a></li>
+      
+    
+  </ul>
+
+  <div class="px-4 post-heading">Go知识点杂记</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>2019-04-05</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>11 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h2 id="go语言的不足">Go语言的不足</h2>
+<p>我在使用 Go 语言编程开发时发现的一些问题，记录：</p>
+<ul>
+<li>没有泛型，写工具库时很不方便</li>
+<li>Go 把错误当成一种函数返回值来处理自有其设计道理，但是一次只能只能处理一个错误则是语法上的不足</li>
+<li>编译器不支持尾递归优化，这对于递归代码而言很不友好</li>
+<li>strings 库不像 Java 那样直接支持正则</li>
+<li>没有三目运算符</li>
+<li>官方库提供的锁不支持重入</li>
+<li>Go静态链接编译的做法会把二进制包撑的特别大，虽然这带来了较好的可移植性</li>
+<li>使用首字母大小写这种隐式的做法来区分变量可见性很不直观，同时也会限制程序的命名风格，申明一个关键字则会好的很多</li>
+<li>没有集合的支持，虽然用散列表实现也就是一行代码的事，但是可读性上来说有很大区别</li>
+</ul>
+<h2 id="基本语法">基本语法</h2>
+<h3 id="for-i-遍历和-for-range-遍历有什么区别">for i 遍历和 for range 遍历有什么区别</h3>
+<p>后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。</p>
+<p>for v1,v2 := range ha 遍历数组的实际运行格式：</p>
+<pre><code>ha := a
+hv1 := 0
+hn := len(ha)
+v1 := hv1
+for ; hv1 &lt; hn; hv1++ {
+    tmp := ha[hv1] 
+    v1, v2 := hv1, tmp
+    ...
+}
+</code></pre><p>for hv1 := range h1 遍历 channel 实际运行格式：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">ha</span> <span class="o">:=</span> <span class="nx">a</span>
+<span class="nx">hv1</span><span class="p">,</span> <span class="nx">hb</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">ha</span>
+<span class="k">for</span> <span class="p">;</span> <span class="nx">hb</span> <span class="o">!=</span> <span class="kc">false</span><span class="p">;</span> <span class="nx">hv1</span><span class="p">,</span> <span class="nx">hb</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">ha</span> <span class="p">{</span>
+    <span class="nx">v1</span> <span class="o">:=</span> <span class="nx">hv1</span>
+    <span class="nx">hv1</span> <span class="p">=</span> <span class="kc">nil</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></div><p>所以不难解释如下代码为什么不会永远运行了，因为这个遍历的次数一开始就根据切片的长度确定了：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">arr</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">arr</span> <span class="p">{</span>
+		<span class="nx">arr</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">arr</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">arr</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
+<span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span>
+</code></pre></div><h3 id="go字符串实现原理">Go字符串实现原理</h3>
+<p>字符串的实现其实和切片比较像，只是没有容量而已：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">StringHeader</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Data</span> <span class="kt">uintptr</span>
+	<span class="nx">Len</span>  <span class="kt">int</span>
+<span class="p">}</span>
+</code></pre></div><p>字符串的底层是一个只读的字节数组指针：[]byte，所以其实也不用担心字符串在传递时的性能开销。</p>
+<p>因为 string 是只读的，而字节数组是可以修改的，所以在和 []byte 相互转换时会通过：memmove 复制内存，因此我们最好尽量避免这两者之间的频繁转换，空间复杂度为 O(len(string))，开销还是比较大的。</p>
+<p>Go 里的字符串是使用 UTF-8 编码的，相较于 Unicode，英文字符等跟 ASCII 一样只要占用一个字节，中文字符在 ASCII 下基本都要占用三个字节，在使用 for range 遍历 string 时，是按照字符而不是字节去遍历，值也是用 rune 类型承接的，不过每次的序号还是这个字符的第一个字节的下标。</p>
+<p>我们在需要字符的序号时，可以把字符串转成 []rune 数组去遍历。</p>
+<p>同时我们也可以转成 []byte 强制其按字节遍历。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">str</span> <span class="o">:=</span> <span class="s">&#34;你好啊今天天气真不错&#34;</span>
+	<span class="nx">runeTotal</span><span class="p">,</span> <span class="nx">byteTotal</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+	<span class="k">for</span> <span class="k">range</span> <span class="nx">str</span> <span class="p">{</span>
+		<span class="nx">runeTotal</span><span class="o">++</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="k">range</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">byteTotal</span><span class="o">++</span>
+	<span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;字符数：%d 字节数：%d 长度：%d&#34;</span><span class="p">,</span> <span class="nx">runeTotal</span><span class="p">,</span> <span class="nx">byteTotal</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">str</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="nx">输出</span><span class="err">：</span><span class="nx">字符数</span><span class="err">：</span><span class="mi">10</span> <span class="nx">字节数</span><span class="err">：</span><span class="mi">30</span> <span class="nx">长度</span><span class="err">：</span><span class="mi">30</span>
+</code></pre></div><h3 id="go-为什么使用-plan9-作为汇编语言">Go 为什么使用 Plan9 作为汇编语言？</h3>
+<p>因为 Go 的作者大部分以前都是搞 Plan9 的，他们在 Go 里重新启用了这种类似的汇编语法，微跨平台汇编语法，所有指令集通用的 ADD MOV JUMP PUSH 之类的指令在 Plan9 里相当于有了一个统一的指令名称，有的指令实在是只在某个指令集上有，那就没办法了，只能说能省一点力气是一点力气。</p>
+<p>编译为 Plan9 汇编之后，Go 实现了一个比较轻量的汇编器来真正将 Plan9 翻译成对应平台的机器码。</p>
+<p><a href="https://9p.io/sys/doc/asm.html">https://9p.io/sys/doc/asm.html</a></p>
+<h3 id="go-反射的实现原理">Go 反射的实现原理</h3>
+<p><a href="">Go 反射的的三大定律</a></p>
+<p>反射的入口主要是两个方法：reflect.TypeOf 和 reflect.ValueOf，对应的它们的入参都是一个 interface{}，interface{} 内部会有两个变量，一个是 type，一个是指向原始数据的指针，而反射的两个方法就是分别获取的对应的这两个值。</p>
+<p>reflect.TypeOf:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">TypeOf</span><span class="p">(</span><span class="nx">i</span> <span class="kd">interface</span><span class="p">{})</span> <span class="nx">Type</span> <span class="p">{</span>
+	<span class="nx">eface</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">emptyInterface</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">))</span>
+	<span class="k">return</span> <span class="nf">toType</span><span class="p">(</span><span class="nx">eface</span><span class="p">.</span><span class="nx">typ</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>reflect.reflect.ValueOf:</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">ValueOf</span><span class="p">(</span><span class="nx">i</span> <span class="kd">interface</span><span class="p">{})</span> <span class="nx">Value</span> <span class="p">{</span>
+	<span class="nx">e</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">emptyInterface</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">))</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">typ</span>
+	<span class="nx">f</span> <span class="o">:=</span> <span class="nf">flag</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">Kind</span><span class="p">())</span>
+	<span class="k">if</span> <span class="nf">ifaceIndir</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">f</span> <span class="o">|=</span> <span class="nx">flagIndir</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">Value</span><span class="p">{</span><span class="nx">t</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">word</span><span class="p">,</span> <span class="nx">f</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="变量之间的可比较性">变量之间的可比较性</h3>
+<p>比较运算符：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="o">==</span>    <span class="nx">equal</span>
+<span class="o">!=</span>    <span class="nx">not</span> <span class="nx">equal</span>
+<span class="p">&lt;</span>     <span class="nx">less</span>
+<span class="o">&lt;=</span>    <span class="nx">less</span> <span class="nx">or</span> <span class="nx">equal</span>
+<span class="p">&gt;</span>     <span class="nx">greater</span>
+<span class="o">&gt;=</span>    <span class="nx">greater</span> <span class="nx">or</span> <span class="nx">equal</span>
+</code></pre></div><p>go 的比较都是基于值去比较的，结构体则会一个一个值的判断，而指针则会比较指针的内存地址，不过我们可以调用reflect.DeepEqual 来强行判断指向的值是否相等。</p>
+<p>但也并不是所有的类型都是可以比较的。</p>
+<p>不可以比较的类型：</p>
+<ul>
+<li>
+<p>切片：切片是引用类型， 如果只判断指针地址的话，没有太大意义并且会带来很大的困惑，而如果比较值的，因为是引用类型，会出现自身指向自身这种导致程序崩溃的情况，所以 go 团队干脆就没有实现这个了，Example：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">  <span class="c1">// 切片，自身指向自身，会 stack overflow
+</span><span class="c1"></span>  <span class="nx">a</span> <span class="o">:=</span> <span class="p">[]</span><span class="kd">interface</span><span class="p">{}{</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.0</span> <span class="p">}</span>
+  <span class="nx">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">a</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="c1">// 输出：fatal error: stack overflow
+</span><span class="c1"></span>  	
+  <span class="c1">// 而数组则不会
+</span><span class="c1"></span>  <span class="nx">b</span> <span class="o">:=</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.0</span> <span class="p">}</span>
+  <span class="nx">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="nx">b</span>
+  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="c1">// 输出：[1 [1 2]]
+</span></code></pre></div></li>
+<li>
+<p>map: map 和切片是一样的，也会出现循环引用的场景。</p>
+</li>
+</ul>
+<p>所有包含这两种类型的类型也仍然是不可比较的，比如切片的数组，包含有切片的结构体。</p>
+<p>另外 map 的 key 判断也是使用的 == 符号，所以也不能使用不可比较的类型做为 map 的 key。</p>
+<p>复杂类型的可比较性的实现原理是，它的类型 _type 中会有一个 equal 方法：<code>func(unsafe.Pointer, unsafe.Pointer) bool</code>，如果为 nil，则代表这个类型是不可比较的。</p>
+<p>内置类型的 equal 方法实现于 <code>src/runtime/alg.go</code> 文件中。</p>
+<p>另外有一个特殊的地方，即使是 map slice 这种不能比较的类型，也是可以和 nil 判等的。Go 变量初始化的执行顺序</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200902154225.png" alt="这里写图片描述"></p>
+<p>main 函数是系统的入口，从 main 函数所在的包开始初始化：</p>
+<p>**包之间：**一个包在初始化之前，会按照引入顺序先初始化其所依赖的的包，一直递归下去；</p>
+<p>**包内：**一个包内不同的文件之间会按照文件名字符顺序初始化：a.go &gt; b.go</p>
+<p>**文件内：**初始化按照字段类型顺序为：常量 -&gt; 变量 -&gt; init 函数</p>
+<p>**一种字段类型内：**按照申明顺序从上到下初始化</p>
+<h2 id="关键字">关键字</h2>
+<h3 id="defer的实现原理">defer的实现原理</h3>
+<p>defer 关键字在调用的时候会通过 runtime.deferproc 创建出来一个 runtime._defer 结构体，这就是 defer 的运行时表示：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">_defer</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">siz</span>     <span class="kt">int32</span> 		 <span class="c1">// defer 参数长度，单位字节
+</span><span class="c1"></span>	<span class="nx">openDefer</span> <span class="kt">bool</span>
+	<span class="nx">sp</span>        <span class="kt">uintptr</span>  <span class="c1">// sp
+</span><span class="c1"></span>	<span class="nx">pc</span>        <span class="kt">uintptr</span>  <span class="c1">// pc
+</span><span class="c1"></span>	<span class="nx">fn</span>        <span class="o">*</span><span class="nx">funcval</span> <span class="c1">// 指向对应的方法
+</span><span class="c1"></span>	<span class="nx">_panic</span>    <span class="o">*</span><span class="nx">_panic</span>  <span class="c1">// 指向调用 defer 的 panic
+</span><span class="c1"></span>	<span class="nx">link</span>      <span class="o">*</span><span class="nx">_defer</span>	 <span class="c1">// 指向下一个 defer 
+</span><span class="c1"></span>
+	<span class="nx">fd</span>   <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> 
+	<span class="nx">varp</span> <span class="kt">uintptr</span>
+	<span class="nx">framepc</span> <span class="kt">uintptr</span>
+<span class="p">}</span>
+</code></pre></div><p>runtime.deferproc 的逻辑也很简单，传入参数的总长度，获取到当前协程，创建defer结构体挂到协程 defer 队列的头部：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">newdefer</span><span class="p">(</span><span class="nx">siz</span> <span class="kt">int32</span><span class="p">)</span> <span class="o">*</span><span class="nx">_defer</span> <span class="p">{</span>
+   <span class="kd">var</span> <span class="nx">d</span> <span class="o">*</span><span class="nx">_defer</span>
+   <span class="nx">gp</span> <span class="o">:=</span> <span class="nf">getg</span><span class="p">()</span> <span class="c1">// get the current goroutine
+</span><span class="c1"></span>   <span class="p">[</span><span class="o">...</span><span class="p">]</span>
+   <span class="c1">// deferred list is now attached to the new _defer struct
+</span><span class="c1"></span>   <span class="nx">d</span><span class="p">.</span><span class="nx">link</span> <span class="p">=</span> <span class="nx">gp</span><span class="p">.</span><span class="nx">_defer</span> 
+   <span class="nx">gp</span><span class="p">.</span><span class="nx">_defer</span> <span class="p">=</span> <span class="nx">d</span> <span class="c1">// the new struct is now the first to be called
+</span><span class="c1"></span>   <span class="k">return</span> <span class="nx">d</span>
+<span class="p">}</span>
+</code></pre></div><p>defer 在调用的时候会立即计算出参数的值，这是容易让很多人困惑的一点：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span>
+	<span class="k">defer</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nb">println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+	<span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+	<span class="nx">i</span><span class="o">++</span>
+<span class="p">}</span>
+
+<span class="nx">输出</span><span class="err">：</span><span class="mi">0</span><span class="err">，</span><span class="nx">即使</span> <span class="nx">main</span> <span class="nx">函数退出的时候</span> <span class="nx">i</span> <span class="nx">的值已经变成了1</span>
+</code></pre></div><p>在函数退出或者 panic 的时候就会把函数出栈同时调用 runtime.deferreturn 把当前协程队列的第一个协程执行，因此 defer 的执行顺序总是 Last-In-First-Out 的。</p>
+<h3 id="defer执行顺序">defer执行顺序</h3>
+<p>Last-In-First-Out</p>
+<h2 id="接口">接口</h2>
+<h3 id="interface-之-eface-的实现">interface{} 之 eface 的实现</h3>
+<p>go 里的接口有两种，带方法的接口：iface，和不带方法的 eface，我们平常在处理任意类型时所用的参数类型，就是一种特殊的接口 interface{}，这个接口没有方法，所以所有的结构体都实现了它，由于 go 的接口是 duck type 的，所以任何结构体都可以传递到以 interface{} 为参数的方法中，这种传值方式跟：io.Reader 这种接口其实是一个性质。空的接口在 go 中做了特殊处理，interface{} 就是 eface，eface 包括一个类型指针和一个指向真实数据的指针。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">eface</span> <span class="kd">struct</span> <span class="p">{</span> <span class="c1">// 16 bytes
+</span><span class="c1"></span>	<span class="nx">_type</span> <span class="o">*</span><span class="nx">_type</span>
+	<span class="nx">data</span>  <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="接口判空判断如下代码返回的结果">接口判空：判断如下代码返回的结果</h3>
+<pre><code>func main() {
+   println(ErrorA() == nil)
+   println(ErrorB() == nil)
+}
+
+func ErrorA() error {
+   return nil
+}
+
+func ErrorB() error {
+   var err *os.PathError
+   return err
+}
+</code></pre><p>返回的结果会是：true，false。</p>
+<p>因为 Go 里面 interface 由两个元素组成，Type 和 Value，Type 表示对象的具体类型，Value 指向对应的内存地址，只有当 Type 和 Value 都为空时，interface 才为空。</p>
+<p>而函数 B 中将 err 变量转换为了 error interface 返回的，而它的 Type 为 *os.PathError 不为空，所以判断是否为 nil 会返回否定的结果。</p>
+<p>而在方法 A 中，虽然 nil 也被转换成了 interface，但是它的 Type 就是 nil，所以能走到正常的逻辑。</p>
+<p>这也是为什么当代码中没有错误时推荐显示返回 nil 而不是空指针的原因了。</p>
+<h2 id="容器">容器</h2>
+<h3 id="go-map-遍历顺序是固定的吗">Go Map 遍历顺序是固定的吗</h3>
+<p>不是，map 遍历并不保证遍历顺序的固定同时也不是有序的，Go 甚至会在用 for range 遍历 map 时，生成一个随机数，从随机的桶开始遍历，就是为了让大家不要依赖 map 遍历的顺序。
+如果需要一个有序的 map 的话，需要自己引入其他的空间自行排序：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">m</span> <span class="kd">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="kt">string</span>
+<span class="kd">var</span> <span class="nx">keys</span> <span class="p">[]</span><span class="kt">int</span>
+<span class="k">for</span> <span class="nx">k</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">m</span> <span class="p">{</span>
+    <span class="nx">keys</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">keys</span><span class="p">,</span> <span class="nx">k</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">sort</span><span class="p">.</span><span class="nf">Ints</span><span class="p">(</span><span class="nx">keys</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">k</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">keys</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Key:&#34;</span><span class="p">,</span> <span class="nx">k</span><span class="p">,</span> <span class="s">&#34;Value:&#34;</span><span class="p">,</span> <span class="nx">m</span><span class="p">[</span><span class="nx">k</span><span class="p">])</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="切片是如何扩容的">切片是如何扩容的</h3>
+<p>参考下面这个问题。</p>
+<h3 id="切片的实现原理">切片的实现原理</h3>
+<p>Rob Pike 对于 slice 的定义：切片一种描述数组中的一个连续片段</p>
+<p>我们在创建切片时，会先创建一个数组，然后再通过 [:] 的方式转化为切片：</p>
+<pre><code>slice := []int{1, 2, 3} 
+
+的实现原理
+
+var vstat [3]int
+vstat[0] = 1
+vstat[1] = 2
+vstat[2] = 3
+var vauto *[3]int = new([3]int)
+*vauto = vstat
+slice := vauto[:]
+</code></pre><p>[:]是创建切片的最底层方法，其他方式都是它的语法糖。</p>
+<p>Go 语言中切片在运行时是用 SliceHeader 结构体表示的：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">SliceHeader</span> <span class="kd">struct</span> <span class="p">{</span>
+   <span class="nx">Data</span> <span class="kt">uintptr</span>
+   <span class="nx">Len</span>  <span class="kt">int</span>
+   <span class="nx">Cap</span>  <span class="kt">int</span>
+<span class="p">}</span>
+</code></pre></div><p>指向底层数组第一个元素的指针，切片的长度和容量；切片是动态的，可以通过 append 来增加元素，append 的逻辑如下，以 append 三个元素为例：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// append(slice, 1, 2, 3)
+</span><span class="c1"></span><span class="nx">ptr</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cap</span> <span class="o">:=</span> <span class="nx">slice</span>
+<span class="nx">newlen</span> <span class="o">:=</span> <span class="nx">len</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="k">if</span> <span class="nx">newlen</span> <span class="p">&gt;</span> <span class="nx">cap</span> <span class="p">{</span>
+    <span class="nx">ptr</span><span class="p">,</span> <span class="nx">len</span><span class="p">,</span> <span class="nx">cap</span> <span class="p">=</span> <span class="nf">growslice</span><span class="p">(</span><span class="nx">slice</span><span class="p">,</span> <span class="nx">newlen</span><span class="p">)</span>
+    <span class="nx">newlen</span> <span class="p">=</span> <span class="nx">len</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="p">}</span>
+<span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="p">)</span> <span class="p">=</span> <span class="mi">1</span>
+<span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">=</span> <span class="mi">2</span>
+<span class="o">*</span><span class="p">(</span><span class="nx">ptr</span><span class="o">+</span><span class="nx">len</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="p">=</span> <span class="mi">3</span>
+<span class="k">return</span> <span class="nf">makeslice</span><span class="p">(</span><span class="nx">ptr</span><span class="p">,</span> <span class="nx">newlen</span><span class="p">,</span> <span class="nx">cap</span><span class="p">)</span>
+</code></pre></div><p>如果 cap 够用，那么会直接在底层数组上赋值并右移，所以这里会存在一个 bug：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">a</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+	<span class="nx">b</span> <span class="o">:=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+	<span class="nx">a</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> 
+	<span class="nb">println</span><span class="p">(</span><span class="nx">b</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+<span class="p">}</span>
+<span class="nx">最终输出</span><span class="err">：</span><span class="mi">4</span>
+
+<span class="k">go</span> <span class="nx">slice</span> <span class="nx">如果只基于</span> <span class="nx">cap</span> <span class="nx">够不够去判断要不要申请一个新数组的话</span><span class="err">，</span>
+<span class="nx">第四行</span> <span class="nx">a</span> <span class="nx">的</span> <span class="nx">len</span><span class="p">=</span><span class="mi">4</span><span class="err">，</span><span class="nx">cap</span><span class="p">=</span><span class="mi">8</span><span class="err">，</span><span class="nx">看起来是容量够用的</span><span class="err">，</span><span class="nx">会直接在底层数组往后追加</span><span class="err">，</span><span class="nx">而</span> <span class="nx">b</span> <span class="nx">和</span> <span class="nx">a</span> <span class="nx">指向的是同一个底层数组</span><span class="err">，</span><span class="nx">b</span> <span class="nx">append</span> <span class="nx">的值就会被覆盖</span><span class="err">。</span>
+</code></pre></div><p>因此切片在 append 之后，最好就不要再使用原来的值了，或者直接将新的切片赋值到原来的变量上去。</p>
+<p>当如果 cap 不够用的时候，就会触发切片的扩容机制：</p>
+<p>在容量小于 1024 时，会复制成双倍，当容量大于 1024 时，会一次扩 1/4，直到可以满足需求。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">growslice</span><span class="p">(</span><span class="nx">et</span> <span class="o">*</span><span class="nx">_type</span><span class="p">,</span> <span class="nx">old</span> <span class="nx">slice</span><span class="p">,</span> <span class="nx">cap</span> <span class="kt">int</span><span class="p">)</span> <span class="nx">slice</span> <span class="p">{</span>
+	<span class="nx">newcap</span> <span class="o">:=</span> <span class="nx">old</span><span class="p">.</span><span class="nx">cap</span>
+	<span class="nx">doublecap</span> <span class="o">:=</span> <span class="nx">newcap</span> <span class="o">+</span> <span class="nx">newcap</span>
+	<span class="k">if</span> <span class="nx">cap</span> <span class="p">&gt;</span> <span class="nx">doublecap</span> <span class="p">{</span>
+		<span class="nx">newcap</span> <span class="p">=</span> <span class="nx">cap</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">old</span><span class="p">.</span><span class="nx">len</span> <span class="p">&lt;</span> <span class="mi">1024</span> <span class="p">{</span>
+			<span class="nx">newcap</span> <span class="p">=</span> <span class="nx">doublecap</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="k">for</span> <span class="mi">0</span> <span class="p">&lt;</span> <span class="nx">newcap</span> <span class="o">&amp;&amp;</span> <span class="nx">newcap</span> <span class="p">&lt;</span> <span class="nx">cap</span> <span class="p">{</span>
+				<span class="nx">newcap</span> <span class="o">+=</span> <span class="nx">newcap</span> <span class="o">/</span> <span class="mi">4</span>
+			<span class="p">}</span>
+			<span class="k">if</span> <span class="nx">newcap</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
+				<span class="nx">newcap</span> <span class="p">=</span> <span class="nx">cap</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+</code></pre></div><p>不过再初步确定了容量之后，还有一个逻辑：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">capmem</span> <span class="p">=</span> <span class="nf">roundupsize</span><span class="p">(</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">newcap</span><span class="p">))</span>
+<span class="nx">newcap</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">capmem</span> <span class="o">/</span> <span class="nx">et</span><span class="p">.</span><span class="nx">size</span><span class="p">)</span>
+</code></pre></div><p>会根据类型进行内存对齐，会在双倍的基础上再对容量根据最佳对齐值进行一定的向上取整。</p>
+<p>切片拷贝时会调用：memmove，将整块内存空间全部复制到新的地方，同时把源切片的 Len 复制给新的切片，而不是一个一个元素在 Go 代码层面的复制。</p>
+<h3 id="空切片和-nil-有什么区别-a--int-a--nil">空切片和 nil 有什么区别： a := []int{} a := nil</h3>
+<p>我们可以通过 <code>*(*reflect.SliceHeader)(unsafe.Pointer(&amp;slice))</code>显示的将切片转化为其底层数据结构，便于分析：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span> <span class="p">[]</span><span class="kt">int</span>
+	<span class="nx">b</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">c</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{}</span>
+	<span class="nx">aHeader</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">SliceHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">))</span>
+	<span class="nx">bHeader</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">SliceHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">b</span><span class="p">))</span>
+	<span class="nx">cHeader</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">SliceHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">c</span><span class="p">))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">aHeader</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">bHeader</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">cHeader</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">输出</span><span class="err">：</span>
+<span class="p">{</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">}</span>
+<span class="p">{</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">}</span>
+<span class="p">{</span><span class="mi">824634355400</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">}</span>
+</code></pre></div><p>我们分别用申明变量、显示赋值为 nil、初始化一个空切片的方式构造了三个切片，转化为底层数据结构在打印日志可以发现，前两种方式指向数组的指针其实并没有初始化，而第三种方式 Data 会指向一个数组，虽然它的长度为0。</p>
+<p>这个不同会导致前两者在 json 序列化的时候被序列化成：<code>null</code>，而空切片则会序列化为：<code>[]</code>：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">,</span> <span class="nx">c</span> <span class="p">[]</span><span class="kt">int</span>
+	<span class="nx">b</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">c</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{}</span>
+	<span class="nx">aBytes</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+	<span class="nx">bBytes</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+	<span class="nx">cBytes</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+	<span class="nb">println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">aBytes</span><span class="p">))</span>
+	<span class="nb">println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">bBytes</span><span class="p">))</span>
+	<span class="nb">println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">cBytes</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="nx">输出</span><span class="err">：</span>
+<span class="nx">null</span>
+<span class="nx">null</span>
+<span class="p">[]</span>
+</code></pre></div><h3 id="长度不同的数组是同样的类型吗">长度不同的数组是同样的类型吗？</h3>
+<p>不是；[2]int 和 [3]int 并不是一个类型，因为他们的内存结构不是一样的，在 64 位机器下，[2]int 是占用两个16个字节，而[3]int 占用24个字节，不过切片的内存布局是一样的，都是 runtime.SliceHeader 结构体，数据部分只是一个指针。</p>
+<p><code>reflect.TypeOf([3]int{}).String()</code> 的结果是：[3]int，长度也是数组的一个元信息。</p>
+<p>但它们的 Kind 是一样的，都是：array。</p>
+<h2 id="并发">并发</h2>
+<h3 id="select-实现超时逻辑">select 实现超时逻辑</h3>
+<p>time.After 会在指定时间之后在返回的管道中发送当前时间，这样循环就会退出。</p>
+<p>time.After 封装了一下 timer.Timer，在计时结束之后就 Timer 对象就会被垃圾回收。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="k">for</span> <span class="p">{</span>
+  <span class="k">select</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">time</span><span class="p">.</span><span class="nf">After</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">):</span>
+  	<span class="k">break</span><span class="p">;</span>
+	<span class="k">default</span><span class="p">:</span>
+		<span class="c1">// do something
+</span><span class="c1"></span>  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h3 id="sync-包相关库实现原理">sync 包相关库实现原理</h3>
+<p>参考：https://huweicai.com/go-package-sync/</p>
+<h2 id="内存模型与gc">内存模型与GC</h2>
+<h2 id="go性能优化">Go性能优化</h2>
+<h3 id="找到瓶颈点">找到瓶颈点</h3>
+<ul>
+<li>go tool pprof 分析内存</li>
+<li>go tool trace 协程运行分析</li>
+<li>go build -gcflags=&rdquo;-m&rdquo; 查看逃逸分析，编译器优化</li>
+</ul>
+<h3 id="优化-gc">优化 GC</h3>
+<ul>
+<li>map 存值而不是指针，指针会影响 gc 标记时长</li>
+</ul>
+<h3 id="减少内存拷贝">减少内存拷贝</h3>
+<ul>
+<li>大对象使用指针而不是值类型，减少方法传递时带来的性能损耗</li>
+<li>尽量避免在 []byte 和 string 两种类型之间频繁转换，每一次都要完整拷贝内存，性能影响很大</li>
+<li>使用 strings.Builder 而不是 butes.buffer 甚至是加号来拼接字符串，性能从左到右依次递减，bytes.buffer 底层是一个byte数组，最后会通过 string([]byte) 转成 string，会发生一次内存拷贝，而用加号拼接，每拼接一次都会申请一块新的内存，性能更差</li>
+<li>使用切片时尽量预分配长度，无法确定长度也可以先尽量预分配容量，减少切片扩容带来的内存拷贝</li>
+</ul>
+<h3 id="减少内存分配">减少内存分配</h3>
+<ul>
+<li>小对象使用值类型而不是指针，指针会导致逃逸分析失效，对象分配在堆上，对于小对象而言得不偿失</li>
+<li>使用空 struct{} 来进行占位，不需要分配内存，编译器会将空 struct{} 全部指向 runtime.zerobase</li>
+<li>合理复用对象，或者使用对象池：sync.Pool，减少内存分配，同时降低 GC <a href="">压力</a></li>
+</ul>
+<h3 id="并发优化">并发优化</h3>
+<ul>
+<li>使用 atomic.CAS atomic.Add 在单次操作上替代 sync.Mutex，前者只是一个 CPU 指令，而后者则是负责的软件逻辑</li>
+</ul>
+<h2 id="其他工具库">其他工具库</h2>
+<h3 id="go-timer-实现原理">go Timer 实现原理</h3>
+<p>首先如果让我们自己去实现一个 Timer 的话，我们可以计算出来要具体下一次调度的时间，然后 sleep 对应的时长就好了，但是如果创建了很多的 Timer 的话，这样的性能其实是比较差的，go 里面会有一个协程统一负责管理 timer 来执行我们上面这个操作，所有的 timer 会放在一个堆中进行管理，每次取堆顶的值来判断要 sleep 多久即可。</p>
+<h2 id="待更新">待更新</h2>
+<ul>
+<li>select 多个条件满足时会走哪一个分支</li>
+<li>go gc 三色标记+写屏障</li>
+<li>go 协程调度模型：Machine-Processor-Goroutine</li>
+<li>什么是闭包</li>
+<li>iota</li>
+<li>Go Happens-Before</li>
+<li>Go 内存模型</li>
+</ul>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/go" role="button">go </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/redis-faq/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Redis FAQ</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://huweicai.com/java-platforms/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>Java跨平台究竟能跨哪些平台</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go%e8%af%ad%e8%a8%80%e7%9a%84%e4%b8%8d%e8%b6%b3">
+												 Go语言的不足
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9f%ba%e6%9c%ac%e8%af%ad%e6%b3%95">
+												 基本语法
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#for-i-%e9%81%8d%e5%8e%86%e5%92%8c-for-range-%e9%81%8d%e5%8e%86%e6%9c%89%e4%bb%80%e4%b9%88%e5%8c%ba%e5%88%ab">
+												 for i 遍历和 for range 遍历有什么区别
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go%e5%ad%97%e7%ac%a6%e4%b8%b2%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 Go字符串实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-%e4%b8%ba%e4%bb%80%e4%b9%88%e4%bd%bf%e7%94%a8-plan9-%e4%bd%9c%e4%b8%ba%e6%b1%87%e7%bc%96%e8%af%ad%e8%a8%80">
+												 Go 为什么使用 Plan9 作为汇编语言？
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-%e5%8f%8d%e5%b0%84%e7%9a%84%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 Go 反射的实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%98%e9%87%8f%e4%b9%8b%e9%97%b4%e7%9a%84%e5%8f%af%e6%af%94%e8%be%83%e6%80%a7">
+												 变量之间的可比较性
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%b3%e9%94%ae%e5%ad%97">
+												 关键字
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#defer%e7%9a%84%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 defer的实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#defer%e6%89%a7%e8%a1%8c%e9%a1%ba%e5%ba%8f">
+												 defer执行顺序
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8e%a5%e5%8f%a3">
+												 接口
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#interface-%e4%b9%8b-eface-%e7%9a%84%e5%ae%9e%e7%8e%b0">
+												 interface{} 之 eface 的实现
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8e%a5%e5%8f%a3%e5%88%a4%e7%a9%ba%e5%88%a4%e6%96%ad%e5%a6%82%e4%b8%8b%e4%bb%a3%e7%a0%81%e8%bf%94%e5%9b%9e%e7%9a%84%e7%bb%93%e6%9e%9c">
+												 接口判空：判断如下代码返回的结果
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%b9%e5%99%a8">
+												 容器
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-map-%e9%81%8d%e5%8e%86%e9%a1%ba%e5%ba%8f%e6%98%af%e5%9b%ba%e5%ae%9a%e7%9a%84%e5%90%97">
+												 Go Map 遍历顺序是固定的吗
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%87%e7%89%87%e6%98%af%e5%a6%82%e4%bd%95%e6%89%a9%e5%ae%b9%e7%9a%84">
+												 切片是如何扩容的
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%87%e7%89%87%e7%9a%84%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 切片的实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%a9%ba%e5%88%87%e7%89%87%e5%92%8c-nil-%e6%9c%89%e4%bb%80%e4%b9%88%e5%8c%ba%e5%88%ab-a--int-a--nil">
+												 空切片和 nil 有什么区别： a := []int{} a := nil
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%95%bf%e5%ba%a6%e4%b8%8d%e5%90%8c%e7%9a%84%e6%95%b0%e7%bb%84%e6%98%af%e5%90%8c%e6%a0%b7%e7%9a%84%e7%b1%bb%e5%9e%8b%e5%90%97">
+												 长度不同的数组是同样的类型吗？
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b9%b6%e5%8f%91">
+												 并发
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#select-%e5%ae%9e%e7%8e%b0%e8%b6%85%e6%97%b6%e9%80%bb%e8%be%91">
+												 select 实现超时逻辑
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#sync-%e5%8c%85%e7%9b%b8%e5%85%b3%e5%ba%93%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 sync 包相关库实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%86%85%e5%ad%98%e6%a8%a1%e5%9e%8b%e4%b8%8egc">
+												 内存模型与GC
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go%e6%80%a7%e8%83%bd%e4%bc%98%e5%8c%96">
+												 Go性能优化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%89%be%e5%88%b0%e7%93%b6%e9%a2%88%e7%82%b9">
+												 找到瓶颈点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%98%e5%8c%96-gc">
+												 优化 GC
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%87%8f%e5%b0%91%e5%86%85%e5%ad%98%e6%8b%b7%e8%b4%9d">
+												 减少内存拷贝
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%87%8f%e5%b0%91%e5%86%85%e5%ad%98%e5%88%86%e9%85%8d">
+												 减少内存分配
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b9%b6%e5%8f%91%e4%bc%98%e5%8c%96">
+												 并发优化
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%b6%e4%bb%96%e5%b7%a5%e5%85%b7%e5%ba%93">
+												 其他工具库
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-timer-%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 go Timer 实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%be%85%e6%9b%b4%e6%96%b0">
+												 待更新
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+  
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

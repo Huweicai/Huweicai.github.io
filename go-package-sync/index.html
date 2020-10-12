@@ -14,7 +14,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/go-package-sync/" />
 <meta property="article:published_time" content="2020-01-10T00:30:00+08:00" />
-<meta property="article:modified_time" content="2020-01-10T00:30:00+08:00" /><meta property="og:see_also" content="https://huweicai.com/troubleshotting-goroutine-leeking/" /><meta property="og:see_also" content="https://huweicai.com/go-switch/" />
+<meta property="article:modified_time" content="2020-01-10T00:30:00+08:00" /><meta property="og:see_also" content="https://huweicai.com/troubleshotting-goroutine-leeking/" /><meta property="og:see_also" content="https://huweicai.com/go-switch/" /><meta property="og:see_also" content="https://huweicai.com/go-tips/" />
 
 
   
@@ -534,7 +534,7 @@
 </span><span class="c1"></span><span class="p">}</span>
 </code></pre></div><p>对象池的核心数据结构是一个长度为 Processor 数量即底层线程个数的数组，这样每个协程可以访问各自底层 P 的本地缓存来避免共享访问时加锁。</p>
 <p>每个 P 都能缓存一个对象，同时所有 P 都会共享一个队列用来缓存公共的对象。</p>
-<p>在 Go 语言早期共享对象池是直接用一个切片实现的队列 + 锁来实现的，在 Go 1.13 的时候优化成了使用无锁双端队列来避免加锁。</p>
+<p>在 Go 语言早期共享对象池是直接用一个切片实现的队列 + 锁来实现的，在 Go 1.13 的时候优化成了使用无锁双端队列来避免加锁。``</p>
 <h4 id="获取对象流程">获取对象流程</h4>
 <ol>
 <li>找到当前的 P 对应的 poolLocal</li>
