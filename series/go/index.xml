@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Go on Anonymous&#39; Blog</title>
+    <title>go on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/series/go/</link>
-    <description>Recent content in Go on Anonymous&#39; Blog</description>
+    <description>Recent content in go on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
     <lastBuildDate>Fri, 29 May 2020 19:58:00 +0800</lastBuildDate>
@@ -18,6 +18,15 @@
       
       <guid>https://huweicai.com/troubleshotting-goroutine-leeking/</guid>
       <description>背景 周所周知，内存泄漏是一个很严重的问题，会导致系统运行占用资源越来越多，无法释放，直至崩溃。所幸 Go 语言是一门 具有垃圾回收的语言，能大大降低遇到内存泄漏的概率，而我们今天要说的是另外一个棘手的问题：协程泄漏。 协程泄漏：顾名思义就是出现了应该释放而没有被释放的协程，导致系统协程数量一直上升。不像对象回收需要引用计数、三色标记等手段，协程的回收是相当简单的，等待协程将代码从头到尾执行完毕之后这一块儿空</description>
+    </item>
+    
+    <item>
+      <title>Go语言sync包实现原理分析</title>
+      <link>https://huweicai.com/go-package-sync/</link>
+      <pubDate>Fri, 10 Jan 2020 00:30:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/go-package-sync/</guid>
+      <description>Java 语言中有一个 java.util.Concurrent 包提供了大量的并发工，而 Go 语言中也有这样的角色：sync包。 sync.Mutex 锁实现原理 sync.Mutext 是 Go 提供的一种同步原语，用于表达互斥，不过不推荐在业务中使用，根据 Go 的设计思想，应首先考虑通过传递消息（管道）来共享内存，而不是通过共享内存来传递消息 Mutex 结构体如下，只有两个变量，非常简单： type Mutex struct { state int32 // 状态，bitmap sema uint32 // 信号量 } state 字段是一个位图 第 0 位表示是否加锁 第 1 位表示是否已唤醒 第 2 位表示是否为饥饿模</description>
     </item>
     
     <item>

@@ -57,6 +57,15 @@
     </item>
     
     <item>
+      <title>Go语言sync包实现原理分析</title>
+      <link>https://huweicai.com/go-package-sync/</link>
+      <pubDate>Fri, 10 Jan 2020 00:30:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/go-package-sync/</guid>
+      <description>Java 语言中有一个 java.util.Concurrent 包提供了大量的并发工，而 Go 语言中也有这样的角色：sync包。 sync.Mutex 锁实现原理 sync.Mutext 是 Go 提供的一种同步原语，用于表达互斥，不过不推荐在业务中使用，根据 Go 的设计思想，应首先考虑通过传递消息（管道）来共享内存，而不是通过共享内存来传递消息 Mutex 结构体如下，只有两个变量，非常简单： type Mutex struct { state int32 // 状态，bitmap sema uint32 // 信号量 } state 字段是一个位图 第 0 位表示是否加锁 第 1 位表示是否已唤醒 第 2 位表示是否为饥饿模</description>
+    </item>
+    
+    <item>
       <title>Go 多路条件语句 Switch 语法详解</title>
       <link>https://huweicai.com/go-switch/</link>
       <pubDate>Thu, 02 Jan 2020 12:09:00 +0800</pubDate>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>并发 on Anonymous&#39; Blog</title>
+    <link>https://huweicai.com/tags/%E5%B9%B6%E5%8F%91/</link>
+    <description>Recent content in 并发 on Anonymous&#39; Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Fri, 10 Jan 2020 00:30:00 +0800</lastBuildDate>
+    
+	<atom:link href="https://huweicai.com/tags/%E5%B9%B6%E5%8F%91/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Go语言sync包实现原理分析</title>
+      <link>https://huweicai.com/go-package-sync/</link>
+      <pubDate>Fri, 10 Jan 2020 00:30:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/go-package-sync/</guid>
+      <description>Java 语言中有一个 java.util.Concurrent 包提供了大量的并发工，而 Go 语言中也有这样的角色：sync包。 sync.Mutex 锁实现原理 sync.Mutext 是 Go 提供的一种同步原语，用于表达互斥，不过不推荐在业务中使用，根据 Go 的设计思想，应首先考虑通过传递消息（管道）来共享内存，而不是通过共享内存来传递消息 Mutex 结构体如下，只有两个变量，非常简单： type Mutex struct { state int32 // 状态，bitmap sema uint32 // 信号量 } state 字段是一个位图 第 0 位表示是否加锁 第 1 位表示是否已唤醒 第 2 位表示是否为饥饿模</description>
+    </item>
+    
+  </channel>
+</rss>

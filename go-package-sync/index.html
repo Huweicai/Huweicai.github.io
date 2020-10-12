@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="Java 语言中有一个 java.util.Concurrent 包提供了大量的并发工，而 Go 语言中也有这样的角色：sync包。 sync.Mutex 锁实现原理 sync.Mutext 是 Go 提供的一种同步原语，用于表达互斥，不过不推荐在业务中使用，根据 Go 的设计思想，应首先考虑通过传递消息（管道）来共享内存，而不是通过共享内存来传递消息 Mutex 结构体如下，只有两个变量，非常简单： type Mutex struct { state int32 // 状态，bitmap sema uint32 // 信号量 } state 字段是一个位图 第 0 位表示是否加锁 第 1 位表示是否已唤醒 第 2 位表示是否为饥饿模">
+  
+  <meta property="og:title" content="Go语言sync包实现原理分析" />
+<meta property="og:description" content="Java 语言中有一个 java.util.Concurrent 包提供了大量的并发工，而 Go 语言中也有这样的角色：sync包。 sync.Mutex 锁实现原理 sync.Mutext 是 Go 提供的一种同步原语，用于表达互斥，不过不推荐在业务中使用，根据 Go 的设计思想，应首先考虑通过传递消息（管道）来共享内存，而不是通过共享内存来传递消息 Mutex 结构体如下，只有两个变量，非常简单： type Mutex struct { state int32 // 状态，bitmap sema uint32 // 信号量 } state 字段是一个位图 第 0 位表示是否加锁 第 1 位表示是否已唤醒 第 2 位表示是否为饥饿模" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/go-package-sync/" />
+<meta property="article:published_time" content="2020-01-10T00:30:00+08:00" />
+<meta property="article:modified_time" content="2020-01-10T00:30:00+08:00" /><meta property="og:see_also" content="https://huweicai.com/troubleshotting-goroutine-leeking/" /><meta property="og:see_also" content="https://huweicai.com/go-switch/" />
+
+
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-175035126-1');
+</script>
+
+  <title>
+  
+       Go语言sync包实现原理分析 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/go-package-sync/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet"> 
+    
+  
+  <link href="https://huweicai.com/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.css">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+      
+
+        
+        <div class="carousel-item">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides//raw_1515691746.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+            
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+      
+        <li><a href="https://huweicai.com/series/go"><i class="fas fa-bookmark pr-1" aria-hidden="true"></i>go</a></li>
+      
+    
+  </ul>
+
+  <div class="px-4 post-heading">Go语言sync包实现原理分析</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>2020-01-10</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>6 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>Java 语言中有一个 java.util.Concurrent 包提供了大量的并发工，而 Go 语言中也有这样的角色：<a href="https://github.com/golang/go/tree/master/src/sync">sync包</a>。</p>
+<h3 id="syncmutex-锁实现原理">sync.Mutex 锁实现原理</h3>
+<p>sync.Mutext 是 Go 提供的一种同步原语，用于表达互斥，不过不推荐在业务中使用，根据 Go 的设计思想，应首先考虑通过传递消息（管道）来共享内存，而不是通过共享内存来传递消息</p>
+<p>Mutex 结构体如下，只有两个变量，非常简单：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Mutex</span> <span class="kd">struct</span> <span class="p">{</span>
+   <span class="nx">state</span> <span class="kt">int32</span>	<span class="c1">// 状态，bitmap
+</span><span class="c1"></span>   <span class="nx">sema</span>  <span class="kt">uint32</span> <span class="c1">// 信号量
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>state 字段是一个位图</p>
+<ul>
+<li>第 0 位表示是否加锁</li>
+<li>第 1 位表示是否已唤醒</li>
+<li>第 2 位表示是否为饥饿模式</li>
+<li>剩下的位则用于表示在这个 Mutex 上等待的 goroutine 数量</li>
+</ul>
+<p>sema 是一个信号量，配合 sleep 原语和 notify 原因使用，具体实现是协程调用 <code>runtime_SemacquireMutex</code> 用于在信号量上等待信号量大于0，<code>runtime_Semrelease</code> 则会唤醒在这个信号量上等待的协程。</p>
+<p>加锁的时候其实就是尝试将state的第一个位置成true，表示已经加锁，而解锁则是将其置回0再调用<code>runtime_Semrelease</code>唤醒等待的协程。</p>
+<p>不过之后的版本引入了饥饿模式，当有协程等待超过一毫秒之后，就会进入饥饿模式，所有占用CPU的协程不再尝试自旋获取锁，直接去等待队列尾端排队，锁会在释放后直接递交给等待队列中的第一个协程。当满足以下任一条件时就会退出饥饿模式：</p>
+<ul>
+<li>等待时间小于 1ms</li>
+<li>等待队列空了</li>
+</ul>
+<p>不过需要注意的是，go 的 Mutex <strong>并没有额外实现可重入的机制</strong>，所以当一个获取了锁再尝试去加锁时就会死锁。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
+<span class="kn">import</span> <span class="s">&#34;sync&#34;</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">mutex</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span><span class="p">{}</span>
+	<span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span> <span class="c1">// panic，无法重入
+</span><span class="c1"></span><span class="p">}</span>
+<span class="p">&gt;</span> <span class="nx">输出</span><span class="err">：</span><span class="nx">fatal</span> <span class="kt">error</span><span class="p">:</span> <span class="nx">all</span> <span class="nx">goroutines</span> <span class="nx">are</span> <span class="nx">asleep</span> <span class="o">-</span> <span class="nx">deadlock</span><span class="p">!</span>
+</code></pre></div><p>在 Java语言中有重量级锁和轻量级锁的概念，而在 go 里面对应的则是在信号量上等待的饥饿模式，和自旋空等的普通模式。</p>
+<p>饥饿模式和普通模式的切换，也是 go 在公平和性能中的一个权衡。</p>
+<h3 id="syncrwmutex读写锁实现原理">sync.RWMutex读写锁实现原理</h3>
+<p>RWMutex 提供的是一个读写锁的功能，同一时间可以有很多个读者在读，或者一个写者在写，适用于读多写少的场景；</p>
+<p>RWMutex 的实现和 Mutex 一样，也是基于信号量和atomic指令来实现的；</p>
+<p>数据结构：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">RWMutex</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">w</span>           <span class="nx">Mutex</span>  <span class="c1">// 写者锁
+</span><span class="c1"></span>	<span class="nx">writerSem</span>   <span class="kt">uint32</span> <span class="c1">// 写者信号量
+</span><span class="c1"></span>	<span class="nx">readerSem</span>   <span class="kt">uint32</span> <span class="c1">// 读者信号量
+</span><span class="c1"></span>	<span class="nx">readerCount</span> <span class="kt">int32</span>  <span class="c1">// 读者数量
+</span><span class="c1"></span>	<span class="nx">readerWait</span>  <span class="kt">int32</span>  <span class="c1">// 离开的写者数量
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">rwmutexMaxReaders</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">30</span> <span class="c1">// 最大的读者数量，2^30 = 1073741824
+</span></code></pre></div><p>大致的实现原理就是，读加锁时会先把读者数量加一，然后判断当前有没有协程尝试写入，没有的话就可以读了，如果有的话那么就会挂起，挂起是通过判断读者数量是否为负数来实现的，所以这里会限制读者数量不能超过rwmutexMaxReaders，这样才能保证读者数量能在尝试写入时一定能变成负值；在尝试加写锁时会先通过 Mutex 跟其他尝试写的协程竞争，然后才能进入临界区，进入之后就会把读者数量减去rwmutexMaxReaders变成负数，这样就不会有新增的读者，然后等待当前正在读的读者全部读完，最后一个读者读完之后会唤醒它，然后就可以开始写了，写者写完之后唤醒读者，大家你来我往，井井有条。</p>
+<h3 id="synccond条件变量">sync.Cond条件变量</h3>
+<p>Cond 是一个条件变量：</p>
+<ul>
+<li>Wait 等待</li>
+<li>Notify 唤醒一个等待的协程</li>
+<li>BroadCast 唤醒所有等待的协程</li>
+</ul>
+<p>不过这个库在 Go 显得有的有点鸡肋，管道既可以实现信号量的功能，而且还顺带可以传输数据，具体实现的话底层和锁依赖的信号量一样的。</p>
+<h3 id="syncwaitgroup-等待条件">sync.WaitGroup 等待条件</h3>
+<p>waitGroup 类似于 Java 里面的 CountDownLatch类，可以让一个协程等待其他协程任务的完成，拥有三个方法：</p>
+<ul>
+<li>Add 申明要等待的数量</li>
+<li>Done 完成了一个任务，Add( -1)</li>
+<li>Wait 等待</li>
+</ul>
+<p>底层实现也是通过 atomic 和信号量来实现的。</p>
+<p>一个没有 WaitGroup 的例子：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">wg</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+	<span class="nx">size</span> <span class="o">:=</span> <span class="mi">10</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">size</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">x</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nb">println</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+			<span class="nx">wg</span> <span class="o">&lt;-</span> <span class="kd">struct</span><span class="p">{}{}</span>
+		<span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">size</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="o">&lt;-</span><span class="nx">wg</span>
+	<span class="p">}</span>
+</code></pre></div><p>WaitGroup 版本：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">wg</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+	<span class="nx">size</span> <span class="o">:=</span> <span class="mi">10</span>
+	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">size</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">go</span> <span class="kd">func</span><span class="p">(</span><span class="nx">x</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nb">println</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>
+			<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+		<span class="p">}(</span><span class="nx">i</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</code></pre></div><h3 id="synconce实现原理">sync.Once实现原理</h3>
+<p>sync.Once 数据结构：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Once</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">done</span> <span class="kt">uint32</span> <span class="c1">// 标记是否完成
+</span><span class="c1"></span>	<span class="nx">m</span>    <span class="nx">Mutex</span>
+<span class="p">}</span>
+</code></pre></div><p>sync.Once 可以保证提交给它的方法无论被调用多少次也只会执行一次，这个其实就是一个经典的单例模式的解决方案，两步判断，实现原理如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="mi">0</span> <span class="o">*</span><span class="nx">Once</span><span class="p">)</span><span class="nf">Do</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">){</span>
+	<span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadUint32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">o</span><span class="p">.</span><span class="nx">done</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span> <span class="c1">// 判断是否已经被执行过
+</span><span class="c1"></span>		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="nx">o</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>	<span class="c1">// 加锁尝试初始化
+</span><span class="c1"></span>	<span class="k">defer</span> <span class="nx">o</span><span class="p">.</span><span class="nx">m</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">o</span><span class="p">.</span><span class="nx">done</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span> <span class="c1">// 可能在等待锁的时候已经被其他协程执行过了
+</span><span class="c1"></span>		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="nf">f</span><span class="p">()</span> <span class="c1">// 执行
+</span><span class="c1"></span>	<span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreUint32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">o</span><span class="p">.</span><span class="nx">done</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">// 标记已完成
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><h3 id="syncmap实现原理">sync.Map实现原理</h3>
+<h4 id="数据结构">数据结构</h4>
+<p>Go 语言中自带的 map 出于性能考虑并不是线程安全的，go 1.9 加入了 sync.Map 来提供并发场景下哈希表的高性能解决方案，维护了一个只读的副本，这样在只有查询的时候就不用加锁，数据结构如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">mu</span> <span class="nx">Mutex</span>					<span class="c1">// 
+</span><span class="c1"></span>  	<span class="nx">read</span> <span class="nx">atomic</span><span class="p">.</span><span class="nx">Value</span> <span class="c1">// 只读数据
+</span><span class="c1"></span>  	<span class="nx">dirty</span> <span class="kd">map</span><span class="p">[</span><span class="kd">interface</span><span class="p">{}]</span><span class="o">*</span><span class="nx">entry</span> <span class="c1">// 动态数据
+</span><span class="c1"></span>  	<span class="nx">misses</span> <span class="kt">int</span>	<span class="c1">// 未命中的数量
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="c1">// read 的结构
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">readOnly</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">m</span>       <span class="kd">map</span><span class="p">[</span><span class="kd">interface</span><span class="p">{}]</span><span class="o">*</span><span class="nx">entry</span>
+	<span class="nx">amended</span> <span class="kt">bool</span> <span class="c1">// true 表示 dirty 中后面添加了元素，如果 read 中查不到需要查一下 dirty 确认
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">entry</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">p</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// *interface{} // 指向对应的存储元素
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><h4 id="查询">查询</h4>
+<p>读取数据时会先从 read 中读取，read 中读不到才会尝试去 dirty 读，任何对 dirty 的操作都会加锁，来保证数据的安全。如果 amended 不为 true 的话意味着 dirty 中的数据 read 全有，read 中查不到也就不会继续去 dirty 中查询了。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Map</span><span class="p">)</span> <span class="nf">Load</span><span class="p">(</span><span class="nx">key</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">(</span><span class="nx">value</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">ok</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">read</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">read</span><span class="p">.</span><span class="nf">Load</span><span class="p">().(</span><span class="nx">readOnly</span><span class="p">)</span>
+	<span class="nx">e</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">read</span><span class="p">.</span><span class="nx">m</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="o">&amp;&amp;</span> <span class="nx">read</span><span class="p">.</span><span class="nx">amended</span> <span class="p">{</span> <span class="c1">// 穿透
+</span><span class="c1"></span>		<span class="nx">m</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+		<span class="nx">read</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">read</span><span class="p">.</span><span class="nf">Load</span><span class="p">().(</span><span class="nx">readOnly</span><span class="p">)</span>
+		<span class="nx">e</span><span class="p">,</span> <span class="nx">ok</span> <span class="p">=</span> <span class="nx">read</span><span class="p">.</span><span class="nx">m</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="o">&amp;&amp;</span> <span class="nx">read</span><span class="p">.</span><span class="nx">amended</span> <span class="p">{</span>
+			<span class="nx">e</span><span class="p">,</span> <span class="nx">ok</span> <span class="p">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">dirty</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+			<span class="nx">m</span><span class="p">.</span><span class="nf">missLocked</span><span class="p">()</span> <span class="c1">// 统计穿透 read 的数量
+</span><span class="c1"></span>		<span class="p">}</span>
+		<span class="nx">m</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+   <span class="p">}</span>
+   
+	<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">false</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nx">e</span><span class="p">.</span><span class="nf">load</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div><h4 id="修改">修改</h4>
+<p>修改数据时会尝试 CAS 直接修改 read 指向的节点，因为 read 和 dirty 指向的数据：entry 其实是同一份，所以修改是会生效的。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 修改，不考虑添加的场景
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Map</span><span class="p">)</span> <span class="nf">Store</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+	<span class="nx">read</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">read</span><span class="p">.</span><span class="nf">Load</span><span class="p">().(</span><span class="nx">readOnly</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">e</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">read</span><span class="p">.</span><span class="nx">m</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span> <span class="nx">ok</span><span class="p">{</span>
+		<span class="k">for</span> <span class="p">{</span>
+         <span class="nx">p</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadPointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">e</span><span class="p">.</span><span class="nx">p</span><span class="p">)</span>
+				 <span class="c1">//替换底层指向的值
+</span><span class="c1"></span>         <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapPointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">e</span><span class="p">.</span><span class="nx">p</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span> <span class="p">{</span> 
+            <span class="k">return</span> <span class="c1">// 修改成功
+</span><span class="c1"></span>         <span class="p">}</span>
+      <span class="p">}</span>
+   <span class="p">}</span>
+   <span class="k">return</span>
+<span class="p">}</span>
+</code></pre></div><h4 id="添加">添加</h4>
+<p>添加数据时则会直接添加到 dirty 中，数据添加后虽然没有在 read 里出现，但是读是会但穿透次数频繁到一定程度后，就会把 dirty 升级为 read。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 只考虑添加的场景，不考虑修改
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Map</span><span class="p">)</span> <span class="nf">Store</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+	<span class="nx">m</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">read</span><span class="p">.</span><span class="nx">amended</span> <span class="p">{</span> <span class="c1">// 如果当前dirty和read数据一致，修改为这个标识符
+</span><span class="c1"></span>      <span class="nx">m</span><span class="p">.</span><span class="nf">dirtyLocked</span><span class="p">()</span>
+      <span class="nx">m</span><span class="p">.</span><span class="nx">read</span><span class="p">.</span><span class="nf">Store</span><span class="p">(</span><span class="nx">readOnly</span><span class="p">{</span><span class="nx">m</span><span class="p">:</span> <span class="nx">read</span><span class="p">.</span><span class="nx">m</span><span class="p">,</span> <span class="nx">amended</span><span class="p">:</span> <span class="kc">true</span><span class="p">})</span>
+   <span class="p">}</span>
+   <span class="nx">m</span><span class="p">.</span><span class="nx">dirty</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nf">newEntry</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+	<span class="nx">m</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div><h4 id="删除">删除</h4>
+<p>因为 read 是只读的，所以不能直接删除，sync.Map 替换掉原有数据指向一个特殊的标记来表示数据已经被删除，同时会在 dirty 中删除这个 key，这样这个 key 就不会一直存在。</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Map</span><span class="p">)</span> <span class="nf">Delete</span><span class="p">(</span><span class="nx">key</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+	<span class="nx">read</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">read</span><span class="p">.</span><span class="nf">Load</span><span class="p">().(</span><span class="nx">readOnly</span><span class="p">)</span>
+   <span class="nx">e</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">read</span><span class="p">.</span><span class="nx">m</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+	<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="o">&amp;&amp;</span> <span class="nx">read</span><span class="p">.</span><span class="nx">amended</span> <span class="p">{</span> <span class="c1">// read 中没有找到，看看 dirty 中有没有
+</span><span class="c1"></span>		<span class="nx">m</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+		<span class="nx">read</span><span class="p">,</span> <span class="nx">_</span> <span class="p">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">read</span><span class="p">.</span><span class="nf">Load</span><span class="p">().(</span><span class="nx">readOnly</span><span class="p">)</span>
+		<span class="nx">e</span><span class="p">,</span> <span class="nx">ok</span> <span class="p">=</span> <span class="nx">read</span><span class="p">.</span><span class="nx">m</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">ok</span> <span class="o">&amp;&amp;</span> <span class="nx">read</span><span class="p">.</span><span class="nx">amended</span> <span class="p">{</span>
+			<span class="nb">delete</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">dirty</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">m</span><span class="p">.</span><span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+   <span class="p">}</span>
+   
+	<span class="k">if</span> <span class="nx">ok</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="p">{</span>
+         <span class="nx">p</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadPointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">e</span><span class="p">.</span><span class="nx">p</span><span class="p">)</span>
+         <span class="k">if</span> <span class="nx">p</span> <span class="o">==</span> <span class="kc">nil</span> <span class="o">||</span> <span class="nx">p</span> <span class="o">==</span> <span class="nx">expunged</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="kc">false</span>
+         <span class="p">}</span>
+         <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapPointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">e</span><span class="p">.</span><span class="nx">p</span><span class="p">,</span> <span class="nx">p</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 用一个空指针表示删除了
+</span><span class="c1"></span>            <span class="k">return</span> <span class="kc">true</span>
+         <span class="p">}</span>
+      <span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h4 id="小结">小结</h4>
+<p>sync.Map 的思想是用空间换时间，维护了一个只读的数据副本，对于读多写少的场景性能几乎和普通 map 一样，但是当写入和删除频繁时性能就比较差了，不过还是比用全局读写锁保护的map要好很多。</p>
+<p>Java 里面的 ConcurrentHashMap 的思路则是锁粒度细分，不过 Go 社区里面也有用这种思路实现的开源库：https://github.com/orcaman/concurrent-map，如果写的场景也很频繁的话，这会是一个比 sync.Map 更好的选择。</p>
+<h3 id="syncpool对象池实现原理">sync.Pool对象池实现原理</h3>
+<p>我们在需要频繁创建和销毁对象时可以使用对象池来减少内存分配和GC的压力。</p>
+<h4 id="基本用法">基本用法</h4>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">pool</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Pool</span><span class="p">{</span><span class="nx">New</span><span class="p">:</span> <span class="nx">NewObject</span><span class="p">}</span> <span class="c1">// 创建对象池同时提供创建函数
+</span><span class="c1"></span><span class="nx">x</span> <span class="o">:=</span> <span class="nx">pool</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>	<span class="c1">// 通过 Get 获取一个对象
+</span><span class="c1"></span><span class="nx">pool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span>			<span class="c1">// 使用完之后通过 Put 放回对象池
+</span></code></pre></div><h4 id="数据结构-1">数据结构</h4>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Pool</span> <span class="kd">struct</span> <span class="p">{</span>
+  <span class="nx">local</span>     <span class="p">[</span><span class="nx">P</span><span class="p">]</span><span class="nx">poolLocal</span>  <span class="c1">// 每个P(线程)私有的结构体
+</span><span class="c1"></span>	<span class="nx">New</span> <span class="kd">func</span><span class="p">()</span> <span class="kd">interface</span><span class="p">{}</span>	<span class="c1">// 创建函数
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">poolLocalInternal</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">private</span> <span class="kd">interface</span><span class="p">{}</span><span class="c1">// 线程私有对象 
+</span><span class="c1"></span>	<span class="nx">shared</span>  <span class="nx">poolChain</span>  <span class="c1">// 共享双端队列
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><p>对象池的核心数据结构是一个长度为 Processor 数量即底层线程个数的数组，这样每个协程可以访问各自底层 P 的本地缓存来避免共享访问时加锁。</p>
+<p>每个 P 都能缓存一个对象，同时所有 P 都会共享一个队列用来缓存公共的对象。</p>
+<p>在 Go 语言早期共享对象池是直接用一个切片实现的队列 + 锁来实现的，在 Go 1.13 的时候优化成了使用无锁双端队列来避免加锁。</p>
+<h4 id="获取对象流程">获取对象流程</h4>
+<ol>
+<li>找到当前的 P 对应的 poolLocal</li>
+<li>poolLocal 中查看私有的那一份对象缓存在不在，如果在的话直接返回即可</li>
+<li>去共享队列中尝试获取对象</li>
+<li>如果共享队列中也没有，会遍历其他的 P 看看他们是否有缓存</li>
+<li>如果所有地方都没有缓存，直接调用 New 创建一个</li>
+</ol>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/go" role="button">go </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%B9%B6%E5%8F%91" role="button">并发 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/go-switch/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Go 多路条件语句 Switch 语法详解</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://huweicai.com/process-thread-goroutine/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>进程线程协程的本质区别</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#syncmutex-%e9%94%81%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 sync.Mutex 锁实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#syncrwmutex%e8%af%bb%e5%86%99%e9%94%81%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 sync.RWMutex读写锁实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#synccond%e6%9d%a1%e4%bb%b6%e5%8f%98%e9%87%8f">
+												 sync.Cond条件变量
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#syncwaitgroup-%e7%ad%89%e5%be%85%e6%9d%a1%e4%bb%b6">
+												 sync.WaitGroup 等待条件
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#synconce%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 sync.Once实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#syncmap%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 sync.Map实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84">
+												 数据结构
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9f%a5%e8%af%a2">
+												 查询
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bf%ae%e6%94%b9">
+												 修改
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%b7%bb%e5%8a%a0">
+												 添加
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%a0%e9%99%a4">
+												 删除
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b0%8f%e7%bb%93">
+												 小结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#syncpool%e5%af%b9%e8%b1%a1%e6%b1%a0%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 sync.Pool对象池实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9f%ba%e6%9c%ac%e7%94%a8%e6%b3%95">
+												 基本用法
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%95%b0%e6%8d%ae%e7%bb%93%e6%9e%84-1">
+												 数据结构
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%8e%b7%e5%8f%96%e5%af%b9%e8%b1%a1%e6%b5%81%e7%a8%8b">
+												 获取对象流程
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/popper.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors/holder.min.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+  
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

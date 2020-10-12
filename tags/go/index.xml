@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Go on Anonymous&#39; Blog</title>
+    <title>go on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/go/</link>
-    <description>Recent content in Go on Anonymous&#39; Blog</description>
+    <description>Recent content in go on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
     <lastBuildDate>Fri, 29 May 2020 19:58:00 +0800</lastBuildDate>
@@ -27,6 +27,15 @@
       
       <guid>https://huweicai.com/process-thread-goroutine/</guid>
       <description>现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。 我们经常能在教科书上看到对于进程和线程的定义：进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。 广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充分利用硬件资源，而用户态线程实现简单上下文切换开销小，后者也被称</description>
+    </item>
+    
+    <item>
+      <title>Go语言sync包实现原理分析</title>
+      <link>https://huweicai.com/go-package-sync/</link>
+      <pubDate>Fri, 10 Jan 2020 00:30:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/go-package-sync/</guid>
+      <description>Java 语言中有一个 java.util.Concurrent 包提供了大量的并发工，而 Go 语言中也有这样的角色：sync包。 sync.Mutex 锁实现原理 sync.Mutext 是 Go 提供的一种同步原语，用于表达互斥，不过不推荐在业务中使用，根据 Go 的设计思想，应首先考虑通过传递消息（管道）来共享内存，而不是通过共享内存来传递消息 Mutex 结构体如下，只有两个变量，非常简单： type Mutex struct { state int32 // 状态，bitmap sema uint32 // 信号量 } state 字段是一个位图 第 0 位表示是否加锁 第 1 位表示是否已唤醒 第 2 位表示是否为饥饿模</description>
     </item>
     
     <item>

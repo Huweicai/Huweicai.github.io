@@ -57,7 +57,7 @@
     </item>
     
     <item>
-      <title>Go</title>
+      <title>go</title>
       <link>https://huweicai.com/tags/go/</link>
       <pubDate>Fri, 29 May 2020 19:58:00 +0800</pubDate>
       
@@ -116,6 +116,15 @@
       <pubDate>Tue, 17 Mar 2020 01:20:00 +0800</pubDate>
       
       <guid>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>并发</title>
+      <link>https://huweicai.com/tags/%E5%B9%B6%E5%8F%91/</link>
+      <pubDate>Fri, 10 Jan 2020 00:30:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/tags/%E5%B9%B6%E5%8F%91/</guid>
       <description></description>
     </item>
     
