@@ -42,11 +42,11 @@
   <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Ubuntu+Mono:400,400i,700,700i|Raleway:300,400,500,600">
+  <link rel="stylesheet" href="css/fonts/open_sans_ubuntu_mono">
   <link href="https://huweicai.com/css/font.css" rel="stylesheet"> 
     
   
-  <link href="https://huweicai.com/css/vendors/bootstrap4/bootstrap.min.css" rel="stylesheet">
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
   <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
   <link href="https://huweicai.com/css/main.css" rel="stylesheet">
@@ -316,7 +316,7 @@
           <div class="post-content markdown">
             <h2 id="go语言的不足">Go语言的不足</h2>
 <p>我在使用 Go 语言编程开发时发现的一些问题，记录：</p>
-<ul>
+<ol>
 <li>没有泛型，写工具库时很不方便</li>
 <li>Go 把错误当成一种函数返回值来处理自有其设计道理，但是一次只能只能处理一个错误则是语法上的不足</li>
 <li>编译器不支持尾递归优化，这对于递归代码而言很不友好</li>
@@ -327,7 +327,7 @@
 <li>使用首字母大小写这种隐式的做法来区分变量可见性很不直观，同时也会限制程序的命名风格，申明一个关键字则会好的很多</li>
 <li>没有集合的支持，虽然用散列表实现也就是一行代码的事，但是可读性上来说有很大区别</li>
 <li>协程只能主动退出，无法kill 或者 interrupt</li>
-</ul>
+</ol>
 <h2 id="基本语法">基本语法</h2>
 <h3 id="for-i-遍历和-for-range-遍历有什么区别">for i 遍历和 for range 遍历有什么区别</h3>
 <p>后者是前者的语法糖，编译在编译的时候还是会转化成 for i 的方式。</p>
@@ -1644,14 +1644,14 @@ slice := vauto[:]
 
 
 
-<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery-3.3.1.min.js"></script>
-<script type="text/javascript" src="https://huweicai.com/js/vendors/jquery/jquery.smooth-scroll.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
 
 
 
 <script type="text/javascript" src="https://huweicai.com/js/vendors/popper.min.js"></script>
 <script type="text/javascript" src="https://huweicai.com/js/vendors/holder.min.js"></script>
-<script type="text/javascript" src="https://huweicai.com/js/vendors-extensions/bootstrap4/bootstrap.js" ></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
 
 <script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
 
