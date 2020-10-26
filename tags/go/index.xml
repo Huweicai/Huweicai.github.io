@@ -49,10 +49,10 @@
     
     <item>
       <title>Go知识点杂记</title>
-      <link>https://huweicai.com/go-tips/</link>
+      <link>https://huweicai.com/go-knowledge-points/</link>
       <pubDate>Fri, 05 Apr 2019 23:55:00 +0800</pubDate>
       
-      <guid>https://huweicai.com/go-tips/</guid>
+      <guid>https://huweicai.com/go-knowledge-points/</guid>
       <description>Go语言的不足 我在使用 Go 语言编程开发时发现的一些问题，记录： 没有泛型，写工具库时很不方便 Go 把错误当成一种函数返回值来处理自有其设计道理，但是一次只能只能处理一个错误则是语法上的不足 编译器不支持尾递归优化，这对于递归代码而言很不友好 strings 库不像 Java 那样直接支持正则 没有三目运算符 官方库提供的锁不支持重入 Go静态链接编译的做法会把二进制包撑的特别大，虽然这带来了较好的可移植性 使用首字母大小写这种隐式的做法来</description>
     </item>
     
