@@ -16,7 +16,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</guid>
-      <description>Go内存示意图 page 内存页面的最单元，大小为：_PageShift = 13;_PageSize = 1 &amp;lt;&amp;lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。 mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。 type mheap struct { allspans []*mspan // all spans out there arenas [1]*[4194304]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB // pagesPerArena = 8192 = 8 * 1024 // heapArenaBitmapBytes = 2097152 =</description>
+      <description>Go内存示意图 page 内存页面的最小单元，大小为：_PageShift = 13;_PageSize = 1 &amp;lt;&amp;lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。 mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。 type mheap struct { allspans []*mspan // all spans out there arenas [1]*[4194304]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB // pagesPerArena = 8192 = 8 * 1024 // heapArenaBitmapBytes = 2097152</description>
     </item>
     
   </channel>
