@@ -6,10 +6,19 @@
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 01 Jul 2020 01:47:00 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 11 Nov 2020 01:43:00 +0800</lastBuildDate>
     
 	<atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Git实现原理</title>
+      <link>https://huweicai.com/git-implementation/</link>
+      <pubDate>Wed, 11 Nov 2020 01:43:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/git-implementation/</guid>
+      <description>基本概念 概述 Git 是一个基于快照的文件版本管理系统，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 下面我</description>
+    </item>
     
     <item>
       <title>完整网络请求包自底向上分析</title>

@@ -4,7 +4,28 @@
   
   <url>
     <loc>https://huweicai.com/</loc>
-    <lastmod>2020-07-01T01:47:00+08:00</lastmod>
+    <lastmod>2020-11-11T01:43:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/git/</loc>
+    <lastmod>2020-11-11T01:43:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/git-implementation/</loc>
+    <lastmod>2020-11-11T01:43:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/</loc>
+    <lastmod>2020-11-11T01:43:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -25,13 +46,6 @@
   
   <url>
     <loc>https://huweicai.com/tags/ip/</loc>
-    <lastmod>2020-07-01T01:47:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/</loc>
     <lastmod>2020-07-01T01:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
