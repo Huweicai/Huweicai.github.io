@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 下面我">
+  <meta name="description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一">
   
   <meta property="og:title" content="Git实现原理" />
-<meta property="og:description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 下面我" />
+<meta property="og:description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/git-implementation/" />
 <meta property="article:published_time" content="2020-11-11T01:43:00+08:00" />
@@ -290,9 +290,11 @@
 <h2 id="概述">概述</h2>
 <p>Git 是一个<strong>基于快照的文件版本管理系统</strong>，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。</p>
 <p>commit 的上层还有一个概念叫<strong>分支</strong>，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。</p>
-<p>下面我基于 go 语言版本的 git 实现源码（相较于C语言版更面向对象，可读性更好）来分析一下这些概念的实现。</p>
+<p>这是一个<a href="https://github.com/Huweicai/gitdemo">简单仓库</a>的示意图，我们会在文章末尾详细分析其构成。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201111120427.png" alt="image-20201110005626068"></p>
+<p>下面我基于 go 语言版本的 git 实现源码（相较于C语言版更面向对象，可读性更好）来分析一下这些概念的底层实现。</p>
 <h2 id="object">Object</h2>
-<p>Object 是这个文件管理系统中最基本的单元，就代表了一个普通的文件，每一个被 git 管理的文件都会计算出一个 hash 值然后压缩放置于 .git/objects 目录中。</p>
+<p>Object 是这个文件管理系统中最基本的单元，就代表了一个普通的文件，每一个被 git 管理的文件都会计算出一个 hash 值然后压缩放置于 <code>.git/objects</code> 目录中。</p>
 <p>同时一个提交和目录还有标签页被抽象成了对象的一种。</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">CommitObject</span>  <span class="p">=</span> <span class="mi">1</span> <span class="c1">// 提交
 </span><span class="c1"></span>	<span class="nx">TreeObject</span>    <span class="p">=</span> <span class="mi">2</span> <span class="c1">// 目录
