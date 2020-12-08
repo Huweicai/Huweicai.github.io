@@ -6,11 +6,7 @@
     <description>Recent content in shell on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Fri, 20 Mar 2020 19:58:00 +0800</lastBuildDate>
-    
-	<atom:link href="https://huweicai.com/tags/shell/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 20 Mar 2020 19:58:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/shell/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>找出使用最频繁的Shell命令</title>
       <link>https://huweicai.com/most-frequently-command/</link>

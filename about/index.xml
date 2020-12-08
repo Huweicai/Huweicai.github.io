@@ -5,10 +5,6 @@
     <link>https://huweicai.com/about/</link>
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zn-Hans</language>
-    
-	<atom:link href="https://huweicai.com/about/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>zn-Hans</language><atom:link href="https://huweicai.com/about/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

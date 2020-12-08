@@ -6,10 +6,15 @@
     <description>Recent content in 操作系统 on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 17 Mar 2020 01:20:00 +0800</lastBuildDate>
-    
-	<atom:link href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml" />
-    
+    <lastBuildDate>Tue, 08 Dec 2020 23:47:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>小米路由器4A百兆版刷OpenWRT</title>
+      <link>https://huweicai.com/run-openwrt-on-xiaomi4a100m/</link>
+      <pubDate>Tue, 08 Dec 2020 23:47:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/run-openwrt-on-xiaomi4a100m/</guid>
+      <description>我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此记录下来，分享给有缘人。 找到合适的OpenWRT固件 固件可以自己编译，参考官网教程：https://openwrt.org/zh/docs/guide-developer/quickstart-build-images，OpenWRT提供了一个可视化的CLI编译配置工具，照着来就是了，自由度会高一些。 同时OpenWRT也</description>
+    </item>
     
     <item>
       <title>进程线程协程的本质区别</title>

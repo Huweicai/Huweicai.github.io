@@ -6,11 +6,7 @@
     <description>Recent content in HTTP on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 01 Jul 2020 01:47:00 +0800</lastBuildDate>
-    
-	<atom:link href="https://huweicai.com/tags/http/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Wed, 01 Jul 2020 01:47:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/http/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>完整网络请求包自底向上分析</title>
       <link>https://huweicai.com/who-network-capture-analysis/</link>

@@ -7,14 +7,14 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？ 人眼如何感知色彩 众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，颜色的本质就是电磁波的频率，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。 人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，">
+  <meta name="description" content="我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此记录下来，分享给有缘人。 找到合适的OpenWRT固件 固件可以自己编译，参考官网教程：https://openwrt.org/zh/docs/guide-developer/quickstart-build-images，OpenWRT提供了一个可视化的CLI编译配置工具，照着来就是了，自由度会高一些。 同时OpenWRT也">
   
-  <meta property="og:title" content="颜色是如何呈现的" />
-<meta property="og:description" content="现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？ 人眼如何感知色彩 众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，颜色的本质就是电磁波的频率，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。 人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，" />
+  <meta property="og:title" content="小米路由器4A百兆版刷OpenWRT" />
+<meta property="og:description" content="我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此记录下来，分享给有缘人。 找到合适的OpenWRT固件 固件可以自己编译，参考官网教程：https://openwrt.org/zh/docs/guide-developer/quickstart-build-images，OpenWRT提供了一个可视化的CLI编译配置工具，照着来就是了，自由度会高一些。 同时OpenWRT也" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/how-color-present/" />
-<meta property="article:published_time" content="2020-04-09T01:27:11+08:00" />
-<meta property="article:modified_time" content="2020-04-09T01:27:11+08:00" />
+<meta property="og:url" content="https://huweicai.com/run-openwrt-on-xiaomi4a100m/" />
+<meta property="article:published_time" content="2020-12-08T23:47:00+08:00" />
+<meta property="article:modified_time" content="2020-12-08T23:47:00+08:00" />
 
    
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-175035126-1"></script>
@@ -28,11 +28,11 @@
 
   <title>
   
-       颜色是如何呈现的 | Anonymous&#39; Blog 
+       小米路由器4A百兆版刷OpenWRT | Anonymous&#39; Blog 
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/how-color-present/">
+  <link rel="canonical" href="https://huweicai.com/run-openwrt-on-xiaomi4a100m/">
 
   
   
@@ -268,11 +268,11 @@
     
   </ul>
 
-  <div class="px-4 post-heading">颜色是如何呈现的</div>
+  <div class="px-4 post-heading">小米路由器4A百兆版刷OpenWRT</div>
 
   <ul class="post-meta li-x mt-1">
     
-      <li>2020-04-09</li>
+      <li>2020-12-08</li>
     
 
     
@@ -286,102 +286,87 @@
 
 
           <div class="post-content markdown">
-            <p>现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？</p>
-<h1 id="人眼如何感知色彩">人眼如何感知色彩</h1>
-<p>众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，<strong>颜色的本质就是电磁波的频率</strong>，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001733.png" alt="电磁波谱"></p>
-<p>人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，而视锥细胞则负责感受光的色彩。</p>
-<h2 id="视锥细胞">视锥细胞</h2>
-<p>人类眼睛中有三种对不同电磁波频率敏感的视锥细胞，分别是 <strong>Small</strong> <strong>Mediam</strong> <strong>Long</strong>，所有的颜色就是对这三种细胞不同强度刺激的组合结果，比如：</p>
-<ul>
-<li>黄色就是同时刺激 M 细胞和 L 细胞的结果</li>
-<li>同时刺激三种细胞时，我们就会得到白色</li>
-<li>如果都没有刺激，那就是黑色</li>
-</ul>
-<p>这三种基本的光就是我们通常意义上所说的三原色，通过这三种原色，基于同时用540nm 和 570 nm 波长的光刺激锥状细胞在人类大脑看来大约等价于用 560nm光刺激的原理我们可以模拟出任意颜色的效果。不过这种等价只基于人类成立，鸡只有两种视锥细胞，而皮皮虾则有足足十六对，人类眼中相同的颜色在其他生物眼中可能差异非常大，不过这并不重要，只要能骗过我们的大脑就行，这种原理就是我们现代彩色显示器的理论基础。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001738.png" alt="视锥细胞敏感频率"></p>
-<p>M 细胞和 L 细胞依赖的光敏色素蛋白基因编码于 X 染色体上，如果出现问题，这会导致这两种细胞无法正常运转，即我们通常意义上说的红绿色盲症，另外它还是一种隐性遗传病，根据高中遗传学知识，患这种病的男性会比较多。
-红绿色盲世界模拟如下图右：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001743.png" alt="红绿色盲世界模拟"></p>
-<p>还有一种全色色盲症，即三种视锥细胞全无法正常工作，此时依靠视杆细胞维持视觉运行，只能看到黑白的世界。</p>
-<h1 id="色彩表示方式">色彩表示方式</h1>
-<h2 id="rgb">RGB</h2>
-<p>利用按一定强度刺激人眼三种锥细胞即可等效模拟出颜色效果的原理，当前几乎所有的彩色显示器全部是使用的 RGB 颜色模型来渲染色彩。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001753.png" alt="RGB Example"></p>
-<p>具体传输时我们一般是用三个数字表示一个彩色像素点，对应其：Red Green Blue 的比例，例如：</p>
-<ul>
-<li>0 0 0 代表黑色，没有光</li>
-<li>1 1 1 代表白色，三种光混合</li>
-<li>0 0 255 纯蓝色</li>
-<li>255 255 0 黄色</li>
-</ul>
-<h3 id="rgbw">RGBW</h3>
-<p>考虑到白光是一种非常常见的颜色，而在 RGB 模型下显示白光时需要三种光全力运作，少数显示器出于省电考虑加入了 White：白色灯，在需要显示白色时只需亮起白灯一个即可，达到省电的效果。所以这也是说为什么黑色的背景可以省电的原理，黑色时一个灯都不需要亮，不过只有 OLED （Organic Light Emitting Display）这种每个像素点单独发光的显示技术才可以，对于像 LCD （Liquid Crystal Display）这种使用一块背光板通过遮罩来调整光大小的技术来说什么颜色耗电量都是一样的。</p>
-<h3 id="yuv">YUV</h3>
-<p>YUV色彩模型使用 Y 亮度，U 色度，V 浓度来表示颜色。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001805.png" alt="YUV亮度模型"></p>
-<p>同样的 UV 分量，Y 不同时效果如下：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001813.png" alt=""></p>
-<p>这种格式不同于 RGB 的地方在于，在缺失了 UV 只有 Y 值时，也能进行显示，不过看到的图像就是黑白图像，所以这种格式刚开始被提出用于黑白电视到彩色电视的过渡。</p>
-<p>另外人类眼中的视杆细胞比视锥细胞多很多，所以相对于色彩的变化，人眼要对亮度的变化更加敏感，利用这种特性，可以让多个 UV 分量共用一个 Y 分量，在基本保持色彩还原度的前提下尽可能的压缩空间，根据不同的采样率，常见的 YUV 格式有这几种：</p>
-<ul>
-<li>4:4:4 完全采样，Y:UV = 1:1</li>
-<li>4:2:2 2:1的水平取样，垂直完全采样，Y:UV = 2:1</li>
-<li>4:2:0 垂直与水平均为 2:1 采样，Y:UV =4:1</li>
-</ul>
-<p>在 RGB 格式下，四个像素点存储需要的空间为：4 * 3 = 12B，而使用 YUV420P 格式则只需要 4 * 1 + 1 + 1 = 8B，可以节约三分之一的空间，这是一个非常可观的数字，所以 YUV 格式基本也是网络传输的首选颜色编码格式。
-不过基于现代显示器的工作原理，YUV 格式很明显是无法直接被显示器渲染的，需要转化成 RGB 格式才可以，以 YUV444 格式为例，可以通过 NTSC 给出的如下公式在这两种格式之间进行换算：</p>
-<pre><code>Y = ( (  66 * R + 129 * G +  25 * B + 128) &gt;&gt; 8) +  16
-U = ( ( -38 * R -  74 * G + 112 * B + 128) &gt;&gt; 8) + 128
-V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
-</code></pre><p>公式看的头大也不要紧，只需要知道，RGB 和 YUV 以及下方的 CMYK 都是可以互相换算的就可以。</p>
-<h2 id="cmyk">CMYK</h2>
-<p>不同于 RGB 这一套基于光源自身发光的颜色编码体系，我们现实世界中看到的很多东西其实是并不能发光的，然而我们又有自由组合色彩的需求，比如：彩印。利用色料的三原色混色原理，加上黑色油墨，共计四种颜色混合叠加，形成所谓“全彩印刷”，这种颜色编码方式就是 CMYK：</p>
-<ul>
-<li>C：Cyan ＝ 青色</li>
-<li>M：Magenta ＝ 洋红</li>
-<li>Y：Yellow ＝ 黄色</li>
-<li>K：blacK ＝ 黑色</li>
-</ul>
-<p>CMYK 和 RGB 之间也是可以互相转换的，在我们打印 RGB 图片的时候就会发生这个转换过程：
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001821.png" alt=""></p>
-<h2 id="hslhsv">HSL(HSV)</h2>
-<p>RGB 编码方式虽然可以很好的完成自然颜色到显示器展示的映射，然而这种模式是基于光源的角度出发的，对于人类来说并不友好。HSL 模型在1978年由埃爾維·雷·史密斯提出，它是一种 RGB 的非线性映射：</p>
-<ul>
-<li>H: Hue，色调</li>
-<li>S: Saturation, 饱和度</li>
-<li>L: Lightness，亮度
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001829.png" alt=""></li>
-</ul>
-<p>这个模型以人类更加熟悉的方式封装了颜色的特性：什么颜色？深浅如何？明暗如何？
-所以这也是在颜色调整的人机交互界面上所使用的最为广泛的模型，例如：Photoshop，显示器色彩调整，Windows颜色选择器等。</p>
-<h1 id="总结">总结</h1>
-<p>看到这里，相信诸如下列问题大家都能找到想要的答案了：</p>
-<ul>
-<li>RGB、YUV、CMYK、HSL的关系</li>
-<li>RGB显示器的工作原理</li>
-<li>人如何感知颜色</li>
-<li>色盲症的原因</li>
-</ul>
-<p>五彩斑斓的精彩世界。</p>
-<p>参考链接：</p>
+            <p>我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此记录下来，分享给有缘人。</p>
+<h2 id="找到合适的openwrt固件">找到合适的OpenWRT固件</h2>
+<p>固件可以自己编译，参考官网教程：<a href="https://openwrt.org/zh/docs/guide-developer/quickstart-build-images">https://openwrt.org/zh/docs/guide-developer/quickstart-build-images</a>，OpenWRT提供了一个可视化的CLI编译配置工具，照着来就是了，自由度会高一些。</p>
+<p>同时OpenWRT也提供了一些已经编译好的固件供大家使用：<a href="https://openwrt.org/toh/views/toh_fwdownload">https://openwrt.org/toh/views/toh_fwdownload</a>，图省事的话，我们直接使用即可。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201208184834.png" alt="image-20201208184834711"></p>
+<p>可以搜到我们的小米4A百兆版也在列表中（注意和千兆版区分开），使用了一颗联发科MT7628的处理器，我们在表格后面找到它的稳定版固件下载即可，注意尽量不要下 snapshot 版本的，snapshost 是主分支最近打出来的包，我之前下了一个最新的分支，Linux内核版本居然是才发布半个月的 5.4.80，稳定性和兼容性都有待验证。</p>
+<p>我们就直接用这个稳定版的固件：</p>
+<p><code>http://downloads.openwrt.org/releases/19.07.4/targets/ramips/mt76x8/openwrt-19.07.4-ramips-mt76x8-xiaomi_mir4a-100m-squashfs-sysupgrade.bin</code></p>
+<p>先记住这个下载地址。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201208185510.png" alt="image-20201208185510933"></p>
+<p>另外考虑到国内下载速度，如果觉得很慢的话，可以使用中科大的镜像源，把URL中 <code>downloads.openwrt.org</code> 替换成 <code>mirrors.ustc.edu.cn/openwrt</code>即可：</p>
+<pre><code>http://downloads.openwrt.org/releases/19.07.4/targets/ramips/mt76x8/openwrt-19.07.4-ramips-mt76x8-xiaomi_mir4a-100m-squashfs-sysupgrade.bin
+
+=&gt;
+
+http://mirrors.ustc.edu.cn/openwrt/releases/19.07.4/targets/ramips/mt76x8/openwrt-19.07.4-ramips-mt76x8-xiaomi_mir4a-100m-squashfs-sysupgrade.bin
+</code></pre><h2 id="远程登录到路由器">远程登录到路由器</h2>
+<p>不像其他路由器升级到开发版固件即可直接开启远程登录功能，小米4代的路由器可能因为都比较新还没来得及维护，所以都没有开发版的固件，我们只能尝试通过其他的方式来登录到路由器。</p>
+<p>有大神利用了一个小米路由器的远程执行漏洞：<a href="https://nvd.nist.gov/vuln/detail/CVE-2019-18370">CVE-2019-18370</a> 写了一个开放远程登录的脚本：https://github.com/acecilia/OpenWRTInvasion，我们可以利用这个来登录到路由器上执行我们的刷机命令。</p>
+<p>这个脚本有 0.0.2 和 0.0.1 两个版本，默认是推荐 0.0.2 版本会省事一点，但是我使用 0.0.2 版本并没有成功，通过 0.0.1 倒是 OK 了，这里都把过程给大家列一下，可以都试试。</p>
+<h3 id="升级到有漏洞的版本">升级到有漏洞的版本</h3>
+<p>同时经过社区验证，适用于固件版本：2.18.51 和 2.18.58，其他版本可以先试一下如果不行的话刷到这两个版本就好，我自己实践在 <code>2.18.58</code> 成功运行了，对应的固件包我传到网盘上了大家有需要的可以自取：</p>
+<pre><code>小米4A路由器百兆版2.18.51固件：https://pan.baidu.com/s/1DXHZx9puoN9kEY7BDymxqA
+小米4A路由器百兆版2.18.58固件：https://pan.baidu.com/s/1DXHZx9puoN9kEY7BDymxqA
+提取码：debw
+</code></pre><p>下载好后点击常用设置-&gt;系统状态-&gt;手动升级即可，详细步骤可以参考<a href="https://www.mi.com/service/miwifi/miwifipro/update">官网教程</a>，这里就不截图了。</p>
+<h3 id="执行脚本">执行脚本</h3>
+<p>正式开始执行脚本之前我们还需要或者一个东西 stok，打开我们的路由器管理后台，找到地址栏形如 <strong>stok=ef443ae52875a6a442913bbbf38872</strong> 的这一串东西，其中的 <strong>ef443ae52875a6a442913bbbf38872</strong> 就是 stok，我们会需要用到这个参数来执行漏洞。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201208221513.png" alt="image-20201208221513260"></p>
+<p>我们继续，先下载这个代码仓库：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">git clone https://github.com/acecilia/OpenWRTInvasion
+<span class="nb">cd</span> OpenWRTInvasion
+</code></pre></div><p>下面我们就可以来运行脚本了。</p>
+<h4 id="方式一002">方式一：0.0.2</h4>
 <ol>
-<li>
-<p><a href="https://www.ixueshu.com/document/6f6ebb7bc153a6a89a4103ed4acdcdd2318947a18e7f9386.html">印刷世界：人眼与色彩</a></p>
-</li>
-<li>
-<p><a href="https://zh.wikipedia.org/wiki/%E5%BD%A9%E8%89%B2%E8%A7%86%E8%A7%89">维基百科：彩色视觉</a></p>
-</li>
-<li>
-<p><a href="https://zh.wikipedia.org/zh-sg/%E8%A7%86%E6%9D%86%E7%BB%86%E8%83%9E">维基百科：视杆细胞</a></p>
-</li>
-<li>
-<p><a href="https://www.fourcc.org/yuv.php">YUV pixel formats</a></p>
-</li>
-<li>
-<p><a href="https://www.lg.com/us/experience-tvs/oled-tv/oled-vs-lcd">LG: OLED vs. LCD</a></p>
-</li>
+<li><strong>安装依赖</strong></li>
 </ol>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">pip3 install --upgrade pip
+pip3 install -r requirements.txt
+</code></pre></div><ol start="2">
+<li><strong>执行脚本</strong></li>
+</ol>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">python3 remote_command_execution_vulnerability.py
+</code></pre></div><p>按照提示输入路由器IP地址，如果没有改过的话不用管直接回车就行，然后输入 stok 值。</p>
+<ol start="3">
+<li><strong>尝试远程登录</strong></li>
+</ol>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">telnet 192.168.31.1
+</code></pre></div><p>用户名为 root 密码为空，如果能成功登录的话那就直接跳到“安装固件”部分即可，如果提示 Connection Confused，说明启动 telnet 服务失败了，我们可以尝试第二种方式。</p>
+<h4 id="方式二001">方式二：0.0.1</h4>
+<p>我们需要先切换到0.0.1版本然后再执行脚本：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 切换版本</span>
+git checkout -f 0.0.1
+<span class="c1"># 安装依赖</span>
+pip3 install --upgrade pip
+pip3 install -r requirements.txt
+<span class="c1"># 运行脚本</span>
+python3 remote_command_execution_vulnerability.py
+</code></pre></div><p>然后这里提示会需要在另一个窗口开一个Shell 用 nc 工具监听指定的接口，我们照做即可：</p>
+<pre><code>/usr/bin/nc -l 4444
+</code></pre><p>开好了之后回到这个Shell继续输入路由器IP，stok即可，我使用这种方式成功了，脚本执行完后回到 nc 的那个窗口会发现已经可以执行命令了。</p>
+<h2 id="安装固件">安装固件</h2>
+<p>切换到 tmp 目录（其他分区空间不够放不下镜像）：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">cd</span> /tmp
+</code></pre></div><p>下载固件：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">curl -o firmware.bin http://mirrors.ustc.edu.cn/openwrt/releases/19.07.4/targets/ramips/mt76x8/openwrt-19.07.4-ramips-mt76x8-xiaomi_mir4a-100m-squashfs-sysupgrade.bin
+</code></pre></div><p>安装：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 刷机有风险，请慎重</span>
+mtd -e OS1 -r write firmware.bin OS1
+</code></pre></div><p>等待命令执行完成后，我们安装 OpenWRT 就成功了~</p>
+<h2 id="扩展openwrt">扩展OpenWRT</h2>
+<p>OpenWRT装好之后，是开箱即用的，我们连上网线就能直接上网了，不需要什么额外的配置，不过我们肯定不是充足温饱来的，可以尽情的运行自己的代码才是最吸引我们的地方。</p>
+<p>Unbuntu 有 apt，CentOS 有 yum，而 OpenWRT 则使用 opkg 来管理软件包，所以我们可以可以直接使用 opkg 命令来安装一些有用的插件，比如神器Luci：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">opkg update <span class="o">&amp;&amp;</span> opkg install luci
+</code></pre></div><p>然后我们就可以打开管理页面（默认是：http://192.168.1.1）来对路由器系统进行可视化的管理了。</p>
+<p>OpenWRT 本质上是一个图灵完备的Linux系统，所以除了官方提供的软件包之外，我们也可以运行自己的代码，不过我们这款路由器的 CPU 是ARM架构的，跟我们个人电脑通常使用的x86架构不同（Apple Silicon mac 除外），而路由器那一点点空间用不足以进行编译，所以我们需要在自己的电脑上交叉编译出对应的二进制包然后 <code>scp</code> 上去才行。</p>
+<p>Golang 代码的交叉编译就非常简单，加几个环境变量就行：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 开启软浮点 &amp; 小端mips架构 &amp; linux内核API</span>
+<span class="nv">GOMIPS</span><span class="o">=</span>softfloat <span class="nv">GOARCH</span><span class="o">=</span>mipsle <span class="nv">GOOS</span><span class="o">=</span>linux go build main.go
+</code></pre></div><p>如果是 C/C++的话，可以在官网下载SDK工具链进行交叉编译：https://openwrt.org/docs/guide-developer/using_the_sdk。</p>
+<p>OpenWRT 还有很多功能可以去探索：frp内网传统、广告过滤、VPN等等，have fun on OpenWRT~</p>
 
           </div>
 
@@ -395,10 +380,13 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
   <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
   <div class="tags-sm">
     
-      <li><a href="https://huweicai.com/tags/yuv" role="button">yuv </a></li>
+      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
       
     
-      <li><a href="https://huweicai.com/tags/%E5%9B%BE%E5%83%8F" role="button">图像 </a></li>
+      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6" role="button">硬件 </a></li>
       
     
   </div>
@@ -414,23 +402,16 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
           <div class="row pt-3">
             <div class="col-md-6">
               
-                <a href=https://huweicai.com/most-frequently-command/ class="post-meta">Previous
+                <a href=https://huweicai.com/git-implementation/ class="post-meta">Previous
                   <div class="pt-2 pb-5 d-flex">
                     <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
-                    <span>找出使用最频繁的Shell命令</span>
+                    <span>Git实现原理</span>
                   </div>
                 </a>
               
             </div>
             
             <div class="col-md-6 text-right" >
-              
-                <a href=https://huweicai.com/troubleshotting-goroutine-leeking/ class="post-meta">Next
-                  <div class="pt-2 pb-5 flex-reverse">
-                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>Golang 如何排查协程泄漏问题</span>
-                  </div>
-                </a>
               
             </div>
           </div>
@@ -476,8 +457,30 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e4%ba%ba%e7%9c%bc%e5%a6%82%e4%bd%95%e6%84%9f%e7%9f%a5%e8%89%b2%e5%bd%a9">
-												 人眼如何感知色彩
+						 					<a class="nav-link" href="#%e6%89%be%e5%88%b0%e5%90%88%e9%80%82%e7%9a%84openwrt%e5%9b%ba%e4%bb%b6">
+												 找到合适的OpenWRT固件
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%bf%9c%e7%a8%8b%e7%99%bb%e5%bd%95%e5%88%b0%e8%b7%af%e7%94%b1%e5%99%a8">
+												 远程登录到路由器
 											</a>
 										</li>
 						 
@@ -500,142 +503,8 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e8%a7%86%e9%94%a5%e7%bb%86%e8%83%9e">
-												 视锥细胞
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#%e8%89%b2%e5%bd%a9%e8%a1%a8%e7%a4%ba%e6%96%b9%e5%bc%8f">
-												 色彩表示方式
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#rgb">
-												 RGB
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#rgbw">
-												 RGBW
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-									</ul>
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#yuv">
-												 YUV
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-									</ul>
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#cmyk">
-												 CMYK
+						 					<a class="nav-link" href="#%e5%8d%87%e7%ba%a7%e5%88%b0%e6%9c%89%e6%bc%8f%e6%b4%9e%e7%9a%84%e7%89%88%e6%9c%ac">
+												 升级到有漏洞的版本
 											</a>
 										</li>
 						 
@@ -660,8 +529,8 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#hslhsv">
-												 HSL(HSV)
+						 					<a class="nav-link" href="#%e6%89%a7%e8%a1%8c%e8%84%9a%e6%9c%ac">
+												 执行脚本
 											</a>
 										</li>
 						 
@@ -681,11 +550,93 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
 								
 									<ul class="nav">
 								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
-												 总结
+						 					<a class="nav-link" href="#%e6%96%b9%e5%bc%8f%e4%b8%80002">
+												 方式一：0.0.2
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%96%b9%e5%bc%8f%e4%ba%8c001">
+												 方式二：0.0.1
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%89%e8%a3%85%e5%9b%ba%e4%bb%b6">
+												 安装固件
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%89%a9%e5%b1%95openwrt">
+												 扩展OpenWRT
 											</a>
 										</li>
 						 
