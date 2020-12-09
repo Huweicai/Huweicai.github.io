@@ -13,7 +13,7 @@
       <pubDate>Tue, 08 Dec 2020 23:47:00 +0800</pubDate>
       
       <guid>https://huweicai.com/run-openwrt-on-xiaomi4a100m/</guid>
-      <description>我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此记录下来，分享给有缘人。 找到合适的OpenWRT固件 固件可以自己编译，参考官网教程：https://openwrt.org/zh/docs/guide-developer/quickstart-build-images，OpenWRT提供了一个可视化的CLI编译配置工具，照着来就是了，自由度会高一些。 同时OpenWRT也</description>
+      <description>我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此记录下来，分享给有缘人。 找到合适的OpenWRT固件 固件可以自己编译，参考官网教程：https://openwrt.org/zh/docs/guide-developer/quickstart-build-images，OpenWRT提供了一个可视化的CLI编译配置工具，照着来就是了，自由度会高一些。 同时 OpenWRT 也提供了一些已</description>
     </item>
     
     <item>
