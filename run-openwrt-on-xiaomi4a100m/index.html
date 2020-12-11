@@ -343,7 +343,8 @@ pip3 install --upgrade pip
 pip3 install -r requirements.txt
 <span class="c1"># 运行脚本</span>
 python3 remote_command_execution_vulnerability.py
-</code></pre></div><p>然后这里提示会需要在另一个窗口开一个Shell 用 nc 工具监听指定的接口，我们照做即可：</p>
+</code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211160654.png" alt="image-20201211160654006">
+然后这里提示会需要在另一个窗口开一个Shell 用 nc 工具监听指定的接口，我们照做即可：</p>
 <pre><code>/usr/bin/nc -l 4444
 </code></pre><p>开好了之后回到这个Shell继续输入路由器IP，stok即可，我使用这种方式成功了，脚本执行完后回到 nc 的那个窗口会发现已经可以执行命令了。</p>
 <h2 id="安装固件">安装固件</h2>
@@ -354,12 +355,14 @@ python3 remote_command_execution_vulnerability.py
 </code></pre></div><p>安装：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 刷机有风险，请慎重</span>
 mtd -e OS1 -r write firmware.bin OS1
-</code></pre></div><p>等待命令执行完成后，我们安装 OpenWRT 就成功了~</p>
+</code></pre></div><p>等待命令执行完成后，我们安装 OpenWRT 就成功了~ 我们可以 ssh 登录到路由器上验证一下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211161226.png" alt="image-20201211161225985"></p>
 <h2 id="扩展openwrt">扩展OpenWRT</h2>
 <p>OpenWRT装好之后，是开箱即用的，我们连上网线就能直接上网了，不需要什么额外的配置，不过我们肯定不是充足温饱来的，可以尽情的运行自己的代码才是最吸引我们的地方。</p>
-<p>Unbuntu 有 apt，CentOS 有 yum，而 OpenWRT 则使用 opkg 来管理软件包，所以我们可以可以直接使用 opkg 命令来安装一些有用的插件，比如神器Luci：</p>
+<p>Unbuntu 有 apt，CentOS 有 yum，而 OpenWRT 则使用 opkg 来管理软件包，所以我们可以直接使用 opkg 命令来安装一些有用的插件，比如神器Luci：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">opkg update <span class="o">&amp;&amp;</span> opkg install luci
 </code></pre></div><p>然后我们就可以打开管理页面（默认是：http://192.168.1.1）来对路由器系统进行可视化的管理了。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211161301.png" alt="image-20201211161301530"></p>
 <p>OpenWRT 本质上是一个图灵完备的Linux系统，所以除了官方提供的软件包之外，我们也可以运行自己的代码，不过我们这款路由器的 CPU 是 mips 架构的，跟我们个人电脑通常使用的x86架构不同（Apple Silicon mac 除外），而路由器那一点点空间用不足以进行编译，所以我们需要在自己的电脑上交叉编译出对应的二进制包然后 <code>scp</code> 上去才行。</p>
 <p>Golang 代码的交叉编译就非常简单，加几个环境变量就行：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 开启软浮点 &amp; 小端mips架构 &amp; linux内核API</span>
