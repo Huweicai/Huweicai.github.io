@@ -5,16 +5,16 @@
   font-family: 'Font Awesome 5 Brands';
   font-style: normal;
   font-weight: normal;
-  src: url("../fonts/fontawesome/fa-brands-400.eot");
-  src: url("../fonts/fontawesome/fa-brands-400.eot?#iefix") format("embedded-opentype"), url("../fonts/fontawesome/fa-brands-400.woff2") format("woff2"), url("../fonts/fontawesome/fa-brands-400.woff") format("woff"), url("../fonts/fontawesome/fa-brands-400.ttf") format("truetype"), url("../fonts/fontawesome/fa-brands-400.svg#fontawesome") format("svg"); }
+  src: url("https://s3.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-brands-400.eot");
+  src: url("https://s3.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-brands-400.eot?#iefix") format("embedded-opentype"), url("https://s3.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-brands-400.woff2") format("woff2"), url("https://s3.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-brands-400.woff") format("woff"), url("https://s3.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-brands-400.ttf") format("truetype"), url("https://s3.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-brands-400.svg#fontawesome") format("svg"); }
 
 
 @font-face {
   font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 400;
-  src: url("../fonts/fontawesome/fa-regular-400.eot");
-  src: url("../fonts/fontawesome/fa-regular-400.eot?#iefix") format("embedded-opentype"), url("../fonts/fontawesome/fa-regular-400.woff2") format("woff2"), url("../fonts/fontawesome/fa-regular-400.woff") format("woff"), url("../fonts/fontawesome/fa-regular-400.ttf") format("truetype"), url("../fonts/fontawesome/fa-regular-400.svg#fontawesome") format("svg"); }
+  src: url("https://s1.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-regular-400.eot");
+  src: url("https://s1.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-regular-400.eot?#iefix") format("embedded-opentype"), url("https://s2.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-regular-400.woff2") format("woff2"), url("https://s1.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-regular-400.woff") format("woff"), url("https://s2.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-regular-400.ttf") format("truetype"), url("https://s1.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-regular-400.svg#fontawesome") format("svg"); }
 
 
 
@@ -22,8 +22,8 @@
   font-family: 'Font Awesome 5 Free';
   font-style: normal;
   font-weight: 900;
-  src: url("../fonts/fontawesome/fa-solid-900.eot");
-  src: url("../fonts/fontawesome/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("../fonts/fontawesome/fa-solid-900.woff2") format("woff2"), url("../fonts/fontawesome/fa-solid-900.woff") format("woff"), url("../fonts/fontawesome/fa-solid-900.ttf") format("truetype"), url("../fonts/fontawesome/fa-solid-900.svg#fontawesome") format("svg"); }
+  src: url("https://s0.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-solid-900.eot");
+  src: url("https://s0.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("https://s0.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-solid-900.woff2") format("woff2"), url("https://s1.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-solid-900.woff") format("woff"), url("https://s2.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-solid-900.ttf") format("truetype"), url("https://s1.pstatp.com/cdn/expire-1-M/font-awesome/5.8.1/webfonts/fa-solid-900.svg#fontawesome") format("svg"); }
 
 
 
