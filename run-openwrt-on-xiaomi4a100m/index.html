@@ -315,7 +315,7 @@
 http://mirrors.ustc.edu.cn/openwrt/releases/19.07.4/targets/ramips/mt76x8/openwrt-19.07.4-ramips-mt76x8-xiaomi_mir4a-100m-squashfs-sysupgrade.bin
 </code></pre><h2 id="远程登录到路由器">远程登录到路由器</h2>
 <p>不像其他路由器升级到开发版固件即可直接开启远程登录功能，小米4代的路由器可能因为都比较新还没来得及维护，所以都没有开发版的固件，我们只能尝试通过其他的方式来登录到路由器。</p>
-<p>有大神利用了一个小米路由器的远程执行漏洞：<a href="https://nvd.nist.gov/vuln/detail/CVE-2019-18370">CVE-2019-18370</a> 写了一个开放远程登录的脚本：https://github.com/acecilia/OpenWRTInvasion，我们可以利用这个来登录到路由器上执行我们的刷机命令。</p>
+<p>小米路由器系列路由器存在一个远程执行漏洞：<a href="https://nvd.nist.gov/vuln/detail/CVE-2019-18370">CVE-2019-18370</a> ，小米魔改的 luci 管理后台有一个接口可以注入 shell 命令执行，我们就可以通过这个漏洞远程执行脚本开启 ssh、telnet 等远程登录服务，或者通过 nc工具配合管道反向shell登录。有人写了一个开放远程登录的脚本：https://github.com/acecilia/OpenWRTInvasion，我们可以利用这个脚本来一键登录到路由器上执行我们的刷机命令。</p>
 <p>这个脚本有 <code>0.0.2</code> 和 <code>0.0.1</code> 两个版本，默认是推荐 <code>0.0.2</code> 版本会省事一点，但是我使用 <code>0.0.2</code> 版本并没有成功，通过 <code>0.0.1</code> 倒是 OK 了，这里都把过程给大家列一下，可以都试试。</p>
 <h3 id="升级到有漏洞的版本">升级到有漏洞的版本</h3>
 <p>同时经过社区验证，适用于固件版本：<code>2.18.51</code> 和 <code>2.18.58</code>，其他版本可以先试一下如果不行的话刷到这两个版本就好，我自己实践在 <code>2.18.58</code> 成功运行了，对应的固件包我传到网盘上了大家有需要的可以自取：</p>
@@ -356,7 +356,7 @@ pip3 install -r requirements.txt
 <span class="c1"># 运行脚本</span>
 python3 remote_command_execution_vulnerability.py
 </code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211160654.png" alt="image-20201211160654006">
-然后这里提示会需要在另一个窗口开一个Shell 用 nc 工具监听指定的接口，我们照做即可：</p>
+然后这里提示会需要在另一个窗口开一个Shell 用 nc 工具监听指定的接口，等待路由器将shell界面反向连接过来：</p>
 <pre><code>/usr/bin/nc -l 4444
 </code></pre><p>开好了之后回到这个Shell继续输入路由器IP，stok即可，我使用这种方式成功了，脚本执行完后回到 nc 的那个窗口会发现已经可以执行命令了。</p>
 <h2 id="安装固件">安装固件</h2>
