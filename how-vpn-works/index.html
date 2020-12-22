@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="VPN 想象一下这两种场景： 你下班家，公司线上一台机器出事故了，这个时候你需要远程到这台机器上来排查并处理问题。 你在其他城市实习，这个时候学校需要选下学期的课了，但是教务网站只对校园网开放。 在这两种场景中，都离不开一种关键的技术：VPN（Virtual Private Network：虚拟局域网）。 VPN提供了一种在公网上安全的加入局域网的方式，可以我们这里就以开源的 OpenConnect VPN 为例，探讨一下 VPN 这种技术是如何安全的将局域网在互">
+  
+  <meta property="og:title" content="VPN是如何工作的" />
+<meta property="og:description" content="VPN 想象一下这两种场景： 你下班家，公司线上一台机器出事故了，这个时候你需要远程到这台机器上来排查并处理问题。 你在其他城市实习，这个时候学校需要选下学期的课了，但是教务网站只对校园网开放。 在这两种场景中，都离不开一种关键的技术：VPN（Virtual Private Network：虚拟局域网）。 VPN提供了一种在公网上安全的加入局域网的方式，可以我们这里就以开源的 OpenConnect VPN 为例，探讨一下 VPN 这种技术是如何安全的将局域网在互" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/how-vpn-works/" />
+<meta property="article:published_time" content="2020-12-22T23:42:00+08:00" />
+<meta property="article:modified_time" content="2020-12-22T23:42:00+08:00" />
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       VPN是如何工作的 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/how-vpn-works/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+    
+  
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.js">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">VPN是如何工作的</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>2020-12-22</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>4 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h2 id="vpn">VPN</h2>
+<p>想象一下这两种场景：</p>
+<ol>
+<li>你下班家，公司线上一台机器出事故了，这个时候你需要远程到这台机器上来排查并处理问题。</li>
+<li>你在其他城市实习，这个时候学校需要选下学期的课了，但是教务网站只对校园网开放。</li>
+</ol>
+<p>在这两种场景中，都离不开一种关键的技术：VPN（Virtual Private Network：虚拟局域网）。</p>
+<p>VPN提供了一种在公网上安全的加入局域网的方式，可以我们这里就以开源的 OpenConnect VPN 为例，探讨一下 VPN 这种技术是如何安全的将局域网在互联网中横向扩展的。</p>
+<p>需要说明的一点是，通常大家会将能实现访问 Google 等网站的技术都叫做 VPN，但比如常见的 ShadowSocks，v2ray(vmess)等其实只是一种加密部分常用流量的代理技术，并不能真正构建一个局域网，严格意义上来说他们并不是VPN。</p>
+<p>常见的 VPN 技术按照主要使用的传输协议可以分为 L2TP/IPSec VPN、PPTP VPN、TLS VPN等，我们这次则主要分析 <strong>openconnect</strong> 这个 TLS VPN 产品来概览 VPN 技术的实现全流程。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201222231236.png" alt="OpenConnect"></p>
+<h2 id="架设服务端">架设服务端</h2>
+<p>要在公网中接入到某个特定的局域网，首先我们需要在局域网中找一台服务器，这个服务器需要一张网卡在局域网一张网卡在公网，然后我们在上面需要一个 VPN 服务。OpenConnect 开源的 <a href="https://github.com/openconnect/ocserv">ocserv</a> 就是一个不错的选择，接着我们就可以通过客户端在公网上和服务端交互建立隧道来实现远程局域网访问，openconnect 组织开源了一个同名的 <a href="https://github.com/openconnect/openconnect">openconnect</a> 客户端用于和 ocserv 配套使用。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201222234058.png" alt="image-20201222234058831"></p>
+<p><strong>ocserv服务端模块图:</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201222231044.png" alt="ocserv服务端模块图"></p>
+<h2 id="身份认证">身份认证</h2>
+<p>并不是所有的连接请求 server 都要接受，不然这会是一个非常大的安全隐患，这就需要 server 能提供一套身份认证机制，识别出来哪些想要蒙混过关的恶意攻击者。</p>
+<p><strong>ocserv</strong> 支持密码认证、GSSAPI、公钥+证书等身份认证机制，通常安全级别较高的企业还会对认证进行定制化的开发配合动态令牌进行使用。</p>
+<h2 id="给客户端配置网络">给客户端配置网络</h2>
+<p>客户端要接入一个网络的话，首先肯定需要一张身份证：IP地址，以及对应的子网掩码。通常企业或者学校会在内网中架设私有的DNS服务器，那么这个 DNS 服务器的地址也是需要告知客户端的，需要它来帮助解析一些内网域名。</p>
+<p>我们正常加入一个网络的时候，DHCP服务器会下发给我们这些信息。而当我们通过 VPN 这种非常规的方式加入时，VPN server 就需要来承担这一部分工作。</p>
+<p>在 oscerv 中，它会读取一个指定格式的配置文件，配置文件中的 <code>ipv4-network</code> <code>ipv4-netmask</code> <code>dns</code></p>
+<p>这三个选项指定了提供给客户端的 IP 地址池和 DNS 地址。</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">ipv4-network <span class="o">=</span> 192.168.1.0 <span class="c1"># 每次会随机从 192.168.1 这个子网IP池中分配一个给客户端使用</span>
+ipv4-netmask <span class="o">=</span> 255.255.255.0
+<span class="nv">dns</span> <span class="o">=</span> 192.168.1.2
+</code></pre></div><p>VPN 身份认证完毕之后，openconnect 就会在计算机中创建一张 tun 虚拟网卡，之后 openconnect 就可以读取到发送到这张网卡的原始 IP 报文，处理封装后再经由真实的物理网卡发送出去，然后再由那边的 oscerv 服务端接收处理，再转发到真实的目标地址。</p>
+<p>在创建虚拟网卡之后，我们需要将网络流量导到这张网卡上来，默认 openconnect 会在系统中添加一条路由规则，将虚拟网卡设置为默认出口，相当于命令：<code>route add 0.0.0.0 tun4</code>，不过有可能并不是所有的流量都需要流经 VPN，可以在 oscerv 服务端通过 <code>route</code> 配置项下发路由表规则指定哪些流量走 VPN。</p>
+<h2 id="网络传输">网络传输</h2>
+<p>客户端设好了 IP 地址虚拟网卡等配置后，客户端就可以正常发送数据包到服务端了，但是另一个问题来了，如果只是简单地把整个原始局域网 IP 包放在一个公网IP包中，那么这个风险是非常大的，任何一个中间的设备都可以轻松的窥探其中传输的数据。</p>
+<p>所以数据包最好能经过加密之后再进行传输，目前 VPN 领域内比较主流的加密传输协议有应用层的 TLS 和网络层的 IPSec。</p>
+<p>openconnect 的传输是基于 TLS 的，客户端和服务端之间会维持一条基于 TCP 的 TLS 用于传输控制配置等信息，而数据则通过另一条基于 UDP 的 DTLS 连接（UDP 版 TLS）传输。</p>
+<p>不直接用 TLS 传输主要是考虑到通常网络流量中 TCP 流量占大多数，而用 TCP 传输 TCP 会有一些性能问题，考虑一个场景，如果一个 TCP 包丢了，那么VPN和业务端对应的两条TCP连接都会需要重传这一个包，但却是为了同一份数据，这就会造成大量不必要的重传。</p>
+<p>所以 openconnect 主要使用 udp 传输数据，基于 DTLS 实现的可靠传输来保证数据的完整性，在 UDP 不可用的时候才会降级到 TCP 的 TLS 通道。</p>
+<p>通道建立好之后，就可以传输数据了，由于我们要传输的虚拟 IP 数据包在物理传输链路上直到到达 VPN 服务端之前都是不会有人关心的，所以这就有了压缩的空间，我传输的时候把 VPN 网络层的报文压缩了，VPN 服务端再解开，对于网络协议这种具有明显规律的数据，压缩的收益还是比较高的，这样就能在一定程度上提高传输速度。</p>
+<p>具体到 openconnect，它支持目前压缩效率比较高 LZ4 和 LZS 两种压缩算法。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201222233502.png" alt="image-20201222233502643"></p>
+<p>这样，一个安全、可靠、高效的VPN通道就建立完成了~</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/ip" role="button">IP </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/run-openwrt-on-xiaomi4a100m/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>小米路由器4A百兆版刷OpenWRT</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#vpn">
+												 VPN
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9e%b6%e8%ae%be%e6%9c%8d%e5%8a%a1%e7%ab%af">
+												 架设服务端
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%ba%ab%e4%bb%bd%e8%ae%a4%e8%af%81">
+												 身份认证
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bb%99%e5%ae%a2%e6%88%b7%e7%ab%af%e9%85%8d%e7%bd%ae%e7%bd%91%e7%bb%9c">
+												 给客户端配置网络
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bd%91%e7%bb%9c%e4%bc%a0%e8%be%93">
+												 网络传输
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+  
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

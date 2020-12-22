@@ -4,20 +4,41 @@
   
   <url>
     <loc>https://huweicai.com/</loc>
-    <lastmod>2020-12-08T23:47:00+08:00</lastmod>
+    <lastmod>2020-12-22T23:42:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://huweicai.com/tags/linux/</loc>
-    <lastmod>2020-12-08T23:47:00+08:00</lastmod>
+    <loc>https://huweicai.com/tags/ip/</loc>
+    <lastmod>2020-12-22T23:42:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/</loc>
+    <lastmod>2020-12-22T23:42:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/how-vpn-works/</loc>
+    <lastmod>2020-12-22T23:42:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <lastmod>2020-12-22T23:42:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/linux/</loc>
     <lastmod>2020-12-08T23:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -73,13 +94,6 @@
   </url>
   
   <url>
-    <loc>https://huweicai.com/tags/ip/</loc>
-    <lastmod>2020-07-01T01:47:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/tags/tcp/</loc>
     <lastmod>2020-07-01T01:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
@@ -88,13 +102,6 @@
   
   <url>
     <loc>https://huweicai.com/who-network-capture-analysis/</loc>
-    <lastmod>2020-07-01T01:47:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
     <lastmod>2020-07-01T01:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>

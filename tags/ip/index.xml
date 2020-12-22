@@ -6,7 +6,16 @@
     <description>Recent content in IP on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 01 Jul 2020 01:47:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/ip/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Dec 2020 23:42:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/ip/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>VPN是如何工作的</title>
+      <link>https://huweicai.com/how-vpn-works/</link>
+      <pubDate>Tue, 22 Dec 2020 23:42:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/how-vpn-works/</guid>
+      <description>VPN 想象一下这两种场景： 你下班家，公司线上一台机器出事故了，这个时候你需要远程到这台机器上来排查并处理问题。 你在其他城市实习，这个时候学校需要选下学期的课了，但是教务网站只对校园网开放。 在这两种场景中，都离不开一种关键的技术：VPN（Virtual Private Network：虚拟局域网）。 VPN提供了一种在公网上安全的加入局域网的方式，可以我们这里就以开源的 OpenConnect VPN 为例，探讨一下 VPN 这种技术是如何安全的将局域网在互</description>
+    </item>
+    
     <item>
       <title>完整网络请求包自底向上分析</title>
       <link>https://huweicai.com/who-network-capture-analysis/</link>
