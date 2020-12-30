@@ -14,7 +14,7 @@
 <meta property="og:description" content="[好奇心探索世界 善意假设 做最酷的事情]" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://huweicai.com/" />
-<meta property="og:updated_time" content="2020-12-22T23:42:00+08:00" />
+<meta property="og:updated_time" content="2020-12-30T01:20:00+08:00" />
 
    
 
@@ -391,6 +391,8 @@
 
   
 
+  
+
 
 
 
@@ -411,13 +413,13 @@
         
         
         
-            <li><a href="https://huweicai.com/tags/go" role="button"><span>go (5)</span></a></li>
+            <li><a href="https://huweicai.com/tags/go" role="button"><span>go (6)</span></a></li>
           
         
-            <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (3)</span></a></li>
+            <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (4)</span></a></li>
           
         
-            <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button"><span>操作系统 (3)</span></a></li>
+            <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button"><span>操作系统 (4)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/ip" role="button"><span>ip (2)</span></a></li>
@@ -430,6 +432,9 @@
           
         
             <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (2)</span></a></li>
+          
+        
+            <li><a href="https://huweicai.com/tags/cpu" role="button"><span>cpu (1)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/ethernet" role="button"><span>ethernet (1)</span></a></li>
@@ -466,9 +471,6 @@
           
         
             <li><a href="https://huweicai.com/tags/%E5%8A%9E%E5%85%AC%E6%95%88%E7%8E%87" role="button"><span>办公效率 (1)</span></a></li>
-          
-        
-            <li><a href="https://huweicai.com/tags/%E5%9B%BE%E5%83%8F" role="button"><span>图像 (1)</span></a></li>
           
         
       </div>
@@ -598,6 +600,65 @@
 
 
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/go-linux-get-cpu-usage/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">如何准确的获取CPU占用率[Linux][Go]</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2020-12-30</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>6 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      如果我们想要获取系统的 CPU 占用率，首先，Go语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，人眼看可能还好点，要是写代码的话还是直接读系统文件来的方便。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/go" role="button">Go </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cpu" role="button">CPU </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -810,67 +871,6 @@
       
     
       <li><a href="https://huweicai.com/tags/ip" role="button">IP </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/troubleshotting-goroutine-leeking/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Golang 如何排查协程泄漏问题</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2020-05-29</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>3 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      背景 周所周知，内存泄漏是一个很严重的问题，会导致系统运行占用资源越来越多，无法释放，直至崩溃。所幸 Go 语言是一门 具有垃圾回收的语言，能大大降低遇到内存泄漏的概率，而我们今天要说的是另外一个棘手的问题：协程泄漏。 协程泄漏：顾名思义就是出现了应该释放而没有被释放的协程，导致系统协程数量一直上升。不像对象回收需要引用计数、三色标记等手段，协程的回收是相当简单的，等待协程将代码从头到尾执行完毕之后这一块儿空......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-        
-          <li><a href="https://huweicai.com/categories/go"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> go </a></li>
-        
-      
-      
-        
-          <li><a href="https://huweicai.com/series/go"><i class="fas fa-bookmark pr-1" aria-hidden="true"></i>go</a></li>
-        
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/go" role="button">go </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/pprof" role="button">pprof </a></li>
       
     
   </div>

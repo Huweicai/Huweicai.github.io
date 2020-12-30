@@ -6,7 +6,43 @@
     <description>Recent content in Tags on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 22 Dec 2020 23:42:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 30 Dec 2020 01:20:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CPU</title>
+      <link>https://huweicai.com/tags/cpu/</link>
+      <pubDate>Wed, 30 Dec 2020 01:20:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/tags/cpu/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Go</title>
+      <link>https://huweicai.com/tags/go/</link>
+      <pubDate>Wed, 30 Dec 2020 01:20:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/tags/go/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Linux</title>
+      <link>https://huweicai.com/tags/linux/</link>
+      <pubDate>Wed, 30 Dec 2020 01:20:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>操作系统</title>
+      <link>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Wed, 30 Dec 2020 01:20:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>IP</title>
       <link>https://huweicai.com/tags/ip/</link>
@@ -22,24 +58,6 @@
       <pubDate>Tue, 22 Dec 2020 23:42:00 +0800</pubDate>
       
       <guid>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Linux</title>
-      <link>https://huweicai.com/tags/linux/</link>
-      <pubDate>Tue, 08 Dec 2020 23:47:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/tags/linux/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>操作系统</title>
-      <link>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
-      <pubDate>Tue, 08 Dec 2020 23:47:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</guid>
       <description></description>
     </item>
     
@@ -85,15 +103,6 @@
       <pubDate>Wed, 01 Jul 2020 01:47:00 +0800</pubDate>
       
       <guid>https://huweicai.com/tags/tcp/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>go</title>
-      <link>https://huweicai.com/tags/go/</link>
-      <pubDate>Fri, 29 May 2020 19:58:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/tags/go/</guid>
       <description></description>
     </item>
     

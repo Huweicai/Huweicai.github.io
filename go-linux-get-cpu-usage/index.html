@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="如果我们想要获取系统的 CPU 占用率，首先，Go语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，人眼看可能还好点，要是写代码的话还是直接读系统文件来的方便。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，">
+  
+  <meta property="og:title" content="如何准确的获取CPU占用率[Linux][Go]" />
+<meta property="og:description" content="如果我们想要获取系统的 CPU 占用率，首先，Go语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，人眼看可能还好点，要是写代码的话还是直接读系统文件来的方便。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/go-linux-get-cpu-usage/" />
+<meta property="article:published_time" content="2020-12-30T01:20:00+08:00" />
+<meta property="article:modified_time" content="2020-12-30T01:20:00+08:00" />
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       如何准确的获取CPU占用率[Linux][Go] | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/go-linux-get-cpu-usage/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+    
+  
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.js">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">如何准确的获取CPU占用率[Linux][Go]</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>2020-12-30</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>6 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>如果我们想要获取系统的 CPU 占用率，首先，Go语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。</p>
+
+<p>虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，人眼看可能还好点，要是写代码的话还是直接读系统文件来的方便。</p>
+
+<h1 id="process-文件系统">PROCESS 文件系统</h1>
+
+<p>在许多 Unix 类系统中，都存在一个 <code>procfs</code> (Process FIle System) 进程文件系统的概念，用于将内核中的一些信息通过文件的形式开放出来供用户使用，不过这个文件并不是我们平常指的狭义上的文件，这些信息是只存在于内存中的，所以也不用担心性能问题，类似内存文件系统的还有 sysfs、tmpfs 等。</p>
+
+<p>我们可以通过 df 命令查看一个目录所使用的文件系统：
+<figure><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230185420.png" alt="image-20201230185420142"></figure></p>
+
+<p>而在 Linux 系统，这个文件系统默认挂载在  <code>/proc</code> 目录下，除了进程信息 Linux 还塞了很多诸如IO、总线设备、内存、CPU、cgroups 等其他系统信息在里面，这并不是我们关心的重点，就不细说了。</p>
+
+<p>在这个目录下的 <code>stat</code>文件中，则保存着一些内核的统计数据，其中就有我们关心的CPU运行统计数据。</p>
+
+<p>这个文件里面有一些数字，在分析这些数字之前我们需要有一些关于CPU的基本概念。</p>
+
+<h1 id="cpu运行统计">CPU运行统计</h1>
+
+<p><strong>CPU 本质上就是一个指令执行器</strong>，我们写好的代码经由编译器编译成对应 CPU 架构的指令，然后我们委托操作系统把这些指令给到 CPU 去执行，CPU 内部经过 <code>取值、译码、执行、访存、写回</code> 等流程就完成了一条指令然后取下一条，同时给CPU 配上一些内存、输入输出设备来供其差遣，这就是一个计算机运行的基本模型。
+<figure><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/5_Stage_Pipeline.svg/400px-5_Stage_Pipeline.svg.png" alt="img"></figure></p>
+
+<p>这个指令执行器是只存在两种状态的，在执行指令 or 没有在执行指令，不存在像内存这种用了一半、用了百分之多少的说法。</p>
+
+<p>而我们通常看到的百分之多少的CPU使用，其实都省略了一个条件，采样周期，虽然 CPU 在一个特定的时刻只有 0 和 1 两种状态，但是如果我们定一个周期，比如 1秒钟，我们统计这一秒钟内 CPU 有多少时间在运行，除以总的时间单位数量就能得出一个可读性非常好的百分数字，这就是所有 CPU 使用率统计的原理。</p>
+
+<p>在 Linux 中，内核会将时间划分成一个最小单元：jiffy，直译成中文是瞬间，形容非常非常短，受 <code>USER_HZ</code>（频率）参数控制<code>jiffy = 1 / USER_HZ</code>，通常 USER_HZ 是 100，而对应的 jiffy 则是 <code>10ms</code>。</p>
+
+<h1 id="process-statistics">PROCESS STATISTICS</h1>
+
+<p>再回到我们的 <code>/proc/stat</code>文件，一个 <code>/proc/stat</code>文件实例如下（红字是我标注的）：
+<figure><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230223811.png" alt="image-20201230223811735"></figure></p>
+
+<p>关于 Linux proc 文件系统的目录和文件结构描述我们可以在 Linux 的在线文档站找到：<a href="https://man7.org/linux/man-pages/man5/procfs.5.html">https://man7.org/linux/man-pages/man5/procfs.5.html</a> ，其中也包括关于 <code>/proc/stat</code> 的详细描述。</p>
+
+<p>这个文件前面 cpu 开头的几行是代表 CPU 相关的一些信息：</p>
+
+<ul>
+<li>第一行 cpu 是代表总体的 CPU 使用情况</li>
+<li>之后的 cpuN 则是代表具体某一个核心的情况</li>
+</ul>
+
+<p>每一行后面都有一些数字，这些数字则是我们上面提到的 <code>jiffies</code>，分别描述了 CPU 累计在各种状态下的时间，具体从左到右依次是（6-10是内核 2.6 版本加进去的）：</p>
+
+<ol>
+<li><code>user</code> 用户态</li>
+<li><code>nice</code> 低优先级用户态（nice 的进程）</li>
+<li><code>system</code>内核态（特权模式）</li>
+<li><code>idle</code>空闲</li>
+<li><code>iowait</code>IO等待</li>
+<li><code>irq</code>硬中断 （Interrupt request）</li>
+<li><code>softirq</code>软中断</li>
+<li><code>steal</code> 虚拟化环境下其他系统的运行时间</li>
+<li><code>guest</code> 运行虚拟宿主机</li>
+<li><code>guest_nice</code>虚拟宿主机nice</li>
+</ol>
+
+<p>在网上流传的很多 CPU 利用率计算的公式中，要么就是版本太老只有前五项或者前七项，要么就是粗暴的把所有数字加到一起然后用 <code>idle</code>相除，但是这些其实都不准确，比如在<a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/sched/cputime.c?h=v4.8#n169">内核代码</a>中统计虚拟宿主机的<code>guest_nice</code>和<code>guest</code>时间时（截图如下），对应的<code>user_nice</code>和<code>user</code>值也会增加，那么全部加一块儿很明显就会导致 CPU 占用率偏高，这并不科学。</p>
+
+<p><figure><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230183831.png" alt="image-20201230183043703"></figure></p>
+
+<p>参考这个<a href="https://stackoverflow.com/questions/11356330/how-to-get-cpu-usage">帖子</a>以及<a href="https://github.com/htop-dev/htop/blob/15652e7b8102e86b3405254405d8ee5d2a239004/linux/LinuxProcessList.c">htop</a>的实现：</p>
+
+<ol>
+<li>guest 和 guest_nice 的时间片已经算在用户态时间中了</li>
+<li>iowait 的时候 CPU 是不干活的所以算空闲状态（这个值可能不太精确，因为CPU可能在等待 IO 时会执行其他进程）</li>
+<li>系统态和中断时 CPU 都是运行状态</li>
+</ol>
+
+<p>准确的 CPU 累计占用率计算方式应该是：</p>
+<pre><code>work = user +  nice + system + irq + softirq + steal
+idle = idle + iowait
+usage = work / (work + idle)</code></pre>
+<p>当然这是累计的值，如果我们要取实时值的话，采样一小段时间取差值即可。</p>
+
+<h1 id="go-语言实现">Go 语言实现</h1>
+
+<p>那么在 Go 语言里面，比较完备的实现则是这样的（注：内核版本 &gt;= 2.6.33）：</p>
+
+<h2 id="整体版">整体版</h2>
+
+<p><details>
+<summary>点击展开代码详情</summary></p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">user</span> <span class="p">=</span> <span class="kc">iota</span>
+	<span class="nx">nice</span>
+	<span class="nx">system</span>
+	<span class="nx">idle</span>
+	<span class="nx">iowait</span>
+	<span class="nx">irq</span>
+	<span class="nx">softirq</span>
+	<span class="nx">steal</span>
+	<span class="nx">guest</span>
+	<span class="nx">guest_nice</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">getCPUUseRate</span><span class="p">(</span><span class="nx">sampleTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span> <span class="p">(</span><span class="kt">float64</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">workPre</span><span class="p">,</span> <span class="nx">totalPre</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">jiffies</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">sampleTime</span><span class="p">)</span>
+
+	<span class="nx">workAfter</span><span class="p">,</span> <span class="nx">totalAfter</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">jiffies</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="nx">work</span> <span class="o">:=</span> <span class="nx">workAfter</span> <span class="o">-</span> <span class="nx">workPre</span>
+	<span class="nx">total</span> <span class="o">:=</span> <span class="nx">totalAfter</span> <span class="o">-</span> <span class="nx">totalPre</span>
+
+	<span class="k">return</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">work</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">total</span><span class="p">),</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">ErrInvalidStatFile</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;invalid statistic file&#34;</span><span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">jiffies</span><span class="p">()</span> <span class="p">(</span><span class="nx">workTime</span><span class="p">,</span> <span class="nx">totalTime</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">contents</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nf">ReadFile</span><span class="p">(</span><span class="s">&#34;/proc/stat&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="nx">lines</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">SplitN</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">contents</span><span class="p">),</span> <span class="s">&#34;\n&#34;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ErrInvalidStatFile</span>
+	<span class="p">}</span>
+
+	<span class="nx">fields</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Fields</span><span class="p">(</span><span class="nx">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">fields</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">11</span> <span class="o">||</span> <span class="nx">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#34;cpu&#34;</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">ErrInvalidStatFile</span>
+	<span class="p">}</span>
+
+	<span class="nx">v</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">fields</span><span class="p">))</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">fields</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">val</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">fields</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;%w: %v&#34;</span><span class="p">,</span> <span class="nx">ErrInvalidStatFile</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">v</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">val</span>
+	<span class="p">}</span>
+
+	<span class="nx">workTime</span> <span class="p">=</span> <span class="nx">v</span><span class="p">[</span><span class="nx">user</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">[</span><span class="nx">nice</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">[</span><span class="nx">system</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">[</span><span class="nx">irq</span><span class="p">]</span> <span class="o">+</span> <span class="o">+</span><span class="nx">v</span><span class="p">[</span><span class="nx">softirq</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">[</span><span class="nx">steal</span><span class="p">]</span>
+	<span class="nx">idleTime</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">[</span><span class="nx">idle</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">[</span><span class="nx">iowait</span><span class="p">]</span>
+
+	<span class="k">return</span> <span class="nx">workTime</span><span class="p">,</span> <span class="nx">workTime</span> <span class="o">+</span> <span class="nx">idleTime</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></div>
+<p></details></p>
+
+<h2 id="分核版">分核版</h2>
+
+<p>如果我们想要分别获取 CPU 每个核心的使用情况：</p>
+
+<p><details>
+<summary>点击展开代码</summary></p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">user</span> <span class="p">=</span> <span class="kc">iota</span>
+	<span class="nx">nice</span>
+	<span class="nx">system</span>
+	<span class="nx">idle</span>
+	<span class="nx">iowait</span>
+	<span class="nx">irq</span>
+	<span class="nx">softirq</span>
+	<span class="nx">steal</span>
+	<span class="nx">guest</span>
+	<span class="nx">guest_nice</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nf">jiffiesPerCore</span><span class="p">()</span> <span class="p">(</span><span class="nx">workTimes</span><span class="p">,</span> <span class="nx">totalTimes</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">contents</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">ioutil</span><span class="p">.</span><span class="nf">ReadFile</span><span class="p">(</span><span class="s">&#34;/proc/stat&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="nx">lines</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Split</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">contents</span><span class="p">),</span> <span class="s">&#34;\n&#34;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrInvalidStatFile</span>
+	<span class="p">}</span>
+	
+	<span class="nx">coreValues</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([][]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">line</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">!</span><span class="nx">strings</span><span class="p">.</span><span class="nf">HasPrefix</span><span class="p">(</span><span class="nx">line</span><span class="p">,</span> <span class="s">&#34;cpu&#34;</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">continue</span>
+		<span class="p">}</span>
+		<span class="nx">fields</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Fields</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">fields</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">11</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ErrInvalidStatFile</span>
+		<span class="p">}</span>
+	
+		<span class="nx">v</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">fields</span><span class="p">))</span>
+		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">fields</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+			<span class="nx">val</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">fields</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;%w: %v&#34;</span><span class="p">,</span> <span class="nx">ErrInvalidStatFile</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+			<span class="p">}</span>
+			<span class="nx">v</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">val</span>
+		<span class="p">}</span>
+		<span class="nx">coreValues</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">coreValues</span><span class="p">,</span> <span class="nx">v</span><span class="p">)</span>
+	<span class="p">}</span>
+	
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">coreValues</span> <span class="p">{</span>
+		<span class="nx">workTime</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">[</span><span class="nx">user</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">[</span><span class="nx">nice</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">[</span><span class="nx">system</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">[</span><span class="nx">irq</span><span class="p">]</span> <span class="o">+</span> <span class="o">+</span><span class="nx">v</span><span class="p">[</span><span class="nx">softirq</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">[</span><span class="nx">steal</span><span class="p">]</span>
+		<span class="nx">idleTime</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">[</span><span class="nx">idle</span><span class="p">]</span> <span class="o">+</span> <span class="nx">v</span><span class="p">[</span><span class="nx">iowait</span><span class="p">]</span>
+		<span class="nx">workTimes</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">workTimes</span><span class="p">,</span> <span class="nx">workTime</span><span class="p">)</span>
+		<span class="nx">totalTimes</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">totalTimes</span><span class="p">,</span> <span class="nx">workTime</span><span class="o">+</span><span class="nx">idleTime</span><span class="p">)</span>
+	<span class="p">}</span>
+	
+	<span class="k">return</span> <span class="nx">workTimes</span><span class="p">,</span> <span class="nx">totalTimes</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">getCPUUseRatePerCore</span><span class="p">(</span><span class="nx">sampleTime</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Duration</span><span class="p">)</span> <span class="p">(</span><span class="nx">rates</span> <span class="p">[]</span><span class="kt">float64</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">workPre</span><span class="p">,</span> <span class="nx">totalPre</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">jiffiesPerCore</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">sampleTime</span><span class="p">)</span>
+	
+	<span class="nx">workAfter</span><span class="p">,</span> <span class="nx">totalAfter</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">jiffiesPerCore</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+	
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">workPre</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">workAfter</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;unexpected jiffies&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	
+	<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">workPre</span> <span class="p">{</span>
+		<span class="nx">work</span> <span class="o">:=</span> <span class="nx">workAfter</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">-</span> <span class="nx">workPre</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+		<span class="nx">total</span> <span class="o">:=</span> <span class="nx">totalAfter</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">-</span> <span class="nx">totalPre</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+		<span class="nx">rate</span> <span class="o">:=</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">work</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float64</span><span class="p">(</span><span class="nx">total</span><span class="p">)</span>
+		<span class="nx">rates</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">rates</span><span class="p">,</span> <span class="nx">rate</span><span class="p">)</span>
+	<span class="p">}</span>
+	
+	<span class="k">return</span> <span class="nx">rates</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></div>
+<p></details></p>
+
+<h1 id="验证">验证</h1>
+
+<p>我们可以写一个简单的小程序来验证一下我们代码的正确性。</p>
+
+<p>我的服务器拥有两个 <code>Intel(R) Xeon(R) Gold 6148</code>CPU核心，主频都是 <code>2.40GHz</code>。上面没跑啥任务，正常情况下服务器的 CPU 占用情况都只有百分之几。</p>
+
+<p>为了测试，我写了一段死循环累加代码，在另一个协程中执行，然后主协程中调用了我们上面写的多核版 CPU 占用率计算函数：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">;</span> <span class="p">{</span><span class="nx">i</span><span class="o">++</span><span class="p">}</span>
+	<span class="p">}()</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="nx">rates</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">getCPUUseRatePerCore</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+		<span class="p">}</span>
+
+		<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">rate</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">rates</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;当前CPU %d 利用率：%f%%\n&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nx">rate</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
+		<span class="p">}</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">()</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>由于不存在任何的 IO、锁以及任何条件的等待，那么这段死循环累加会一直执行下去，持续不断的提供指令让 CPU 执行。因为没有什么其他任务会来抢占 CPU，所以预期这个程序会吃掉一整个核的 CPU，至于为什么不是两个核都吃满，因为我段代码是线性的，这意味着同一时间只会有一条指令在被执行。</p>
+
+<p>我们知道在 go 的协程调度机制中，协程会被绑定在线程上运行，而在 Linux 下线程则使用了 CFS 可抢占支持优先级时间片动态轮转调度算法来决策哪个线程将要运行，每个核心都有一条调度队列，当我们的代码在一个核上被其他进程抢占了之后，在没有设置CPU核心亲和度（affinity）绑定核心的时候是有可能被移到另一个核上执行的。</p>
+
+<p>因此预期的现象就是，虽然代码能跑满一个核，但是有可能前半段跑满了第一个核，然后后半段是跑满了第二个核，两个 CPU 利用率总和加起来一直在一百多一点徘徊，实际测试结果，基本符合预期：</p>
+
+<p><figure><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230222426.png" alt="image-20201230222426596"></figure></p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/go" role="button">Go </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cpu" role="button">CPU </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/how-vpn-works/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>VPN是如何工作的</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#process-%e6%96%87%e4%bb%b6%e7%b3%bb%e7%bb%9f">
+												 PROCESS 文件系统
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#cpu%e8%bf%90%e8%a1%8c%e7%bb%9f%e8%ae%a1">
+												 CPU运行统计
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#process-statistics">
+												 PROCESS STATISTICS
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#go-%e8%af%ad%e8%a8%80%e5%ae%9e%e7%8e%b0">
+												 Go 语言实现
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%95%b4%e4%bd%93%e7%89%88">
+												 整体版
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%86%e6%a0%b8%e7%89%88">
+												 分核版
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%aa%8c%e8%af%81">
+												 验证
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+  
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
