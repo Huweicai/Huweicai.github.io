@@ -362,11 +362,13 @@
 <h2 id="git-commit-原理">Git Commit 原理</h2>
 <p>在调用 git commit 命令时，git 会将 index 引用的所有文件全部计算 hash 值，然后将当前指向的 commit 作为父节点，创建一个新的 commit 对象，然后让当前分支指向新创建的 commit 对象。</p>
 <h2 id="git-merge-原理">Git Merge 原理</h2>
-<p>假设当前分支为 master ，当前 git 树是这样的：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201111011349.png" alt="image (3)"></p>
-<p>我在 master 分支执行了：git merge topic</p>
-<p>然后 git 会把 topic 相对于它和 master 的公共 commit 之后的修改打包成一个新的 commit 提交到 master 分支上面，不过对于 topic 没有任何影响，只是说这个新的 commit 会有两个父节点，一个指向 master，一个指向 topic。</p>
-<p>可以通过 git cat-file commit hash 来查看 commit 内容，比如这是一个 merge 的 commit，同时有两个 parent。</p>
+<p>假设当前分支为 master ，当前 git 树是这样的，有一个 master 分支和一个 topic 分支：<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230231004.png" alt="image-20201230231004625"></p>
+<p>如果我在 master 分支执行了：<code>git merge topic</code></p>
+<p>然后 git 会把 topic 相对于它和 master 的公共 commit 之后的修改打包成一个新的 commit 提交到 master 分支上面，不过对于 topic 没有任何影响，只是说这个新的 commit 会有两个父节点，一个指向 master，一个指向 topic，新的 git 树会长这样：
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230230942.png" alt="image-20201230230942517"></p>
+<p>这也是为什么很多人吐槽 merge 的一点，会导致本来直直的一条提交线出现分叉，如果只有一两条分支还好，但是如果上图中 E F G 这几个 commit 也都是其他分支合入的，甚至 topic 分支上的 A B commit 也是其他分支合并进去的，那么分支树可能会变成这样，真是一场噩梦啊：
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230231922.png" alt="image-20201230231922138"></p>
+<p>可以通过 <code>git cat-file commit hash</code> 来查看 commit 内容，比如这是一个 merge 的 commit，同时有两个 parent，对应到我们上面的 commit 结构中，commit 的 parent 也确实是一个数组：<code>ParentHashes []plumbing.Hash</code>。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201111010952.png" alt="image-20201111010952453"></p>
 <h2 id="git-rebase-原理">Git Rebase 原理</h2>
 <p>实现原理，假设当前分支为：topic，当前的 git 树是这样的：</p>
