@@ -346,7 +346,7 @@ omz_history <span class="o">()</span> <span class="o">{</span>
 	<span class="k">fi</span>
 <span class="o">}</span>
 
-</code></pre></div><p>可以看到 history 在 zsh 中是omz_history的别名，而继续分析这个omz_history我们可以发现它只是一个函数，看到这个函数我们就可以大概理解了，history其实就是把 $HISTFILE 这个文件里的东西全部读出来处理一下而已。</p>
+</code></pre></div><p>可以看到 history 在 zsh 中是<code>omz_history</code>的别名，而继续分析这个<code>omz_history</code>我们可以发现它只是一个函数，看到这个函数我们就可以大概理解了，history其实就是把 <code>$HISTFILE</code> 这个文件里的东西全部读出来处理一下而已，这个文件默认是使用的用户目录下的<code>.zsh_history</code>，我们可以通过 <code>cat ~/.zsh_history</code>直接查看。</p>
 <p>不过由于 hisotry 是每个 shell 内置的，各自的实现方式都有所不同，所以历史在不同的 shell 中是彼此不可见的。</p>
 <p>我们截取一下 history 的输出，大概是形如：序号+空格+命令这样的形式：</p>
 <pre><code>$history | head -10
@@ -751,7 +751,7 @@ which
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2020 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
   </div>
   
 
