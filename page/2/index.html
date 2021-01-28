@@ -14,7 +14,7 @@
 <meta property="og:description" content="[好奇心探索世界 善意假设 做最酷的事情]" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://huweicai.com/" />
-<meta property="og:updated_time" content="2020-12-30T01:20:00+08:00" />
+<meta property="og:updated_time" content="2021-01-28T15:01:00+08:00" />
 
    
 
@@ -393,6 +393,8 @@
 
   
 
+  
+
 
 
 
@@ -453,6 +455,9 @@
           
         
             <li><a href="https://huweicai.com/tags/jvm" role="button"><span>jvm (1)</span></a></li>
+          
+        
+            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (1)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/mysql" role="button"><span>mysql (1)</span></a></li>
@@ -609,15 +614,80 @@
     <a class="page-link" href="https://huweicai.com/page/4/">4</a>
   </li>
   <li class="page-item">
+    <a class="page-link" href="https://huweicai.com/page/5/">5</a>
+  </li>
+  <li class="page-item">
     <a href="https://huweicai.com/page/3/" class="page-link" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
   </li>
   <li class="page-item">
-    <a href="https://huweicai.com/page/4/" class="page-link" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+    <a href="https://huweicai.com/page/5/" class="page-link" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
   </li>
 </ul>
 
 
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/who-network-capture-analysis/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">完整网络请求包自底向上分析</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2020-07-01</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>17 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      我们都知道网络是分层的，国际标准化组织将网络划分了七层，定义于 ISO/IEC 7498-1，也就是我们所熟知的 ISO 七层模型。 自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。 而我们所熟知的超文本传输协议（HTTP: HyperText Transfer Protocol）便位于这个模型中的第七层，HTTP 请求包发出的时候会一层一层往下叠加头部知道最终变成最底层的物理信号在网线上传输，那么最终的网络包到底是长什么样呢？我们今......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/ethernet" role="button">Ethernet </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/tcp" role="button">TCP </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/http" role="button">HTTP </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/ip" role="button">IP </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -838,66 +908,6 @@
       
     
       <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/go-package-sync/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Go语言sync包实现原理分析</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2020-01-10</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>6 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      Java 语言中有一个 java.util.Concurrent 包提供了大量的并发工，而 Go 语言中也有这样的角色：sync包。 sync.Mutex 锁实现原理 sync.Mutext 是 Go 提供的一种同步原语，用于表达互斥，不过不推荐在业务中使用，根据 Go 的设计思想，应首先考虑通过传递消息（管道）来共享内存，而不是通过共享内存来传递消息 Mutex 结构体如下，只有两个变量，非常简单： type Mutex struct { state int32 // 状态，bitmap sema uint32 // 信号量 } state 字段是一个位图 第 0 位表示是否加锁 第 1 位表示是否已唤醒 第 2 位表示是否为饥饿模......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-        
-          <li><a href="https://huweicai.com/series/go"><i class="fas fa-bookmark pr-1" aria-hidden="true"></i>go</a></li>
-        
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/go" role="button">go </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E5%B9%B6%E5%8F%91" role="button">并发 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" role="button">编程语言 </a></li>
       
     
   </div>
