@@ -13,7 +13,7 @@
       <pubDate>Thu, 28 Jan 2021 15:01:00 +0800</pubDate>
       
       <guid>https://huweicai.com/kubectl-concepts-and-commands/</guid>
-      <description>基本概念 容器化 + Kubernetes 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 kubectl 则提供了一种非常直观和强大的观察操控 k8s集群的方式。 kubectl 是 kubernetes自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 cobra 来解析命令行参数，读取 .kube/config中存储的认证信息经由 k8s restful api 和集群交互。 kubectl 命令基本格式如下： kubectl [子命令] [资源类型] [资源名称] [选项] 和 docker、git这种复杂的命令行程序一</description>
+      <description>基本概念 容器化 + Kubernetes 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 kubectl 则提供了一种非常直观和强大的观察操控 k8s集群的方式。 kubectl 是 kubernetes自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 cobra 来解析命令行参数，读取 .kube/config中存储的认证信息经由 k8s restful api 和集群交互。 kubectl 命令基本格式如下： kubectl [子命令] [资源类型] [资源名称] [选项] 和 docker 、git这种复杂的命令行程序一样，kub</description>
     </item>
     
   </channel>

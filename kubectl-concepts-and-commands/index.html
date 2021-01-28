@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="基本概念 容器化 &#43; Kubernetes 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 kubectl 则提供了一种非常直观和强大的观察操控 k8s集群的方式。 kubectl 是 kubernetes自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 cobra 来解析命令行参数，读取 .kube/config中存储的认证信息经由 k8s restful api 和集群交互。 kubectl 命令基本格式如下： kubectl [子命令] [资源类型] [资源名称] [选项] 和 docker、git这种复杂的命令行程序一">
+  <meta name="description" content="基本概念 容器化 &#43; Kubernetes 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 kubectl 则提供了一种非常直观和强大的观察操控 k8s集群的方式。 kubectl 是 kubernetes自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 cobra 来解析命令行参数，读取 .kube/config中存储的认证信息经由 k8s restful api 和集群交互。 kubectl 命令基本格式如下： kubectl [子命令] [资源类型] [资源名称] [选项] 和 docker 、git这种复杂的命令行程序一样，kub">
   
   <meta property="og:title" content="Kubectl基本概念&amp;常用命令" />
-<meta property="og:description" content="基本概念 容器化 &#43; Kubernetes 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 kubectl 则提供了一种非常直观和强大的观察操控 k8s集群的方式。 kubectl 是 kubernetes自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 cobra 来解析命令行参数，读取 .kube/config中存储的认证信息经由 k8s restful api 和集群交互。 kubectl 命令基本格式如下： kubectl [子命令] [资源类型] [资源名称] [选项] 和 docker、git这种复杂的命令行程序一" />
+<meta property="og:description" content="基本概念 容器化 &#43; Kubernetes 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 kubectl 则提供了一种非常直观和强大的观察操控 k8s集群的方式。 kubectl 是 kubernetes自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 cobra 来解析命令行参数，读取 .kube/config中存储的认证信息经由 k8s restful api 和集群交互。 kubectl 命令基本格式如下： kubectl [子命令] [资源类型] [资源名称] [选项] 和 docker 、git这种复杂的命令行程序一样，kub" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/kubectl-concepts-and-commands/" />
 <meta property="article:published_time" content="2021-01-28T15:01:00+08:00" />
@@ -298,87 +298,68 @@
 
           <div class="post-content markdown">
             <h1 id="基本概念">基本概念</h1>
-
 <p>容器化 + <code>Kubernetes</code> 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 <code>kubectl</code> 则提供了一种非常直观和强大的观察操控 k8s集群的方式。</p>
-
 <p><a href="https://github.com/kubernetes/kubectl">kubectl</a> 是 <a href="https://github.com/kubernetes/kubernetes">kubernetes</a>自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 <a href="https://github.com/spf13/cobra">cobra</a> 来解析命令行参数，读取 <code>.kube/config</code>中存储的认证信息经由 <code>k8s restful api</code> 和集群交互。</p>
-
 <p>kubectl 命令基本格式如下：</p>
-<pre><code>kubectl [子命令] [资源类型] [资源名称] [选项]</code></pre>
-<p>和 <code>docker</code>、<code>git</code>这种复杂的命令行程序一样，<code>kubectl</code>也采用了命令下再分子命令的形式，子命令声明了要执行的动作，如：增删改查，当然 kubeclt 能做的远不止这四个动作，下文会简单介绍一下它们分别都能干什么。</p>
-
+<pre><code>kubectl [子命令] [资源类型] [资源名称] [选项]
+</code></pre><p>和 <code>docker </code>、<code>git</code>这种复杂的命令行程序一样，<code>kubectl</code>也采用了命令下再分子命令的形式，子命令声明了要执行的动作，如：增删改查，当然 kubeclt 能做的远不止这四个动作，下文会简单介绍一下它们分别都能干什么。</p>
 <p>确定了动作之后还需要声明这个动作的对象，在 k8s 中通过<code>资源类型 + 资源名称</code>唯一确定一个资源。</p>
-
 <p>最后这一部分用于声明命令选项，包括子命令独有的以及 <code>kubectl</code> 全局的一些选项。</p>
-
 <h2 id="子命令">子命令</h2>
-
 <p><code>kubectl</code> 将所有的子命令分为了 7 个大类，共 41 条：</p>
-
 <h3 id="基本命令">基本命令</h3>
-
 <table>
 <thead>
 <tr>
-<th align="center">命令</th>
+<th style="text-align:center">命令</th>
 <th>简述</th>
 <th>实例</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="center">create</td>
+<td style="text-align:center">create</td>
 <td>创建资源</td>
 <td><code>kubectl create namespace hello-world</code></td>
 </tr>
-
 <tr>
-<td align="center">expose</td>
+<td style="text-align:center">expose</td>
 <td>将 replica set、deployment 等通过 service 暴露出来供外部访问</td>
 <td><code>kubectl expose deploy nginx --type=NodePort --port=80</code></td>
 </tr>
-
 <tr>
-<td align="center">run</td>
+<td style="text-align:center">run</td>
 <td>快速创建一个deployment来运行镜像</td>
 <td><code>kubectl run nginx --image=nginx</code></td>
 </tr>
-
 <tr>
-<td align="center">set</td>
+<td style="text-align:center">set</td>
 <td>edit 的简化版，用于快速修改资源的环境变量、镜像、账号等</td>
 <td></td>
 </tr>
-
 <tr>
-<td align="center">explain</td>
+<td style="text-align:center">explain</td>
 <td>查看某个 api 的语法结构，用于编写yaml时参考都有哪些字段</td>
 <td>查看Service的yaml语法：<code>kubectl explain pod</code></td>
 </tr>
-
 <tr>
-<td align="center">get</td>
+<td style="text-align:center">get</td>
 <td>查看资源</td>
 <td><code>kubectl get pod -A</code></td>
 </tr>
-
 <tr>
-<td align="center">edit</td>
+<td style="text-align:center">edit</td>
 <td>编辑资源</td>
 <td><code>kubectl edit services ${SvcName}</code></td>
 </tr>
-
 <tr>
-<td align="center">delete</td>
+<td style="text-align:center">delete</td>
 <td>删除资源</td>
 <td><code>kubectl delte namespace hello-word</code></td>
 </tr>
 </tbody>
 </table>
-
 <h3 id="部署命令">部署命令</h3>
-
 <table>
 <thead>
 <tr>
@@ -387,86 +368,72 @@
 <th>实例</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>rollout</td>
 <td>对资源进行发布管理：暂停发布、回滚、重启、查看状态、查看历史记录等</td>
 <td>查看deployment发布状态：<code>kubectl rollout status deployment/nginx</code></td>
 </tr>
-
 <tr>
 <td>scale</td>
 <td>手动调整容量</td>
 <td></td>
 </tr>
-
 <tr>
 <td>autoscale</td>
 <td>会创建一个 HorizontalPodAutoscaler(HPA) 来帮助 deployment 自动扩缩容</td>
-<td>自动扩缩容，最多5个，阈值CPU使用80%：<br /><code>kubectl autoscale deployment ${DeployName} --max=5 --cpu-percent=80</code></td>
+<td>自动扩缩容，最多5个，阈值CPU使用80%：<!-- raw HTML omitted --><code>kubectl autoscale deployment ${DeployName} --max=5 --cpu-percent=80</code></td>
 </tr>
 </tbody>
 </table>
-
 <h3 id="集群管理">集群管理</h3>
-
 <table>
 <thead>
 <tr>
-<th align="center">命令</th>
+<th style="text-align:center">命令</th>
 <th>简述</th>
 <th>实例</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="center">certificate</td>
+<td style="text-align:center">certificate</td>
 <td>通过集群CA根证书签发或者拒绝其他证书签发请求（CSR）</td>
-<td>1. 通过 <code>k get certificatesigningrequest -A</code>查看签发请求<br />2. 签署：kubectl certificate approve csr-xxx</td>
+<td>1. 通过 <code>k get certificatesigningrequest -A</code>查看签发请求<!-- raw HTML omitted -->2. 签署：kubectl certificate approve csr-xxx</td>
 </tr>
-
 <tr>
-<td align="center">cluster-info</td>
+<td style="text-align:center">cluster-info</td>
 <td>查看master、dashboard、core-dns地址等集群信息</td>
 <td></td>
 </tr>
-
 <tr>
-<td align="center">top</td>
+<td style="text-align:center">top</td>
 <td>像本地的 top 命令一样，可以查看机器或者实例的CPU、内存等资源占用</td>
-<td># 查看所有节点的内存、CPU占用情况<br /><code>kubectl top node</code></td>
+<td># 查看所有节点的内存、CPU占用情况<!-- raw HTML omitted --><code>kubectl top node</code></td>
 </tr>
-
 <tr>
-<td align="center">cordon</td>
+<td style="text-align:center">cordon</td>
 <td>将一台节点设为不可调度，不再接受新实例的创建（老的实例不受影响），比如：cordon master 节点来保证集群稳定性</td>
 <td><code>kubectl cordon $NodeName</code></td>
 </tr>
-
 <tr>
-<td align="center">uncordon</td>
+<td style="text-align:center">uncordon</td>
 <td>允许调度</td>
 <td><code>kubectl uncordon $NodeName</code></td>
 </tr>
-
 <tr>
-<td align="center">drain</td>
+<td style="text-align:center">drain</td>
 <td>驱逐Node上的所有实例并拒绝新实例调度，常用于临时维护、升级或者机器下线等场景</td>
 <td><code>kubectl drain node-name-xxx --force</code></td>
 </tr>
-
 <tr>
-<td align="center">taint</td>
+<td style="text-align:center">taint</td>
 <td>配合 toleration 可以设置实例对于节点的亲和性，实现：一组实例全部分配、不分配或者优先分配到特定的节点上</td>
 <td><code>kubectl taint nodes $NodeName dedicated=special-user:NoSchedule</code></td>
 </tr>
 </tbody>
 </table>
-
 <h3 id="问题排查">问题排查</h3>
-
 <table>
 <thead>
 <tr>
@@ -475,50 +442,42 @@
 <th>实例</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>describe</td>
 <td>查看指定资源的详细信息</td>
 <td>查看一个Pod的详细信息:<code>kubectl describe pod pod-name-xxx</code></td>
 </tr>
-
 <tr>
 <td>logs</td>
 <td>查看一个或者一组容器的日志（标准输出）</td>
 <td>查看一个Pod的实时日志：<code>kubectl logs -f  pod-name-xxx</code></td>
 </tr>
-
 <tr>
 <td>attach</td>
 <td>和 docker 中的 attach 一样，用于连接到一个正在运行中的容器，由于一个实例内可能存在多个容器，未指定时默认进去第一个容器</td>
 <td>进入一个运行中的实例打开shell调试：<code>kubectl attach ${PodName} -i -t</code></td>
 </tr>
-
 <tr>
 <td>exec</td>
 <td>也和 docker 中的 exec 一样，在容器中运行一个命令</td>
 <td>查看容器时间：<code>kubectl exec ${PodName} &quot;date&quot;</code></td>
 </tr>
-
 <tr>
 <td>port-forward</td>
 <td>端口转发，映射无法直接访问的集群内部服务端口到本地</td>
 <td>转发服务80端口到本地6789：<code>kubectl port-forward svc/${MySvc} 6789:80</code></td>
 </tr>
-
 <tr>
 <td>proxy</td>
 <td>创建一个本地的 k8s apiserver 代理，这样调试的时候无需配置证书就能直接访问api server</td>
 <td>代理apiserver到本地6789端口：<code>kubectl proxy --port=</code>6789</td>
 </tr>
-
 <tr>
 <td>cp</td>
 <td>复制文件</td>
 <td>复制本地文件到指定实例内：<code>kubectl cp /tmp/local.txt &lt;some-pod&gt;:/tmp/remote.txt</code></td>
 </tr>
-
 <tr>
 <td>auth</td>
 <td>校验是否有权限</td>
@@ -526,9 +485,7 @@
 </tr>
 </tbody>
 </table>
-
 <h3 id="高级命令">高级命令</h3>
-
 <table>
 <thead>
 <tr>
@@ -537,44 +494,37 @@
 <th>实例</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>diff</td>
 <td>指定一个 manifest 判断它相较于当前线上版本有何差异</td>
 <td></td>
 </tr>
-
 <tr>
 <td>apply</td>
 <td>应用生效配置文件，用于发布新资源，可以理解为 create 的高级加强版</td>
 <td><code>kubectl apply -f deploy.yaml</code></td>
 </tr>
-
 <tr>
 <td>patch</td>
 <td>edit 命令的高级版，增加一部分参数到配置文件上</td>
 <td><code>kubectl patch node ${NodeName} -p '{&quot;spec&quot;:{&quot;unschedulable&quot;:true}}'</code></td>
 </tr>
-
 <tr>
 <td>replace</td>
 <td>替换配置文件</td>
 <td></td>
 </tr>
-
 <tr>
 <td>wait</td>
 <td>阻塞等待直至事件完成，比如：等待一个Pod的删除或者就绪</td>
 <td>等待Pod就绪，30秒超时：<code>kubectl wait --for=condition=Ready pod/${PodName} --timeout=30s</code></td>
 </tr>
-
 <tr>
 <td>convert</td>
 <td>配置文件格式转换</td>
 <td>把配置文件由yaml的格式转成json：<code>kubectl convert -f pod.yaml --local -o json</code></td>
 </tr>
-
 <tr>
 <td>kustomize</td>
 <td>定制化 k8s 配置方式的拓展</td>
@@ -582,9 +532,7 @@
 </tr>
 </tbody>
 </table>
-
 <h3 id="配置命令">配置命令</h3>
-
 <table>
 <thead>
 <tr>
@@ -593,20 +541,17 @@
 <th>实例</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>label</td>
 <td>修改资源的标签</td>
 <td></td>
 </tr>
-
 <tr>
 <td>annotate</td>
 <td>增加注解，位于：meta-annotations 字段下方</td>
 <td><code>kubectl  annotate pod ${PodName} description=&quot;Hello World&quot;</code></td>
 </tr>
-
 <tr>
 <td>completion</td>
 <td>导出 shell 自动补全的示例</td>
@@ -614,9 +559,7 @@
 </tr>
 </tbody>
 </table>
-
 <h3 id="其他命令">其他命令</h3>
-
 <table>
 <thead>
 <tr>
@@ -625,32 +568,27 @@
 <th>实例</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>api-resources</td>
 <td>查看所有支持的资源类型，包括自定义的 crd</td>
 <td><code>kubectl api-resources</code></td>
 </tr>
-
 <tr>
 <td>api-versions</td>
 <td>查看 k8s 集群所有支持的 api 版本（k8s rest api 中的请求路径）</td>
 <td><code>kubectl api-versions</code></td>
 </tr>
-
 <tr>
 <td>config</td>
 <td>修改操作kubeconfig配置文件的简便方式，可以用于修改默认namespace，修改默认集群之类的</td>
 <td></td>
 </tr>
-
 <tr>
 <td>plugin</td>
 <td>kubectl 插件管理</td>
 <td>查看所有安装的kubectl插件：<code>kubectl plugin list</code></td>
 </tr>
-
 <tr>
 <td>version</td>
 <td>查看 kubectl 和服务端的版本</td>
@@ -658,11 +596,8 @@
 </tr>
 </tbody>
 </table>
-
 <h2 id="主要资源">主要资源</h2>
-
-<p>在用 kubectl 操作资源时，可以直接使用其缩写来简化命令，可以通过 <code>kubectl api-resources</code>查看当前集群支持的所有资源，常见资源如下：</p>
-
+<p>在用 kubectl 操作资源时，可以直接使用其缩写来简化命令， 当前集群支持的所有资源可以通过命令<code>kubectl api-resources</code>查看，常见资源如下：</p>
 <table>
 <thead>
 <tr>
@@ -671,68 +606,57 @@
 <th>说明</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td>events</td>
 <td>ev</td>
 <td>实时事件日志</td>
 </tr>
-
 <tr>
 <td>namespaces</td>
 <td>ns</td>
 <td>命名空间，隔离不同的资源</td>
 </tr>
-
 <tr>
 <td>nodes</td>
 <td>no</td>
 <td>节点（对应一台机器）</td>
 </tr>
-
 <tr>
 <td>pods</td>
 <td>po</td>
 <td>实例（一个或者一组容器）</td>
 </tr>
-
 <tr>
 <td>services</td>
 <td>svc</td>
 <td>服务（一组实例的抽象）</td>
 </tr>
-
 <tr>
 <td>deployments</td>
 <td>deploy</td>
 <td>部署</td>
 </tr>
-
 <tr>
 <td>replicasets</td>
 <td>rs</td>
 <td>实例副本集</td>
 </tr>
-
 <tr>
 <td>ingresses</td>
 <td>ing</td>
 <td>负载均衡配置</td>
 </tr>
-
 <tr>
 <td>jobs</td>
 <td></td>
 <td>短任务</td>
 </tr>
-
 <tr>
 <td>serviceaccounts</td>
 <td>sa</td>
 <td>账号</td>
 </tr>
-
 <tr>
 <td>cronjobs</td>
 <td>cj</td>
@@ -740,77 +664,56 @@
 </tr>
 </tbody>
 </table>
-
 <h1 id="常用操作">常用操作</h1>
-
 <h3 id="查看一个-deployment-所有实例的实时日志">查看一个 deployment 所有实例的实时日志</h3>
-
-<p>kubectl logs命令指定资源类型和其他的命令还不一样，因为可以不传类型只传实例名称，一个实例有可能就是叫：“deployment”，所以类型和名称要通过 <code>/</code>符号连接而不是空格，通过 <code>-f</code>参数流式实时查看：</p>
-<pre><code>kubectl logs -f deployment/${deployment.name}</code></pre>
-<h3 id="kubectl-获取所有实例">kubectl 获取所有实例</h3>
-
+<p><code>kubectl logs</code>命令指定资源类型和其他的命令还不一样，因为可以不传类型只传实例名称，一个实例有可能就是叫：“deployment”，所以类型和名称要通过 <code>/</code>符号连接而不是空格，通过 <code>-f</code>参数流式实时查看：</p>
+<pre><code>kubectl logs -f deployment/${deployment.name}
+</code></pre><h3 id="kubectl-获取所有实例">kubectl 获取所有实例</h3>
 <p>对于大部分的资源，默认都只会获取指定命名空间下的资源，不过可以添加 -A 参数来获取所有命名空间下的资源。</p>
-<pre><code>kubectl get pods -A</code></pre>
-<h3 id="kubectl-自动补全">kubectl 自动补全</h3>
-
+<pre><code>kubectl get pods -A
+</code></pre><h3 id="kubectl-自动补全">kubectl 自动补全</h3>
 <p>自动补全能极大的提高我们的输入效率，脑补一下像操作一个本地文件时文件名的自动补全能应用到 pod、service 名上时会多么的方便。</p>
 <pre><code># BASH
 source &lt;(kubectl completion bash)
 # ZSH
 source &lt;(kubectl completion zsh)
 
-# 如果想要每次打开shell都生效的话，加入对应shell的初始化文件即可</code></pre>
-<h3 id="为-kubectl-命令设置别名">为 kubectl 命令设置别名</h3>
-
+# 如果想要每次打开shell都生效的话，加入对应shell的初始化文件即可
+</code></pre><h3 id="为-kubectl-命令设置别名">为 kubectl 命令设置别名</h3>
 <p>kubectl 这个命令每次都要敲7个字符，虽然有自动补全但是会和其他的 kubeXXX 组件冲突，这个时候我们可以设置一个别名来提升 kubectl 这种高频命令的效率，在 .bashrc 或者 .zshrc 等shell初始化文件中加入：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">alias</span> <span class="nv">k</span><span class="o">=</span>kubectl</code></pre></div>
-<h3 id="设置默认-namespace">设置默认 namespace</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">alias</span> <span class="nv">k</span><span class="o">=</span>kubectl
+</code></pre></div><h3 id="设置默认-namespace">设置默认 namespace</h3>
 <p>有两种方式可以设置默认的 namespace 来免去每次都要敲 -n xxx 的繁琐：</p>
-
 <p>方式一：</p>
-
 <ol>
-<li><code>shell
-kubectl config set-context --current --namespace=${NAMESPACE}</code></li>
+<li>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">kubectl config set-context --current --namespace<span class="o">=</span><span class="si">${</span><span class="nv">NAMESPACE</span><span class="si">}</span>
+</code></pre></div></li>
 </ol>
-
 <p>方式二：</p>
-
 <p>直接修改 kubectl 的配置文件：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">vi ~/.kube/config</code></pre></div>
-<p>然后修改当前Context下的namespace字段：
-<figure><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210122114451.png" alt="image-20210122114446510"></figure></p>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">vi ~/.kube/config
+</code></pre></div><p>然后修改当前Context下的namespace字段：
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210122114451.png" alt="image-20210122114446510"></p>
 <h3 id="修改kubectl配置文件位置">修改kubectl配置文件位置</h3>
-
 <p>kubectl 默认会读取当前用户HOME目录下的：<code>.kube/config</code>作为配置文件，不过也可以通过</p>
-
 <ol>
 <li>添加 <code>KUBECONFIG=${FILE_PATH}</code> 环境变量</li>
 <li>运行时添加 <code>-kubeconfig=${FILE_PATH}</code> 参数</li>
 </ol>
-
 <p>这两种方式来从其他文件中读取。</p>
-
 <h3 id="重启deploymentdaemonset">重启deployment、daemonset</h3>
-
 <p>我们可以直接使用 <code>rollout restart</code> 命令来实现重启：</p>
-<pre><code> kubectl rollout restart deployment ${DeploymentName}</code></pre>
-<p>或者也可以修改配置文件中无关紧要的一些参数来让资源重新发布。</p>
-
+<pre><code> kubectl rollout restart deployment ${DeploymentName}
+</code></pre><p>或者也可以修改配置文件中无关紧要的一些参数来让资源重新发布。</p>
 <h3 id="重启-pod">重启 Pod</h3>
-
 <p>如果要重启一个 <code>deployment</code> 下托管的 pod，直接删除即可，<code>replica-set controller</code> 会再拉起来一个同样的 pod；</p>
-
 <p>如果是无人托管的野实例，可以通过 replace 命令来删掉原有pod再拉起来一个同样配置的 pod 来实现重启：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">kubectl get pod <span class="si">${</span><span class="nv">PodName</span><span class="si">}</span>  -o yaml <span class="p">|</span> kubectl replace --force -f -</code></pre></div>
-<h3 id="pod批量执行命令">Pod批量执行命令</h3>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">kubectl get pod <span class="si">${</span><span class="nv">PodName</span><span class="si">}</span>  -o yaml <span class="p">|</span> kubectl replace --force -f -
+</code></pre></div><h3 id="pod批量执行命令">Pod批量执行命令</h3>
 <p><code>exec</code> 子命令可以帮助我们在 pod 上执行命令，但是只支持一个实例的执行，我们可以 <code>get</code> 到所有的 pod 之后通过 <code>jsonpath</code> 取出 pod 名称，然后通过 shell for 循环来实现这个操作，比如：查看当前 <code>namespace</code> 下所有实例上的时间：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="k">for</span> a in <span class="k">$(</span>k get pod -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{range .items[*]}{.metadata.name}{&#34;\n&#34;}{end}&#39;</span><span class="k">)</span><span class="p">;</span> kubectl <span class="nb">exec</span> <span class="nv">$a</span> <span class="s2">&#34;date&#34;</span></code></pre></div>
-<h1 id="参考">参考</h1>
-
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="k">for</span> a in <span class="k">$(</span>k get pod -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{range .items[*]}{.metadata.name}{&#34;\n&#34;}{end}&#39;</span><span class="k">)</span><span class="p">;</span> kubectl <span class="nb">exec</span> <span class="nv">$a</span> <span class="s2">&#34;date&#34;</span>
+</code></pre></div><h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://kubernetes.io/zh/docs/reference/kubectl/overview/">Kubernetes 官方文档：kubectl 概述</a></li>
 <li><a href="https://github.com/kubernetes/kubectl">kubectl github 源代码</a></li>
