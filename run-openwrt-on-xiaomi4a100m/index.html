@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此系统性的捋一下，分享给有缘人，我手上的型号是百兆版的，4A千兆版刷OpenWRT的流程也基本一样，不过需要注意镜像地址什么的自行替换一下。 前提：需要安装 git、python3 以及熟悉基本的终端操作。 找到合适的OpenWRT固件 首先，我们需要一个 OpenWRT 的系统镜像，不同的路由器可能 CPU、网卡等硬件设备都不一样，所以需要不同的指">
+  <meta name="description" content="我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此系统性的捋一下，分享给有缘人，我手上的型号是百兆版的，4A千兆版刷OpenWRT的流程也基本一样，不过需要注意镜像地址什么的自行替换一下。 前提：需要安装 git、python3 以及熟悉基本的终端操作。 OpenWRT 首先我们要对 OpenWRT 有一些最基本的概念，OpenWRT 是一种 Linux 发行版，本质上是一个操作系统，和我们的常见的 Windows、And">
   
   <meta property="og:title" content="小米路由器4A百兆版刷OpenWRT" />
-<meta property="og:description" content="我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此系统性的捋一下，分享给有缘人，我手上的型号是百兆版的，4A千兆版刷OpenWRT的流程也基本一样，不过需要注意镜像地址什么的自行替换一下。 前提：需要安装 git、python3 以及熟悉基本的终端操作。 找到合适的OpenWRT固件 首先，我们需要一个 OpenWRT 的系统镜像，不同的路由器可能 CPU、网卡等硬件设备都不一样，所以需要不同的指" />
+<meta property="og:description" content="我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此系统性的捋一下，分享给有缘人，我手上的型号是百兆版的，4A千兆版刷OpenWRT的流程也基本一样，不过需要注意镜像地址什么的自行替换一下。 前提：需要安装 git、python3 以及熟悉基本的终端操作。 OpenWRT 首先我们要对 OpenWRT 有一些最基本的概念，OpenWRT 是一种 Linux 发行版，本质上是一个操作系统，和我们的常见的 Windows、And" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/run-openwrt-on-xiaomi4a100m/" />
 <meta property="article:published_time" content="2020-12-08T23:47:00+08:00" />
@@ -288,7 +288,7 @@
 
     
       <li class="middot"></li>
-      <li>6 minutes read</li>
+      <li>7 minutes read</li>
     
   </ul>
   
@@ -301,9 +301,15 @@
 <blockquote>
 <p>前提：需要安装 <code>git</code>、<code>python3</code> 以及熟悉基本的终端操作。</p>
 </blockquote>
+<h2 id="openwrt">OpenWRT</h2>
+<p>首先我们要对 OpenWRT 有一些最基本的概念，OpenWRT 是一种 Linux 发行版，本质上是一个<strong>操作系统</strong>，和我们的常见的 <strong>Windows</strong>、<strong>Android</strong> 等概念是一类的，只是针对路由器这种场景做了特殊的优化。</p>
+<p>路由器虽然比较小，很迷你，但是CPU、内存、IO等五脏都是俱全的，只是通常来说会阉割掉一些不必要的功能，以便于降低配置和功耗这样我们才能以百元左右的价格买到，同时就算 24h 长期开机也太过担心电费。</p>
+<p>理论上我们也能在配置足够，硬件兼容的路由器上跑 Windows 系统，同时我们也可以用一台现成的大电脑改改配置来当路由器使用，这都是可以的。</p>
+<p>所以我们给路由器刷 OpenWRT 的行为，其实和我们平常给 PC 重装 Windows 的操作本质是一样的：<strong>给一台冯诺依曼架构的机器装载一个操作系统来更好地控制其硬件行为。</strong></p>
+<p>找固件（系统镜像）-&gt; 刷入，即可，只是固件可能没那么通用，刷入的流程也没有统一的标准而已。</p>
 <h2 id="找到合适的openwrt固件">找到合适的OpenWRT固件</h2>
-<p>首先，我们需要一个 OpenWRT 的系统镜像，不同的路由器可能 CPU、网卡等硬件设备都不一样，所以需要不同的指令集和驱动，同时嵌入式的小空间决定了我不能写一个超级大的镜像兼容所有的场景，因此我们需要找到最适合我们路由器的那一款固件。</p>
-<p>固件可以自己编译，参考官网教程：<a href="https://openwrt.org/zh/docs/guide-developer/quickstart-build-images">https://openwrt.org/zh/docs/guide-developer/quickstart-build-images</a>，OpenWRT提供了一个可视化的CLI编译配置工具，照着来就是了，自由度会高一些。</p>
+<p>首先，我们需要一个 OpenWRT 的系统镜像，不同的路由器可能 CPU、网卡等硬件设备都不一样，所以需要不同的指令集和驱动，同时嵌入式的小空间决定了我们不能写一个超级大的镜像兼容所有的场景，因此我们需要找到最适合我们路由器的那一款固件。</p>
+<p>固件可以自己编译，参考官网教程：<a href="https://openwrt.org/zh/docs/guide-developer/quickstart-build-images">https://openwrt.org/zh/docs/guide-developer/quickstart-build-images</a>，OpenWRT提供了一个可视化的CLI编译配置工具，照着来就是了，自由度会高一些，可以自己提前把一些特性打开，编入一些内核模块等。</p>
 <p>同时 OpenWRT 也提供了一些已经编译好的固件供大家使用：<a href="https://openwrt.org/toh/views/toh_fwdownload">https://openwrt.org/toh/views/toh_fwdownload</a>，图省事的话，我们直接使用即可。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201208184834.png" alt="image-20201208184834711"></p>
 <p>可以搜到我们的小米4A百兆版也在列表中（注意和 Gigabit Edition千兆版区分开），使用了一颗联发科MT7628的处理器，我们在表格后面找到它的稳定版固件下载即可，注意尽量不要下 snapshot 版本的，snapshost 是主分支最近打出来的包，我之前下了一个最新的分支，Linux内核版本居然是才发布半个月的 5.4.80，稳定性和兼容性都有待验证。</p>
@@ -379,7 +385,8 @@ mtd -e OS1 -r write firmware.bin OS1
 <h2 id="扩展openwrt">扩展OpenWRT</h2>
 <p>OpenWRT 装好之后，是开箱即用的，我们连上网线就能直接上网了，不需要什么额外的配置，不过我们肯定不是冲着温饱来的，可以尽情的运行自己的代码才是最吸引我们的。</p>
 <p>Ubuntu 有 apt，CentOS 有 yum，而 OpenWRT 则使用 opkg 来管理软件包，所以我们可以直接使用 opkg 命令来安装一些有用的插件，比如神器Luci：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">opkg update <span class="o">&amp;&amp;</span> opkg install luci
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">ssh root@192.168.1.1
+opkg update <span class="o">&amp;&amp;</span> opkg install luci
 </code></pre></div><p>然后我们就可以打开管理页面（默认是：<a href="http://192.168.1.1">http://192.168.1.1</a>）来对路由器系统进行可视化的管理了。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211161301.png" alt="image-20201211161301530"></p>
 <p>想要安装其他插件的话，到控制台打开软件包管理界面，点击下载软件列表，然后自行搜索安装即可：
@@ -389,7 +396,13 @@ mtd -e OS1 -r write firmware.bin OS1
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 开启软浮点 &amp; 小端mips架构 &amp; linux内核API</span>
 <span class="nv">GOMIPS</span><span class="o">=</span>softfloat <span class="nv">GOARCH</span><span class="o">=</span>mipsle <span class="nv">GOOS</span><span class="o">=</span>linux go build main.go
 </code></pre></div><p>如果是 C/C++的话，可以在官网下载SDK工具链进行交叉编译：https://openwrt.org/docs/guide-developer/using_the_sdk，或者自己从源码编译也是可以的。</p>
-<p>OpenWRT 还有很多的功能可以去探索：frp内网穿透、广告过滤、VPN等等。</p>
+<p>OpenWRT 还有很多的功能可以去探索，比如：</p>
+<ul>
+<li>frp内网穿透: 你可以在自家电脑或者路由器上部署一个公网可达的服务</li>
+<li>广告过滤：网络级别的广告过滤</li>
+<li>VPN：路由器上装一次，所有设备皆可获得VPN能力</li>
+<li>更强大的网络管控：iptalbes、dnsmasq 能帮助你为所欲为的管控你的网络</li>
+</ul>
 <p>Have fun on OpenWRT~</p>
 
           </div>
@@ -478,6 +491,28 @@ mtd -e OS1 -r write firmware.bin OS1
 					</li>
 
 					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#openwrt">
+												 OpenWRT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
 						
 						
 							
