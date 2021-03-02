@@ -423,7 +423,7 @@
 </tr>
 <tr>
 <td style="text-align:center">drain</td>
-<td>驱逐Node上的所有实例并拒绝新实例调度，常用于临时维护、升级或者机器下线等场景</td>
+<td>驱逐Node上的所有实例并拒绝新实例调度，常用于临时维护、升级或者机器下线等场景；<code>drain</code>了一个机器之后，通过 <code>uncordon</code> 来恢复</td>
 <td><code>kubectl drain node-name-xxx --force</code></td>
 </tr>
 <tr>
