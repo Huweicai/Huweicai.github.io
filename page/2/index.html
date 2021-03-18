@@ -14,7 +14,7 @@
 <meta property="og:description" content="[好奇心探索世界 善意假设 做最酷的事情]" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://huweicai.com/" />
-<meta property="og:updated_time" content="2021-01-28T15:01:00+08:00" />
+<meta property="og:updated_time" content="2021-03-18T21:29:00+08:00" />
 
    
 
@@ -395,6 +395,8 @@
 
   
 
+  
+
 
 
 
@@ -436,6 +438,9 @@
             <li><a href="https://huweicai.com/tags/java" role="button"><span>java (2)</span></a></li>
           
         
+            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (2)</span></a></li>
+          
+        
             <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (2)</span></a></li>
           
         
@@ -455,9 +460,6 @@
           
         
             <li><a href="https://huweicai.com/tags/jvm" role="button"><span>jvm (1)</span></a></li>
-          
-        
-            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (1)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/mysql" role="button"><span>mysql (1)</span></a></li>
@@ -484,10 +486,16 @@
             <li><a href="https://huweicai.com/tags/%E5%9B%BE%E5%83%8F" role="button"><span>图像 (1)</span></a></li>
           
         
+            <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button"><span>容器 (1)</span></a></li>
+          
+        
             <li><a href="https://huweicai.com/tags/%E5%B9%B6%E5%8F%91" role="button"><span>并发 (1)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" role="button"><span>数据库 (1)</span></a></li>
+          
+        
+            <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button"><span>权限管理 (1)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6" role="button"><span>硬件 (1)</span></a></li>
@@ -626,6 +634,59 @@
 
 
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/git-implementation/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">Git实现原理</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2020-11-11</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>6 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      基本概念 概述 Git 是一个基于快照的文件版本管理系统，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/git" role="button">git </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button">存储 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -852,62 +913,6 @@
       
     
       <li><a href="https://huweicai.com/tags/shell" role="button">shell </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/process-thread-goroutine/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">进程线程协程的本质区别</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2020-03-17</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>9 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。 我们经常能在教科书上看到对于进程和线程的定义：进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。 广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充分利用硬件资源，而用户态线程实现简单上下文切换开销小，后者也被称......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/go" role="button">Go </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
       
     
   </div>

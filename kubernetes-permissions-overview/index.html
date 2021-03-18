@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。 以 Git 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。 通常在校验权限中分为两个流程，认证和鉴权。 即先判断你是谁：认证，然后再鉴权，判断你有没有这个资源的权限。 毫无疑问，复杂的Kubernetes也具">
+  
+  <meta property="og:title" content="Kubernetes权限管理概述" />
+<meta property="og:description" content="对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。 以 Git 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。 通常在校验权限中分为两个流程，认证和鉴权。 即先判断你是谁：认证，然后再鉴权，判断你有没有这个资源的权限。 毫无疑问，复杂的Kubernetes也具" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/kubernetes-permissions-overview/" />
+<meta property="article:published_time" content="2021-03-18T21:29:00+08:00" />
+<meta property="article:modified_time" content="2021-03-18T21:29:00+08:00" />
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       Kubernetes权限管理概述 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/kubernetes-permissions-overview/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+    
+  
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.js">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">Kubernetes权限管理概述</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>2021-03-18</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>12 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。</p>
+<p>以 Git 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。</p>
+<p>通常在校验权限中分为两个流程，<code>认证</code>和<code>鉴权</code>。</p>
+<p>即先判断你是谁：<code>认证</code>，然后再<code>鉴权</code>，判断你有没有这个资源的权限。</p>
+<p>毫无疑问，复杂的<code>Kubernetes</code>也具有一套复杂的权限管理系统，如果要用一句话简单介绍一下的话：</p>
+<blockquote>
+<p>客户端经过认证，确认了身份之后，再经过鉴权，就可以访问资源了。</p>
+</blockquote>
+<p><strong>k8s 权限管理机制概览：</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210318210936.png" alt="image-20210318210936820"></p>
+<p>下文我们会逐一详细介绍各个环节。</p>
+<h1 id="认证authentication">认证：Authentication</h1>
+<p>权限管理系统的第一步肯定是需要确认访问者的身份，如果访问者的身份是伪造的的话，那么后面的一切也就无从谈起。</p>
+<p>k8s 支持非常多种途径来证明访问者的身份，比如最常见的kubectl 中的客户端证书等等，同时访问者的身份也也可能有很多种，如：外部用户、服务账号、用户组。</p>
+<p>虽然从 API Server 的角度来说，你得先认证，然后才有身份，但是从访问者的角度而言，他是先有身份然后再去接受 <code>API Server</code> 认证的，所以我们按照访问者的角度来看，先介绍一下 k8s 中都有哪些身份。</p>
+<h2 id="身份类型">身份类型</h2>
+<h3 id="user">User</h3>
+<p><code>User</code>，外部用户是 k8s 中非常常见的一种访问者身份，通常用于从 k8s 之外来访问集群中的资源，不过硬要在集群内部访问也不是不可以，毕竟从 <code>API Server</code> 提供的 HTTP 协议角度而言，都是外部客户端，只是 IP 地址不一样罢了。</p>
+<p>因为这种资源的定位就是外部用户，所以 k8s 是不会存储 User 信息的，我们可以通过 Keystone 或者 Google Accounts 这种外部应用来管理。</p>
+<p>至于用户的创建和删除等生命周期管理，以X509客户端证书认证的方式为例，k8s 假设拿到集群 CA 私钥的人都是可信的，只需要用 CA 签发一张证书即可，证书里的正式名称（Common Name）写的什么用户名就是什么。</p>
+<p>不过虽然 User 这个字符串的拼接规则是在外部，但是对应“字符串”所拥有的权限还是需要在集群中申明的。</p>
+<h3 id="group">Group</h3>
+<p>同外部用户，Group 也是一种外部的概念，在X509客户端证书认证的方式中，Group 名字就是证书的组织名（Orgnization），也是想写什么就是什么。</p>
+<p>主要方便快速的为一组用户授予权限。</p>
+<h3 id="service-account">Service Account</h3>
+<p>相对于外部用户 User 而言，Service Account 则是集群内部的用户，我们可以使用 k8s api 来查看和管理这种用户。</p>
+<pre><code>增：kubectl create serviceaccount my-test-sa
+删：kubectl delete serviceaccounts my-test-sa
+改：kubectl edit serviceaccounts my-test-sa
+查：kubectl get serviceaccounts
+</code></pre><p><code>k8s 服务账号机制主要是为了方便 POD 访问集群资源而建立的，每一个 ServiceAccount 都会对应一个或多个 Secret，Secret 中就放着该账号对应的秘钥，通常是一个 JWT Token。</code></p>
+<p>在一个 POD 上绑定一个 ServiceAccount，那么运行时对应的秘钥就会挂载到这个 POD 中，然后我们在 POD 中读取出来就可以通过使用其他 <code>JWT Token</code> 一样的方式，添加一个 HTTP头部：<code>Authorization: Bearer xxx</code>，来让 <code>API Server</code> 可以识别这个请求的身份，这样就免去了把秘钥写在代码或者镜像里这种不安全的行为了。</p>
+<p>同时，当一个 POD 上没有申明任何的服务账号时，k8s 也会挂载一个默认的 <code>ServiceAccount</code> 供 POD 使用。</p>
+<ol>
+<li>能方便的挂载 POD 上</li>
+<li>在 k8s 集群内部管理</li>
+</ol>
+<p>这两点是 ServiceAccount 最显著的特征，不过除此之外 <strong>ServiceAccount 和 User 是没有任何本质区别的</strong>，<code>API Server</code> 在判断用户是否拥有某个资源的权限时，ServiceAccount的实现方式就是加了：<code>system:serviceaccount:</code> +<code> NameSpace</code> 前缀的 User。</p>
+<p>我们可以用集群公钥签一张证书，CommonName 就按照集群内已有的 ServiceAccount 来拼接，比如：<code>system:serviceaccount:kube-system:kube-user</code>，然后我们直接使用客户端证书的方式认证访问就会发现我们拼出来的这个外部“User”拥有对应 ServiceAccount 的所有权限。</p>
+<h3 id="anonymous">Anonymous</h3>
+<blockquote>
+<p>没有身份也是一种身份。</p>
+</blockquote>
+<p>当一个请求没有携带任何的认证信息时，它会自动获得用户名：<code>system:anonymous</code>和用户组<code>system:unauthenticated</code>，我们可以配置分配特定的权限给这种匿名用户，适用于想要公开一些不敏感的资源等场景。</p>
+<h2 id="认证方式">认证方式</h2>
+<p>有了身份之后，我们接下来要做的事情就是向系统证明我们的身份。</p>
+<p>认证这种行为，其实说到底就是把自己的用户名传递给API Server，同时有一个别人不知道的独一无二的标识，能证明这个用户名确实是你的。</p>
+<p>这个标识可能是很多种东西，比如证书认证中的客户端私钥，BasicAuth 中的密码等等，Kubernetes 支持非常丰富的认证方式，甚至当内置的认证方式无法满足你的场景时还可以通过 <code>Webhook</code> 来自定义，甚至你还可以通过直接修改 <code>k8s API Server</code> 代码，添加一个：<code>authentication.authenticator.Request</code>接口的实现然后注册上去即可实现代码级别的自定义认证。</p>
+<p>在 HTTP 请求到达 <code>API Server</code> 时，<code>API Server</code> 会遍历所有启用的认证方式，只要有一个认证成功就跳出进入下一个逻辑，认证顺序如下：</p>
+<ol>
+<li>基本认证</li>
+<li>X509 客户端证书</li>
+<li>静态令牌</li>
+<li>ServiceAccount令牌</li>
+<li>BootstrapToken</li>
+<li>OIDC</li>
+<li>Webhook</li>
+</ol>
+<p>所以理论上顺序越靠后的认证方式性能是越差的，而且由于是 O(n) 的时间复杂度，每次认证都会遍历所有的认证方式，所以我们可以尽量关闭一些用不到的认证方式来提高性能。</p>
+<h3 id="http-basicauth">HTTP BasicAuth</h3>
+<p>HTTP BasicAuth 是一种非常简单的认证方式，通过 HTTP 头部：<code>Authorization</code> 传输客户端用户名和密码的base64值来提供给服务端进行认证。</p>
+<p>这种方式虽然很方便，风险比较大，明文的密码机制很容易泄露，也不好管理。</p>
+<p>k8s 对于这种机制也支持的比较克制，在 <code>API Server</code> 启动时可以通过参数<code>–basic-auth-file</code>指定基本认证的用户名密码路径，<code>API Server</code> 起来之后就会把这些信息载入，之后如果要修改的话必须重启 <code>API Server</code>。</p>
+<p>轻易重启<code>API Server</code> 对于线上集群而言是一件比较危险的事情，无法随意添加修改用户，这也就限制了这种认证方式的使用场景，一定程度上也避免了某些人图方便而滥用这种机制的情况。</p>
+<h3 id="x509客户端证书">X509客户端证书</h3>
+<p>X509证书即我们平常所熟知的 HTTPS 证书，不过平常我们访问 HTTPS 网站的时候只是单向验证了服务端的身份没有被篡改。</p>
+<p>k8s 支持我们使用客户端证书的方式，来证明我们自己客户端的身份。</p>
+<p>用集群的CA私钥签署一张证书，证书的 CommonName 填上用户名，Organization 填用户组，这样一张客户端证书就签好了。</p>
+<p>只要管理员手中的私钥没有泄露，那么持有CA签署过的证书同时持有对应私钥的用户，就是可信的，我们只需要在跟 API Server 进行 TLS 握手时提供我们的证书，即可证明我们的身份，比如使用 curl 的话我们可以这样来带上：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># client.crt 客户端证书</span>
+<span class="c1"># client.key 客户端私钥</span>
+<span class="c1"># 127.0.0.1:60002 API Server 地址</span>
+curl -k --cert  ./client.crt  --key ./client.key https://127.0.0.1:60002
+</code></pre></div><p>不过签发证书的操作还是比较繁琐的，同时证书一旦签发出去就再也无法回收了，最多也只能把这个证书对应用户的权限撤销，适合用于签发一些低频的系统账号。</p>
+<h3 id="serviceaccount-令牌">ServiceAccount 令牌</h3>
+<p>ServiceAccount 是我们上面提到的一种特殊的身份，一种以 <code>system:serviceaccount</code>开头的用户，而 ServiceAccount 令牌则是这种机制使用的认证方式。创建 ServiceAccount 时会同时创建一个 Secret，里面存着的就是对应的 ServiceAccount令牌，在 ServiceAccount 被绑定到 POD 后，这个令牌也会自动挂载到 POD 内供其使用。</p>
+<p>ServiceAccount令牌也是一种 BerearToken，对于 API Server 从 HTTP 协议角度的来说，k8s 集群内外是没有区别的，所以我们其实也可以把 ServiceAccount令牌拿到集群外用，比如配到 kubeconfig 里。</p>
+<p>一个 ServcieAccount令牌实例：</p>
+<pre><code>Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImhZeXFZbG1QSlFKQjBKRkdLd0t6cWw0SG8tSVQ1QzJLbjFvMnJBYTRrZzgifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJ0ZXN0LXRlcyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLXpibW03Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJiOWRhY2RlNi05MzkzLTRkYjUtOTk4Yi03NzU3N2QzZGYxNTMiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6dGVzdC10ZXM6ZGVmYXVsdCJ9.mAHVlldUxlJD4dUOp2LTG37H3Jp0P4neYmv7A-bL-lrhFJ9XznLah4UuYIrgutCJ4clXcZnlsvrzDEnoWXSrK4bi62ztJuFneaJb0oczekU8YUligBWBpAHwfgYNXEDAWEVDrPayggF0TZdKfpHhQ0iOisvUO8XEo24fP1VYWtsr8SibyFJ-qOAuMUMi2C54KHY8-NAhbpkRM0d7awH-hU2Zkg-oYrK8U-RbNkWEIgUfxKByal0SXzF-KH24bO0_8XWSazAqi3vpElK2a5h4j7_qNv88UjX21gZtzpkOTXkZsDtiPKihfpXyWRHpo877-AUuC1Ct0ln4o7AbQpADEg
+</code></pre><p>ServiceAccount令牌是一种JWT Token，所以我们可以直接通过 JWT 解析的<a href="https://jwt.io/">工具</a>来查看里面的内容。</p>
+<h3 id="静态令牌文件">静态令牌文件</h3>
+<p>和 BasicAuth 一样，通过 <code>--token-auth-file</code>指定静态令牌文件地址，每次修改文件也一样需要重启才能生效，只不过认证方式由 BasicAuth 改成了 Bearer Token。</p>
+<h3 id="bootstrap-引导令牌认证">Bootstrap 引导令牌认证</h3>
+<p>Bootstrap令牌这种机制最近才出来，在 <code>1.18 </code>版本之后才支持。</p>
+<p>和上面两种令牌一样，也是通过 HTTP Header <code>Authorization</code>传递该令牌，形如：</p>
+<pre><code># 07401b 是 ID
+# f395accd246ae52d 是秘钥
+Authorization: Bearer 07401b.f395accd246ae52d
+</code></pre><p>秘钥存在系统的 Secrtes 里，可以设置过期时间。
+通常用于系统初始化，系统组件如：kubelet，通过该 Token 通过认证连入 <code>API Server</code> 后就发起证书签署请求，之后就通过安全性更高的双向证书进行认证通信。</p>
+<h3 id="oidc令牌">OIDC令牌</h3>
+<p>OAuth 应该是我们经常见到的一种授权协议，用于在用户许可的情况下将系统的资源权限授予给第三平台。</p>
+<p>OAuth 本质上是个授权协议，但是也可以当做认证协议来用，授予查看身份的权限就算是认证了。而 OpenID Connect(OIDC) 则是集 OpenID 和 OAuth 协议精华于一身的既完全兼容 OAuth 协议，同时吸收了 OpenID 在身份认证上的建树。</p>
+<p>而 Kubernetes 也集成了 OIDC 的功能，使得 Kubernetes 可以接入第三方登录系统，来实现自定义认证，比如我们可以配置通过 Github、Google 等第三方应用来登录 k8s，就像很多网站除了直接注册都还支持使用微信、QQ来登录一样。</p>
+<p>而具体第三方系统中内部的身份虽然是五花八门的，但是都需要通过 OIDC 这种标准的协议来和 k8s 交互，不过是 k8s 内部也有一套身份体系，比如我可以把邮箱当做 k8s用户名也可以把 OIDC中的用户名当做 k8s 用户名，这就需要一个地方能配置这种内外字段的映射关系，具体我们可以通过：</p>
+<ul>
+<li><code>--oidc-groups-prefix</code>指定统一的 k8s group 前缀</li>
+<li><code>--oidc-groups-claim</code>指定用哪个 OIDC 字段当做 k8s group</li>
+<li><code>--oidc-username-prefix</code>指定统一的 k8s 用户前缀</li>
+<li><code>--oidc-username-claim</code>指定用哪个字段当做 k8s 用户</li>
+</ul>
+<p>不过 k8s 本身并不能直接提供 OIDC 令牌认证的服务，需要再搭配一个令牌管理插件来使用，比如：CoreOS <a href="https://github.com/coreos/dex">dex</a>、 <a href="https://github.com/keycloak/keycloak">Keycloak</a>、CloudFoundry <a href="https://github.com/cloudfoundry/uaa">UAA</a> 等。</p>
+<h3 id="webhook令牌">Webhook令牌</h3>
+<p>如果想要彻底搭建自己的认证系统，Webhook令牌绝对是最合适的选择。</p>
+<p>k8s 支持在提交 Token 时将 Token 转发至指定的 Webhook 回调地址，然后根据约定好的回调响应来判断此次认证的结果。</p>
+<h1 id="资源resources">资源：Resources</h1>
+<p>当 API Server 完成了认证，确认了“你是谁”之后，下一步就是鉴权了，但是在此之前，API Server 还需要知道“你想要什么”，才能判断能不能给你你想要的东西。具体就是你想要访问的资源，再具体一点，就是你发起的 HTTP 请求中的字段。</p>
+<p>一个资源具体包含以下核心属性，权限分配时也是根据这些属性来进行配置的。</p>
+<blockquote>
+<p>以访问 deployments coredns 的 URL：</p>
+<p>http://127.0.0.1:8001/apis/extensions/v1beta1/namespaces/kube-system/deployments/coredns</p>
+<p>为例，对应资源属性到 HTTP 协议字段位置映射：</p>
+</blockquote>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210318012750.png" alt="image-20210318012750159"></p>
+<h3 id="资源类型资源名称">资源类型+资源名称</h3>
+<p>资源类型包括常见的 <code>POD</code>、<code>Service</code>、Deployment、<code>Secret</code> 等，同时一个资源可能还包含子资源，比如 <code>POD</code> 的日志这种资源类型：&ldquo;pod/logs&rdquo;，</p>
+<p>同时 k8s 也是支持针对某一个具体的资源来进行授权的，所以资源名称也是必要的参考属性。</p>
+<h3 id="api组">API组</h3>
+<p>资源所在的 API 组，用于给一类资源进行权限配置，空白代表核心API组。</p>
+<p>常见的 API 组有：</p>
+<ul>
+<li><code>rbac.authorization.k8s.io</code></li>
+<li><code>storage.k8s.io</code></li>
+<li><code>apps</code> 等等。</li>
+</ul>
+<h3 id="动作">动作</h3>
+<p>要对资源执行的动作，比如增删改查等。</p>
+<p>通用的 k8s 动作如下：</p>
+<table>
+<thead>
+<tr>
+<th>动作</th>
+<th>对应的HTTP请求方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>create</td>
+<td>POST</td>
+</tr>
+<tr>
+<td>get</td>
+<td>GET、HEAD</td>
+</tr>
+<tr>
+<td>update</td>
+<td>PUT</td>
+</tr>
+<tr>
+<td>patch</td>
+<td>PATCH</td>
+</tr>
+<tr>
+<td>delete</td>
+<td>DELETE</td>
+</tr>
+<tr>
+<td>list</td>
+<td>GET</td>
+</tr>
+<tr>
+<td>watch</td>
+<td>GET</td>
+</tr>
+<tr>
+<td>deletecollection</td>
+<td>DELETE</td>
+</tr>
+</tbody>
+</table>
+<h3 id="namespace">Namespace</h3>
+<p>很多类型的资源是分 <code>namespace</code> 的，所以我们也可以对其分 <code>namespace</code> 进行权限授予。</p>
+<h3 id="请求路径"><strong>请求路径</strong></h3>
+<p>适用于非 RESTFul 风格的 API 鉴权使用。</p>
+<h1 id="鉴权authorization">鉴权：Authorization</h1>
+<p>当 <code>API Server</code> 知道了客户端是谁，以及它想要什么之后，下一步 <code>API Server</code> 就需要判断是否允它的请求，而这个判断的依据，就是“鉴权机制”。</p>
+<p>鉴权机制的实现原理无非就是一种对象代表用户，一种对象代表资源，然后在一个地方存着用户到资源的联系集，每次要鉴权的时候就查一下这个联系集看有没有当前用户到资源的规则在。</p>
+<p>而具体不同鉴权机制之间，则主要是这个联系如何建立以及存在哪里会有一些区别。</p>
+<h2 id="属性鉴权abac">属性鉴权：ABAC</h2>
+<p><code>Attribute-based access control</code>基于属性的权限控制，通过一个静态文件通过 <a href="https://jsonlines.org/">JSONL</a>的格式来声明权限授予，需要直接写死给哪个用户或者组分配什么权限，不太灵活，已经不推荐使用了，一个例子如下：</p>
+<p>用户 <code>test-admin</code> 具有 test namespace 下所有资源的权限：</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span><span class="nt">&#34;apiVersion&#34;</span><span class="p">:</span> <span class="s2">&#34;abac.authorization.kubernetes.io/v1beta1&#34;</span><span class="p">,</span> <span class="nt">&#34;kind&#34;</span><span class="p">:</span> <span class="s2">&#34;Policy&#34;</span><span class="p">,</span> <span class="nt">&#34;spec&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;user&#34;</span><span class="p">:</span> <span class="s2">&#34;test-admin&#34;</span><span class="p">,</span> <span class="nt">&#34;namespace&#34;</span><span class="p">:</span> <span class="s2">&#34;test&#34;</span><span class="p">,</span> <span class="nt">&#34;resource&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span><span class="p">,</span> <span class="nt">&#34;apiGroup&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span><span class="p">}}</span>
+</code></pre></div><h2 id="角色鉴权rabc">角色鉴权：RABC</h2>
+<p><code>Role-based access control</code>基于角色的权限控制，<code>RABC</code> 是一种非常经典的权限管理模型，它在 <code>ABAC</code>的基础上将要被授权的<code>属性</code>（或者叫<code>资源</code>）抽象出了一层<code>角色</code>，用户不再直接与资源建立联系，而是先将一系列资源绑定到角色上，用户再与角色建立联系。</p>
+<p>举个例子，假设我有两台机器，给小明和小红开了一个机器管理员的权限，如果是 <code>ABAC</code> 模式的话，如果新加了一台机器，那么我需要分别给小明和小红都加一下权限，如果机器和人一多，那就会非常的乱。</p>
+<p>而如果我们在机器资源之上抽象出来一层机器管理的角色，那么下次再新加机器只需要将这台机器加入到这个角色下即可，拥有机器管理员身份的所有人就都能自动获得这台机器的权限了，这就是 <code>RABC</code>用户和资源不再直接耦合，更加灵活方便。</p>
+<p><strong>ABAC</strong>:</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210318203921.png" alt="image-20210318203921086"></p>
+<p><strong>RBAC:</strong></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210318204053.png" alt="image-20210318204053595"></p>
+<p>角色：Role</p>
+<p>在 k8s 中，角色主要通过 Role 对象来申明资源的集合，Role 通过 Rule 对象来申明具体的权限，一条 Rule 即我们上文提到的资源，<code>*</code>是通配符。</p>
+<p>一个 Role 的例子如下，声明了一个 <code>default</code>命名空间的只读角色：</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io/v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Role</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="c"># Role 是分命名空间的</span><span class="w">
+</span><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">default-viewer</span><span class="w">
+</span><span class="w"></span><span class="nt">rules</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span>- <span class="c"># 资源API组</span><span class="w">
+</span><span class="w">    </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;*&#34;</span><span class="p">]</span><span class="w">
+</span><span class="w">    </span><span class="c"># 资源类型</span><span class="w">
+</span><span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;*&#34;</span><span class="p">]</span><span class="w">
+</span><span class="w">    </span><span class="c"># 动作</span><span class="w">
+</span><span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> 
+</span><span class="w">      </span>- <span class="l">get</span><span class="w">
+</span><span class="w">      </span>- <span class="l">list</span><span class="w">
+</span><span class="w">      </span>- <span class="l">watch</span><span class="w">
+</span><span class="w">    </span><span class="c"># 可以申明具体某一个资源的权限，不填代表拥有所有权限</span><span class="w">
+</span><span class="w">    </span><span class="nt">resourceNames</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+</span></code></pre></div><p>另外存在全局版本的 <code>ClusterRole</code>可以声明整个集群范围内的权限。</p>
+<h3 id="角色绑定rolebinding">角色绑定：RoleBinding</h3>
+<p>有了角色之后，我们还需要完成角色到用户联系集的建立，在 k8s 中可以通过 <code>RoleBinding</code>来实现绑定，对应的全局集群版本为<code>ClusterRolebinding</code>，另外 <code>RoleBinding</code> 也是可以引用<code>ClusterRole</code>的，但是会自动在 <code>ClusterRole</code> 上加上当前命名空间的限制。</p>
+<p>我们可以通过如下的<code>RoleBinding</code>对象申明来将我们上文创建的角色绑定到小明和小红这两个用户上：</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io/v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">RoleBinding</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">default-viewers</span><span class="w">
+</span><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span><span class="w"></span><span class="nt">subjects</span><span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="c"># 可以同时将角色绑定到多个主体上</span><span class="w">
+</span><span class="w"></span>- <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">User</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">xiaoming</span><span class="w"> </span><span class="c"># 不区分大小写</span><span class="w">
+</span><span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io</span><span class="w">
+</span><span class="w"></span>- <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">User</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">xiaohongs</span><span class="w">
+</span><span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io</span><span class="w">
+</span><span class="w"></span><span class="nt">roleRef</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="c"># 要绑定的角色</span><span class="w">
+</span><span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Role</span><span class="w"> </span><span class="c"># Role 或 ClusterRole</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">default-viewer</span><span class="w">
+</span><span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io</span><span class="w">
+</span></code></pre></div><h2 id="node">Node</h2>
+<p>Node鉴权方式其实算是一种 RABC 的变种，它的提出可以参考<a href="https://github.com/kubernetes/kubernetes/issues/40476">kubernetes issue40476</a>，具体实现于 <a href="https://github.com/kubernetes/kubernetes/pull/46076">pr46076</a>，主要是出于安全考虑，早期一台机器上的 kubelet 拥有任意修改其他 node 的资源的权限，存在一定的风险，需要限制 node 即 kubelet 只能访问它这个节点上的资源。</p>
+<p>理论上最好的方式肯定是创建一个 Role 叫 <code>system:node</code>，然后该角色只具有该节点的权限，这样就能直接复用 RABC 机制了，但是很遗憾，我们在上文资源那一节提到了一个资源都有哪些属性，很明显是无法直接配置出来这种角色的，所以只能单独写一种鉴权规则到代码里给 kubelet 等内部组件鉴权使用。</p>
+<h2 id="自定义">自定义</h2>
+<p>和认证方式一样，鉴权机制也是支持自定义的：Webhook 或者自己改代码实现<code>authorization/authorizer/Authorizer</code>接口即可。</p>
+<hr>
+<p><strong>参考文档</strong>:</p>
+<ol>
+<li><strong>鉴权概述</strong> <a href="https://kubernetes.io/zh/docs/reference/access-authn-authz/authorization/">https://kubernetes.io/zh/docs/reference/access-authn-authz/authorization/</a></li>
+<li><strong>使用 RBAC 鉴权</strong> <a href="https://kubernetes.io/zh/docs/reference/access-authn-authz/rbac/">https://kubernetes.io/zh/docs/reference/access-authn-authz/rbac/</a></li>
+<li><strong>用户认证</strong> <a href="https://kubernetes.io/zh/docs/reference/access-authn-authz/authentication/">https://kubernetes.io/zh/docs/reference/access-authn-authz/authentication/</a></li>
+<li><strong>OIDC</strong> <a href="https://openid.net/connect/">https://openid.net/connect/</a></li>
+<li><strong>X509定义</strong> <a href="https://tools.ietf.org/html/rfc5280">https://tools.ietf.org/html/rfc5280</a></li>
+<li><strong>Kubernetes API Server 源代码</strong> <a href="https://github.com/kubernetes/kubernetes/tree/master/staging/src/k8s.io/apiserver/pkg">https://github.com/kubernetes/kubernetes/tree/master/staging/src/k8s.io/apiserver/pkg</a></li>
+</ol>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/kubernetes" role="button">Kubernetes </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button">权限管理 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/kubectl-concepts-and-commands/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Kubectl基本概念&amp;常用命令</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%ae%a4%e8%af%81authentication">
+												 认证：Authentication
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%ba%ab%e4%bb%bd%e7%b1%bb%e5%9e%8b">
+												 身份类型
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#user">
+												 User
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#group">
+												 Group
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#service-account">
+												 Service Account
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#anonymous">
+												 Anonymous
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%ae%a4%e8%af%81%e6%96%b9%e5%bc%8f">
+												 认证方式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#http-basicauth">
+												 HTTP BasicAuth
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#x509%e5%ae%a2%e6%88%b7%e7%ab%af%e8%af%81%e4%b9%a6">
+												 X509客户端证书
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#serviceaccount-%e4%bb%a4%e7%89%8c">
+												 ServiceAccount 令牌
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%9d%99%e6%80%81%e4%bb%a4%e7%89%8c%e6%96%87%e4%bb%b6">
+												 静态令牌文件
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#bootstrap-%e5%bc%95%e5%af%bc%e4%bb%a4%e7%89%8c%e8%ae%a4%e8%af%81">
+												 Bootstrap 引导令牌认证
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#oidc%e4%bb%a4%e7%89%8c">
+												 OIDC令牌
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#webhook%e4%bb%a4%e7%89%8c">
+												 Webhook令牌
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%b5%84%e6%ba%90resources">
+												 资源：Resources
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%b5%84%e6%ba%90%e7%b1%bb%e5%9e%8b%e8%b5%84%e6%ba%90%e5%90%8d%e7%a7%b0">
+												 资源类型&#43;资源名称
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#api%e7%bb%84">
+												 API组
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e4%bd%9c">
+												 动作
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#namespace">
+												 Namespace
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%af%b7%e6%b1%82%e8%b7%af%e5%be%84">
+												 请求路径
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%89%b4%e6%9d%83authorization">
+												 鉴权：Authorization
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b1%9e%e6%80%a7%e9%89%b4%e6%9d%83abac">
+												 属性鉴权：ABAC
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%a7%92%e8%89%b2%e9%89%b4%e6%9d%83rabc">
+												 角色鉴权：RABC
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%a7%92%e8%89%b2%e7%bb%91%e5%ae%9arolebinding">
+												 角色绑定：RoleBinding
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#node">
+												 Node
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%87%aa%e5%ae%9a%e4%b9%89">
+												 自定义
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+  
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

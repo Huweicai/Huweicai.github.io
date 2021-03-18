@@ -4,27 +4,48 @@
   
   <url>
     <loc>https://huweicai.com/</loc>
-    <lastmod>2021-01-28T15:01:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/kubectl-concepts-and-commands/</loc>
-    <lastmod>2021-01-28T15:01:00+08:00</lastmod>
+    <lastmod>2021-03-18T21:29:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/kubernetes/</loc>
-    <lastmod>2021-01-28T15:01:00+08:00</lastmod>
+    <lastmod>2021-03-18T21:29:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/kubernetes-permissions-overview/</loc>
+    <lastmod>2021-03-18T21:29:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/</loc>
+    <lastmod>2021-03-18T21:29:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</loc>
+    <lastmod>2021-03-18T21:29:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</loc>
+    <lastmod>2021-03-18T21:29:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/kubectl-concepts-and-commands/</loc>
     <lastmod>2021-01-28T15:01:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
