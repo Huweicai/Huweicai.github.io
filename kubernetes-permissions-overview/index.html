@@ -310,7 +310,7 @@
 <p>下文我们会逐一详细介绍各个环节。</p>
 <h1 id="认证authentication">认证：Authentication</h1>
 <p>权限管理系统的第一步肯定是需要确认访问者的身份，如果访问者的身份是伪造的的话，那么后面的一切也就无从谈起。</p>
-<p>k8s 支持非常多种途径来证明访问者的身份，比如最常见的kubectl 中的客户端证书等等，同时访问者的身份也也可能有很多种，如：外部用户、服务账号、用户组。</p>
+<p>k8s 支持非常多种途径来证明访问者的身份，比如最常见的kubectl 中的客户端证书等等，同时访问者的身份也可能有很多种，如：外部用户、服务账号、用户组。</p>
 <p>虽然从 API Server 的角度来说，你得先认证，然后才有身份，但是从访问者的角度而言，他是先有身份然后再去接受 <code>API Server</code> 认证的，所以我们按照访问者的角度来看，先介绍一下 k8s 中都有哪些身份。</p>
 <h2 id="身份类型">身份类型</h2>
 <h3 id="user">User</h3>
@@ -320,18 +320,18 @@
 <p>不过虽然 User 这个字符串的拼接规则是在外部，但是对应“字符串”所拥有的权限还是需要在集群中申明的。</p>
 <h3 id="group">Group</h3>
 <p>同外部用户，Group 也是一种外部的概念，在X509客户端证书认证的方式中，Group 名字就是证书的组织名（Orgnization），也是想写什么就是什么。</p>
-<p>主要方便快速的为一组用户授予权限。</p>
+<p>主要方便快速地为一组用户授予权限。</p>
 <h3 id="service-account">Service Account</h3>
 <p>相对于外部用户 User 而言，Service Account 则是集群内部的用户，我们可以使用 k8s api 来查看和管理这种用户。</p>
 <pre><code>增：kubectl create serviceaccount my-test-sa
 删：kubectl delete serviceaccounts my-test-sa
 改：kubectl edit serviceaccounts my-test-sa
 查：kubectl get serviceaccounts
-</code></pre><p><code>k8s 服务账号机制主要是为了方便 POD 访问集群资源而建立的，每一个 ServiceAccount 都会对应一个或多个 Secret，Secret 中就放着该账号对应的秘钥，通常是一个 JWT Token。</code></p>
-<p>在一个 POD 上绑定一个 ServiceAccount，那么运行时对应的秘钥就会挂载到这个 POD 中，然后我们在 POD 中读取出来就可以通过使用其他 <code>JWT Token</code> 一样的方式，添加一个 HTTP头部：<code>Authorization: Bearer xxx</code>，来让 <code>API Server</code> 可以识别这个请求的身份，这样就免去了把秘钥写在代码或者镜像里这种不安全的行为了。</p>
+</code></pre><p><code>k8s 服务账号机制主要是为了方便 POD 访问集群资源而建立的，每一个 ServiceAccount 都会对应一个或多个 Secret，Secret 中就放着该账号对应的密钥，通常是一个 JWT Token。</code></p>
+<p>在一个 POD 上绑定一个 ServiceAccount，那么运行时对应的密钥就会挂载到这个 POD 中，然后我们在 POD 中读取出来就可以通过使用其他 <code>JWT Token</code> 一样的方式，添加一个 HTTP头部：<code>Authorization: Bearer xxx</code>，来让 <code>API Server</code> 可以识别这个请求的身份，这样就免去了把密钥写在代码或者镜像里这种不安全的行为了。</p>
 <p>同时，当一个 POD 上没有申明任何的服务账号时，k8s 也会挂载一个默认的 <code>ServiceAccount</code> 供 POD 使用。</p>
 <ol>
-<li>能方便的挂载 POD 上</li>
+<li>能方便地挂载 POD 上</li>
 <li>在 k8s 集群内部管理</li>
 </ol>
 <p>这两点是 ServiceAccount 最显著的特征，不过除此之外 <strong>ServiceAccount 和 User 是没有任何本质区别的</strong>，<code>API Server</code> 在判断用户是否拥有某个资源的权限时，ServiceAccount的实现方式就是加了：<code>system:serviceaccount:</code> +<code> NameSpace</code> 前缀的 User。</p>
@@ -383,12 +383,12 @@ curl -k --cert  ./client.crt  --key ./client.key https://127.0.0.1:60002
 <p>Bootstrap令牌这种机制最近才出来，在 <code>1.18 </code>版本之后才支持。</p>
 <p>和上面两种令牌一样，也是通过 HTTP Header <code>Authorization</code>传递该令牌，形如：</p>
 <pre><code># 07401b 是 ID
-# f395accd246ae52d 是秘钥
+# f395accd246ae52d 是密钥
 Authorization: Bearer 07401b.f395accd246ae52d
-</code></pre><p>秘钥存在系统的 Secrtes 里，可以设置过期时间。
+</code></pre><p>密钥存在系统的 Secrtes 里，可以设置过期时间。
 通常用于系统初始化，系统组件如：kubelet，通过该 Token 通过认证连入 <code>API Server</code> 后就发起证书签署请求，之后就通过安全性更高的双向证书进行认证通信。</p>
 <h3 id="oidc令牌">OIDC令牌</h3>
-<p>OAuth 应该是我们经常见到的一种授权协议，用于在用户许可的情况下将系统的资源权限授予给第三平台。</p>
+<p>OAuth 应该是我们经常见到的一种授权协议，用于在用户许可的情况下将系统的资源权限授予给第三方平台。</p>
 <p>OAuth 本质上是个授权协议，但是也可以当做认证协议来用，授予查看身份的权限就算是认证了。而 OpenID Connect(OIDC) 则是集 OpenID 和 OAuth 协议精华于一身的既完全兼容 OAuth 协议，同时吸收了 OpenID 在身份认证上的建树。</p>
 <p>而 Kubernetes 也集成了 OIDC 的功能，使得 Kubernetes 可以接入第三方登录系统，来实现自定义认证，比如我们可以配置通过 Github、Google 等第三方应用来登录 k8s，就像很多网站除了直接注册都还支持使用微信、QQ来登录一样。</p>
 <p>而具体第三方系统中内部的身份虽然是五花八门的，但是都需要通过 OIDC 这种标准的协议来和 k8s 交互，不过是 k8s 内部也有一套身份体系，比如我可以把邮箱当做 k8s用户名也可以把 OIDC中的用户名当做 k8s 用户名，这就需要一个地方能配置这种内外字段的映射关系，具体我们可以通过：</p>
