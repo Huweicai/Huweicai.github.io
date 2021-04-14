@@ -382,7 +382,7 @@
 <tr>
 <td>autoscale</td>
 <td>会创建一个 HorizontalPodAutoscaler(HPA) 来帮助 deployment 自动扩缩容</td>
-<td>自动扩缩容，最多5个，阈值CPU使用80%：<!-- raw HTML omitted --><code>kubectl autoscale deployment ${DeployName} --max=5 --cpu-percent=80</code></td>
+<td>自动扩缩容，最多5个，阈值CPU使用80%：<br /><code>kubectl autoscale deployment ${DeployName} --max=5 --cpu-percent=80</code></td>
 </tr>
 </tbody>
 </table>
@@ -399,7 +399,7 @@
 <tr>
 <td style="text-align:center">certificate</td>
 <td>通过集群CA根证书签发或者拒绝其他证书签发请求（CSR）</td>
-<td>1. 通过 <code>k get certificatesigningrequest -A</code>查看签发请求<!-- raw HTML omitted -->2. 签署：kubectl certificate approve csr-xxx</td>
+<td>1. 通过 <code>k get certificatesigningrequest -A</code>查看签发请求<br />2. 签署：kubectl certificate approve csr-xxx</td>
 </tr>
 <tr>
 <td style="text-align:center">cluster-info</td>
@@ -409,7 +409,7 @@
 <tr>
 <td style="text-align:center">top</td>
 <td>像本地的 top 命令一样，可以查看机器或者实例的CPU、内存等资源占用</td>
-<td># 查看所有节点的内存、CPU占用情况<!-- raw HTML omitted --><code>kubectl top node</code></td>
+<td># 查看所有节点的内存、CPU占用情况<br /><code>kubectl top node</code></td>
 </tr>
 <tr>
 <td style="text-align:center">cordon</td>

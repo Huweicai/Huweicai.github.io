@@ -6,7 +6,16 @@
     <description>Recent content in Linux on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 30 Dec 2020 01:20:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 14 Apr 2021 16:20:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>手动实现一个Linux容器</title>
+      <link>https://huweicai.com/run-linux-container-manual/</link>
+      <pubDate>Wed, 14 Apr 2021 16:20:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/run-linux-container-manual/</guid>
+      <description>容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我还依赖操作系统的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打</description>
+    </item>
+    
     <item>
       <title>如何准确的获取CPU占用率[Linux][Go]</title>
       <link>https://huweicai.com/go-linux-get-cpu-usage/</link>

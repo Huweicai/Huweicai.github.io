@@ -4,7 +4,56 @@
   
   <url>
     <loc>https://huweicai.com/</loc>
-    <lastmod>2021-03-18T21:29:00+08:00</lastmod>
+    <lastmod>2021-04-14T16:20:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/docker/</loc>
+    <lastmod>2021-04-14T16:20:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/linux/</loc>
+    <lastmod>2021-04-14T16:20:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/</loc>
+    <lastmod>2021-04-14T16:20:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/</loc>
+    <lastmod>2021-04-14T16:20:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</loc>
+    <lastmod>2021-04-14T16:20:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/run-linux-container-manual/</loc>
+    <lastmod>2021-04-14T16:20:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <lastmod>2021-04-14T16:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -18,20 +67,6 @@
   
   <url>
     <loc>https://huweicai.com/kubernetes-permissions-overview/</loc>
-    <lastmod>2021-03-18T21:29:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/</loc>
-    <lastmod>2021-03-18T21:29:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</loc>
     <lastmod>2021-03-18T21:29:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -52,13 +87,6 @@
   </url>
   
   <url>
-    <loc>https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/</loc>
-    <lastmod>2021-01-28T15:01:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/tags/cpu/</loc>
     <lastmod>2020-12-30T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
@@ -67,13 +95,6 @@
   
   <url>
     <loc>https://huweicai.com/tags/go/</loc>
-    <lastmod>2020-12-30T01:20:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/linux/</loc>
     <lastmod>2020-12-30T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -109,13 +130,6 @@
   
   <url>
     <loc>https://huweicai.com/how-vpn-works/</loc>
-    <lastmod>2020-12-22T23:42:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
     <lastmod>2020-12-22T23:42:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>

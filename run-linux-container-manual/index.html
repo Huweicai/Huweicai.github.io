@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我还依赖操作系统的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打">
+  
+  <meta property="og:title" content="手动实现一个Linux容器" />
+<meta property="og:description" content="容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我还依赖操作系统的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/run-linux-container-manual/" />
+<meta property="article:published_time" content="2021-04-14T16:20:00+08:00" />
+<meta property="article:modified_time" content="2021-04-14T16:20:00+08:00" />
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       手动实现一个Linux容器 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/run-linux-container-manual/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+    
+  
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.js">
+  
+  
+
+  
+    
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">手动实现一个Linux容器</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>2021-04-14</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>11 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="容器">容器</h1>
+<p>容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 <code>run everywhere</code> 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了：</p>
+<blockquote>
+<p>Accelerate how you build, share and run modern applications.</p>
+</blockquote>
+<p>容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了<code>jdk 14.0.1</code>以及几个外部 jar包，同时我还依赖操作系统的一些特性，需要运行在 <code>debian buster</code>发行版上，那么我们可以把这些通通打入一个镜像中，或者叫一个静态的容器，任何会影响运行时的东西我们都可以打入镜像中，这使得其具有非常高的可移植性。容器运行起来的时候，会被彻底和底层机器以及其他的容器隔离起来，这又避免了许多可能的冲突。正是<code>可移植性</code>和<code>隔离性</code>这两个核心特性使得现代服务越来不越离不开容器化技术。</p>
+<p>容器领域现在一片欣欣向荣，<code>docker、containerd、kata</code>各种各样的容器运行时产品层出不穷，而为其提供支撑的核心技术，其实都万变不离其宗。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413182407.jpg" alt="Snipaste_2021-04-13_18-20-32"></p>
+<p>本文会介绍用纯手动敲命令的方式，基于一个普通的 <code>Linux</code> 系统（注：基于 <code>centos 7.9</code>，其他发行版均可，注意替换包管理相关命令），以 <a href="https://hub.docker.com/layers/alpine/library/alpine/3.11/images/sha256-07301d64eb71d3470346f3965ac51d475b091b4c0b7ed7b9ed857176eb9d76f4?context=explore">alpine:3.11</a> 这个镜像为例，一步步运行起来一个“五脏俱全”的容器，将容器底层相关的核心技术都串联起来。</p>
+<h1 id="下载镜像">下载镜像</h1>
+<p>镜像是静态的容器，本质上就是一堆二进制文件打包在一起，而关于镜像具体如何组织，则出现了好几种镜像格式，目前主流镜像格式有三种：</p>
+<ul>
+<li><code>Docker V2 Schema 1</code>主要为了与老版本兼容</li>
+<li><code>Docker V2 Schema 2</code>目前新版本 Docker 使用中</li>
+<li><code>OCI</code>开放镜像组织基于 <code>Docker V2 Schema 2</code>发布的业内统一镜像标准格式</li>
+</ul>
+<p>这里以最常见的 <code>Docker V2 Schema 2</code>镜像格式为例，一个镜像会存在一个 <code>manifest.json</code>镜像描述文件用于描述诸如文件层数、容器入口命令、版本等信息。</p>
+<p>我们可以直接拼出<code>alpine:3.11</code>镜像对应的描述文件地址，值得注意的是这里需要通过 Header 声明对新版镜像格式的支持，不然出于兼容考虑镜像服务默认只会下发 <code>v1</code>版本的描述文件，另外这里使用了网易的镜像，因为直接去 <code>Docker Hub</code> 拉需要先获取 <code>JWT Token</code>，稍稍麻烦一点：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ curl -H <span class="s2">&#34;Accept: application/vnd.docker.distribution.manifest.v2+json&#34;</span> https://hub-mirror.c.163.com/v2/library/alpine/manifests/3.11
+
+​<span class="sb">```</span>
+<span class="o">{</span>
+   <span class="s2">&#34;schemaVersion&#34;</span>: 2,
+   <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>,
+   <span class="s2">&#34;config&#34;</span>: <span class="o">{</span>
+      <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.container.image.v1+json&#34;</span>,
+      <span class="s2">&#34;size&#34;</span>: 1470,
+      <span class="s2">&#34;digest&#34;</span>: <span class="s2">&#34;sha256:44dc5a8658dc159bb1c78f9285feead8e0d375d13300f10e647152abf5f3c329&#34;</span>
+   <span class="o">}</span>,
+   <span class="s2">&#34;layers&#34;</span>: <span class="o">[</span>
+      <span class="o">{</span>
+         <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span>,
+         <span class="s2">&#34;size&#34;</span>: 2815346,
+         <span class="s2">&#34;digest&#34;</span>: <span class="s2">&#34;sha256:9b794450f7b6db7c944ba1f4161edb68cb535052fe7db8ac06e613516c4a658d&#34;</span>
+      <span class="o">}</span>
+   <span class="o">]</span>
+<span class="o">}</span>
+​<span class="sb">```</span>
+</code></pre></div><p>镜像描述文件中的 <code>layers</code>则包含了容器对应每一层的文件对象地址，对应一个 tar 压缩包，容器运行时会通过联合文件系统将这些层关联起来，这里我们的 <code>alpine:3.11</code>是个基础镜像，只有一层。</p>
+<p>我们可以直接拼接出 URL 下载这一层并解压到 <code>alpine</code> 目录：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">wget -O alpine.tar <span class="se">\
+</span><span class="se"></span>https://hub-mirror.c.163.com/v2/library/alpine/blobs/<span class="se">\
+</span><span class="se"></span>sha256:9b794450f7b6db7c944ba1f4161edb68cb535052fe7db8ac06e613516c4a658d
+
+mkdir -p alpine <span class="o">&amp;&amp;</span> tar xf alpine.tar -C alpine
+</code></pre></div><blockquote>
+<p><strong>注</strong>：如果网易镜像失效了，直接去 alpine 官网或者其他途径下载 <code>rootfs</code> 也是可以的：</p>
+<p>官网地址：</p>
+<p><a href="https://dl-cdn.alpinelinux.org/alpine/v3.11/releases/x86_64/alpine-minirootfs-3.11.0-x86_64.tar.gz">https://dl-cdn.alpinelinux.org/alpine/v3.11/releases/x86_64/alpine-minirootfs-3.11.0-x86_64.tar.gz</a></p>
+<p>对应清华镜像：</p>
+<p><a href="https://mirrors.tuna.tsinghua.edu.cn/alpine/v3.11/releases/x86_64/alpine-minirootfs-3.11.0-x86_64.tar.gz">https://mirrors.tuna.tsinghua.edu.cn/alpine/v3.11/releases/x86_64/alpine-minirootfs-3.11.0-x86_64.tar.gz</a></p>
+</blockquote>
+<h1 id="简单运行">简单运行</h1>
+<p>我们查看上文解压的结果，会发现这就是 <code>alpine</code> 的 <code>rootfs</code>：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210408171758.png" alt="image-20210408171753062" style="zoom:50%;" /></p>
+<p>我们可以使用 <code>chroot</code> 修改根目录的地址，实现对文件视图的隔离，然后再启动一个<code>alpine</code>镜像中带的 <code>shell</code>：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">chroot . /bin/sh --login
+</code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210408172830.png" alt="image-20210408172830119"></p>
+<p>是不是瞬间感觉有模有样了，跟我们平常通过 <code>shell</code> 进入一个容器一样？</p>
+<p>不过这个时候还差的远呢，还有很多其他类型资源，需要我们进一步处理：</p>
+<ul>
+<li>文件系统<code>df -h</code>需要只能看到容器自己的挂载点</li>
+<li>网络：<code>ifconfig</code>需要只能看到容器自己的网卡</li>
+<li>进程信息：<code>ps aux</code>需要只能看到容器自己的进程</li>
+<li>CPU、进程：只分配指定配额给这个容器使用避免影响到其他容器</li>
+</ul>
+<p>下面我们来继续一步步的实现。</p>
+<h1 id="创建挂载点">创建挂载点</h1>
+<p>虽然我们可以直接在镜像上执行我们的业务操作，但是如果要再基于这个镜像启动一个容器的话就需要再拉取一份镜像下来，所以容器产品通常会使用一种叫做 <strong>联合文件系统 (Union File System)</strong> 的技术，可以将多个文件层联合起来，呈现出一层的视图供使用者使用，但使用者所有的修改删除新增等操作全部是只会实际对最上层产生影响的，底层全部是是只读的，这样有利于多个容器间共用镜像，减少文件传输和存储成本。</p>
+<p><img src="https://img.draveness.me/2017-11-30-docker-filesystems.png" alt="docker-filesystems" style="zoom: 67%;" /></p>
+<p>就像普通文件系统一样，联合文件系统也有很多种，比如：aufs、devicemapper、zfs等，这里以 docker 推荐的 <code>OverlayFS</code> 为例，我们创建一个新的目录做为上层，底层则是我们的 <code>alpine</code> 镜像所在的目录，合并成挂载一个文件系统：</p>
+<pre><code># 确保 overlay 内核模块开启
+modprobe overlay
+# 创建上层目录，同时 overlayfs 还需要一个临时目录
+mkdir ./alpine-workdir ./tmp
+# 联合挂载到 ./alpine 目录
+ mount -t overlay -o lowerdir=./alpine,upperdir=./alpine-workdir,workdir=./tmp overlay ./alpine
+</code></pre><p>这里我们先给容器准备好这个挂载点，下文我们会把这个挂载点再给隔离出来。</p>
+<blockquote>
+<p>注： 如果系统不支持 overlay 文件系统的话，也可以使用其他文件系统，或者简单通过 <code>mount --bind ./alpine ./alpine </code>将这个子目录挂到它当前的位置来创建一个挂载点。</p>
+</blockquote>
+<h1 id="隔离">隔离</h1>
+<h2 id="进程主机名">进程&amp;主机名</h2>
+<p>Linux 社区为了支持容器化技术实现了一种资源视图分区机制：<code>namespace</code>，可以将操作系统管理的资源按进程组进行隔离， 使得进程能只看到跟它相关联的资源，支持如下六种资源：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413200128.png" alt="image-20210413200038969" style="zoom:50%;" /></p>
+<p>在代码层面，内核提供了<code>clone</code>、<code>unshare</code>、<code>setns</code>三个系统调用来提供命名空间的功能，不过我们今天并不是要直接写代码来实现，<a href="https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git/">util-linux</a> 提供了 <code>unshare</code>命令行工具能让我们手动直接使用这种能力，几乎所有的发行版都内置了这个包。</p>
+<p><code>unshare</code> 的用法如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ unshare --help
+
+命令格式：
+ unshare <span class="o">[</span>选项<span class="o">]</span> &lt;程序&gt; <span class="o">[</span>&lt;参数&gt;...<span class="o">]</span>
+
+启动一个新的命名空间运行指定的程序，不再共享当前命名空间。
+
+选项
+ -m, --mount               隔离文件挂载系统
+ -u, --uts                 隔离主机名
+ -i, --ipc                 隔离 System V 进程通信机制
+ -n, --net                 隔离网络空间
+ -p, --pid                 隔离进程号
+ -U, --user                隔离用户
+ -f, --fork                fork一个子进程运行程序而不是直接运行
+     --mount-proc<span class="o">[=</span>&lt;dir&gt;<span class="o">]</span>  在隔离完成后，运行程序之前，挂载 proc 系统（隔离后的）到指定位置
+ -r, --map-root-user       将当前用户映射成 root
+</code></pre></div><p>那么我们可以通过 <code>unshare</code> 隔离了资源之后再通过上文的 <code>chroot</code> 隔离文件视图：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">unshare -muinp -f chroot . /bin/sh --login
+</code></pre></div><p>这里需要注意的是，我们需要通过 <code>-f</code>参数让我们的 shell 在新 <strong>fork</strong> 的进程中执行才能进入新的命名空间，因为这个命令的设计是调用 <code>unshare</code> 的进程会仍然留在原来的命名空间下，子进程才会被置入新空间。</p>
+<p>这个时候我们新的进程就已经隔离好了，不过我们还需要再手动挂载一下 <code>/proc</code>文件系统，让内核把当前的进程、CPU、内存等系统运行时信息通过文件的方式暴露出来，供<code>ps、df</code> 等工具使用：</p>
+<pre><code>/bin/mount -t proc proc /proc
+</code></pre><p>现在我们就已经把新开的这个 <code>shell</code>进程隔离出来了，不过还有两个小问题需要再进一步处理：</p>
+<ol>
+<li>文件挂载表虽然隔离了，但是新的命名空间下会把老命名空间的挂载表原样复制过来，这意味着容器里还是能看到之前所有的挂载点，只是以后的修改两个空间不会互相影响罢了</li>
+<li>网络空间虽然隔离了，但是新的空间下是什么设备都没有的，需要进一步进行网络配置</li>
+</ol>
+<h2 id="文件挂载">文件挂载</h2>
+<p>Linux 提供了 <a href="https://man7.org/linux/man-pages/man2/pivot_root.2.html">pivot_root</a> 系统调用可以将整个系统的挂载点以指定的目录为轴，进行“旋转”，子目录旋转到根的位置，而原来的根目录则会旋转到子目录的位置，然后我们再解除掉原来根目录的挂载，就能得到一个&quot;纯净&quot;的文件挂载表，只有我们子目录下的挂载点，同时也省去使用 <code>chroot</code> 来完成文件视图隔离的操作了。</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">cd</span> alpine/
+<span class="c1"># 在新的命名空间下启动宿主机 bash</span>
+unshare -umpn -f bash
+<span class="c1"># 创建一个目录用于挂载旧 root</span>
+mkdir -p old-root
+<span class="c1"># 修改 root 挂载点，将原来的 root 挂载到 old-root 下</span>
+pivot_root . old-root/
+<span class="c1"># 用 alpine 下的 sh 替换当前 bash 进程启动</span>
+<span class="nb">exec</span> /bin/sh --login
+<span class="c1"># 挂载 proc 系统</span>
+/bin/mount -t proc proc /proc
+<span class="c1"># 解除旧 root 挂载</span>
+umount -l old-root/
+</code></pre></div><p>我们可以再用 <code>df</code> 命令查看一下，会发现容器里面已经只剩我们 alpine目录对应的挂载点了，符合预期。</p>
+<h1 id="网络配置">网络配置</h1>
+<p>容器网络模型中存在一种 <code>host</code>网络模式，即容器和宿主机共用网络空间，不进行隔离，所以理论上我们不进行下面的操作也算勉强实现一个容器了，不过如果我们想要实现一个常规的使用 <code>bridge</code>网络模式具有自己独立 IP 的容器的话，那我们还有最后一步要做。</p>
+<p>利用 <code>linux namespace</code> 的功能，我们可以隔离出一个具有独立网络设备、IP协议栈、路由表、防火墙规则的网络空间，但是就像我们上文提到的，这个新的网络空间创建出来之后是空空如也的，需要我们配置。</p>
+<h2 id="物理层">物理层</h2>
+<p>我们首先需要创建一个网络空间，然后给它创建网卡，这个时候理论上我们可以直接把默认网络空间下的物理网卡搬到新的网络空间下，这样容器就能上网，但是宿主机的网络就瘫痪了，不过有多张物理网卡的话就没有这个问题。</p>
+<p>Linux 提供了 <code>veth pair</code>（<a href="https://man7.org/linux/man-pages/man4/veth.4.html">veth - Virtual Ethernet Device</a>）的虚拟网卡对机制，可以在两个网络空间间建立一条隧道，使得网络流量可以跨越不同的网络空间，我们可以创建一对 <code>veth</code>，一张放在默认网络空间，一张放在我们新的网络空间，连通两个网络空间。</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 创建网络空间</span>
+ip netns add ns0
+<span class="c1"># 创建 veht pair</span>
+ip link add veth0 <span class="nb">type</span> veth peer name veth1
+<span class="c1"># 将 veth1 放入新创建的网络空间中</span>
+ip link <span class="nb">set</span> veth1 netns ns0
+</code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413204604.png" alt="image-20210413204603899"></p>
+<h2 id="链路层">链路层</h2>
+<p>现在两个网络空间还只能视为“物理层”已连通，物理网卡之间链路层的打通是通过交换机，而我们的虚拟网卡，则也需要一个虚拟交换机——网桥，在 <code>docker</code>   的容器网络中，会把所有的容器都挂到 <code>docker0</code>网桥上，这样这些虚拟设备们就像串在一个交换机之下互相直接不需要经过路由即可直连。</p>
+<pre><code># 安装网桥操作工具
+yum install -y bridge-utils
+# 创建一个网桥
+brctl addbr bridge0
+# 将veth0加入到网桥中
+brctl addif bridge0 veth0
+</code></pre><h2 id="网络层">网络层</h2>
+<p>下面我们需要继续来打通网络层，首先需要给容器配置 IP 地址，同时网桥也需要一个 IP 地址，我们可以随意选择一个不冲突的网段即可，另外还需要配置容器的路由表，让容器将流量全部转发到网桥上。</p>
+<pre><code># 配置网桥 IP 地址，使用 172.18.0.0/16 网段
+ifconfig bridge0 172.18.0.1
+# 配置容器 IP 
+ip netns exec ns0 ifconfig veth1 172.18.0.2
+# 配置容器路由表默认转发地址
+ip netns exec ns0 ip route add default via 172.18.0.1
+# 启动网卡
+ip link set dev veth0 up
+</code></pre><p>为了便于理解，简单画了一下如果有多个容器，即多个 namespace  之间的网络是如何连通的，可以看到每个 namesapce 和带物理网卡的默认 namespace 之间都会有一对 veth pair，默认 namespace 上的 veth pari 会被 bridge0 网桥接管，从而打通各个容器之间的网络，网桥和物理网卡之间在一个 namespace 内本来在链路层就是可以彼此可见的，而网络层的话，物理网卡和网桥会通过直接路由的方式进行连通，路由表在我们给网桥配置 IP 的时候会自动生成。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413221130.png" alt="image-20210413221130507"></p>
+<p>现在理论上我们就能在容器里 ping 通宿主机了：<code>ping 172.18.0.1</code>，但是访问外部网络的话还是不行的，因为我们这只是一个局域网 IP，包出去之后外网的机器没有我们的路由不能把包传回来，需要利用 <code>iptables</code> 等工具进行 nat 转换，在包发出时修改 IP 包源地址为宿主机地址再发出去：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 开启宿主机 IP 包转发功能</span>
+sysctl -w net.ipv4.ip_forward<span class="o">=</span><span class="m">1</span>
+<span class="c1"># NAT 转换，MASQUERADE是一种动态源IP 的 NAT 转换</span>
+iptables -t nat -A POSTROUTING -s 172.18.0.0/16 ! -o bridge0 -j MASQUERADE
+</code></pre></div><h2 id="应用层">应用层</h2>
+<p>这个时候我们就能 ping 通外部机器了，但是还有一个小问题需要解决：DNS还没有配置，我们在隔离文件视图之前需要复制宿主机的 DNS 配置到容器中：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 复制宿主机 DNS 配置到容器</span>
+cp /etc/resolv.conf alpine/
+</code></pre></div><p>到这里，我们的网络配置就全部完成了。</p>
+<h1 id="资源限制">资源限制</h1>
+<p>作为一个五脏俱全的容器，资源限制这个问题是无论如何也绕不过的，不然比如一个容器出了 bug 死循环跑满了 CPU 导致其他容器全部异常，甚至影响到了宿主机的安全，这种的没有资源限制机制容器肯定是没人敢用的。</p>
+<p>Linux 提供 <a href="https://en.wikipedia.org/wiki/Cgroups">cgroups</a> (Control Groups) 机制用来限制、控制与分离一个进程组的资源，其实现原理也不难猜测，每一份资源都是以进程为最小单元分配的，资源的用量内核也是能统计到的，那么在分配 CPU 和 内存等资源分配时，内核只需要稍微留意一下这个进程是否受限即可。</p>
+<p><code>cgroups</code> 的用户接口层实现为了一个文件系统，挂载在<code>/sys/fs/cgroup</code>路径下，这下面的一级子目录都对应一种资源控制子系统：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ ls /sys/fs/cgroup
+blkio  cpu  cpuacct  cpu,cpuacct  cpuset  devices  freezer hugetlb
+memory  net_cls  net_cls,net_prio  net_prio  perf_event  pids  systemd
+
+</code></pre></div><p>而限制要一组进程的资源的话，只需要在资源控制子系统下创建一个子目录，然后把进程号写到 <code>tasks</code>文件中 即可，找 PID 这个事情不太好自动化，我们可以配合 cgroups 相关工具使用：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 限制CPU使用</span>
+<span class="nb">cd</span> /sys/fs/cgroup/cpu
+
+<span class="c1"># 创建目录，cgroups 会帮我们自动生成很多信息</span>
+mkdir -p my-container
+<span class="c1"># 限制 20% 的资源利用率，默认总值100000</span>
+<span class="nb">echo</span> <span class="m">20000</span> &gt; my-container/cpu.cfs_quota_us 
+
+<span class="c1"># 限制内存使用</span>
+<span class="nb">cd</span> /sys/fs/cgroup/memory/
+mkdir -p my-container
+<span class="c1"># 限制内存 200M</span>
+<span class="nb">echo</span> <span class="s2">&#34;200M&#34;</span> &gt; memory.limit_in_bytes
+
+<span class="c1"># 安装 cgroups 工具集</span>
+yum install -y libcgroup libcgroup-tools
+
+<span class="c1"># 配合 cgroups 工具免去手动写入 PID 的过程</span>
+cgexec -g cpu,memory:my-container bash
+</code></pre></div><h1 id="总结">总结</h1>
+<p>我们实现了一个具有独立网络、进程、文件空间并能物理隔离于宿主机的容器，容器所依赖的底层技术基本就是这些了：</p>
+<ul>
+<li>通过 <strong>namespace</strong> 机制隔离进程、IPC、主机号、网络设备、网络协议栈</li>
+<li><strong>pivot_root</strong> 隔离文件挂载点 &amp; 文件视图</li>
+<li><strong>veth pair</strong> 连通网络空间 &amp; <strong>网桥</strong>网络配置&amp; <strong>iptalbes</strong> 做 nat 转换实现外网访问</li>
+<li><strong>cgroups</strong> 实现资源限制</li>
+<li><strong>联合文件系统</strong>实现底层镜像不变可共享</li>
+</ul>
+<p>最终效果演示：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210414162224.png" alt="image-20210414162224423" style="zoom:50%;" /></p>
+<p>所有命令汇总：</p>
+<pre><code>######################### 镜像下载解压
+wget -O alpine.tar \
+https://hub-mirror.c.163.com/v2/library/alpine/blobs/\
+sha256:9b794450f7b6db7c944ba1f4161edb68cb535052fe7db8ac06e613516c4a658d
+
+# 或者：wget -O alpine.tar \
+# https://mirrors.tuna.tsinghua.edu.cn\
+#/alpine/v3.11/releases/x86_64/alpine-minirootfs-3.11.0-x86_64.tar.gz
+
+mkdir -p alpine &amp;&amp; tar xf alpine.tar -C alpine
+
+
+########################## 网络配置
+
+# 创建网络空间
+ip netns add ns0
+# 创建 veht pair
+ip link add veth0 type veth peer name veth1
+# 将 veth1 放入新创建的网络空间中
+ip link set veth1 netns ns0
+
+# 安装网桥操作工具
+yum install -y bridge-utils
+# 创建一个网桥
+brctl addbr bridge0
+# 将veth0加入到网桥中
+brctl addif bridge0 veth0
+
+# 配置网桥 IP 地址，使用 172.18.0.0/16 网段
+ifconfig bridge0 172.18.0.1
+# 配置容器 IP 
+ip netns exec ns0 ifconfig veth1 172.18.0.2
+# 配置容器路由表默认转发地址
+ip netns exec ns0 ip route add default via 172.18.0.1
+# 启动网卡
+ip link set dev veth0 up
+
+# 开启宿主机 IP 包转发功能
+sysctl -w net.ipv4.ip_forward=1
+# NAT 转换，MASQUERADE是一种动态源IP 的 NAT 转换
+iptables -t nat -A POSTROUTING -s 172.18.0.0/16 ! -o bridge0 -j MASQUERADE
+
+# 复制宿主机 DNS 配置到容器
+cp /etc/resolv.conf alpine/
+
+########################## 联合文件系统挂载
+
+# 确保 overlay 内核模块开启
+modprobe overlay
+# 创建上层目录，同时 overlayfs 还需要一个临时目录
+mkdir ./alpine-workdir ./tmp
+# 联合挂载到 ./alpine 目录
+ mount -t overlay -o lowerdir=./alpine,upperdir=./alpine-workdir,workdir=./tmp overlay ./alpine
+
+
+########################### 资源限制
+
+# 限制CPU使用
+cd /sys/fs/cgroup/cpu
+
+# 创建目录，cgroups 会帮我们自动生成很多信息
+mkdir -p my-container
+# 限制 20% 的资源利用率，默认总值100000
+echo 20000 &gt; my-container/cpu.cfs_quota_us 
+
+# 限制内存使用
+cd /sys/fs/cgroup/memory/
+mkdir -p my-container
+# 限制内存 200M
+echo &quot;200M&quot; &gt; memory.limit_in_bytes
+
+# 安装 cgroups 工具集
+yum install -y libcgroup libcgroup-tools
+
+# 配合 cgroups 工具免去手动写入 PID 的过程
+cgexec -g cpu,memory:my-container bash
+
+
+######################### 文件挂载点隔离 &amp;&amp; 启动
+
+cd alpine/
+
+# 资源限制-网络隔离-其他资源隔离启动 bash shell
+cgexec -g cpu,memory:my-container ip netns exec ns0 unshare -muip -f /bin/bash
+
+# 创建一个目录用于挂载旧 root
+mkdir -p old-root
+# 修改 root 挂载点，将原来的 root 挂载到 old-root 下
+pivot_root . old-root/
+# 用 alpine 下的 sh 替换当前 bash 进程启动
+exec /bin/sh --login
+# 挂载 proc 系统
+/bin/mount -t proc proc /proc
+# 解除旧 root 挂载
+umount -l old-root/
+
+######################### 验证
+pwd
+ls
+df -Th
+netstat -a
+ifconfig
+ping -c 2 172.18.0.1
+ping -c 2 baidu.com
+</code></pre><h1 id="参考">参考</h1>
+<ol>
+<li><strong>Bocker</strong> <a href="https://github.com/p8952/bocker">https://github.com/p8952/bocker</a></li>
+<li><strong>Linux Namespace</strong> <a href="https://lwn.net/Articles/531114/">https://lwn.net/Articles/531114/</a></li>
+<li><strong>unshare</strong> <a href="https://man7.org/linux/man-pages/man7/namespaces.7.html">https://man7.org/linux/man-pages/man7/namespaces.7.html</a></li>
+<li><strong>MyDocker</strong> <a href="https://github.com/xianlubird/mydocker">https://github.com/xianlubird/mydocker</a></li>
+<li><strong>Docker 核心技术与实现原理</strong> <a href="https://draveness.me/docker/">https://draveness.me/docker/</a></li>
+<li><strong>UnionFS</strong> <a href="https://en.wikipedia.org/wiki/UnionFS">https://en.wikipedia.org/wiki/UnionFS</a></li>
+<li><strong>containerd</strong> <a href="https://github.com/containerd/containerd">https://github.com/containerd/containerd</a></li>
+</ol>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/docker" role="button">Docker </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button">命令行 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/kubernetes-permissions-overview/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Kubernetes权限管理概述</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%b9%e5%99%a8">
+												 容器
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%8b%e8%bd%bd%e9%95%9c%e5%83%8f">
+												 下载镜像
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%ae%80%e5%8d%95%e8%bf%90%e8%a1%8c">
+												 简单运行
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%9b%e5%bb%ba%e6%8c%82%e8%bd%bd%e7%82%b9">
+												 创建挂载点
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%9a%94%e7%a6%bb">
+												 隔离
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%bf%9b%e7%a8%8b%e4%b8%bb%e6%9c%ba%e5%90%8d">
+												 进程&amp;主机名
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%96%87%e4%bb%b6%e6%8c%82%e8%bd%bd">
+												 文件挂载
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bd%91%e7%bb%9c%e9%85%8d%e7%bd%ae">
+												 网络配置
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%89%a9%e7%90%86%e5%b1%82">
+												 物理层
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%93%be%e8%b7%af%e5%b1%82">
+												 链路层
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bd%91%e7%bb%9c%e5%b1%82">
+												 网络层
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ba%94%e7%94%a8%e5%b1%82">
+												 应用层
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%b5%84%e6%ba%90%e9%99%90%e5%88%b6">
+												 资源限制
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%82%e8%80%83">
+												 参考
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+  
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+ 
+  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
+  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
