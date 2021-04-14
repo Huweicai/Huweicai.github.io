@@ -366,7 +366,7 @@ mkdir -p alpine <span class="o">&amp;&amp;</span> tar xf alpine.tar -C alpine
 <p>下面我们来继续一步步的实现。</p>
 <h1 id="创建挂载点">创建挂载点</h1>
 <p>虽然我们可以直接在镜像上执行我们的业务操作，但是如果要再基于这个镜像启动一个容器的话就需要再拉取一份镜像下来，所以容器产品通常会使用一种叫做 <strong>联合文件系统 (Union File System)</strong> 的技术，可以将多个文件层联合起来，呈现出一层的视图供使用者使用，但使用者所有的修改删除新增等操作全部是只会实际对最上层产生影响的，底层全部是是只读的，这样有利于多个容器间共用镜像，减少文件传输和存储成本。</p>
-<p><img src="https://img.draveness.me/2017-11-30-docker-filesystems.png" alt="docker-filesystems" style="zoom: 67%;" /></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210414170953.png" alt="docker-filesystems" style="zoom: 67%;" /></p>
 <p>就像普通文件系统一样，联合文件系统也有很多种，比如：aufs、devicemapper、zfs等，这里以 docker 推荐的 <code>OverlayFS</code> 为例，我们创建一个新的目录做为上层，底层则是我们的 <code>alpine</code> 镜像所在的目录，合并成挂载一个文件系统：</p>
 <pre><code># 确保 overlay 内核模块开启
 modprobe overlay
