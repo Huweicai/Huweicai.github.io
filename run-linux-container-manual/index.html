@@ -439,7 +439,7 @@ ip netns add ns0
 ip link add veth0 <span class="nb">type</span> veth peer name veth1
 <span class="c1"># 将 veth1 放入新创建的网络空间中</span>
 ip link <span class="nb">set</span> veth1 netns ns0
-</code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413204604.png" alt="image-20210413204603899"></p>
+</code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413204604.png" alt="image-20210413204603899" style="zoom:50%;" /></p>
 <h2 id="链路层">链路层</h2>
 <p>现在两个网络空间还只能视为“物理层”已连通，物理网卡之间链路层的打通是通过交换机，而我们的虚拟网卡，则也需要一个虚拟交换机——网桥，在 <code>docker</code>   的容器网络中，会把所有的容器都挂到 <code>docker0</code>网桥上，这样这些虚拟设备们就像串在一个交换机之下互相直接不需要经过路由即可直连。</p>
 <pre><code># 安装网桥操作工具
@@ -459,7 +459,7 @@ ip netns exec ns0 ip route add default via 172.18.0.1
 # 启动网卡
 ip link set dev veth0 up
 </code></pre><p>为了便于理解，简单画了一下如果有多个容器，即多个 namespace  之间的网络是如何连通的，可以看到每个 namesapce 和带物理网卡的默认 namespace 之间都会有一对 veth pair，默认 namespace 上的 veth pari 会被 bridge0 网桥接管，从而打通各个容器之间的网络，网桥和物理网卡之间在一个 namespace 内本来在链路层就是可以彼此可见的，而网络层的话，物理网卡和网桥会通过直接路由的方式进行连通，路由表在我们给网桥配置 IP 的时候会自动生成。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413221130.png" alt="image-20210413221130507"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413221130.png" alt="image-20210413221130507" style="zoom:50%;" /></p>
 <p>现在理论上我们就能在容器里 ping 通宿主机了：<code>ping 172.18.0.1</code>，但是访问外部网络的话还是不行的，因为我们这只是一个局域网 IP，包出去之后外网的机器没有我们的路由不能把包传回来，需要利用 <code>iptables</code> 等工具进行 nat 转换，在包发出时修改 IP 包源地址为宿主机地址再发出去：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 开启宿主机 IP 包转发功能</span>
 sysctl -w net.ipv4.ip_forward<span class="o">=</span><span class="m">1</span>
