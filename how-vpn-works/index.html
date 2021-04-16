@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
   <meta name="description" content="VPN 想象一下这两种场景： 你下班家，公司线上一台机器出事故了，这个时候你需要远程到这台机器上来排查并处理问题。 你在其他城市实习，这个时候学校需要选下学期的课了，但是教务网站只对校园网开放。 在这两种场景中，都离不开一种关键的技术：VPN（Virtual Private Network：虚拟局域网）。 VPN提供了一种在公网上安全的加入局域网的方式，可以我们这里就以开源的 OpenConnect VPN 为例，探讨一下 VPN 这种技术是如何安全的将局域网在互">
-  
+
   <meta property="og:title" content="VPN是如何工作的" />
 <meta property="og:description" content="VPN 想象一下这两种场景： 你下班家，公司线上一台机器出事故了，这个时候你需要远程到这台机器上来排查并处理问题。 你在其他城市实习，这个时候学校需要选下学期的课了，但是教务网站只对校园网开放。 在这两种场景中，都离不开一种关键的技术：VPN（Virtual Private Network：虚拟局域网）。 VPN提供了一种在公网上安全的加入局域网的方式，可以我们这里就以开源的 OpenConnect VPN 为例，探讨一下 VPN 这种技术是如何安全的将局域网在互" />
 <meta property="og:type" content="article" />
@@ -50,17 +50,17 @@
   
 
   
-  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
-    
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+
   
   <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
-  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
-  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
-
+  <link href="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+ 
 
   
   <link rel="shortcut icon"
@@ -83,14 +83,14 @@
 
 
   
-    
-    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.js">
+  
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/katex.min.js">
   
   
 
   
-    
-    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
   
 
 </head>
@@ -616,26 +616,26 @@ ipv4-netmask <span class="o">=</span> 255.255.255.0
 
 
 
-<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
-<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
 <script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
 
-<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+<script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/js/mdb.min.js"></script>
 
-<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
 
 
 
-  
-  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+
+  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 
 
 
- 
-  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
-  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
 
   <script>
       document.addEventListener("DOMContentLoaded", function () {

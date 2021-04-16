@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
   <meta name="description" content="现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。 我们经常能在教科书上看到对于进程和线程的定义： 进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。 这句话没错，但是只是从职责上给出的定义，而不是基于底层实现出发的。 广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充">
-  
+
   <meta property="og:title" content="进程线程协程的本质区别" />
 <meta property="og:description" content="现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。 我们经常能在教科书上看到对于进程和线程的定义： 进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。 这句话没错，但是只是从职责上给出的定义，而不是基于底层实现出发的。 广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充" />
 <meta property="og:type" content="article" />
@@ -50,17 +50,17 @@
   
 
   
-  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
-    
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+
   
   <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://huweicai.com/css/vendors-extensions/mdb/mdb.min.css" rel="stylesheet"> 
-  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet"> 
-  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
-
+  <link href="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+ 
 
   
   <link rel="shortcut icon"
@@ -83,14 +83,14 @@
 
 
   
-    
-    <link rel="stylesheet" href="https://huweicai.com/js/vendors/katex/katex.min.js">
+  
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/katex.min.js">
   
   
 
   
-    
-    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
   
 
 </head>
@@ -1270,26 +1270,26 @@ P 中管理了一个协程队列，M 每次就从这个队列中取协程来运�
 
 
 
-<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
-<script type="text/javascript" src="https://s2.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
 <script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
 
-<script type="text/javascript" src="https://huweicai.com/js/vendors/mdb/mdb.min.js"></script>
+<script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/js/mdb.min.js"></script>
 
-<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
 
 
 
-  
-  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+
+  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 
 
 
- 
-  <script src="https://huweicai.com/js/vendors/katex/katex.min.js"> </script>
-  <script src="https://huweicai.com/js/vendors/katex/contrib/auto-render.min.js"></script>
+
+  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
 
   <script>
       document.addEventListener("DOMContentLoaded", function () {
