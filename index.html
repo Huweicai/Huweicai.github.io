@@ -14,7 +14,7 @@
 <meta property="og:description" content="[好奇心探索世界 善意假设 做最酷的事情]" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://huweicai.com/" />
-<meta property="og:updated_time" content="2021-04-14T16:20:00+08:00" />
+<meta property="og:updated_time" content="2021-05-05T13:58:00+08:00" />
 
    
 
@@ -399,6 +399,8 @@
 
   
 
+  
+
 
 
 
@@ -434,6 +436,9 @@
             <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button"><span>存储 (3)</span></a></li>
           
         
+            <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button"><span>容器 (3)</span></a></li>
+          
+        
             <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (3)</span></a></li>
           
         
@@ -447,9 +452,6 @@
           
         
             <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button"><span>命令行 (2)</span></a></li>
-          
-        
-            <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button"><span>容器 (2)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/cpu" role="button"><span>cpu (1)</span></a></li>
@@ -501,6 +503,9 @@
           
         
             <li><a href="https://huweicai.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93" role="button"><span>数据库 (1)</span></a></li>
+          
+        
+            <li><a href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97" role="button"><span>日志 (1)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button"><span>权限管理 (1)</span></a></li>
@@ -639,6 +644,59 @@
 
 
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/fluent-bit/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">Fluent Bit介绍</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2021-05-05</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>6 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。 基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。 Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97" role="button">日志 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -972,59 +1030,6 @@
       
     
       <li><a href="https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6" role="button">硬件 </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/git-implementation/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Git实现原理</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2020-11-11</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>6 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      基本概念 概述 Git 是一个基于快照的文件版本管理系统，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/git" role="button">git </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button">存储 </a></li>
       
     
   </div>

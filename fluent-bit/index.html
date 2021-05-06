@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。 基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。 Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：">
+
+  <meta property="og:title" content="Fluent Bit介绍" />
+<meta property="og:description" content="Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。 基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。 Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/fluent-bit/" />
+<meta property="article:published_time" content="2021-05-05T13:58:00+08:00" />
+<meta property="article:modified_time" content="2021-05-05T13:58:00+08:00" />
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       Fluent Bit介绍 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/fluent-bit/">
+
+  
+  
+
+  
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/katex.min.js">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">Fluent Bit介绍</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>2021-05-05</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>6 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="fluent-bit">Fluent Bit</h1>
+<p><a href="https://fluentbit.io/"><img src="https://fluentbit.io/assets/img/logo1-default.png" alt="Logo"></a></p>
+<p><strong>Fluent Bit</strong> 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。</p>
+<h1 id="基本概念">基本概念</h1>
+<p>大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。</p>
+<p><strong>Fluent Bit</strong> 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：</p>
+<ul>
+<li>输入部分负责采集原始日志；</li>
+<li>解析部分将原始日志结构化，比如提取字段、解转义等操作；</li>
+<li>过滤部分可以对日志做一些的统一的过滤和修改操作，比如增加一些统一的字段，过滤一些脏日志等等</li>
+<li>然后日志会被放到缓冲区等待发送</li>
+<li>路由部分会决策这个包应该发送到哪些输出</li>
+<li>输出将日志真正转发出去</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210421173801.png" alt="image-20210421173801544"></p>
+<h1 id="数据流">数据流</h1>
+<h2 id="输入input">输入：INPUT</h2>
+<p>一个<strong>Fluent Bit</strong> 可以有多个输入，输入部分是插件化的，提供了许多种常用的插件供我们使用，常见的日志采集方式，如：文件、TCP、HTTP、MQTT、标准输入这些都是支持的，除此之外，<strong>Fluent Bit</strong>还支持一些带业务含义的插件，如：采集内存、CPU、磁盘、温度等信息；采集进程状态；采集 Linux 内核、systemd 日志；采集 windows 事件等等。</p>
+<p>一个文件采集输入的配置例子：</p>
+<pre><code>[INPUT]
+    Name             tail
+    Tag              api.log             # 打标签，后面处理和转发会根据这个标签来匹配
+    Path             /var/log/api/*.log  # 采集/var/log/api目录下所有 log 后缀的文件
+</code></pre><h2 id="解析parser">解析：PARSER</h2>
+<p>解析器主要用于将原始日志进行结构化，支持 JSON、LTSV、<a href="https://brandur.org/logfmt">logfmt</a> 等格式的解析，对于非规则的日志也可以通过正则解析器来提取。</p>
+<p>一个通过正则匹配提取 apache 日志的解析器例子：</p>
+<div class="highlight"><pre class="chroma"><code class="language-toml" data-lang="toml"><span class="p">[</span><span class="nx">PARSER</span><span class="p">]</span>
+    <span class="nx">Name</span>   <span class="nx">apache</span>
+    <span class="nx">Format</span> <span class="nx">regex</span>
+    <span class="nx">Regex</span>  <span class="err">^(?&lt;</span><span class="nx">host</span><span class="err">&gt;</span><span class="p">[</span><span class="err">^</span> <span class="p">]</span><span class="err">*)</span> <span class="p">[</span><span class="err">^</span> <span class="p">]</span><span class="err">*</span> <span class="err">(?&lt;</span><span class="nx">user</span><span class="err">&gt;</span><span class="p">[</span><span class="err">^</span> <span class="p">]</span><span class="err">*)</span> <span class="err">\</span><span class="p">[</span><span class="err">(?&lt;</span><span class="nx">time</span><span class="err">&gt;</span><span class="p">[</span><span class="err">^\</span><span class="p">]]</span><span class="err">*)\</span><span class="p">]</span> <span class="s2">&#34;(?&lt;method&gt;\S+)(?: +(?&lt;path&gt;[^\&#34;]*?)(?: +\S*)?)?&#34;</span> <span class="err">(?&lt;</span><span class="nx">code</span><span class="err">&gt;</span><span class="p">[</span><span class="err">^</span> <span class="p">]</span><span class="err">*)</span> <span class="err">(?&lt;</span><span class="nx">size</span><span class="err">&gt;</span><span class="p">[</span><span class="err">^</span> <span class="p">]</span><span class="err">*)(?:</span> <span class="s2">&#34;(?&lt;referer&gt;[^\&#34;]*)&#34;</span> <span class="s2">&#34;(?&lt;agent&gt;[^\&#34;]*)&#34;</span><span class="err">)?$</span>
+    <span class="nx">Time_Key</span> <span class="nx">time</span>
+    <span class="nx">Time_Format</span> <span class="err">%</span><span class="nx">d</span><span class="err">/%</span><span class="nx">b</span><span class="err">/%</span><span class="nx">Y</span><span class="err">:%</span><span class="nx">H</span><span class="err">:%</span><span class="nx">M</span><span class="err">:%</span><span class="nx">S</span> <span class="err">%</span><span class="nx">z</span>
+    <span class="nx">Types</span> <span class="nx">code</span><span class="err">:</span><span class="nx">integer</span> <span class="nx">size</span><span class="err">:</span><span class="nx">integer</span>
+</code></pre></div><p>原始 HTTP 日志：</p>
+<pre><code>192.168.2.20 - - [29/Jul/2015:10:27:10 -0300] &quot;GET /cgi-bin/try/ HTTP/1.0&quot; 200 3395
+</code></pre><p>解析之后：</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+    <span class="nt">&#34;host&#34;</span><span class="p">:</span> <span class="s2">&#34;192.168.2.20&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;user&#34;</span><span class="p">:</span> <span class="s2">&#34;-&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;method&#34;</span><span class="p">:</span> <span class="s2">&#34;GET&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;path&#34;</span><span class="p">:</span> <span class="s2">&#34;/cgi-bin/try/&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;code&#34;</span><span class="p">:</span> <span class="s2">&#34;200&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="s2">&#34;3395&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;referer&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;agent&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="过滤filter">过滤：FILTER</h2>
+<p>Filter 部分允许我们在发送前对日志进行修改，是很有用的一个模块，filter 也是插件化的，同时一个实例内支持使用多个 filter 插件，常用的 filter 插件包括：</p>
+<ul>
+<li><code>Grep</code> 正则过滤日志</li>
+<li><code>GeoIP2 Filter</code>查询 IP 库给 IP 字段附加地理信息</li>
+<li><code>Lua</code> 可以直接嵌入 lua 脚本对数据进行修改</li>
+<li><code>Modify</code> 重命名、添加、删除字段</li>
+</ul>
+<p>配置例子：过滤所有 debug 级别的日志：</p>
+<pre><code>[FILTER]
+    name   grep
+    match  *
+    exclude ^\[debug\] .+ # 正则
+</code></pre><h2 id="缓冲buffer">缓冲：BUFFER</h2>
+<p>日志经过 filter 处理完之后就会在缓存区先放着，可以避免突然的大流量导致输出模块处理不过来从而导致日志丢失，也可以让输出模块攒一批日志然后批量发送提升性能。</p>
+<p>和大部分的日志收集组件一样，<strong>Fluent Bit</strong> 也支持内存和磁盘两种 buffer，内存速度会快一些，但是稳定性不如磁盘，断电后内存 buffer 里的数据就丢了，而磁盘则正好相反，不会丢日志但是速度慢。</p>
+<h2 id="路由routing">路由：ROUTING</h2>
+<p>路由部分会决定日志要发往哪些输出，不过在配置文件并没有单独的实体存在，主要依赖标签机制来实现，在日志通过输入模块流入时可以给日志打上标签，然后 router 会读取输出插件的 <code>Match</code>字段进行正则匹配，来判断要不要发往这个输出。</p>
+<pre><code>[INPUT]
+    Name             tail
+    Tag              api.log             # 打标签，后面处理和转发会根据这个标签来匹配
+    Path             /var/log/api/*.log  # 采集/var/log/api目录下所有 log 后缀的文件
+    
+[INPUT]
+    Name             tail
+    Tag              api.log             # 打标签，后面处理和转发会根据这个标签来匹配
+    Path             /var/log/api/*.log  # 采集/var/log/api目录下所有 log 后缀的文件
+    
+[OUTPUT]
+</code></pre><h2 id="输出output">输出：OUTPUT</h2>
+<p>输出部分也是插件化的，我们可以通过多种方式将日志发送到它的目的地。</p>
+<p>常用的输出插件如下：</p>
+<ul>
+<li>S3对象存储</li>
+<li>ES</li>
+<li>文件</li>
+<li>Forward：将日志用 forward 协议发出去，常用于边缘 fluent bit + 中心 fluentd 架构</li>
+<li>HTTP</li>
+<li>InfluxDB</li>
+<li>Kafka</li>
+<li>Loki</li>
+<li>PostgresQL</li>
+<li>TCP</li>
+<li>Websocket</li>
+</ul>
+<p>例子：将日志通过HTTP的方式输出到目标接口：</p>
+<div class="highlight"><pre class="chroma"><code class="language-toml" data-lang="toml"><span class="p">[</span><span class="nx">OUTPUT</span><span class="p">]</span>
+    <span class="nx">Name</span>  <span class="nx">http</span>
+    <span class="nx">Match</span> <span class="err">*</span>    <span class="c"># 匹配所有日志</span>
+    <span class="nx">Host</span>  <span class="nx">log</span><span class="p">.</span><span class="nx">example</span><span class="p">.</span><span class="nx">com</span>
+    <span class="nx">Port</span>  <span class="mi">80</span>
+    <span class="nx">URI</span>   <span class="err">/</span><span class="nx">something</span>
+    <span class="nx">Format</span> <span class="nx">json</span>
+</code></pre></div><p>值得一提的是，output 插件还支持用 Go 语言开发，只需要实现指定的几个方法，编译出一个动态链接库即可，详情参考：<a href="https://docs.fluentbit.io/manual/development/golang-output-plugins">https://docs.fluentbit.io/manual/development/golang-output-plugins</a>。</p>
+<h1 id="fluent-bit-和-fluentd">Fluent Bit 和 Fluentd</h1>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210506172014.png" alt="image-20210506171952172"></p>
+<p><code>fluentd</code> 和 <code>fluent bit</code> 师出同门，先有的 <code>fluentd</code>，后来 <a href="https://www.treasuredata.com/">Treasure Data</a> 基于 <code>fluentd</code> 的架构思想 又设计开源了更轻量的 <code>fluent bit</code>，功能虽然没有前者多，但是基本够用，胜在轻量，<code>fluent bit</code> 之于 <code>fluentd</code> 类似 <code>filebeat</code> 之于 <code>logstash</code>。</p>
+<p>很常见的一种应用场景是在边缘部署更轻量 <code>fluent-bit</code> 然后汇总到中心的 <code>fluentd</code> 处理：</p>
+<p><img src="https://dytvr9ot2sszz.cloudfront.net/wp-content/uploads/2018/06/kuberbetes-monitoring-arch-1.jpg" alt="img" style="zoom:50%;" /></p>
+<p>详细对比：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Fluentd</th>
+<th>Fluent Bit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>使用范围</td>
+<td>容器 / 服务器</td>
+<td>嵌入式 Linux / 容器 / 服务器</td>
+</tr>
+<tr>
+<td>语言</td>
+<td>C &amp; Ruby</td>
+<td>C</td>
+</tr>
+<tr>
+<td>内存</td>
+<td>~40MB</td>
+<td>~650KB</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>高</td>
+<td>高</td>
+</tr>
+<tr>
+<td>日志聚合</td>
+<td>YES</td>
+<td>NO</td>
+</tr>
+<tr>
+<td>依赖</td>
+<td>依赖一些 ruby gem</td>
+<td>零依赖</td>
+</tr>
+<tr>
+<td>插件</td>
+<td>1000+</td>
+<td>70+</td>
+</tr>
+<tr>
+<td>Github Star</td>
+<td>10.2k</td>
+<td>2.7k</td>
+</tr>
+</tbody>
+</table>
+<h1 id="hello-world">HELLO WORLD</h1>
+<h2 id="安装">安装</h2>
+<h3 id="centos">CentOS</h3>
+<p>先配置YUM源：</p>
+<pre><code>echo '[td-agent-bit]
+name = TD Agent Bit
+baseurl = https://packages.fluentbit.io/centos/7/$basearch/
+gpgcheck=1
+gpgkey=https://packages.fluentbit.io/fluentbit.key
+enabled=1' &gt; /etc/yum.repos.d/td-agent-bit.repo
+</code></pre><p>fluent-bit 是以 <code>td-agent-bit</code>的名称分发的，我们直接安装即可：<code>yum install td-agent-bit</code></p>
+<p>可以直接手动启动二进程程序，这样更直观：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">/opt/td-agent-bit/bin/td-agent-bit -i mem -o stdout -f <span class="m">1</span>
+</code></pre></div><p>或者通过 systemd 托管启动：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">sudo service td-agent-bit start
+</code></pre></div><h3 id="docker推荐">Docker【推荐】</h3>
+<p>用 docker 安装通常来说会是一种更便捷及标准化的做法，我们只需要一行命令就能直接体验 fluent bit:</p>
+<pre><code># 输入：CPU信息采集 输出：标准输出 FLUSH: 1秒一次
+docker run -it fluent/fluent-bit:1.7 /fluent-bit/bin/fluent-bit -i cpu -o stdout -f 1
+</code></pre><h2 id="实践采集docker日志到es">实践：采集Docker日志到ES</h2>
+<p>一种很常见的场景，我们的业务代码中打了日志，然后希望收集到 ES 中通过 Kibana 查看日志，这个时候我们就可以使用 Fluent Bit 来实现日志的收集与转发。</p>
+<h3 id="搭建-es--kibana">搭建 ES + Kibana</h3>
+<p>业务上有现成的 ES 肯定最方便，如果是想从零开始体验的话，我们可以直接拉起一套容器环境：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">docker run --name elasticsearch -p 9200:9200 -p 9300:9300 -e <span class="s2">&#34;discovery.type=single-node&#34;</span> -d elasticsearch:7.12.0
+docker run --name kibana --link<span class="o">=</span>elasticsearch:test  -p 5601:5601 -d kibana:7.12.0
+</code></pre></div><p>然后创建一个 ES 索引用来放日志：</p>
+<pre><code>curl -X PUT 'http://127.0.0.1:9200/api-log'
+</code></pre><h3 id="配置容器日志">配置容器日志</h3>
+<p>首先，在业务代码中，我们需要将日志打成 JSON 格式到标准输出中供 docker 收集，这里可以使用 <a href="https://github.com/sirupsen/logrus">logrus 框架</a>。</p>
+<p>Docker 默认的日志驱动是 <code>json-file</code>，会将日志写入到 <code>/var/lib/docker/containers/&lt;container id&gt;/&lt;container id&gt;-json.log</code>中，理论上我们可以配置日志采集程序直接监听这个文件即可，不过 docker 1.8 后有了更高效的选择，docker 原生支持了 <strong>fluentd <strong>和</strong>fluent bit</strong>，我们只需要配置一下容器的驱动即可，然后 docker 就会将日志通过 <a href="https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v1">fluent bit 能够识别的FORWARD协议</a>转发到 <code>tcp://localhost:24224</code>。</p>
+<pre><code>docker run --log-driver=fluentd api-system:latest
+</code></pre><h3 id="配置-fluent-bit">配置 Fluent Bit</h3>
+<p>这一步是最为关键的，我们需要合理地配置 fluent bit，来让它可以收集 docker 日志，然后转发到 ES 的接口中去。</p>
+<p>另外，docker 过来的日志本来就是 json 格式，而我们业务上的 json 日志则会被转义放入 log 字段中，所以我们需要将业务日志反转义然后提取到最上一级的 json 结构下，这样才能直观的在 kibana 中看到我们的字段。</p>
+<p>配置文件如下：</p>
+<p><strong>/etc/fluent-bit/fluent-bit.conf</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-toml" data-lang="toml"><span class="p">[</span><span class="nx">SERVICE</span><span class="p">]</span>
+    <span class="nx">Parsers_File</span> <span class="nx">parser</span><span class="p">.</span><span class="nx">conf</span> <span class="c"># 解析文件位置</span>
+    <span class="nx">Flush</span>        <span class="mi">5</span>           <span class="c"># 5秒写入一次ES</span>
+    <span class="nx">Daemon</span>       <span class="nx">Off</span>
+    <span class="nx">Log_Level</span>    <span class="nx">debug</span>
+
+<span class="p">[</span><span class="nx">INPUT</span><span class="p">]</span>
+    <span class="nx">Name</span>   <span class="nx">forward</span>           <span class="c"># forward 协议</span>
+    <span class="nx">Listen</span> <span class="mf">0.0</span><span class="p">.</span><span class="mf">0.0</span>
+    <span class="nx">Port</span>   <span class="mi">24224</span>             <span class="c"># 默认端口，如果需要修改的话，Docker日志驱动参数也要同步</span>
+
+<span class="p">[</span><span class="nx">FILTER</span><span class="p">]</span>
+    <span class="nx">Name</span>         <span class="nx">parser</span>
+    <span class="nx">Key_Name</span>     <span class="nx">log</span>
+    <span class="nx">Parser</span>       <span class="nx">docker</span>      <span class="c"># 指定使用 docker 解析器来处理日志，定义于 parser.conf 中</span>
+    <span class="nx">Match</span>        <span class="err">*</span>
+
+<span class="p">[</span><span class="nx">FILTER</span><span class="p">]</span>
+    <span class="nx">Name</span> <span class="nx">nest</span>  
+    <span class="nx">Match</span> <span class="err">*</span>
+    <span class="nx">Operation</span> <span class="nx">lift</span>
+    <span class="nx">Nested_under</span> <span class="nx">log</span>         <span class="c"># 将 log 下的所有 json 字段上移一级</span>
+
+<span class="p">[</span><span class="nx">OUTPUT</span><span class="p">]</span>
+    <span class="nx">Name</span> <span class="nx">es</span>                  <span class="c"># 转发日志到指定地址的 es 中</span>
+    <span class="nx">Match</span> <span class="err">*</span>
+    <span class="nx">Host</span>  <span class="mf">127.0</span><span class="p">.</span><span class="mf">0.1</span>
+    <span class="nx">Port</span>  <span class="mi">9200</span>
+    <span class="nx">Index</span> <span class="nx">api</span><span class="err">-</span><span class="nx">log</span>            <span class="c"># es 索引，需要提前创建好</span>
+</code></pre></div><p><strong>/etc/fluent-bit/parser.conf</strong></p>
+<div class="highlight"><pre class="chroma"><code class="language-toml" data-lang="toml"><span class="p">[</span><span class="nx">PARSER</span><span class="p">]</span>
+    <span class="nx">Name</span>         <span class="nx">docker</span>
+    <span class="nx">Format</span>       <span class="nx">json</span>
+    <span class="nx">Time_Key</span>     <span class="nx">time</span>
+    <span class="nx">Time_Format</span>  <span class="err">%</span><span class="nx">Y</span><span class="err">-%</span><span class="nx">m</span><span class="err">-%</span><span class="nx">dT</span><span class="err">%</span><span class="nx">H</span><span class="err">:%</span><span class="nx">M</span><span class="err">:%</span><span class="nx">S</span><span class="p">.</span><span class="err">%</span><span class="nx">L</span>
+    <span class="nx">Time_Keep</span>    <span class="nx">On</span>
+    <span class="nx">Decode_Field_As</span>    <span class="nx">escaped</span>     <span class="nx">log</span>  <span class="c"># 解转义</span>
+    <span class="nx">Decode_Field_As</span>    <span class="nx">json</span>        <span class="nx">log</span>  <span class="c"># json解析，而不是视为纯字符串</span>
+</code></pre></div><h3 id="启动-fluent-bit">启动 Fluent Bit</h3>
+<p>这里我们直接用容器的方式启动一个 <strong>Fluent Bit</strong> 进程，同时直接和宿主机共用网络空间减少网络包跨越网络空间带来的损耗，另外我们需要将我们上面的配置文件地址映射到容器内的默认配置读取目录，来使我们的配置生效：</p>
+<pre><code>docker run  --name fluent-bit --network host  -d -v /etc/fluent-bit/:/fluent-bit/etc fluent/fluent-bit:1.7
+</code></pre><p>然后理论上我们就能方便地在 kibana 中查看我们的日志了。</p>
+<h1 id="参考">参考</h1>
+<ol>
+<li><a href="https://logz.io/blog/fluentd-vs-fluent-bit/">https://logz.io/blog/fluentd-vs-fluent-bit/</a></li>
+<li><a href="https://docs.fluentbit.io/manual/">https://docs.fluentbit.io/manual/</a></li>
+<li><a href="https://github.com/fluent/fluent-bit">https://github.com/fluent/fluent-bit</a></li>
+</ol>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97" role="button">日志 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/run-linux-container-manual/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>手动实现一个Linux容器</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#fluent-bit">
+												 Fluent Bit
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9f%ba%e6%9c%ac%e6%a6%82%e5%bf%b5">
+												 基本概念
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%95%b0%e6%8d%ae%e6%b5%81">
+												 数据流
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%be%93%e5%85%a5input">
+												 输入：INPUT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%a7%a3%e6%9e%90parser">
+												 解析：PARSER
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%bf%87%e6%bb%a4filter">
+												 过滤：FILTER
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bc%93%e5%86%b2buffer">
+												 缓冲：BUFFER
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%b7%af%e7%94%b1routing">
+												 路由：ROUTING
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%be%93%e5%87%baoutput">
+												 输出：OUTPUT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#fluent-bit-%e5%92%8c-fluentd">
+												 Fluent Bit 和 Fluentd
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#hello-world">
+												 HELLO WORLD
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%89%e8%a3%85">
+												 安装
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#centos">
+												 CentOS
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#docker%e6%8e%a8%e8%8d%90">
+												 Docker【推荐】
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9e%e8%b7%b5%e9%87%87%e9%9b%86docker%e6%97%a5%e5%bf%97%e5%88%b0es">
+												 实践：采集Docker日志到ES
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%90%ad%e5%bb%ba-es--kibana">
+												 搭建 ES &#43; Kibana
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%85%8d%e7%bd%ae%e5%ae%b9%e5%99%a8%e6%97%a5%e5%bf%97">
+												 配置容器日志
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%85%8d%e7%bd%ae-fluent-bit">
+												 配置 Fluent Bit
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%90%af%e5%8a%a8-fluent-bit">
+												 启动 Fluent Bit
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%82%e8%80%83">
+												 参考
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

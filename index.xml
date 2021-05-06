@@ -6,7 +6,16 @@
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 14 Apr 2021 16:20:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 05 May 2021 13:58:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Fluent Bit介绍</title>
+      <link>https://huweicai.com/fluent-bit/</link>
+      <pubDate>Wed, 05 May 2021 13:58:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/fluent-bit/</guid>
+      <description>Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;amp;过滤&amp;amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。 基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。 Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：</description>
+    </item>
+    
     <item>
       <title>手动实现一个Linux容器</title>
       <link>https://huweicai.com/run-linux-container-manual/</link>
