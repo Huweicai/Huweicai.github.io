@@ -150,6 +150,13 @@
   </url>
   
   <url>
+    <loc>https://huweicai.com/minikube-install-tutorial/</loc>
+    <lastmod>2020-12-14T16:20:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://huweicai.com/run-openwrt-on-xiaomi4a100m/</loc>
     <lastmod>2020-12-08T23:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>

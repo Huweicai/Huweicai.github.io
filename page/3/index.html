@@ -648,6 +648,66 @@
           
           <div class="post-wrapper white-bg post-card">
   
+  <a href="https://huweicai.com/go-package-sync/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">Go语言sync包实现原理分析</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2020-01-10</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>6 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      Java 语言中有一个 java.util.Concurrent 包提供了大量的并发工，而 Go 语言中也有这样的角色：sync包。 sync.Mutex 锁实现原理 sync.Mutext 是 Go 提供的一种同步原语，用于表达互斥，不过不推荐在业务中使用，根据 Go 的设计思想，应首先考虑通过传递消息（管道）来共享内存，而不是通过共享内存来传递消息 Mutex 结构体如下，只有两个变量，非常简单： type Mutex struct { state int32 // 状态，bitmap sema uint32 // 信号量 } state 字段是一个位图 第 0 位表示是否加锁 第 1 位表示是否已唤醒 第 2 位表示是否为饥饿模......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+        
+          <li><a href="https://huweicai.com/series/go"><i class="fas fa-bookmark pr-1" aria-hidden="true"></i>go</a></li>
+        
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/go" role="button">go </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%B9%B6%E5%8F%91" role="button">并发 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" role="button">编程语言 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
   <a href="https://huweicai.com/go-switch/">
     <div class="post-header text-center">
       <div class="px-4 post-heading">Go 多路条件语句 Switch 语法详解</div>
@@ -972,56 +1032,6 @@
       
     
       <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button">存储 </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/computer-encodings/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">小论计算机Encoding</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2018-05-26</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>6 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      乱码问题一直是最让人心烦的一类问题，因为不知从何而来，由何而起，只能一处一处的改编码，运气好了就改成功了，运气不好就继续试，有时候明明把所有能改的地方全改成UTF-8了，却仍然无济于事，着实叫人抓狂。这一切都要从1946年的那个春天说起。 在第一计算机台诞生的时候，那个时候还只有0和1，慢慢的，科学家们厌倦了只有0和1的世界，所以他们就聚在一起开了个会，讨论了讨论，决定按特定的方式将人类语言映射到0......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
       
     
   </div>

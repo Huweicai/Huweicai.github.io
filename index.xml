@@ -62,6 +62,15 @@
     </item>
     
     <item>
+      <title>Minikube安装教程</title>
+      <link>https://huweicai.com/minikube-install-tutorial/</link>
+      <pubDate>Mon, 14 Dec 2020 16:20:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/minikube-install-tutorial/</guid>
+      <description>Minikube 是一个迷你版的 k8s，部署极其简单（相较于正常一套完整的k8s系统而言），对于想要学习k8s或者本地开发调试的人而言都是一个非常不错的选择。 注：以下操作均基于 CentOS 7，其他发型版流程大致一样，不过包管理部分会略有差异 安装容器引擎: Docker k8s 是一个容器编排调度系统，但是容器实体还是需要其他系统来创建的，常见的有如：docker、virtual box、kata等，这里我们以最常见的 docker 为例进行安装，如果系统上已</description>
+    </item>
+    
+    <item>
       <title>小米路由器4A百兆版刷OpenWRT</title>
       <link>https://huweicai.com/run-openwrt-on-xiaomi4a100m/</link>
       <pubDate>Tue, 08 Dec 2020 23:47:00 +0800</pubDate>
