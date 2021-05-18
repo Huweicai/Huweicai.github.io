@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="Minikube 是一个迷你版的 k8s，部署极其简单（相较于正常一套完整的k8s系统而言），对于想要学习k8s或者本地开发调试的人而言都是一个非常不错的选择。 注：以下操作均基于 CentOS 7，其他发型版流程大致一样，不过包管理部分会略有差异 安装容器引擎: Docker k8s 是一个容器编排调度系统，但是容器实体还是需要其他系统来创建的，常见的有如：docker、virtual box、kata等，这里我们以最常见的 docker 为例进行安装，如果系统上已">
+  <meta name="description" content="Minikube 是一个迷你版的 k8s，部署极其简单（相较于正常一套完整的k8s系统而言），对于想要学习k8s或者本地开发调试的人而言都是一个非常不错的选择。 注：以下操作均基于 CentOS 7，其他发型版流程大致一样，不过包管理部分会略有差异 安装容器引擎: Docker Kubernetes 是一个容器编排调度系统，但是容器实体还是需要其他系统来创建的，常见的有如：docker、virtual box、kata等，这里我们以最常见的 docker 为例进行安装，如果系统上已">
 
   <meta property="og:title" content="Minikube安装教程" />
-<meta property="og:description" content="Minikube 是一个迷你版的 k8s，部署极其简单（相较于正常一套完整的k8s系统而言），对于想要学习k8s或者本地开发调试的人而言都是一个非常不错的选择。 注：以下操作均基于 CentOS 7，其他发型版流程大致一样，不过包管理部分会略有差异 安装容器引擎: Docker k8s 是一个容器编排调度系统，但是容器实体还是需要其他系统来创建的，常见的有如：docker、virtual box、kata等，这里我们以最常见的 docker 为例进行安装，如果系统上已" />
+<meta property="og:description" content="Minikube 是一个迷你版的 k8s，部署极其简单（相较于正常一套完整的k8s系统而言），对于想要学习k8s或者本地开发调试的人而言都是一个非常不错的选择。 注：以下操作均基于 CentOS 7，其他发型版流程大致一样，不过包管理部分会略有差异 安装容器引擎: Docker Kubernetes 是一个容器编排调度系统，但是容器实体还是需要其他系统来创建的，常见的有如：docker、virtual box、kata等，这里我们以最常见的 docker 为例进行安装，如果系统上已" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/minikube-install-tutorial/" />
 <meta property="article:published_time" content="2020-12-14T16:20:00+08:00" />
@@ -302,7 +302,7 @@
 <p>注：以下操作均基于 CentOS 7，其他发型版流程大致一样，不过包管理部分会略有差异</p>
 </blockquote>
 <h1 id="安装容器引擎-docker">安装容器引擎: Docker</h1>
-<p>k8s 是一个容器编排调度系统，但是容器实体还是需要其他系统来创建的，常见的有如：docker、virtual box、kata等，这里我们以最常见的 docker 为例进行安装，如果系统上已经安装好了的话可以直接跳过，配置一下用户即可：</p>
+<p>Kubernetes 是一个容器编排调度系统，但是容器实体还是需要其他系统来创建的，常见的有如：<code>docker</code>、virtual box、<code>kata</code>等，这里我们以最常见的 <code>docker</code> 为例进行安装，如果系统上已经安装好了的话可以直接跳过，配置一下用户即可：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 若安装过docker，需要先删掉，之后再安装依赖:</span>
 sudo yum remove docker docker-common docker-selinux docker-engine
 sudo yum install -y yum-utils device-mapper-persistent-data lvm2

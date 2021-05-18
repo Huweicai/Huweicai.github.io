@@ -288,7 +288,7 @@
 
     
       <li class="middot"></li>
-      <li>12 minutes read</li>
+      <li>13 minutes read</li>
     
   </ul>
   
@@ -298,7 +298,7 @@
 
           <div class="post-content markdown">
             <p>对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。</p>
-<p>以 Git 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。</p>
+<p>以 <code>Git</code> 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。</p>
 <p>通常在校验权限中分为两个流程，<code>认证</code>和<code>鉴权</code>。</p>
 <p>即先判断你是谁：<code>认证</code>，然后再<code>鉴权</code>，判断你有没有这个资源的权限。</p>
 <p>毫无疑问，复杂的<code>Kubernetes</code>也具有一套复杂的权限管理系统，如果要用一句话简单介绍一下的话：</p>
@@ -380,18 +380,18 @@ curl -k --cert  ./client.crt  --key ./client.key https://127.0.0.1:60002
 <h3 id="静态令牌文件">静态令牌文件</h3>
 <p>和 BasicAuth 一样，通过 <code>--token-auth-file</code>指定静态令牌文件地址，每次修改文件也一样需要重启才能生效，只不过认证方式由 BasicAuth 改成了 Bearer Token。</p>
 <h3 id="bootstrap-引导令牌认证">Bootstrap 引导令牌认证</h3>
-<p>Bootstrap令牌这种机制最近才出来，在 <code>1.18 </code>版本之后才支持。</p>
-<p>和上面两种令牌一样，也是通过 HTTP Header <code>Authorization</code>传递该令牌，形如：</p>
+<p>Bootstrap令牌是最近才出来的一种认证机制，在 <code>1.18 </code>版本之后才支持。</p>
+<p>和上面两种令牌一样，也是通过 HTTP 头部<code>Authorization</code>传递该令牌，形如：</p>
 <pre><code># 07401b 是 ID
 # f395accd246ae52d 是密钥
 Authorization: Bearer 07401b.f395accd246ae52d
 </code></pre><p>密钥存在系统的 Secrtes 里，可以设置过期时间。
-通常用于系统初始化，系统组件如：kubelet，通过该 Token 通过认证连入 <code>API Server</code> 后就发起证书签署请求，之后就通过安全性更高的双向证书进行认证通信。</p>
+通常用于系统初始化，系统组件如：<code>kubelet</code>，通过该 token 通过认证连入 <code>API Server</code> 后就发起证书签署请求，之后就通过安全性更高的双向证书进行认证通信。</p>
 <h3 id="oidc令牌">OIDC令牌</h3>
 <p>OAuth 应该是我们经常见到的一种授权协议，用于在用户许可的情况下将系统的资源权限授予给第三方平台。</p>
 <p>OAuth 本质上是个授权协议，但是也可以当做认证协议来用，授予查看身份的权限就算是认证了。而 OpenID Connect(OIDC) 则是集 OpenID 和 OAuth 协议精华于一身的既完全兼容 OAuth 协议，同时吸收了 OpenID 在身份认证上的建树。</p>
 <p>而 Kubernetes 也集成了 OIDC 的功能，使得 Kubernetes 可以接入第三方登录系统，来实现自定义认证，比如我们可以配置通过 Github、Google 等第三方应用来登录 k8s，就像很多网站除了直接注册都还支持使用微信、QQ来登录一样。</p>
-<p>而具体第三方系统中内部的身份虽然是五花八门的，但是都需要通过 OIDC 这种标准的协议来和 k8s 交互，不过是 k8s 内部也有一套身份体系，比如我可以把邮箱当做 k8s用户名也可以把 OIDC中的用户名当做 k8s 用户名，这就需要一个地方能配置这种内外字段的映射关系，具体我们可以通过：</p>
+<p>而具体第三方系统中内部的身份虽然是五花八门的，但是都需要通过 OIDC 这种标准的协议来和 k8s 交互，不过是 k8s 内部也有一套身份体系，比如我可以把邮箱当做 k8s 用户名也可以把 OIDC 中的用户名当做 k8s 用户名，这就需要一个地方能配置这种内外字段的映射关系，具体我们可以通过：</p>
 <ul>
 <li><code>--oidc-groups-prefix</code>指定统一的 k8s group 前缀</li>
 <li><code>--oidc-groups-claim</code>指定用哪个 OIDC 字段当做 k8s group</li>
@@ -403,16 +403,16 @@ Authorization: Bearer 07401b.f395accd246ae52d
 <p>如果想要彻底搭建自己的认证系统，Webhook令牌绝对是最合适的选择。</p>
 <p>k8s 支持在提交 Token 时将 Token 转发至指定的 Webhook 回调地址，然后根据约定好的回调响应来判断此次认证的结果。</p>
 <h1 id="资源resources">资源：Resources</h1>
-<p>当 API Server 完成了认证，确认了“你是谁”之后，下一步就是鉴权了，但是在此之前，API Server 还需要知道“你想要什么”，才能判断能不能给你你想要的东西。具体就是你想要访问的资源，再具体一点，就是你发起的 HTTP 请求中的字段。</p>
+<p>当 <code>API Server</code> 完成了认证，确认了**“你是谁”**之后，下一步就是鉴权了，但是在此之前，API Server 还需要知道**“你想要什么”**，才能判断能不能给你你想要的东西。具体就是你想要访问的资源，再具体一点，就是你发起的 HTTP 请求中的字段。</p>
 <p>一个资源具体包含以下核心属性，权限分配时也是根据这些属性来进行配置的。</p>
 <blockquote>
-<p>以访问 deployments coredns 的 URL：</p>
+<p>以访问 deployments coredns 资源的 URL为例：</p>
 <p>http://127.0.0.1:8001/apis/extensions/v1beta1/namespaces/kube-system/deployments/coredns</p>
-<p>为例，对应资源属性到 HTTP 协议字段位置映射：</p>
+<p>对应资源属性到 HTTP 协议字段位置映射如下图：</p>
 </blockquote>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210318012750.png" alt="image-20210318012750159"></p>
 <h3 id="资源类型资源名称">资源类型+资源名称</h3>
-<p>资源类型包括常见的 <code>POD</code>、<code>Service</code>、Deployment、<code>Secret</code> 等，同时一个资源可能还包含子资源，比如 <code>POD</code> 的日志这种资源类型：&ldquo;pod/logs&rdquo;，</p>
+<p>资源类型包括常见的 <code>POD</code>、<code>Service</code>、<code>Deployment</code>、<code>Secret</code> 等，同时一个资源可能还包含子资源，比如 <code>POD</code> 的日志这种资源类型：&ldquo;pod/logs&rdquo;，</p>
 <p>同时 k8s 也是支持针对某一个具体的资源来进行授权的，所以资源名称也是必要的参考属性。</p>
 <h3 id="api组">API组</h3>
 <p>资源所在的 API 组，用于给一类资源进行权限配置，空白代表核心API组。</p>
@@ -420,8 +420,9 @@ Authorization: Bearer 07401b.f395accd246ae52d
 <ul>
 <li><code>rbac.authorization.k8s.io</code></li>
 <li><code>storage.k8s.io</code></li>
-<li><code>apps</code> 等等。</li>
+<li><code>apps</code> 等等</li>
 </ul>
+<p>当前集群所支持的所有资源及其API组可以通过 <code>kubectl api-resources</code>命令查询。</p>
 <h3 id="动作">动作</h3>
 <p>要对资源执行的动作，比如增删改查等。</p>
 <p>通用的 k8s 动作如下：</p>
