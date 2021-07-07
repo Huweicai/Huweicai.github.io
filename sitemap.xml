@@ -102,35 +102,35 @@
   
   <url>
     <loc>https://huweicai.com/tags/cpu/</loc>
-    <lastmod>2020-12-30T01:20:00+08:00</lastmod>
+    <lastmod>2021-01-01T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/go/</loc>
-    <lastmod>2020-12-30T01:20:00+08:00</lastmod>
+    <lastmod>2021-01-01T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/go-linux-get-cpu-usage/</loc>
-    <lastmod>2020-12-30T01:20:00+08:00</lastmod>
+    <lastmod>2021-01-01T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</loc>
-    <lastmod>2020-12-30T01:20:00+08:00</lastmod>
+    <lastmod>2021-01-01T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</loc>
-    <lastmod>2020-12-30T01:20:00+08:00</lastmod>
+    <lastmod>2021-01-01T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -436,6 +436,12 @@
   
   <url>
     <loc>https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>

@@ -46,10 +46,10 @@
     <item>
       <title>如何准确的获取CPU占用率[Linux][Go]</title>
       <link>https://huweicai.com/go-linux-get-cpu-usage/</link>
-      <pubDate>Wed, 30 Dec 2020 01:20:00 +0800</pubDate>
+      <pubDate>Fri, 01 Jan 2021 01:20:00 +0800</pubDate>
       
       <guid>https://huweicai.com/go-linux-get-cpu-usage/</guid>
-      <description>如果我们想要获取系统的 CPU 占用率，首先，Go语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，人眼看可能还好点，要是写代码的话还是直接读系统文件来的方便。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，</description>
+      <description>如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，要是写代码获取时就不那么方便了。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，用于将</description>
     </item>
     
     <item>
@@ -221,6 +221,15 @@
       
       <guid>https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</guid>
       <description>Go内存示意图 page 内存页面的最小单元，大小为：_PageShift = 13;_PageSize = 1 &amp;lt;&amp;lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。 mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。 type mheap struct { allspans []*mspan // all spans out there arenas [1]*[4194304]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB // pagesPerArena = 8192 = 8 * 1024 // heapArenaBitmapBytes = 2097152</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://huweicai.com/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://huweicai.com/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/</guid>
+      <description>slug: &amp;quot;stand-alone-network-model &amp;quot; tags: [&amp;quot;操作系统&amp;quot;,&amp;quot;网络&amp;quot;,&amp;quot;Linux&amp;quot;,&amp;quot;docker&amp;quot;,&amp;quot;容器&amp;quot;] date: 2021-06-20T01:20:00+08:00 toc: true title: 经典单机容器网络模型-Docker # 参考文档 1. https://docs.docker.com/network/bridge/ 2. https://docs.docker.com/network/iptables/</description>
     </item>
     
   </channel>

@@ -15,5 +15,14 @@
       <description>Go内存示意图 page 内存页面的最小单元，大小为：_PageShift = 13;_PageSize = 1 &amp;lt;&amp;lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。 mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。 type mheap struct { allspans []*mspan // all spans out there arenas [1]*[4194304]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB // pagesPerArena = 8192 = 8 * 1024 // heapArenaBitmapBytes = 2097152</description>
     </item>
     
+    <item>
+      <title></title>
+      <link>https://huweicai.com/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://huweicai.com/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/</guid>
+      <description>slug: &amp;quot;stand-alone-network-model &amp;quot; tags: [&amp;quot;操作系统&amp;quot;,&amp;quot;网络&amp;quot;,&amp;quot;Linux&amp;quot;,&amp;quot;docker&amp;quot;,&amp;quot;容器&amp;quot;] date: 2021-06-20T01:20:00+08:00 toc: true title: 经典单机容器网络模型-Docker # 参考文档 1. https://docs.docker.com/network/bridge/ 2. https://docs.docker.com/network/iptables/</description>
+    </item>
+    
   </channel>
 </rss>

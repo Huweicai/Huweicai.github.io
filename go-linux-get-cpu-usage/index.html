@@ -7,14 +7,14 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="如果我们想要获取系统的 CPU 占用率，首先，Go语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，人眼看可能还好点，要是写代码的话还是直接读系统文件来的方便。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，">
+  <meta name="description" content="如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，要是写代码获取时就不那么方便了。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，用于将">
 
   <meta property="og:title" content="如何准确的获取CPU占用率[Linux][Go]" />
-<meta property="og:description" content="如果我们想要获取系统的 CPU 占用率，首先，Go语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，人眼看可能还好点，要是写代码的话还是直接读系统文件来的方便。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，" />
+<meta property="og:description" content="如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，要是写代码获取时就不那么方便了。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，用于将" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/go-linux-get-cpu-usage/" />
-<meta property="article:published_time" content="2020-12-30T01:20:00+08:00" />
-<meta property="article:modified_time" content="2020-12-30T01:20:00+08:00" />
+<meta property="article:published_time" content="2021-01-01T01:20:00+08:00" />
+<meta property="article:modified_time" content="2021-01-01T01:20:00+08:00" />
 
    
 
@@ -283,7 +283,7 @@
 
   <ul class="post-meta li-x mt-1">
     
-      <li>2020-12-30</li>
+      <li>2021-01-01</li>
     
 
     
@@ -297,18 +297,18 @@
 
 
           <div class="post-content markdown">
-            <p>如果我们想要获取系统的 CPU 占用率，首先，Go语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。</p>
+            <p>如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统<code>“要”</code>的方式都不太一样，我们这里主要基于 Linux 场景来分析。</p>
 
-<p>虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，人眼看可能还好点，要是写代码的话还是直接读系统文件来的方便。</p>
+<p>虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，要是写代码获取时就不那么方便了。</p>
 
 <h1 id="process-文件系统">PROCESS 文件系统</h1>
 
-<p>在许多 Unix 类系统中，都存在一个 <code>procfs</code> (Process FIle System) 进程文件系统的概念，用于将内核中的一些信息通过文件的形式开放出来供用户使用，不过这个文件并不是我们平常指的狭义上的文件，这些信息是只存在于内存中的，所以也不用担心性能问题，类似内存文件系统的还有 sysfs、tmpfs 等。</p>
+<p>在许多 Unix 类系统中，都存在一个 <code>procfs</code> <strong>(Process FIle System)</strong> 进程文件系统的概念，用于将内核中的一些信息通过文件的形式开放出来供用户使用，不过这个文件并不是我们平常指的狭义上的文件，这些信息是只存在于内存中的，所以也不用担心性能问题，类似内存文件系统的还有 sysfs、tmpfs 等。</p>
 
-<p>我们可以通过 df 命令查看一个目录所使用的文件系统：
+<p>我们可以通过 <code>df</code> 命令查看一个目录所使用的文件系统：
 <figure><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230185420.png" alt="image-20201230185420142"></figure></p>
 
-<p>而在 Linux 系统，这个文件系统默认挂载在  <code>/proc</code> 目录下，除了进程信息 Linux 还塞了很多诸如IO、总线设备、内存、CPU、cgroups 等其他系统信息在里面，这并不是我们关心的重点，就不细说了。</p>
+<p>而在 Linux 系统，这个文件系统默认挂载在  <code>/proc</code> 目录下，除了进程信息 Linux 还塞了很多诸如<strong>IO、总线设备、内存、CPU、cgroups</strong> 等其他系统信息在里面，这并不是我们关心的重点，就不详细展开了。</p>
 
 <p>在这个目录下的 <code>stat</code>文件中，则保存着一些内核的统计数据，其中就有我们关心的CPU运行统计数据。</p>
 
@@ -541,7 +541,7 @@ usage = work / (work + idle)</code></pre>
 
 <p>我们可以写一个简单的小程序来验证一下我们代码的正确性。</p>
 
-<p>我的服务器拥有两个 <code>Intel(R) Xeon(R) Gold 6148</code>CPU核心，主频都是 <code>2.40GHz</code>。上面没跑啥任务，正常情况下服务器的 CPU 占用情况都只有百分之几。</p>
+<p>我的服务器拥有 两个 <code>Intel(R) Xeon(R) Gold 6148</code>CPU核心，主频都是 <code>2.40GHz</code>。上面没跑啥任务，正常情况下服务器的 CPU 占用情况都只有百分之几。</p>
 
 <p>为了测试，我写了一段死循环累加代码，在另一个协程中执行，然后主协程中调用了我们上面写的多核版 CPU 占用率计算函数：</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
@@ -563,7 +563,7 @@ usage = work / (work + idle)</code></pre>
 </code></pre></div>
 <p>由于不存在任何的 IO、锁以及任何条件的等待，那么这段死循环累加会一直执行下去，持续不断的提供指令让 CPU 执行。因为没有什么其他任务会来抢占 CPU，所以预期这个程序会吃掉一整个核的 CPU，至于为什么不是两个核都吃满，因为我段代码是线性的，这意味着同一时间只会有一条指令在被执行。</p>
 
-<p>我们知道在 go 的协程调度机制中，协程会被绑定在线程上运行，而在 Linux 下线程则使用了 CFS 可抢占支持优先级时间片动态轮转调度算法来决策哪个线程将要运行，每个核心都有一条调度队列，当我们的代码在一个核上被其他进程抢占了之后，在没有设置CPU核心亲和度（affinity）绑定核心的时候是有可能被移到另一个核上执行的。</p>
+<p>我们知道在 Go 语言的协程调度机制中，协程会被绑定在线程上运行，而在 Linux 下线程则使用了 <code>CFS 可抢占支持优先级时间片动态轮转调度算法</code> 来决策哪个线程将要运行，每个核心都有一条调度队列，当我们的代码在一个核上被其他进程抢占了之后，在没有设置 CPU 核心亲和度（affinity）绑定核心的时候是有可能被移到另一个核上执行的。</p>
 
 <p>因此预期的现象就是，虽然代码能跑满一个核，但是有可能前半段跑满了第一个核，然后后半段是跑满了第二个核，两个 CPU 利用率总和加起来一直在一百多一点徘徊，实际测试结果，基本符合预期：</p>
 
