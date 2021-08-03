@@ -304,7 +304,7 @@
 </blockquote>
 <p>容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了<code>jdk 14.0.1</code>以及几个外部 jar包，同时我还依赖操作系统的一些特性，需要运行在 <code>debian buster</code>发行版上，那么我们可以把这些通通打入一个镜像中，或者叫一个静态的容器，任何会影响运行时的东西我们都可以打入镜像中，这使得其具有非常高的可移植性。容器运行起来的时候，会被彻底和底层机器以及其他的容器隔离起来，这又避免了许多可能的冲突。正是<code>可移植性</code>和<code>隔离性</code>这两个核心特性使得现代服务越来不越离不开容器化技术。</p>
 <p>容器领域现在一片欣欣向荣，<code>docker、containerd、kata</code>各种各样的容器运行时产品层出不穷，而为其提供支撑的核心技术，其实都万变不离其宗。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413182407.jpg" alt="Snipaste_2021-04-13_18-20-32"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210727151924.jpg" alt="Snipaste_2021-04-13_18-20-32"></p>
 <p>本文会介绍用纯手动敲命令的方式，基于一个普通的 <code>Linux</code> 系统（注：基于 <code>centos 7.9</code>，其他发行版均可，注意替换包管理相关命令），以 <a href="https://hub.docker.com/layers/alpine/library/alpine/3.11/images/sha256-07301d64eb71d3470346f3965ac51d475b091b4c0b7ed7b9ed857176eb9d76f4?context=explore">alpine:3.11</a> 这个镜像为例，一步步运行起来一个“五脏俱全”的容器，将容器底层相关的核心技术都串联起来。</p>
 <h1 id="下载镜像">下载镜像</h1>
 <p>镜像是静态的容器，本质上就是一堆二进制文件打包在一起，而关于镜像具体如何组织，则出现了好几种镜像格式，目前主流镜像格式有三种：</p>
