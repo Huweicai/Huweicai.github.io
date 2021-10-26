@@ -6,7 +6,16 @@
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 05 May 2021 13:58:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 24 Jun 2021 21:29:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CentOS Linux内核升级指南</title>
+      <link>https://huweicai.com/upgrade-centos-kernel-version/</link>
+      <pubDate>Thu, 24 Jun 2021 21:29:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/upgrade-centos-kernel-version/</guid>
+      <description>内核 一个 Linux 操作系统，或者叫做 Linux 发行版，比如常见的：CentOS、Debian、Unbuntu 等等，都是由如下五部分构成的，如下图所示，Linux发行版在外层封装了了大量的库、包和工具供用户使用，而底层硬件设备控制相关的能力则仍是由内核提供： 为什么要升级版本 内核也是一个软件， 软件在不断的迭代的过程中会开发很多新的特性，当我们不论是主动还是被动的对内核的新特性有需求而当前版本不支持时，我们就需要升级版</description>
+    </item>
+    
     <item>
       <title>Fluent Bit介绍</title>
       <link>https://huweicai.com/fluent-bit/</link>

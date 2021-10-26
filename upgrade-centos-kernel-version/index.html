@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="内核 一个 Linux 操作系统，或者叫做 Linux 发行版，比如常见的：CentOS、Debian、Unbuntu 等等，都是由如下五部分构成的，如下图所示，Linux发行版在外层封装了了大量的库、包和工具供用户使用，而底层硬件设备控制相关的能力则仍是由内核提供： 为什么要升级版本 内核也是一个软件， 软件在不断的迭代的过程中会开发很多新的特性，当我们不论是主动还是被动的对内核的新特性有需求而当前版本不支持时，我们就需要升级版">
+
+  <meta property="og:title" content="CentOS Linux内核升级指南" />
+<meta property="og:description" content="内核 一个 Linux 操作系统，或者叫做 Linux 发行版，比如常见的：CentOS、Debian、Unbuntu 等等，都是由如下五部分构成的，如下图所示，Linux发行版在外层封装了了大量的库、包和工具供用户使用，而底层硬件设备控制相关的能力则仍是由内核提供： 为什么要升级版本 内核也是一个软件， 软件在不断的迭代的过程中会开发很多新的特性，当我们不论是主动还是被动的对内核的新特性有需求而当前版本不支持时，我们就需要升级版" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/upgrade-centos-kernel-version/" />
+<meta property="article:published_time" content="2021-06-24T21:29:00+08:00" />
+<meta property="article:modified_time" content="2021-06-24T21:29:00+08:00" />
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       CentOS Linux内核升级指南 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/upgrade-centos-kernel-version/">
+
+  
+  
+
+  
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/katex.min.js">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">CentOS Linux内核升级指南</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>2021-06-24</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>3 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="内核">内核</h1>
+<p>一个 Linux 操作系统，或者叫做 Linux 发行版，比如常见的：<code>CentOS</code>、<code>Debian</code>、<code>Unbuntu</code> 等等，都是由如下五部分构成的，如下图所示，Linux发行版在外层封装了了大量的库、包和工具供用户使用，而底层硬件设备控制相关的能力则仍是由内核提供：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210625150645.png" alt="image-20210625150638408"></p>
+<h1 id="为什么要升级版本">为什么要升级版本</h1>
+<p>内核也是一个软件， 软件在不断的迭代的过程中会开发很多新的特性，当我们不论是主动还是被动的对内核的新特性有需求而当前版本不支持时，我们就需要升级版本，来满足我们的需求了。</p>
+<p>我们可以通过 <code>uname -msr</code>命令，来确认当前系统的内核版本。</p>
+<p>内核版本的 change log 可以在这个网站很方便的查看：<a href="https://kernelnewbies.org/LinuxChanges">https://kernelnewbies.org/LinuxChanges</a>。</p>
+<p>一些重大的milestone 版本：</p>
+<ul>
+<li><code>2.4.19</code>namespace 概念引入</li>
+<li><code>2.6.19</code>CUBIC 被拥立为默认TCP拥塞控制算法</li>
+<li><code>2.6.23</code>CFS完全公平调度器支持</li>
+<li><code>3.18</code>eBPF 支持，OverlayFS 合入（4.4才基本完善）</li>
+<li><code>4.5</code>cgroups v2 支持</li>
+<li><code>4.9</code>BBR TCP拥塞控制算法支持</li>
+<li><code>5.6</code>时钟namespace隔离支持</li>
+<li><code>5.7</code>exFAT文件系统支持</li>
+</ul>
+<p><code>Linux内核版本时间线：</code></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210625154211.png" alt="img"></p>
+<h1 id="开始升级">开始升级</h1>
+<p><strong>注：</strong></p>
+<ol>
+<li>在开始升级之前最好先对系统或者对重要数据做一个备份，避免可能的风险。</li>
+<li>全程需要系统 root 权限，下文命令均省略 sudo 前缀</li>
+<li>不同发行版具体命令会不一样，下文基于 CentOS 进行操作</li>
+</ol>
+<h2 id="升级依赖">升级依赖</h2>
+<p>在开始升级内核之前，我们最好先把依赖都更新到最新版本，避免到时候出现软件版本过低不兼容新版内核的情况：</p>
+<pre><code>yum -y update
+</code></pre><h2 id="安装elrepo">安装ELRepo</h2>
+<p>ELRepo全称是 Enterprise Linux Repo，是一个包含大量底层驱动的RPM仓库，我们所依赖的内核包也在这个仓库中。</p>
+<p>我们可以参考<a href="https://elrepo.org/tiki/tiki-index.php">官网的教程</a>来安装这个包，每一个 rpm 包都会附上一个 GPG 签名，默认配置下，CentOS 包管理工具会校验每个 rpm 包的签名，来避免包在分发途中被篡改，所以我们需要导入 ELRepo 的 GPG 公钥，来让 CentOS信任这个包：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+</code></pre></div><p>然后，我们就可以通过yum的方式将ELRepo的源配置到我们的系统中了，这步操作会下载一个repo文件到我们的 yum 源目录中：<code>/etc/yum.repos.d/elrepo.repo</code>：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">yum install https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm
+</code></pre></div><p>配置好了之后，直接下载官方的源可能会比较慢，我们可以配置使用国内的镜像进行加速，可以选择清华或者中科大等镜像，这里中科大镜像为例：</p>
+<ol>
+<li>注释掉原生的镜像列表</li>
+<li>并将 <code>elrepo.org/linux</code> 地址替换为中科大镜像对应的地址 <code>mirrors.ustc.edu.cn/elrepo</code> （如果是想要使用清华镜像就替换为：<code>mirrors.tuna.tsinghua.edu.cn/elrepo</code>）</li>
+</ol>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">sed -i <span class="s1">&#39;s/mirrorlist=/#mirrorlist=/&#39;</span> /etc/yum.repos.d/elrepo.repo
+sed -i <span class="s1">&#39;s/elrepo.org\/linux/mirrors.ustc.edu.cn\/elrepo/&#39;</span> /etc/yum.repos.d/elrepo.repo
+</code></pre></div><ol start="3">
+<li>然后更新一下软件包缓存：</li>
+</ol>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">yum makecache
+</code></pre></div><h2 id="安装新内核">安装新内核</h2>
+<p>配置好了yum源之后我们就可以直接通过 yum 命令来一键安装新内核了，我们可以先通过<code>yum list</code>查看所有可选的版本：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 只看elrepo-kernel中的包，减少干扰</span>
+yum list available --disablerepo<span class="o">=</span><span class="s1">&#39;*&#39;</span> --enablerepo<span class="o">=</span>elrepo-kernel
+</code></pre></div><p>会列出最新可用的内核包，我们可以看到如下两种版本：</p>
+<ul>
+<li><code>lt </code>long term，长期支持版本，更稳定</li>
+<li><code>ml</code> main line，主线版本，特性 更新</li>
+</ul>
+<p>可以按照自己的需求选择，选好之后直接安装即可：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">yum --enablerepo<span class="o">=</span>elrepo-kernel install kernel-lt
+</code></pre></div><h2 id="修改引导顺序">修改引导顺序</h2>
+<p>Linux 系统启动时会由 <code>grub</code> 引导，来决定具体要启动哪一个操作系统，即哪一个内核。当我们安装完新内核之后，还需要修改 <code>grub</code>的默认引导项配置，让其下次启动新版本的内核。</p>
+<p>参考 centos 的<a href="https://wiki.centos.org/zh/HowTos/Grub2">官方grub教程</a>，我们可以先查看一下当前 grub 默认的启动项，这里可以是内核名称的全称也可以是其在 grub 配置中的序号：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">grub2-editenv list
+</code></pre></div><p>同时我们再看一下所有的启动项：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">awk -F<span class="se">\&#39;</span> <span class="s1">&#39;$1==&#34;menuentry &#34; {print i++ &#34; : &#34; $2}&#39;</span> /etc/grub2.cfg
+</code></pre></div><p>理论上来说这个默认启动项仍然是你当前使用的内核版本，我们需要设置成刚刚安装的新版内核：</p>
+<pre><code># 0 为上面 awk 命令输出的新版本内核的序号
+grub2-editenv 0
+# 设置完成之后可以再确认一下
+grub2-editenv list
+</code></pre><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211026202133.png" alt="image-20211026202133584"></p>
+<h2 id="重启">重启</h2>
+<p>修改完启动项之后，我们只需要重启机器，就可以用上新版本的内核了：</p>
+<pre><code>reboot
+</code></pre><h1 id="参考文档">参考文档</h1>
+<ol>
+<li><a href="https://web.archive.org/web/20181003201630/http://swift.siphos.be/linux_sea/whatislinux.html">https://web.archive.org/web/20181003201630/http://swift.siphos.be/linux_sea/whatislinux.html</a></li>
+<li><a href="https://kernelnewbies.org/LinuxVersions">https://kernelnewbies.org/LinuxVersions</a></li>
+<li><a href="https://phoenixnap.com/kb/how-to-upgrade-kernel-centos">https://phoenixnap.com/kb/how-to-upgrade-kernel-centos</a></li>
+<li><a href="https://wiki.centos.org/zh/HowTos/Grub2">https://wiki.centos.org/zh/HowTos/Grub2</a></li>
+</ol>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/fluent-bit/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Fluent Bit介绍</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%86%85%e6%a0%b8">
+												 内核
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e5%8d%87%e7%ba%a7%e7%89%88%e6%9c%ac">
+												 为什么要升级版本
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%bc%80%e5%a7%8b%e5%8d%87%e7%ba%a7">
+												 开始升级
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8d%87%e7%ba%a7%e4%be%9d%e8%b5%96">
+												 升级依赖
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%89%e8%a3%85elrepo">
+												 安装ELRepo
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%89%e8%a3%85%e6%96%b0%e5%86%85%e6%a0%b8">
+												 安装新内核
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bf%ae%e6%94%b9%e5%bc%95%e5%af%bc%e9%a1%ba%e5%ba%8f">
+												 修改引导顺序
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%87%8d%e5%90%af">
+												 重启
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%82%e8%80%83%e6%96%87%e6%a1%a3">
+												 参考文档
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
