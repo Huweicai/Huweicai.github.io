@@ -44,6 +44,15 @@
     </item>
     
     <item>
+      <title>镜像仓库Harbor实现原理</title>
+      <link>https://huweicai.com/harbor-principle/</link>
+      <pubDate>Tue, 17 Mar 2020 01:20:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/harbor-principle/</guid>
+      <description>Harbor Pull 实现原理 Pull 链路</description>
+    </item>
+    
+    <item>
       <title>小论计算机Encoding</title>
       <link>https://huweicai.com/computer-encodings/</link>
       <pubDate>Sat, 26 May 2018 12:47:11 +0800</pubDate>

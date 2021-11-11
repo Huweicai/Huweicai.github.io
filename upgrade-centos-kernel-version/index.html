@@ -363,7 +363,7 @@ yum list available --disablerepo<span class="o">=</span><span class="s1">&#39;*&
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">awk -F<span class="se">\&#39;</span> <span class="s1">&#39;$1==&#34;menuentry &#34; {print i++ &#34; : &#34; $2}&#39;</span> /etc/grub2.cfg
 </code></pre></div><p>理论上来说这个默认启动项仍然是你当前使用的内核版本，我们需要设置成刚刚安装的新版内核：</p>
 <pre><code># 0 为上面 awk 命令输出的新版本内核的序号
-grub2-editenv 0
+grub2-set-default 0
 # 设置完成之后可以再确认一下
 grub2-editenv list
 </code></pre><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211026202133.png" alt="image-20211026202133584"></p>
