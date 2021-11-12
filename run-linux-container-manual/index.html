@@ -288,7 +288,7 @@
 
     
       <li class="middot"></li>
-      <li>11 minutes read</li>
+      <li>12 minutes read</li>
     
   </ul>
   
@@ -313,24 +313,24 @@
 <li><code>Docker V2 Schema 2</code>目前新版本 Docker 使用中</li>
 <li><code>OCI</code>开放镜像组织基于 <code>Docker V2 Schema 2</code>发布的业内统一镜像标准格式</li>
 </ul>
-<p>这里以最常见的 <code>Docker V2 Schema 2</code>镜像格式为例，一个镜像会存在一个 <code>manifest.json</code>镜像描述文件用于描述诸如文件层数、容器入口命令、版本等信息。</p>
+<p>这里以最常见的 <code>Docker V2 Schema 2</code>镜像格式为例，一个镜像会存在一个 <code>manifest.json</code>镜像描述文件用于描述诸如文件层数、容器入口命令、版本等信息，想要了解详细细节可以参考官方定义：https://docs.docker.com/registry/spec/manifest-v2-2/。</p>
 <p>我们可以直接拼出<code>alpine:3.11</code>镜像对应的描述文件地址，值得注意的是这里需要通过 Header 声明对新版镜像格式的支持，不然出于兼容考虑镜像服务默认只会下发 <code>v1</code>版本的描述文件，另外这里使用了网易的镜像，因为直接去 <code>Docker Hub</code> 拉需要先获取 <code>JWT Token</code>，稍稍麻烦一点：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ curl -H <span class="s2">&#34;Accept: application/vnd.docker.distribution.manifest.v2+json&#34;</span> https://hub-mirror.c.163.com/v2/library/alpine/manifests/3.11
 
 ​<span class="sb">```</span>
 <span class="o">{</span>
-   <span class="s2">&#34;schemaVersion&#34;</span>: 2,
-   <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>,
-   <span class="s2">&#34;config&#34;</span>: <span class="o">{</span>
+   <span class="s2">&#34;schemaVersion&#34;</span>: 2, // manifest格式的版本，2.2版本固定为2
+   <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>, // MIME格式，2.2版本的manifest对应的值也是固定的
+   <span class="s2">&#34;config&#34;</span>: <span class="o">{</span> // 描述了镜像配置文件
       <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.container.image.v1+json&#34;</span>,
       <span class="s2">&#34;size&#34;</span>: 1470,
-      <span class="s2">&#34;digest&#34;</span>: <span class="s2">&#34;sha256:44dc5a8658dc159bb1c78f9285feead8e0d375d13300f10e647152abf5f3c329&#34;</span>
+      <span class="s2">&#34;digest&#34;</span>: <span class="s2">&#34;sha256:44dc5a8658dc159bb1c78f9285feead8e0d375d13300f10e647152abf5f3c329&#34;</span> // 镜像配置文件的摘要，同时也是地址
    <span class="o">}</span>,
    <span class="s2">&#34;layers&#34;</span>: <span class="o">[</span>
       <span class="o">{</span>
-         <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span>,
-         <span class="s2">&#34;size&#34;</span>: 2815346,
-         <span class="s2">&#34;digest&#34;</span>: <span class="s2">&#34;sha256:9b794450f7b6db7c944ba1f4161edb68cb535052fe7db8ac06e613516c4a658d&#34;</span>
+         <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span>, // 也基本是固定的
+         <span class="s2">&#34;size&#34;</span>: 2815346,   // 该层的大小，单位字节
+         <span class="s2">&#34;digest&#34;</span>: <span class="s2">&#34;sha256:9b794450f7b6db7c944ba1f4161edb68cb535052fe7db8ac06e613516c4a658d&#34;</span> // 该层文件系统的摘要，同时也是地址
       <span class="o">}</span>
    <span class="o">]</span>
 <span class="o">}</span>
