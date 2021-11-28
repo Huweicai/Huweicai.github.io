@@ -35,15 +35,6 @@
     </item>
     
     <item>
-      <title>镜像仓库Harbor实现原理</title>
-      <link>https://huweicai.com/harbor-principle/</link>
-      <pubDate>Tue, 17 Mar 2020 01:20:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/harbor-principle/</guid>
-      <description>Harbor Pull 实现原理 Pull 链路</description>
-    </item>
-    
-    <item>
       <title>Go语言sync包实现原理分析</title>
       <link>https://huweicai.com/go-package-sync/</link>
       <pubDate>Fri, 10 Jan 2020 00:30:00 +0800</pubDate>

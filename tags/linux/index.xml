@@ -52,14 +52,5 @@
       <description>现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。 我们经常能在教科书上看到对于进程和线程的定义： 进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。 这句话没错，但是只是从职责上给出的定义，而不是基于底层实现出发的。 广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充</description>
     </item>
     
-    <item>
-      <title>镜像仓库Harbor实现原理</title>
-      <link>https://huweicai.com/harbor-principle/</link>
-      <pubDate>Tue, 17 Mar 2020 01:20:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/harbor-principle/</guid>
-      <description>Harbor Pull 实现原理 Pull 链路</description>
-    </item>
-    
   </channel>
 </rss>
