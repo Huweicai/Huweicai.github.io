@@ -4,20 +4,62 @@
   
   <url>
     <loc>https://huweicai.com/</loc>
-    <lastmod>2021-06-24T21:29:00+08:00</lastmod>
+    <lastmod>2021-12-04T01:19:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://huweicai.com/upgrade-centos-kernel-version/</loc>
-    <lastmod>2021-06-24T21:29:00+08:00</lastmod>
+    <loc>https://huweicai.com/tags/cloudnative/</loc>
+    <lastmod>2021-12-04T01:19:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/docker/</loc>
+    <lastmod>2021-12-04T01:19:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/harbor/</loc>
+    <lastmod>2021-12-04T01:19:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://huweicai.com/tags/</loc>
+    <lastmod>2021-12-04T01:19:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</loc>
+    <lastmod>2021-12-04T01:19:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E9%95%9C%E5%83%8F/</loc>
+    <lastmod>2021-12-04T01:19:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/harbor-pull-principle/</loc>
+    <lastmod>2021-12-04T01:19:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/upgrade-centos-kernel-version/</loc>
     <lastmod>2021-06-24T21:29:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -38,22 +80,8 @@
   </url>
   
   <url>
-    <loc>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</loc>
-    <lastmod>2021-05-05T13:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://huweicai.com/tags/%E6%97%A5%E5%BF%97/</loc>
     <lastmod>2021-05-05T13:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/docker/</loc>
-    <lastmod>2021-04-14T16:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>

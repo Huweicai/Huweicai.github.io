@@ -14,7 +14,7 @@
 <meta property="og:description" content="[好奇心探索世界 善意假设 做最酷的事情]" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://huweicai.com/" />
-<meta property="og:updated_time" content="2021-06-24T21:29:00+08:00" />
+<meta property="og:updated_time" content="2021-12-04T01:19:00+08:00" />
 
    
 
@@ -403,6 +403,8 @@
 
   
 
+  
+
 
 
 
@@ -435,13 +437,19 @@
             <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button"><span>操作系统 (5)</span></a></li>
           
         
+            <li><a href="https://huweicai.com/tags/cloudnative" role="button"><span>cloudnative (4)</span></a></li>
+          
+        
+            <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button"><span>容器 (4)</span></a></li>
+          
+        
             <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button"><span>存储 (3)</span></a></li>
           
         
-            <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button"><span>容器 (3)</span></a></li>
+            <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (3)</span></a></li>
           
         
-            <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (3)</span></a></li>
+            <li><a href="https://huweicai.com/tags/docker" role="button"><span>docker (2)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/ip" role="button"><span>ip (2)</span></a></li>
@@ -459,13 +467,13 @@
             <li><a href="https://huweicai.com/tags/cpu" role="button"><span>cpu (1)</span></a></li>
           
         
-            <li><a href="https://huweicai.com/tags/docker" role="button"><span>docker (1)</span></a></li>
-          
-        
             <li><a href="https://huweicai.com/tags/ethernet" role="button"><span>ethernet (1)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/git" role="button"><span>git (1)</span></a></li>
+          
+        
+            <li><a href="https://huweicai.com/tags/harbor" role="button"><span>harbor (1)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/http" role="button"><span>http (1)</span></a></li>
@@ -514,6 +522,9 @@
           
         
             <li><a href="https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6" role="button"><span>硬件 (1)</span></a></li>
+          
+        
+            <li><a href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F" role="button"><span>镜像 (1)</span></a></li>
           
         
             <li><a href="https://huweicai.com/tags/%E9%9F%B3%E8%A7%86%E9%A2%91" role="button"><span>音视频 (1)</span></a></li>
@@ -650,6 +661,68 @@
           
           <div class="post-wrapper white-bg post-card">
   
+  <a href="https://huweicai.com/harbor-pull-principle/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">镜像仓库Harbor Pull实现原理</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2021-12-04</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>10 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      Harbor简介 Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。 Harbor 的系统架构如下图所示，箭头所指方向为数据流向： 一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。 在开始之前 我......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F" role="button">镜像 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/docker" role="button">docker </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/harbor" role="button">harbor </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
   <a href="https://huweicai.com/upgrade-centos-kernel-version/">
     <div class="post-header text-center">
       <div class="px-4 post-heading">CentOS Linux内核升级指南</div>
@@ -740,6 +813,9 @@
       
     
       <li><a href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97" role="button">日志 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
       
     
   </div>
@@ -860,6 +936,9 @@
       <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button">权限管理 </a></li>
       
     
+      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
+      
+    
   </div>
 </div>
       
@@ -911,6 +990,9 @@
       
     
       <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button">命令行 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
       
     
   </div>
@@ -973,59 +1055,6 @@
       
     
       <li><a href="https://huweicai.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" role="button">编程语言 </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/how-vpn-works/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">VPN是如何工作的</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2020-12-22</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>4 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      VPN 想象一下这两种场景： 你下班家，公司线上一台机器出事故了，这个时候你需要远程到这台机器上来排查并处理问题。 你在其他城市实习，这个时候学校需要选下学期的课了，但是教务网站只对校园网开放。 在这两种场景中，都离不开一种关键的技术：VPN（Virtual Private Network：虚拟局域网）。 VPN提供了一种在公网上安全的加入局域网的方式，可以我们这里就以开源的 OpenConnect VPN 为例，探讨一下 VPN 这种技术是如何安全的将局域网在互......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/ip" role="button">IP </a></li>
       
     
   </div>

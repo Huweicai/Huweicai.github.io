@@ -6,7 +6,52 @@
     <description>Recent content in Tags on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Thu, 24 Jun 2021 21:29:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 04 Dec 2021 01:19:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>cloudnative</title>
+      <link>https://huweicai.com/tags/cloudnative/</link>
+      <pubDate>Sat, 04 Dec 2021 01:19:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/tags/cloudnative/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>https://huweicai.com/tags/docker/</link>
+      <pubDate>Sat, 04 Dec 2021 01:19:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/tags/docker/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>harbor</title>
+      <link>https://huweicai.com/tags/harbor/</link>
+      <pubDate>Sat, 04 Dec 2021 01:19:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/tags/harbor/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>容器</title>
+      <link>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</link>
+      <pubDate>Sat, 04 Dec 2021 01:19:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>镜像</title>
+      <link>https://huweicai.com/tags/%E9%95%9C%E5%83%8F/</link>
+      <pubDate>Sat, 04 Dec 2021 01:19:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/tags/%E9%95%9C%E5%83%8F/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>操作系统</title>
       <link>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</link>
@@ -17,29 +62,11 @@
     </item>
     
     <item>
-      <title>容器</title>
-      <link>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</link>
-      <pubDate>Wed, 05 May 2021 13:58:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>日志</title>
       <link>https://huweicai.com/tags/%E6%97%A5%E5%BF%97/</link>
       <pubDate>Wed, 05 May 2021 13:58:00 +0800</pubDate>
       
       <guid>https://huweicai.com/tags/%E6%97%A5%E5%BF%97/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Docker</title>
-      <link>https://huweicai.com/tags/docker/</link>
-      <pubDate>Wed, 14 Apr 2021 16:20:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/tags/docker/</guid>
       <description></description>
     </item>
     

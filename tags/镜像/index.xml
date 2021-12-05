@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>镜像 on Anonymous&#39; Blog</title>
+    <link>https://huweicai.com/tags/%E9%95%9C%E5%83%8F/</link>
+    <description>Recent content in 镜像 on Anonymous&#39; Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Sat, 04 Dec 2021 01:19:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>镜像仓库Harbor Pull实现原理</title>
+      <link>https://huweicai.com/harbor-pull-principle/</link>
+      <pubDate>Sat, 04 Dec 2021 01:19:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/harbor-pull-principle/</guid>
+      <description>Harbor简介 Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。 Harbor 的系统架构如下图所示，箭头所指方向为数据流向： 一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。 在开始之前 我</description>
+    </item>
+    
+  </channel>
+</rss>

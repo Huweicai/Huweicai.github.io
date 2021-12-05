@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="Harbor简介 Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。 Harbor 的系统架构如下图所示，箭头所指方向为数据流向： 一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。 在开始之前 我">
+
+  <meta property="og:title" content="镜像仓库Harbor Pull实现原理" />
+<meta property="og:description" content="Harbor简介 Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。 Harbor 的系统架构如下图所示，箭头所指方向为数据流向： 一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。 在开始之前 我" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/harbor-pull-principle/" />
+<meta property="article:published_time" content="2021-12-04T01:19:00+08:00" />
+<meta property="article:modified_time" content="2021-12-04T01:19:00+08:00" />
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       镜像仓库Harbor Pull实现原理 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/harbor-pull-principle/">
+
+  
+  
+
+  
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">镜像仓库Harbor Pull实现原理</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>2021-12-04</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>10 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="harbor简介">Harbor简介</h1>
+<p><a href="https://github.com/goharbor/harbor">Harbor</a> 是 <a href="https://www.vmware.com/">VMWare</a> 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 <a href="https://www.docker.com/">docker</a> 开源的 <a href="https://github.com/distribution/distribution">registry</a> (后更名为 <code>distribution</code>)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。</p>
+<p>Harbor 的系统架构如下图所示，箭头所指方向为数据流向：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211119181205.png" alt="image-20211119181205666"></p>
+<p>一个镜像仓库最核心的功能就是<code>推送</code>和<code>拉取</code>，本文主要讨论 <code>Harbor</code> 镜像拉取具体的实现细节。</p>
+<h1 id="在开始之前">在开始之前</h1>
+<p>我们先申明一些基本信息，避免版本更迭引入的改动给大家带来困扰：</p>
+<ul>
+<li>
+<p>分析基于<code>Harbor</code>版本：<code>v2.1.5</code>，源代码地址：https://github.com/goharbor/harbor/tree/v2.1.5</p>
+</li>
+<li>
+<p>分析基于<code>registry</code>版本：<code>v2.7.1</code>，源代码地址：https://github.com/distribution/distribution/tree/v2.7.1，<code>registry</code>的后端存储使用对象存储（AWS-S3接口）</p>
+</li>
+<li>
+<p>基于一个具体的镜像分析会更加直观，因此本文会基于<a href="https://hub.docker.com/layers/nginx/library/nginx/1.20.2-alpine/images/sha256-c3ffe58e1eb09a16b3952c2bbe92363c50084f55a0da5c2ad38d6ae798c64599?context=explore">nginx:1.20.2-alpine</a>镜像，复制到 harbor 仓库地址：<code>harbor.huweicai.com/test/nginx:1.20.2-alpine</code> 进行拉取分析</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">docker pull nginx:1.20.2-alpine
+docker tag nginx:1.20.2-alpine harbor.huweicai.com/test/nginx:1.20.2-alpine
+docker push harbor.huweicai.com/test/nginx:1.20.2-alpine
+</code></pre></div></li>
+</ul>
+<h1 id="harbor-pull-实现原理">Harbor Pull 实现原理</h1>
+<p>我们可以先尝试<code>pull</code> <code>harbor.huweicai.com/test/nginx:1.20.2-alpine</code>这个镜像，从外部观察一下 <code>pull</code>的行为，我们可以在终端看到一段这样的输出，直观的看起来就是，这个镜像的被存储在多个对象中，可以并行拉取：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211125164032.png" alt="image-20211125164032898"></p>
+<p>为了进一步的了解其中发生了什么，我们可以给<code>docker daemon</code>进程（不是 docker cli 命令行工具，真正执行镜像拉取动作的是 daemon 进程所以给 cli 设置代理没有用）设置代理到 <code>Charles</code> 或者 <code>Fiddler</code>等七层抓包工具来分析，可以看到<code>docker</code>向<code>harbor</code>共发送了如下请求：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211125174102.png" alt="image-20211125174102116"></p>
+<p>harbor 这边对于请求的处理的链路大概是这样的：流量从 nginx 代理进来匹配规则后转发到 <code>core</code>服务（还有一部分前端页面流量会被转发到<code>portal</code>服务），然后<code>core</code>会从 <code>redis</code> 和 <code>pg</code> 中查询它所想要的数据，同时有可能会将流量再进一步转发给 <code>registry</code>，<code>registry</code>则会再继续调用<code>s3</code>和<code>redis</code>完成整个请求的处理逻辑。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211206011128.png" alt="image-20211206011128705"></p>
+<p>这些请求可以被大致被归类一下，整理成下面四个接口：</p>
+<ul>
+<li><code>/v2/</code></li>
+<li><code>/service/token</code></li>
+<li><code>/v2/*/manifests/*</code></li>
+<li><code>/v2/*/blobs/*</code></li>
+</ul>
+<p>下面我们就顺着这些接口，探究一下每一个接口背后<code>harbor</code>都是怎么实现的。</p>
+<h2 id="v2接口">/v2/接口</h2>
+<p><code>/v2/</code>接口<code>harbor</code>并不会做任何的处理，会直接透传给<code>registry</code>，而<code>registry</code>这一侧也没有什么特殊的逻辑，铁定会返回 <code>401</code> ，这里稍微展开一下讲一下整体的认证流程：</p>
+<p>其实整个 <code>harbor</code> 系统里面是分为两层认证的，首先 <code>harbor</code> 自己有一套账号系统，存在数据库中，然后 <code>registry</code>是一套独立的组件，也有一套自己的认证，不过用户只会感知到第一层<code>harbor</code>的账号，然后<code>habor</code>初始化的时候会和<code>registry</code>一起配置一个固定密码的用户进行它到<code>registry</code>的认证。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211125195538.png" alt="image-20211125195538356"></p>
+<p>所以当用户的请求透传到 registry，registry 肯定是不认 harbor 的凭证的，这个接口最大的意义在于和<strong>客户端协商API版本</strong>，当前版本的 registry 这里会返回一个 <strong>HTTP Header:</strong> <code>Docker-Distribution-Api-Version: registry/2.0</code>告知客户端使用的是 <code>v2</code>版本的接口，而<code>v1</code>版本该接口会直接<code>404</code>，客户端就将降级调用老版本的接口来进行之后的流程。</p>
+<h2 id="servicetoken接口">/service/token接口</h2>
+<p><code>401</code>之后，紧接着<code>docker</code>客户端就会向镜像中心发起登录请求，根据约定，客户端传入自己的账号和密码调用<code>/service/token</code>接口，这个接口对应的代码实现在这个包内：<a href="https://github.com/goharbor/harbor/blob/v2.1.5/src/core/service/token">score/service/token</a>。</p>
+<p>这个接口的逻辑也非常简单主要是做<code>authentication</code> 的事情，即鉴别用户的身份，然后返回一个<code>JWT</code>Token 做为凭证进行接下来的 <code>pull</code>操作。</p>
+<p>你在 docker login 时传入的账号和密码，会通过 BasicAuth 的方式传递给 harbor，harbor会根据预先配置好的鉴权方式，如：LDAP、数据库、OIDC等，对账号密码进行比对，通过之后就会将用户名签在<code>JWT</code>Token中返回，整体请求截图如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211130002448.png" alt="image-20211130002448712"></p>
+<p>解析出来的Token有效载荷如下，其中 <code>sub</code> 字段就是账号：</p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+        <span class="nt">&#34;iss&#34;</span><span class="p">:</span> <span class="s2">&#34;harbor-token-issuer&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;sub&#34;</span><span class="p">:</span> <span class="s2">&#34;huweicai002&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;aud&#34;</span><span class="p">:</span> <span class="s2">&#34;harbor-registry&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;exp&#34;</span><span class="p">:</span> <span class="mi">1638201912</span><span class="p">,</span>
+        <span class="nt">&#34;nbf&#34;</span><span class="p">:</span> <span class="mi">1638200112</span><span class="p">,</span>
+        <span class="nt">&#34;iat&#34;</span><span class="p">:</span> <span class="mi">1638200112</span><span class="p">,</span>
+        <span class="nt">&#34;jti&#34;</span><span class="p">:</span> <span class="s2">&#34;nAP6k77dhMa25at7&#34;</span><span class="p">,</span>
+        <span class="nt">&#34;access&#34;</span><span class="p">:</span> <span class="kc">null</span>
+    <span class="p">}</span>
+</code></pre></div><p>有一种特殊的场景，当没传账号密码时<code>harbor</code>也会给它签发一个 Token 的，当一个项目的权限配置成公开时，其镜像这种 <code>anonymous</code> 的用户也是能 pull 的。</p>
+<p>做完<code>authentication</code>之后，这个接口的逻辑就到此结束了，而<code>authorization</code>的操作则会发生在之后的每一次请求当中，harbor 里面有一个 middleware：<a href="https://github.com/goharbor/harbor/blob/v2.1.5/src/server/middleware/v2auth/auth.go">/src/server/middleware/v2auth.auth.go</a>，会根据 JWT Token 中的用户，以及要访问的项目，进行 rbac 权限校验，如果权限校验失败，就不会有下面的流程了。</p>
+<p>因为鉴权的操作每次请求都是独立进行的，所以有时候我们会看到一个让人困惑的情况，比如下图中的例子，我们尝试推送一个镜像一开始提示层已存在，看起来流程是成功开始走了，却紧接着又接着来了一个提示无权限。这是因为每个对象push之前都会调用一个 <code>HEAD</code>判断对象是否存在，避免重复推送，所以一开始的读请求有权限，而之后真正尝试写入对象文件的时候就报错了。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211130010810.png" alt="image-20211130010810449"></p>
+<h2 id="v2manifests接口">/v2/*/manifests/*接口</h2>
+<h3 id="manifest">manifest</h3>
+<p>完成认证之后，拉取镜像的下一步就是拉取镜像的描述文件了，专有名词叫做：<code>manifest</code>，<a href="https://docs.docker.com/registry/spec/manifest-v2-2/">manifest</a> 主要包含了镜像的元信息配置和文件层对象的摘要，现在基本都是<code>v2</code>版本格式，相对<code>v1</code>来说更通用，还可以塞入一些拓展的信息。</p>
+<p>以我们分析的镜像为例，它的 manifest 文件内容如下，完整的 manifest 格式定义：<a href="https://docs.docker.com/registry/spec/manifest-v2-2/">manifest-v2-2</a></p>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+	<span class="nt">&#34;schemaVersion&#34;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+	  <span class="err">//</span> <span class="err">manifest</span> <span class="err">格式</span>
+	<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span><span class="p">,</span>
+	<span class="nt">&#34;config&#34;</span><span class="p">:</span> <span class="p">{</span>
+  	  <span class="err">//</span> <span class="err">镜像配置文件格式</span>
+		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.container.image.v1+json&#34;</span><span class="p">,</span>
+			<span class="err">//</span> <span class="err">镜像配置文件大小，单位字节</span>
+    <span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">8881</span><span class="p">,</span>
+    	<span class="err">//</span> <span class="err">镜像配置文件摘要</span>
+		<span class="nt">&#34;digest&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:7d899ed163ee9e7979519c4c00be7e38a2cd4b8b8936524f1a8e29c1cd3a0c7a&#34;</span> 
+	<span class="p">},</span>
+  	<span class="err">//</span> <span class="err">镜像对应的所有压缩包文件地址</span>
+	<span class="nt">&#34;layers&#34;</span><span class="p">:</span> <span class="p">[{</span>
+      	<span class="err">//</span> <span class="err">申明了该文件的格式：tar</span> <span class="err">+</span> <span class="err">gzip</span>
+		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span><span class="p">,</span> 
+    	<span class="err">//</span> <span class="err">该层的大小，单位字节</span>
+		<span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">2830948</span><span class="p">,</span> 
+		<span class="nt">&#34;digest&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:5420e0d28c84ecb16748cb90cc6acf8e2a81dab10cb1f674f3eee8533e53c62a&#34;</span>
+	<span class="p">},</span> <span class="p">{</span>
+		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">7702134</span><span class="p">,</span>
+		<span class="nt">&#34;digest&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:74b3565ce580d6e680e17fead073137d59b59694df894b9690f3f9b75dfe60d7&#34;</span>
+	<span class="p">},</span> <span class="p">{</span>
+		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">599</span><span class="p">,</span>
+		<span class="nt">&#34;digest&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:dd5b8f6431c1707d7ddc8fd895e7e5619d16e83967e03eaa4aa9c06abcbbc10f&#34;</span>
+	<span class="p">},</span> <span class="p">{</span>
+		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">894</span><span class="p">,</span>
+		<span class="nt">&#34;digest&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:bed80a240c44c78e884ae1d21f37232ef15c023250092c116ffa5076ec4fefe1&#34;</span>
+	<span class="p">},</span> <span class="p">{</span>
+		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">667</span><span class="p">,</span>
+		<span class="nt">&#34;digest&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:1852ff466a070dd053cd338926ac82d0def499381ced74e6ac671d284a8a394b&#34;</span>
+	<span class="p">},</span> <span class="p">{</span>
+		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span><span class="p">,</span>
+		<span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">1393</span><span class="p">,</span>
+		<span class="nt">&#34;digest&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:a2ca5eee54a63f8128554d3b810ce1aebba37db5c311e7093a18bf7bd93f5575&#34;</span>
+	<span class="p">}]</span>
+<span class="p">}</span>
+</code></pre></div><p>所有的文件对象真实地址都是按摘要来组织的，格式：<code>https://{{HOST}}/v2/{{REPOSITORY}}/blobs/{{DIGEST}}</code>，这样客户端就可以根据 manifest 中的内容拼接出真正的镜像文件层地址然后下载下来。</p>
+<p>元信息配置存储在另一个单独的文件中，可以理解为把整个<code>DokcerFile</code>结构化的存储了起来，上文<code>manifest</code>中引用的配置文件内容如下：</p>
+<details>
+<summary>点击展开详情</summary>
+<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;architecture&#34;</span><span class="p">:</span> <span class="s2">&#34;386&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;config&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;Hostname&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;Domainname&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;User&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;AttachStdin&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;AttachStdout&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;AttachStderr&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;ExposedPorts&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;80/tcp&#34;</span><span class="p">:</span> <span class="p">{}</span>
+    <span class="p">},</span>
+    <span class="nt">&#34;Tty&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;OpenStdin&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;StdinOnce&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;Env&#34;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s2">&#34;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;NGINX_VERSION=1.20.2&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;NJS_VERSION=0.7.0&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;PKG_RELEASE=1&#34;</span>
+    <span class="p">],</span>
+    <span class="nt">&#34;Cmd&#34;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s2">&#34;nginx&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;-g&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;daemon off;&#34;</span>
+    <span class="p">],</span>
+    <span class="nt">&#34;Image&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:a4509f43c92a27f6d2a8fe06339b2445babfc36d5a2f9df99189c5199e63d270&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;Volumes&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&#34;WorkingDir&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;Entrypoint&#34;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s2">&#34;/docker-entrypoint.sh&#34;</span>
+    <span class="p">],</span>
+    <span class="nt">&#34;OnBuild&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&#34;Labels&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;maintainer&#34;</span><span class="p">:</span> <span class="s2">&#34;NGINX Docker Maintainers \u003cdocker-maint@nginx.com\u003e&#34;</span>
+    <span class="p">},</span>
+    <span class="nt">&#34;StopSignal&#34;</span><span class="p">:</span> <span class="s2">&#34;SIGQUIT&#34;</span>
+  <span class="p">},</span>
+  <span class="nt">&#34;container&#34;</span><span class="p">:</span> <span class="s2">&#34;a7c29e632638b45adad89466df474fa144b4b374e7f08e1d10f207482aad659b&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;container_config&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;Hostname&#34;</span><span class="p">:</span> <span class="s2">&#34;a7c29e632638&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;Domainname&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;User&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;AttachStdin&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;AttachStdout&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;AttachStderr&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;ExposedPorts&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;80/tcp&#34;</span><span class="p">:</span> <span class="p">{}</span>
+    <span class="p">},</span>
+    <span class="nt">&#34;Tty&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;OpenStdin&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;StdinOnce&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&#34;Env&#34;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s2">&#34;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;NGINX_VERSION=1.20.2&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;NJS_VERSION=0.7.0&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;PKG_RELEASE=1&#34;</span>
+    <span class="p">],</span>
+    <span class="nt">&#34;Cmd&#34;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s2">&#34;/bin/sh&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;-c&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;#(nop) &#34;</span><span class="p">,</span>
+      <span class="s2">&#34;CMD [\&#34;nginx\&#34; \&#34;-g\&#34; \&#34;daemon off;\&#34;]&#34;</span>
+    <span class="p">],</span>
+    <span class="nt">&#34;Image&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:a4509f43c92a27f6d2a8fe06339b2445babfc36d5a2f9df99189c5199e63d270&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;Volumes&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&#34;WorkingDir&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;Entrypoint&#34;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s2">&#34;/docker-entrypoint.sh&#34;</span>
+    <span class="p">],</span>
+    <span class="nt">&#34;OnBuild&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&#34;Labels&#34;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nt">&#34;maintainer&#34;</span><span class="p">:</span> <span class="s2">&#34;NGINX Docker Maintainers \u003cdocker-maint@nginx.com\u003e&#34;</span>
+    <span class="p">},</span>
+    <span class="nt">&#34;StopSignal&#34;</span><span class="p">:</span> <span class="s2">&#34;SIGQUIT&#34;</span>
+  <span class="p">},</span>
+  <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T18:03:33.536601336Z&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;docker_version&#34;</span><span class="p">:</span> <span class="s2">&#34;20.10.7&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;history&#34;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-12T16:38:42.672361231Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop) ADD file:403428c2903dd9dea10d069185873cb2c2c3149c553797807c69f22aa3d12fe3 in / &#34;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-12T16:38:42.978865393Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop)  CMD [\&#34;/bin/sh\&#34;]&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;empty_layer&#34;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-13T04:17:59.524317112Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop)  LABEL maintainer=NGINX Docker Maintainers \u003cdocker-maint@nginx.com\u003e&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;empty_layer&#34;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T17:59:29.135060866Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop)  ENV NGINX_VERSION=1.20.2&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;empty_layer&#34;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T17:59:29.338465998Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop)  ENV NJS_VERSION=0.7.0&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;empty_layer&#34;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T17:59:29.560393518Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop)  ENV PKG_RELEASE=1&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;empty_layer&#34;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T18:03:31.76653876Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c set -x     \u0026\u0026 addgroup -g 101 -S nginx     \u0026\u0026 adduser -S -D -H -u 101 -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx     \u0026\u0026 apkArch=\&#34;$(cat /etc/apk/arch)\&#34;     \u0026\u0026 nginxPackages=\&#34;         nginx=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-xslt=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-geoip=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-image-filter=${NGINX_VERSION}-r${PKG_RELEASE}         nginx-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${PKG_RELEASE}     \&#34;     \u0026\u0026 apk add --no-cache --virtual .checksum-deps         openssl     \u0026\u0026 case \&#34;$apkArch\&#34; in         x86_64|aarch64)             set -x             \u0026\u0026 KEY_SHA512=\&#34;e7fa8303923d9b95db37a77ad46c68fd4755ff935d0a534d26eba83de193c76166c68bfe7f65471bf8881004ef4aa6df3e34689c305662750c0172fca5d8552a *stdin\&#34;             \u0026\u0026 wget -O /tmp/nginx_signing.rsa.pub https://nginx.org/keys/nginx_signing.rsa.pub             \u0026\u0026 if [ \&#34;$(openssl rsa -pubin -in /tmp/nginx_signing.rsa.pub -text -noout | openssl sha512 -r)\&#34; = \&#34;$KEY_SHA512\&#34; ]; then                 echo \&#34;key verification succeeded!\&#34;;                 mv /tmp/nginx_signing.rsa.pub /etc/apk/keys/;             else                 echo \&#34;key verification failed!\&#34;;                 exit 1;             fi             \u0026\u0026 apk add -X \&#34;https://nginx.org/packages/alpine/v$(egrep -o &#39;^[0-9]+\\.[0-9]+&#39; /etc/alpine-release)/main\&#34; --no-cache $nginxPackages             ;;         *)             set -x             \u0026\u0026 tempDir=\&#34;$(mktemp -d)\&#34;             \u0026\u0026 chown nobody:nobody $tempDir             \u0026\u0026 apk add --no-cache --virtual .build-deps                 gcc                 libc-dev                 make                 openssl-dev                 pcre-dev                 zlib-dev                 linux-headers                 libxslt-dev                 gd-dev                 geoip-dev                 perl-dev                 libedit-dev                 bash                 alpine-sdk                 findutils             \u0026\u0026 su nobody -s /bin/sh -c \&#34;                 export HOME=${tempDir}                 \u0026\u0026 cd ${tempDir}                 \u0026\u0026 curl -f -O https://hg.nginx.org/pkg-oss/archive/${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 \u0026\u0026 PKGOSSCHECKSUM=\\\&#34;af6e7eb25594dffe2903358f7a2c5c956f5b67b8df3f4e8237c30b63e50ce28e6eada3ed453687409beef8f3afa8f551cb20df2f06bd5e235eb66df212ece2ed *${NGINX_VERSION}-${PKG_RELEASE}.tar.gz\\\&#34;                 \u0026\u0026 if [ \\\&#34;\\$(openssl sha512 -r ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz)\\\&#34; = \\\&#34;\\$PKGOSSCHECKSUM\\\&#34; ]; then                     echo \\\&#34;pkg-oss tarball checksum verification succeeded!\\\&#34;;                 else                     echo \\\&#34;pkg-oss tarball checksum verification failed!\\\&#34;;                     exit 1;                 fi                 \u0026\u0026 tar xzvf ${NGINX_VERSION}-${PKG_RELEASE}.tar.gz                 \u0026\u0026 cd pkg-oss-${NGINX_VERSION}-${PKG_RELEASE}                 \u0026\u0026 cd alpine                 \u0026\u0026 make all                 \u0026\u0026 apk index -o ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz ${tempDir}/packages/alpine/${apkArch}/*.apk                 \u0026\u0026 abuild-sign -k ${tempDir}/.abuild/abuild-key.rsa ${tempDir}/packages/alpine/${apkArch}/APKINDEX.tar.gz                 \&#34;             \u0026\u0026 cp ${tempDir}/.abuild/abuild-key.rsa.pub /etc/apk/keys/             \u0026\u0026 apk del .build-deps             \u0026\u0026 apk add -X ${tempDir}/packages/alpine/ --no-cache $nginxPackages             ;;     esac     \u0026\u0026 apk del .checksum-deps     \u0026\u0026 if [ -n \&#34;$tempDir\&#34; ]; then rm -rf \&#34;$tempDir\&#34;; fi     \u0026\u0026 if [ -n \&#34;/etc/apk/keys/abuild-key.rsa.pub\&#34; ]; then rm -f /etc/apk/keys/abuild-key.rsa.pub; fi     \u0026\u0026 if [ -n \&#34;/etc/apk/keys/nginx_signing.rsa.pub\&#34; ]; then rm -f /etc/apk/keys/nginx_signing.rsa.pub; fi     \u0026\u0026 apk add --no-cache --virtual .gettext gettext     \u0026\u0026 mv /usr/bin/envsubst /tmp/         \u0026\u0026 runDeps=\&#34;$(         scanelf --needed --nobanner /tmp/envsubst             | awk &#39;{ gsub(/,/, \&#34;\\nso:\&#34;, $2); print \&#34;so:\&#34; $2 }&#39;             | sort -u             | xargs -r apk info --installed             | sort -u     )\&#34;     \u0026\u0026 apk add --no-cache $runDeps     \u0026\u0026 apk del .gettext     \u0026\u0026 mv /tmp/envsubst /usr/local/bin/     \u0026\u0026 apk add --no-cache tzdata     \u0026\u0026 apk add --no-cache curl ca-certificates     \u0026\u0026 ln -sf /dev/stdout /var/log/nginx/access.log     \u0026\u0026 ln -sf /dev/stderr /var/log/nginx/error.log     \u0026\u0026 mkdir /docker-entrypoint.d&#34;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T18:03:32.044854681Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop) COPY file:65504f71f5855ca017fb64d502ce873a31b2e0decd75297a8fb0a287f97acf92 in / &#34;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T18:03:32.285318989Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop) COPY file:0b866ff3fc1ef5b03c4e6c8c513ae014f691fb05d530257dfffd07035c1b75da in /docker-entrypoint.d &#34;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T18:03:32.505736398Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop) COPY file:0fd5fca330dcd6a7de297435e32af634f29f7132ed0550d342cad9fd20158258 in /docker-entrypoint.d &#34;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T18:03:32.725433102Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop) COPY file:09a214a3e07c919af2fb2d7c749ccbc446b8c10eb217366e5a65640ee9edcc25 in /docker-entrypoint.d &#34;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T18:03:32.924218264Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop)  ENTRYPOINT [\&#34;/docker-entrypoint.sh\&#34;]&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;empty_layer&#34;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T18:03:33.111501939Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop)  EXPOSE 80&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;empty_layer&#34;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T18:03:33.318428497Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop)  STOPSIGNAL SIGQUIT&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;empty_layer&#34;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;created&#34;</span><span class="p">:</span> <span class="s2">&#34;2021-11-16T18:03:33.536601336Z&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;created_by&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh -c #(nop)  CMD [\&#34;nginx\&#34; \&#34;-g\&#34; \&#34;daemon off;\&#34;]&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;empty_layer&#34;</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="nt">&#34;os&#34;</span><span class="p">:</span> <span class="s2">&#34;linux&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;rootfs&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;layers&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;diff_ids&#34;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s2">&#34;sha256:cbce5051e6c71e171e7ca3c175773edd60bcfb2e87e2c6102326da797f3b2ba5&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;sha256:a1609e89eb327e19c971d188b2e50a3c0e5357d0852bc7ba6babf692f51d5554&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;sha256:8340bd9c43bfd4991b04e6a87183b07662bb1c906b6282f379e46bc61b99d65c&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;sha256:709ec8ed56ff86e7c68e12ef44732886346434d0a3744b50d5bf39765c1bdfc1&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;sha256:512b0c08cc883f7529facf86a9f99e12516fd00bb174e76ba8be95bb92e9c32d&#34;</span><span class="p">,</span>
+      <span class="s2">&#34;sha256:09d0ad8413933fe5cfcab200399022fd0641f01784065c493f43e17eb539c044&#34;</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></details>
+<h3 id="harbor流程">Harbor流程</h3>
+<p>补充完背景知识后，我们再来回过来看 <code>harbor</code> 对于这个接口的处理流程。首先我们可以看到获取 manifest 的逻辑分成了两次调用，先发送一次<code>HEAD</code>判断镜像是否存在，同时<code>HEAD</code>会在 header 中返回摘要，所以第二次请求的时候就会直接使用摘要来作为入参提升性能：</p>
+<ol>
+<li>
+<p><code>HEAD</code> https://10.26.26.36/v2/test/nginx/manifests/1.20.2-alpine</p>
+</li>
+<li>
+<p><code>GET</code> https://10.26.26.36/v2/test/nginx/manifests/sha256:c3ffe58e1eb09a16b3952c2bbe92363c50084f55a0da5c2ad38d6ae798c64599</p>
+</li>
+</ol>
+<p>harbor 对应处理逻辑代码的入口位于 <a href="https://github.com/goharbor/harbor/blob/v2.1.5/src/server/registry/manifest.go">/src/server/registry/manifest.go</a> 文件中的 <code>getManifest</code> 方法。</p>
+<p>首先<code>harbor</code>会尝试在自己的数据库中查找这个 <code>manifeset</code>的信息，此时分为两种情况，入参是 TAG 或者入参是摘要，大体的逻辑提炼成SQL如下：</p>
+<ul>
+<li>
+<p>入参是 TAG 时，此时一共会查询三张表：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="o">#</span> <span class="err">先根据仓库名称查到仓库</span><span class="n">ID</span>
+<span class="k">SELECT</span> <span class="n">id</span> <span class="k">FROM</span> <span class="s2">&#34;repository&#34;</span>  <span class="k">WHERE</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;test/nginx&#39;</span><span class="p">;</span>
+<span class="o">#</span> <span class="err">根据仓库</span><span class="n">ID和TAG名称查询TAG表中存储的artifact_id</span>
+<span class="k">SELECT</span> <span class="n">artifact_id</span> <span class="k">FROM</span> <span class="s2">&#34;tag&#34;</span> <span class="k">WHERE</span> <span class="s2">&#34;repository_id&#34;</span> <span class="o">=</span> <span class="err">${</span><span class="n">repository</span><span class="p">.</span><span class="n">id</span><span class="err">}</span> <span class="k">AND</span> <span class="s2">&#34;name&#34;</span> <span class="o">=</span> <span class="s1">&#39;1.20.2-alpine&#39;</span><span class="p">;</span>
+<span class="o">#</span> <span class="err">根据</span><span class="n">ID查询artifact信息</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="s2">&#34;artifact&#34;</span> <span class="k">WHERE</span> <span class="s2">&#34;id&#34;</span> <span class="o">=</span> <span class="err">${</span><span class="n">artifact_id</span><span class="err">}</span><span class="p">;</span>
+</code></pre></div></li>
+<li>
+<p>入参是摘要时，只需一次查询即可：</p>
+<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="s2">&#34;artifact&#34;</span> <span class="k">WHERE</span> <span class="s2">&#34;digest&#34;</span> <span class="o">=</span> <span class="err">${</span><span class="n">digest</span><span class="err">}</span> <span class="k">AND</span> <span class="s2">&#34;repository_name&#34;</span> <span class="o">=</span> <span class="s1">&#39;test/nginx&#39;</span><span class="p">;</span>
+</code></pre></div></li>
+</ul>
+<p>不过查出来的这些信息并不重要，主要是用于<code>harbor</code>内部的回调等逻辑，以及完成<code>TAG</code>到摘要的转换减轻后端存储的压力。</p>
+<p>harbor 处理完自己内部的逻辑之后，会将请求转发给 <code>registry</code>进行处理。</p>
+<h3 id="registry流程">Registry流程</h3>
+<p>registry 这一块儿的处理逻辑入口在：<a href="https://github.com/distribution/distribution/blob/2461543d988979529609e8cb6fca9ca190dc48da/registry/handlers/manifests.go#L82">/registry/handlers/manifests.go:GetManifest</a> 方法，精简后的代码如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">imh</span> <span class="o">*</span><span class="nx">manifestHandler</span><span class="p">)</span> <span class="nf">GetManifest</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+	<span class="cm">/*
+</span><span class="cm">	...
+</span><span class="cm">	根据 Accept Header判断客户端支持的版本
+</span><span class="cm">	...
+</span><span class="cm">	*/</span>
+	
+	<span class="c1">// 如果传入的是TAG，根据TAG查找摘要
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Tag</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+		<span class="nx">tags</span> <span class="o">:=</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Repository</span><span class="p">.</span><span class="nf">Tags</span><span class="p">(</span><span class="nx">imh</span><span class="p">)</span>
+		<span class="nx">desc</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tags</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">imh</span><span class="p">,</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Tag</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">err</span>
+		<span class="p">}</span>
+		<span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span> <span class="p">=</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nf">etagMatch</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span> <span class="p">{</span>
+		<span class="nx">w</span><span class="p">.</span><span class="nf">WriteHeader</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusNotModified</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 根据摘要获取文件对象
+</span><span class="c1"></span>	<span class="nx">manifest</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">manifests</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">imh</span><span class="p">,</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">,</span> <span class="nx">options</span><span class="o">...</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">err</span><span class="p">.(</span><span class="nx">distribution</span><span class="p">.</span><span class="nx">ErrManifestUnknownRevision</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
+			<span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span><span class="p">,</span> <span class="nx">v2</span><span class="p">.</span><span class="nx">ErrorCodeManifestUnknown</span><span class="p">.</span><span class="nf">WithDetail</span><span class="p">(</span><span class="nx">err</span><span class="p">))</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span><span class="p">,</span> <span class="nx">errcode</span><span class="p">.</span><span class="nx">ErrorCodeUnknown</span><span class="p">.</span><span class="nf">WithDetail</span><span class="p">(</span><span class="nx">err</span><span class="p">))</span>
+		<span class="p">}</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="cm">/*
+</span><span class="cm">	...
+</span><span class="cm">	配合 &#39;Accpet&#39; 返回给客户端需要的版本，
+</span><span class="cm">	...
+</span><span class="cm">	*/</span>
+	
+	<span class="c1">// 构造返回 response
+</span><span class="c1"></span>	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Type&#34;</span><span class="p">,</span> <span class="nx">ct</span><span class="p">)</span>
+	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Length&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">p</span><span class="p">)))</span>
+	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Docker-Content-Digest&#34;</span><span class="p">,</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
+	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Etag&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`&#34;%s&#34;`</span><span class="p">,</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">))</span>
+	<span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">manifest</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>逻辑并不复杂，关键的两步操作就是将 TAG 转化为摘要，然后根据摘要获取对应的文件对象。</p>
+<p>再回到我们这个镜像，<code>/v2/test/nginx/manifests/1.20.2-alpine</code> ，第一步对应的操作理论上如下，<code>registry</code>会调用 S3的接口去读取路径位于：<code>/docker/registry/v2/repositories/test/nginx/_manifests/tags/1.20.2-alpine/current/link</code>位置的文件，下载之后会发现里面就是这个<code>TAG</code>指向的真实的摘要地址：</p>
+<pre><code>sha256:c3ffe58e1eb09a16b3952c2bbe92363c50084f55a0da5c2ad38d6ae798c64599
+</code></pre><p>拿到摘要之后，<code>registry</code> 就能拼出这个文件的真实路径了：<code>/docker/registry/v2/blobs/sha256/c3/c3ffe58e1eb09a16b3952c2bbe92363c50084f55a0da5c2ad38d6ae798c64599/data</code> ，然后调用<code>S3</code>的接口去读取，返回给 harbor，harbor 再返回给客户端，获取manifest的流程就到此结束了。</p>
+<h2 id="v2blobs接口">/v2/*/blobs/*接口</h2>
+<p>客户端拿到 manifest 文件之后，就会根据其中的摘要，并行调用 blobs 接口下载其中的镜像层文件了。</p>
+<p>blobs 接口的处理逻辑其实是获取 manifest 接口逻辑的子集，也非常简单，大家直接看下方代码即可：</p>
+<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">bs</span> <span class="o">*</span><span class="nx">blobServer</span><span class="p">)</span> <span class="nf">ServeBlob</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">,</span> <span class="nx">dgst</span> <span class="nx">digest</span><span class="p">.</span><span class="nx">Digest</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="c1">// 获取文件元信息，会尝试从Redis中读取
+</span><span class="c1"></span>	<span class="nx">desc</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">bs</span><span class="p">.</span><span class="nx">statter</span><span class="p">.</span><span class="nf">Stat</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">dgst</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 根据摘要拼接地址：/docker/registry/v2/blobs/sha256/${DIGEST}
+</span><span class="c1"></span>	<span class="nx">path</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">bs</span><span class="p">.</span><span class="nf">pathFn</span><span class="p">(</span><span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 读取文件
+</span><span class="c1"></span>	<span class="nx">br</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">newFileReader</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">bs</span><span class="p">.</span><span class="nx">driver</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">Size</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 设置缓存相关Header
+</span><span class="c1"></span>	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;ETag&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`&#34;%s&#34;`</span><span class="p">,</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">))</span> <span class="c1">// If-None-Match handled by ServeContent
+</span><span class="c1"></span>	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Cache-Control&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;max-age=%.f&#34;</span><span class="p">,</span> <span class="nx">blobCacheControlMaxAge</span><span class="p">.</span><span class="nf">Seconds</span><span class="p">()))</span>
+	<span class="c1">// 写入摘要 Header
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;Docker-Content-Digest&#34;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+		<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Docker-Content-Digest&#34;</span><span class="p">,</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
+	<span class="p">}</span>
+
+	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Type&#34;</span><span class="p">,</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">MediaType</span><span class="p">)</span>
+	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Length&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nx">desc</span><span class="p">.</span><span class="nx">Size</span><span class="p">))</span>
+	<span class="nx">http</span><span class="p">.</span><span class="nf">ServeContent</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">(),</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">{},</span> <span class="nx">br</span><span class="p">)</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></div><h1 id="总结">总结</h1>
+<p>到这里服务端视角的镜像拉取流程我们就分析完了，客户端( docker )拿到这些文件之后，就可以根据 manifest 中配置的命令和参数，然后再将下载到的镜像层通过 <code>overlay</code> 等uino file system 合并成一个文件系统，就可以将这些文件 run 起来了~</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F" role="button">镜像 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/docker" role="button">docker </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/harbor" role="button">harbor </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/upgrade-centos-kernel-version/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>CentOS Linux内核升级指南</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#harbor%e7%ae%80%e4%bb%8b">
+												 Harbor简介
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9c%a8%e5%bc%80%e5%a7%8b%e4%b9%8b%e5%89%8d">
+												 在开始之前
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#harbor-pull-%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 Harbor Pull 实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#v2%e6%8e%a5%e5%8f%a3">
+												 /v2/接口
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#servicetoken%e6%8e%a5%e5%8f%a3">
+												 /service/token接口
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#v2manifests%e6%8e%a5%e5%8f%a3">
+												 /v2/*/manifests/*接口
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#manifest">
+												 manifest
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#harbor%e6%b5%81%e7%a8%8b">
+												 Harbor流程
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#registry%e6%b5%81%e7%a8%8b">
+												 Registry流程
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#v2blobs%e6%8e%a5%e5%8f%a3">
+												 /v2/*/blobs/*接口
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2021 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
