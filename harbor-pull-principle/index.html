@@ -324,7 +324,7 @@ docker push harbor.huweicai.com/test/nginx:1.20.2-alpine
 <p>为了进一步的了解其中发生了什么，我们可以给<code>docker daemon</code>进程（不是 docker cli 命令行工具，真正执行镜像拉取动作的是 daemon 进程所以给 cli 设置代理没有用）设置代理到 <code>Charles</code> 或者 <code>Fiddler</code>等七层抓包工具来分析，可以看到<code>docker</code>向<code>harbor</code>共发送了如下请求：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211125174102.png" alt="image-20211125174102116"></p>
 <p>harbor 这边对于请求的处理的链路大概是这样的：流量从 nginx 代理进来匹配规则后转发到 <code>core</code>服务（还有一部分前端页面流量会被转发到<code>portal</code>服务），然后<code>core</code>会从 <code>redis</code> 和 <code>pg</code> 中查询它所想要的数据，同时有可能会将流量再进一步转发给 <code>registry</code>，<code>registry</code>则会再继续调用<code>s3</code>和<code>redis</code>完成整个请求的处理逻辑。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211206011128.png" alt="image-20211206011128705"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211206005911.png" alt="image-20211206005905550" style="zoom:40%;-moz-transform:scale(0.4);-moz-transform-origin: left top;" /></p>
 <p>这些请求可以被大致被归类一下，整理成下面四个接口：</p>
 <ul>
 <li><code>/v2/</code></li>
