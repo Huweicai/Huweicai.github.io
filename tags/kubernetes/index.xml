@@ -6,7 +6,16 @@
     <description>Recent content in kubernetes on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Thu, 18 Mar 2021 21:29:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 23 Dec 2021 01:19:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NodeLocalDNS实现原理</title>
+      <link>https://huweicai.com/nodelocaldns-principle/</link>
+      <pubDate>Thu, 23 Dec 2021 01:19:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/nodelocaldns-principle/</guid>
+      <description>NodeLocalDNS 引入NodeLocalDNS的意义： 避免 contra</description>
+    </item>
+    
     <item>
       <title>Kubernetes权限管理概述</title>
       <link>https://huweicai.com/kubernetes-permissions-overview/</link>

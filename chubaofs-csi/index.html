@@ -7,12 +7,12 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="[好奇心探索世界 善意假设 做最酷的事情]">
+  <meta name="description" content="ChubaoFS CSI 为什么升级就会挂">
 
-  <meta property="og:title" content="Personals" />
-<meta property="og:description" content="[好奇心探索世界 善意假设 做最酷的事情]" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://huweicai.com/personal/" />
+  <meta property="og:title" content="" />
+<meta property="og:description" content="ChubaoFS CSI 为什么升级就会挂" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/chubaofs-csi/" />
 
 
    
@@ -39,11 +39,11 @@
 
   <title>
   
-       Personals | Anonymous&#39; Blog 
+        | Anonymous&#39; Blog 
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/personal/">
+  <link rel="canonical" href="https://huweicai.com/chubaofs-csi/">
 
   
   
@@ -70,8 +70,6 @@
 
 
   
-  
-  <link href="https://huweicai.com/personal/index.xml" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
   
 
   <style type="text/css">
@@ -242,8 +240,6 @@
             
     
             
-                <a href="https://huweicai.com/personal/index.xml"><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
-            
 
             
         </div>
@@ -261,127 +257,94 @@
     
 
     
-  <main class="post-main-wrapper px-5">
+  
+  <main class="post-main-wrapper">
+    
     
     <div class="row">
 
       
+
       
-        <div class="container content mt-3">  
+      <div class="container pr-5">
       
-          <ul>
-            <div class="div-x">
-              <div class='post-heading'>
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading"></div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>0001-01-01</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>One minute read</li>
+    
+  </ul>
   
-      Personals
-  
+
 </div>
 
-              
-              
-                <div class="px-2 middot"></div>
-                <div>
-                  2 posts
-                </div>
-              
-            </div>
 
-              
-        </ul>
-        <div>
-          <div class="pagination pagination-outline justify-content-end active-color">
-            
-            
-
+          <div class="post-content markdown">
+            <h1 id="chubaofs-csi">ChubaoFS CSI</h1>
+<p>为什么升级就会挂</p>
 
           </div>
 
           
-              <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading"></div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>0001-01-01</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>One minute read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      slug: &#34;stand-alone-network-model &#34; tags: [&#34;操作系统&#34;,&#34;网络&#34;,&#34;Linux&#34;,&#34;docker&#34;,&#34;容器&#34;] date: 2021-06-20T01:20:00&#43;08:00 toc: true title: 经典单机容器网络模型-Docker # 参考文档 1. https://docs.docker.com/network/bridge/ 2. https://docs.docker.com/network/iptables/......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-              <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading"></div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>0001-01-01</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>One minute read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      Go内存示意图 page 内存页面的最小单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。 mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。 type mheap struct { allspans []*mspan // all spans out there arenas [1]*[4194304]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB // pagesPerArena = 8192 = 8 * 1024 // heapArenaBitmapBytes = 2097152......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
+          <div class="row">
+            <div class="col-md-8">
             
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://huweicai.com/confusion-betwwen-forwhiletrue/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>for{;;}与while(true)的困惑</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
         </div>
+        
+
       </div>
       
 
+      
+
     </div>
+    
+
+
   </main>
+  
+
 
     
     
@@ -423,8 +386,6 @@
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
-    
-        <a href="https://huweicai.com/personal/index.xml"><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
     
 
     

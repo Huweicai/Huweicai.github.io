@@ -6,7 +6,16 @@
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sat, 04 Dec 2021 01:19:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 23 Dec 2021 01:19:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NodeLocalDNS实现原理</title>
+      <link>https://huweicai.com/nodelocaldns-principle/</link>
+      <pubDate>Thu, 23 Dec 2021 01:19:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/nodelocaldns-principle/</guid>
+      <description>NodeLocalDNS 引入NodeLocalDNS的意义： 避免 contra</description>
+    </item>
+    
     <item>
       <title>镜像仓库Harbor Pull实现原理</title>
       <link>https://huweicai.com/harbor-pull-principle/</link>
@@ -230,6 +239,15 @@
       
       <guid>https://huweicai.com/confusion-betwwen-forwhiletrue/</guid>
       <description>最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序： public class Test2 { public void whileTest() { int i = 0; while (true) { i++; } } public</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://huweicai.com/chubaofs-csi/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://huweicai.com/chubaofs-csi/</guid>
+      <description>ChubaoFS CSI 为什么升级就会挂</description>
     </item>
     
     <item>

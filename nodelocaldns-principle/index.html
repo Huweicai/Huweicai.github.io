@@ -7,13 +7,14 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="[好奇心探索世界 善意假设 做最酷的事情]">
+  <meta name="description" content="NodeLocalDNS 引入NodeLocalDNS的意义： 避免 contra">
 
-  <meta property="og:title" content="Personals" />
-<meta property="og:description" content="[好奇心探索世界 善意假设 做最酷的事情]" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://huweicai.com/personal/" />
-
+  <meta property="og:title" content="NodeLocalDNS实现原理" />
+<meta property="og:description" content="NodeLocalDNS 引入NodeLocalDNS的意义： 避免 contra" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/nodelocaldns-principle/" />
+<meta property="article:published_time" content="2021-12-23T01:19:00+08:00" />
+<meta property="article:modified_time" content="2021-12-23T01:19:00+08:00" />
 
    
 
@@ -39,11 +40,11 @@
 
   <title>
   
-       Personals | Anonymous&#39; Blog 
+       NodeLocalDNS实现原理 | Anonymous&#39; Blog 
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/personal/">
+  <link rel="canonical" href="https://huweicai.com/nodelocaldns-principle/">
 
   
   
@@ -70,8 +71,6 @@
 
 
   
-  
-  <link href="https://huweicai.com/personal/index.xml" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
   
 
   <style type="text/css">
@@ -242,8 +241,6 @@
             
     
             
-                <a href="https://huweicai.com/personal/index.xml"><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
-            
 
             
         </div>
@@ -261,127 +258,171 @@
     
 
     
-  <main class="post-main-wrapper px-5">
+  
+  <main class="post-main-wrapper">
+    
     
     <div class="row">
 
       
+
       
-        <div class="container content mt-3">  
+      <div class="col-md-10">
       
-          <ul>
-            <div class="div-x">
-              <div class='post-heading'>
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">NodeLocalDNS实现原理</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>2021-12-23</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>One minute read</li>
+    
+  </ul>
   
-      Personals
-  
+
 </div>
 
-              
-              
-                <div class="px-2 middot"></div>
-                <div>
-                  2 posts
-                </div>
-              
-            </div>
 
-              
-        </ul>
-        <div>
-          <div class="pagination pagination-outline justify-content-end active-color">
-            
-            
-
+          <div class="post-content markdown">
+            <h1 id="nodelocaldns">NodeLocalDNS</h1>
+<p>引入NodeLocalDNS的意义：</p>
+<ul>
+<li>避免 contra</li>
+</ul>
 
           </div>
 
           
-              <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading"></div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>0001-01-01</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>One minute read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      slug: &#34;stand-alone-network-model &#34; tags: [&#34;操作系统&#34;,&#34;网络&#34;,&#34;Linux&#34;,&#34;docker&#34;,&#34;容器&#34;] date: 2021-06-20T01:20:00&#43;08:00 toc: true title: 经典单机容器网络模型-Docker # 参考文档 1. https://docs.docker.com/network/bridge/ 2. https://docs.docker.com/network/iptables/......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-              <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading"></div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>0001-01-01</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>One minute read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      Go内存示意图 page 内存页面的最小单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。 mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。 type mheap struct { allspans []*mspan // all spans out there arenas [1]*[4194304]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB // pagesPerArena = 8192 = 8 * 1024 // heapArenaBitmapBytes = 2097152......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
+          <div class="row">
+            <div class="col-md-8">
             
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/kubernetes" role="button">kubernetes </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/dns" role="button">dns </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/harbor-pull-principle/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>镜像仓库Harbor Pull实现原理</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
         </div>
+        
+
       </div>
       
 
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#nodelocaldns">
+												 NodeLocalDNS
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
     </div>
+    
+
+
   </main>
+  
+
 
     
     
@@ -423,8 +464,6 @@
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
-    
-        <a href="https://huweicai.com/personal/index.xml"><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
     
 
     
