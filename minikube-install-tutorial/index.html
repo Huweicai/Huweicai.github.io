@@ -353,7 +353,7 @@ minikube start --image-repository<span class="o">=</span>registry.cn-hangzhou.al
 <h2 id="安装-kubectl">安装 Kubectl</h2>
 <p>kubectl 之于 kubernetes 就像 docker cli 之于  docker dameon，提供了用命令行和 kubernetes 交互的方式，虽然 minikube 里面自带了一个 kubectl，不过用起来总归是比较麻烦，我们可以自行下载一个单独的：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 下载</span>
-curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/latest/bin/linux/amd64/kubectl
+curl -LO <span class="s2">&#34;https://dl.k8s.io/release/</span><span class="k">$(</span>curl -L -s https://dl.k8s.io/release/stable.txt<span class="k">)</span><span class="s2">/bin/linux/amd64/kubectl&#34;</span>
 chmod +x kubectl <span class="o">&amp;&amp;</span> sudo mv kubectl /usr/local/bin/
 </code></pre></div><p>如果我们当前用户不是 developer 的话，需要手动把 kubectl 的配置复制一份到当前用户下，这里面保存了 <code>mikube</code> 的 <code>api</code> 地址以及对应的证书：</p>
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">cp -r /home/developer/.kube ~/
