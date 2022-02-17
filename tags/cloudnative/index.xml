@@ -6,16 +6,7 @@
     <description>Recent content in cloudnative on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Thu, 23 Dec 2021 01:19:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/cloudnative/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>NodeLocalDNS实现原理</title>
-      <link>https://huweicai.com/nodelocaldns-principle/</link>
-      <pubDate>Thu, 23 Dec 2021 01:19:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/nodelocaldns-principle/</guid>
-      <description>NodeLocalDNS 引入NodeLocalDNS的意义： 避免 contra</description>
-    </item>
-    
+    <lastBuildDate>Sat, 04 Dec 2021 01:19:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/cloudnative/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>镜像仓库Harbor Pull实现原理</title>
       <link>https://huweicai.com/harbor-pull-principle/</link>
