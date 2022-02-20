@@ -6,7 +6,16 @@
     <description>Recent content in 计算机网络 on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 14 Apr 2021 16:20:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 19 Feb 2022 11:00:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Cilium 容器数据路径</title>
+      <link>https://huweicai.com/cilium-container-datapath/</link>
+      <pubDate>Sat, 19 Feb 2022 11:00:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/cilium-container-datapath/</guid>
+      <description>Cilium Cilium 提供了一套基于 eBPF 的容器网络方案，在网络可观测性和隔离策略方面提供了非常多强大的特性。 我们今天主要关注 Cilium 容器数据面路径这个话题，即一个使用 Cilium 做为 CNI 的 Pod 的数据是如何流动的。 这里我们以在 Pod 中向 1.1.1.1:80发起 TCP 连接（nc -v 1.1.1.1 80）的流量为例进行分析，演示的 Cilium 集群使用 veth pair 打通容器和宿主机网络命名空间，同时使用 vxlan 模式来进行跨主机间的 Pod 通信。 这里我们使用 Pod 10.1.128.86 进行演示，其所在 Node IP 为 10.11.224</description>
+    </item>
+    
     <item>
       <title>手动实现一个Linux容器</title>
       <link>https://huweicai.com/run-linux-container-manual/</link>

@@ -4,7 +4,49 @@
   
   <url>
     <loc>https://huweicai.com/</loc>
-    <lastmod>2021-12-04T01:19:00+08:00</lastmod>
+    <lastmod>2022-02-19T11:00:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/cilium/</loc>
+    <lastmod>2022-02-19T11:00:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/cilium-container-datapath/</loc>
+    <lastmod>2022-02-19T11:00:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/kubernetes/</loc>
+    <lastmod>2022-02-19T11:00:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/</loc>
+    <lastmod>2022-02-19T11:00:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</loc>
+    <lastmod>2022-02-19T11:00:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <lastmod>2022-02-19T11:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
@@ -25,20 +67,6 @@
   
   <url>
     <loc>https://huweicai.com/tags/harbor/</loc>
-    <lastmod>2021-12-04T01:19:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/</loc>
-    <lastmod>2021-12-04T01:19:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</loc>
     <lastmod>2021-12-04T01:19:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -103,20 +131,6 @@
   <url>
     <loc>https://huweicai.com/run-linux-container-manual/</loc>
     <lastmod>2021-04-14T16:20:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
-    <lastmod>2021-04-14T16:20:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/tags/kubernetes/</loc>
-    <lastmod>2021-03-18T21:29:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>

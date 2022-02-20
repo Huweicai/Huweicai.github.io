@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="Cilium Cilium 提供了一套基于 eBPF 的容器网络方案，在网络可观测性和隔离策略方面提供了非常多强大的特性。 我们今天主要关注 Cilium 容器数据面路径这个话题，即一个使用 Cilium 做为 CNI 的 Pod 的数据是如何流动的。 这里我们以在 Pod 中向 1.1.1.1:80发起 TCP 连接（nc -v 1.1.1.1 80）的流量为例进行分析，演示的 Cilium 集群使用 veth pair 打通容器和宿主机网络命名空间，同时使用 vxlan 模式来进行跨主机间的 Pod 通信。 这里我们使用 Pod 10.1.128.86 进行演示，其所在 Node IP 为 10.11.224">
+
+  <meta property="og:title" content="Cilium 容器数据路径" />
+<meta property="og:description" content="Cilium Cilium 提供了一套基于 eBPF 的容器网络方案，在网络可观测性和隔离策略方面提供了非常多强大的特性。 我们今天主要关注 Cilium 容器数据面路径这个话题，即一个使用 Cilium 做为 CNI 的 Pod 的数据是如何流动的。 这里我们以在 Pod 中向 1.1.1.1:80发起 TCP 连接（nc -v 1.1.1.1 80）的流量为例进行分析，演示的 Cilium 集群使用 veth pair 打通容器和宿主机网络命名空间，同时使用 vxlan 模式来进行跨主机间的 Pod 通信。 这里我们使用 Pod 10.1.128.86 进行演示，其所在 Node IP 为 10.11.224" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/cilium-container-datapath/" />
+<meta property="article:published_time" content="2022-02-19T11:00:00+08:00" />
+<meta property="article:modified_time" content="2022-02-19T11:00:00+08:00" />
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       Cilium 容器数据路径 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/cilium-container-datapath/">
+
+  
+  
+
+  
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+  
+  >
+
+
+  
+  
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #1C2331!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center" >
+  <ul class="post-meta li-x">
+    
+    
+  </ul>
+
+  <div class="px-4 post-heading">Cilium 容器数据路径</div>
+
+  <ul class="post-meta li-x mt-1">
+    
+      <li>2022-02-19</li>
+    
+
+    
+      <li class="middot"></li>
+      <li>6 minutes read</li>
+    
+  </ul>
+  
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="cilium">Cilium</h1>
+<p>Cilium 提供了一套基于 eBPF 的容器网络方案，在网络可观测性和隔离策略方面提供了非常多强大的特性。</p>
+<p>我们今天主要关注 Cilium 容器数据面路径这个话题，即一个使用 Cilium 做为 CNI 的 Pod 的数据是如何流动的。</p>
+<p>这里我们以在 Pod 中向 <code>1.1.1.1:80</code>发起 TCP 连接（<code>nc -v 1.1.1.1 80</code>）的流量为例进行分析，演示的 Cilium 集群使用 <strong>veth pair</strong> 打通容器和宿主机网络命名空间，同时使用 <code>vxlan</code> 模式来进行跨主机间的 Pod 通信。</p>
+<p>这里我们使用 Pod <strong>10.1.128.86</strong> 进行演示，其所在 Node IP 为 <strong>10.11.224.56</strong>，Cilium 集群信息如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="nt">KVStore</span><span class="o">:</span>                <span class="nt">Ok</span>   <span class="nt">Disabled</span>
+<span class="nt">Kubernetes</span><span class="o">:</span>             <span class="nt">Ok</span>   <span class="nt">1</span><span class="p">.</span><span class="nc">20</span> <span class="o">(</span><span class="nt">v1</span><span class="p">.</span><span class="nc">20</span><span class="p">.</span><span class="nc">6</span><span class="o">)</span> <span class="o">[</span><span class="nt">linux</span><span class="o">/</span><span class="nt">amd64</span><span class="o">]</span>
+<span class="nt">KubeProxyReplacement</span><span class="o">:</span>   <span class="nt">Partial</span>   <span class="o">[</span><span class="nt">bond0</span> <span class="nt">10</span><span class="p">.</span><span class="nc">11</span><span class="p">.</span><span class="nc">224</span><span class="p">.</span><span class="nc">56</span> <span class="o">(</span><span class="nt">Direct</span> <span class="nt">Routing</span><span class="o">)]</span>
+<span class="nt">Host</span> <span class="nt">firewall</span><span class="o">:</span>          <span class="nt">Disabled</span>
+<span class="nt">Cilium</span><span class="o">:</span>                 <span class="nt">Ok</span>   <span class="nt">1</span><span class="p">.</span><span class="nc">11</span><span class="p">.</span><span class="nc">1</span> <span class="o">(</span><span class="nt">v1</span><span class="p">.</span><span class="nc">11</span><span class="p">.</span><span class="nc">1-76d34db</span><span class="o">)</span>
+<span class="nt">IPAM</span><span class="o">:</span>                   <span class="nt">IPv4</span><span class="o">:</span> <span class="nt">8</span><span class="o">/</span><span class="nt">62</span> <span class="nt">allocated</span> <span class="nt">from</span> <span class="nt">10</span><span class="p">.</span><span class="nc">1</span><span class="p">.</span><span class="nc">128</span><span class="p">.</span><span class="nc">64</span><span class="o">/</span><span class="nt">26</span><span class="o">,</span> 
+<span class="nt">BandwidthManager</span><span class="o">:</span>       <span class="nt">Disabled</span>
+<span class="nt">Host</span> <span class="nt">Routing</span><span class="o">:</span>           <span class="nt">Legacy</span>
+<span class="nt">Masquerading</span><span class="o">:</span>           <span class="nt">IPTables</span> <span class="o">[</span><span class="nt">IPv4</span><span class="o">:</span> <span class="nt">Enabled</span><span class="o">,</span> <span class="nt">IPv6</span><span class="o">:</span> <span class="nt">Disabled</span><span class="o">]</span>
+<span class="nt">Controller</span> <span class="nt">Status</span><span class="o">:</span>      <span class="nt">44</span><span class="o">/</span><span class="nt">44</span> <span class="nt">healthy</span>
+<span class="nt">Proxy</span> <span class="nt">Status</span><span class="o">:</span>           <span class="nt">OK</span><span class="o">,</span> <span class="nt">ip</span> <span class="nt">10</span><span class="p">.</span><span class="nc">1</span><span class="p">.</span><span class="nc">128</span><span class="p">.</span><span class="nc">88</span><span class="o">,</span> <span class="nt">0</span> <span class="nt">redirects</span> <span class="nt">active</span> <span class="nt">on</span> <span class="nt">ports</span> <span class="nt">10000-20000</span>
+<span class="nt">Hubble</span><span class="o">:</span>                 <span class="nt">Ok</span>   <span class="nt">Current</span><span class="o">/</span><span class="nt">Max</span> <span class="nt">Flows</span><span class="o">:</span> <span class="nt">4095</span><span class="o">/</span><span class="nt">4095</span> <span class="o">(</span><span class="nt">100</span><span class="p">.</span><span class="nc">00</span><span class="o">%),</span> <span class="nt">Flows</span><span class="o">/</span><span class="nt">s</span><span class="o">:</span> <span class="nt">1</span><span class="p">.</span><span class="nc">59</span>   <span class="nt">Metrics</span><span class="o">:</span> <span class="nt">Ok</span>
+<span class="nt">Encryption</span><span class="o">:</span>             <span class="nt">Disabled</span>
+</code></pre></div><h1 id="数据面路径">数据面路径</h1>
+<h2 id="开始">开始</h2>
+<p>我们在容器中敲下如下命令，尝试用 nc 工具（用 telnet 甚至是 curl 也都是可以的）发起 TCP 连接：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># -v verbose 模式，输出更多日志</span>
+nc -v 1.1.1.1 <span class="m">80</span>
+</code></pre></div><p>第一步容器网络空间拿到包之后会进行路由判断，我们可以进入到容器网络空间，查看容器路由配置，虽然我们可以通过 kubectl/docker exec 打开 shell 进入容器，但是容器 rootfs 上配套的相应工具通常不是那么的齐全，因此我们可以在宿主机上切换到容器网络空间来操作：</p>
+<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="err">#</span> <span class="nt">获取容器</span> <span class="nt">namespec</span> <span class="nt">ID</span><span class="err">，</span><span class="nt">注意替换容器名称</span>
+
+<span class="nt">docker</span> <span class="nt">inspect</span> <span class="nt">--format</span> <span class="s2">&#34;{{.State.Pid}}&#34;</span> <span class="o">$(</span><span class="nt">docker</span> <span class="nt">ps</span> <span class="o">|</span><span class="nt">grep</span> <span class="o">$</span><span class="p">{</span><span class="err">POD_NAME</span><span class="p">}</span> <span class="o">|</span> <span class="nt">grep</span> <span class="nt">-v</span> <span class="nt">pause</span> <span class="o">|</span> <span class="nt">awk</span> <span class="s1">&#39;{print $1}&#39;</span><span class="o">)</span>
+
+<span class="err">#</span> <span class="nt">拿到容器</span> <span class="nt">namespce</span> <span class="nt">ID</span> <span class="nt">后即可通过</span> <span class="nt">nsenter</span> <span class="nt">命令在该空间下创建进程执行命令</span>
+<span class="err">#</span> <span class="nt">-t</span> <span class="nt">指定</span> <span class="nt">namespace</span> <span class="nt">ID</span>
+<span class="err">#</span> <span class="nt">-n</span> <span class="nt">进入网络命令空间</span>
+<span class="err">#</span> <span class="nt">-u</span> <span class="nt">进入主机名命名空间</span><span class="err">（</span><span class="nt">让</span> <span class="nt">shell</span> <span class="nt">提示符更直观的跟宿主机的区分开来</span><span class="err">）</span>
+
+<span class="nt">nsenter</span> <span class="nt">-t</span> <span class="o">$</span><span class="nt">NAMESPACE_ID</span> <span class="nt">-n</span> <span class="nt">-u</span> <span class="nt">bash</span>
+</code></pre></div><h2 id="容器路由">容器路由</h2>
+<p>nsenter 进入容器网络空间之后，我们就可以直接查看容器配置了。</p>
+<p>我们先查看一下路由策略：</p>
+<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="o">[</span><span class="nt">root</span><span class="p">@</span><span class="k">test-demo-64b675f4c5-2njgn</span> <span class="o">~]</span><span class="err">#</span> <span class="nt">ip</span> <span class="nt">rule</span> <span class="nt">list</span>
+<span class="nt">0</span><span class="o">:</span>	<span class="nt">from</span> <span class="nt">all</span> <span class="nt">lookup</span> <span class="nt">local</span>
+<span class="nt">32766</span><span class="o">:</span>	<span class="nt">from</span> <span class="nt">all</span> <span class="nt">lookup</span> <span class="nt">main</span>
+<span class="nt">32767</span><span class="o">:</span>	<span class="nt">from</span> <span class="nt">all</span> <span class="nt">lookup</span> <span class="nt">default</span>
+</code></pre></div><p>只有三张默认的路由表策略在，并没有额外配置，默认会使用 main 这张路由表，我们打开看看：</p>
+<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="o">[</span><span class="nt">root</span><span class="p">@</span><span class="k">test-demo-64b675f4c5-2njgn</span> <span class="o">~]</span><span class="err">#</span> <span class="nt">ip</span> <span class="nt">route</span> <span class="nt">show</span> <span class="nt">table</span> <span class="nt">main</span>
+<span class="nt">default</span> <span class="nt">via</span> <span class="nt">10</span><span class="p">.</span><span class="nc">1</span><span class="p">.</span><span class="nc">128</span><span class="p">.</span><span class="nc">88</span> <span class="nt">dev</span> <span class="nt">eth0</span> <span class="nt">mtu</span> <span class="nt">1450</span>
+<span class="nt">10</span><span class="p">.</span><span class="nc">1</span><span class="p">.</span><span class="nc">128</span><span class="p">.</span><span class="nc">88</span> <span class="nt">dev</span> <span class="nt">eth0</span> <span class="nt">scope</span> <span class="nt">link</span>
+<span class="o">[</span><span class="nt">root</span><span class="p">@</span><span class="k">test-demo-64b675f4c5-2njgn</span> <span class="o">~]</span><span class="err">#</span>
+</code></pre></div><p>可以看到路由表配置非常简单，该容器下所有的包通通都会经由 <code>eth0</code> 设备发往 <code>IP 10.1.128.88</code>。</p>
+<h2 id="arp">ARP</h2>
+<p>知道了网络层下一步的目的地是<code>10.1.128.88</code> 之后，操作系统还需要知道数据链路层这个包需要发往哪里，也就是 <code>ARP</code> 地址解析过程，我们可以使用 tcpdump 观察具体的报文：</p>
+<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="err">#</span> <span class="nt">先清空一下容器内的</span> <span class="nt">ARP</span> <span class="nt">缓存</span>
+<span class="o">[</span><span class="nt">root</span><span class="p">@</span><span class="k">test-demo-64b675f4c5-2njgn</span> <span class="o">~]</span><span class="err">#</span> <span class="nt">ip</span> <span class="nt">-s</span> <span class="nt">-s</span> <span class="nt">neigh</span> <span class="nt">flush</span> <span class="nt">all</span>
+<span class="err">#</span> <span class="nt">抓包</span><span class="err">，</span><span class="nt">开始抓包之后另起一个</span> <span class="nt">shell</span> <span class="nt">进行请求</span><span class="err">：</span><span class="nt">nc</span> <span class="nt">-v</span> <span class="nt">1</span><span class="p">.</span><span class="nc">1</span><span class="p">.</span><span class="nc">1</span><span class="p">.</span><span class="nc">1</span> <span class="nt">80</span>
+<span class="o">[</span><span class="nt">root</span><span class="p">@</span><span class="k">test-demo-64b675f4c5-2njgn</span> <span class="o">~]</span><span class="err">#</span> <span class="nt">tcpdump</span> <span class="nt">-n</span> <span class="nt">-vvv</span> <span class="nt">-i</span> <span class="nt">eth0</span>
+<span class="nt">tcpdump</span><span class="o">:</span> <span class="nt">listening</span> <span class="nt">on</span> <span class="nt">eth0</span><span class="o">,</span> <span class="nt">link-type</span> <span class="nt">EN10MB</span> <span class="o">(</span><span class="nt">Ethernet</span><span class="o">),</span> <span class="nt">capture</span> <span class="nt">size</span> <span class="nt">262144</span> <span class="nt">bytes</span>
+<span class="nt">17</span><span class="p">:</span><span class="nd">30</span><span class="p">:</span><span class="nd">45</span><span class="p">.</span><span class="nc">022443</span> <span class="nt">ARP</span><span class="o">,</span> <span class="nt">Ethernet</span> <span class="o">(</span><span class="nt">len</span> <span class="nt">6</span><span class="o">),</span> <span class="nt">IPv4</span> <span class="o">(</span><span class="nt">len</span> <span class="nt">4</span><span class="o">),</span> <span class="nt">Request</span> <span class="nt">who-has</span> <span class="nt">10</span><span class="p">.</span><span class="nc">1</span><span class="p">.</span><span class="nc">128</span><span class="p">.</span><span class="nc">88</span> <span class="nt">tell</span> <span class="nt">10</span><span class="p">.</span><span class="nc">1</span><span class="p">.</span><span class="nc">128</span><span class="p">.</span><span class="nc">86</span><span class="o">,</span> <span class="nt">length</span> <span class="nt">28</span>
+<span class="nt">17</span><span class="p">:</span><span class="nd">30</span><span class="p">:</span><span class="nd">45</span><span class="p">.</span><span class="nc">022475</span> <span class="nt">ARP</span><span class="o">,</span> <span class="nt">Ethernet</span> <span class="o">(</span><span class="nt">len</span> <span class="nt">6</span><span class="o">),</span> <span class="nt">IPv4</span> <span class="o">(</span><span class="nt">len</span> <span class="nt">4</span><span class="o">),</span> <span class="nt">Reply</span> <span class="nt">10</span><span class="p">.</span><span class="nc">1</span><span class="p">.</span><span class="nc">128</span><span class="p">.</span><span class="nc">88</span> <span class="nt">is-at</span> <span class="nt">4e</span><span class="p">:</span><span class="nd">ef</span><span class="p">:</span><span class="nd">52</span><span class="p">:</span><span class="nd">ad</span><span class="p">:</span><span class="nd">3a</span><span class="p">:</span><span class="nd">e4</span><span class="o">,</span> <span class="nt">length</span> <span class="nt">28</span>
+</code></pre></div><p>可以观察到容器端收到了 ARP 响应：IP <code>10.1.128.88</code> 对应的 MAC 地址为 <code>4e:ef:52:ad:3a:e4</code>，那么这个 ARP 响应又是哪儿来的呢？</p>
+<h2 id="veth-pair">veth pair</h2>
+<p>ARP包会广播发送给所有的设备，我们查看一下设备列表：</p>
+<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="err">#</span> <span class="nt">-c</span> <span class="nt">彩色输出</span>
+<span class="o">[</span><span class="nt">root</span><span class="p">@</span><span class="k">test-demo-64b675f4c5-2njgn</span> <span class="o">~]</span><span class="err">#</span> <span class="nt">ip</span> <span class="nt">-c</span> <span class="nt">link</span>
+<span class="nt">1</span><span class="o">:</span> <span class="nt">lo</span><span class="o">:</span> <span class="o">&lt;</span><span class="nt">LOOPBACK</span><span class="o">,</span><span class="nt">UP</span><span class="o">,</span><span class="nt">LOWER_UP</span><span class="o">&gt;</span> <span class="nt">mtu</span> <span class="nt">65536</span> <span class="nt">qdisc</span> <span class="nt">noqueue</span> <span class="nt">state</span> <span class="nt">UNKNOWN</span> <span class="nt">mode</span> <span class="nt">DEFAULT</span> <span class="nt">group</span> <span class="nt">default</span> <span class="nt">qlen</span> <span class="nt">1000</span>
+    <span class="nt">link</span><span class="o">/</span><span class="nt">loopback</span> <span class="nt">00</span><span class="p">:</span><span class="nd">00</span><span class="p">:</span><span class="nd">00</span><span class="p">:</span><span class="nd">00</span><span class="p">:</span><span class="nd">00</span><span class="p">:</span><span class="nd">00</span> <span class="nt">brd</span> <span class="nt">00</span><span class="p">:</span><span class="nd">00</span><span class="p">:</span><span class="nd">00</span><span class="p">:</span><span class="nd">00</span><span class="p">:</span><span class="nd">00</span><span class="p">:</span><span class="nd">00</span>
+<span class="nt">2</span><span class="o">:</span> <span class="nt">tunl0</span><span class="p">@</span><span class="k">NONE</span><span class="o">:</span> <span class="o">&lt;</span><span class="nt">NOARP</span><span class="o">&gt;</span> <span class="nt">mtu</span> <span class="nt">1480</span> <span class="nt">qdisc</span> <span class="nt">noop</span> <span class="nt">state</span> <span class="nt">DOWN</span> <span class="nt">mode</span> <span class="nt">DEFAULT</span> <span class="nt">group</span> <span class="nt">default</span> <span class="nt">qlen</span> <span class="nt">1000</span>
+    <span class="nt">link</span><span class="o">/</span><span class="nt">ipip</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0</span><span class="p">.</span><span class="nc">0</span><span class="p">.</span><span class="nc">0</span> <span class="nt">brd</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0</span><span class="p">.</span><span class="nc">0</span><span class="p">.</span><span class="nc">0</span>
+<span class="nt">134</span><span class="o">:</span> <span class="nt">eth0</span><span class="p">@</span><span class="k">if135</span><span class="o">:</span> <span class="o">&lt;</span><span class="nt">BROADCAST</span><span class="o">,</span><span class="nt">MULTICAST</span><span class="o">,</span><span class="nt">UP</span><span class="o">,</span><span class="nt">LOWER_UP</span><span class="o">&gt;</span> <span class="nt">mtu</span> <span class="nt">1500</span> <span class="nt">qdisc</span> <span class="nt">noqueue</span> <span class="nt">state</span> <span class="nt">UP</span> <span class="nt">mode</span> <span class="nt">DEFAULT</span> <span class="nt">group</span> <span class="nt">default</span> <span class="nt">qlen</span> <span class="nt">1000</span>
+    <span class="nt">link</span><span class="o">/</span><span class="nt">ether</span> <span class="nt">0a</span><span class="p">:</span><span class="nd">58</span><span class="p">:</span><span class="nd">d3</span><span class="p">:</span><span class="nd">2e</span><span class="p">:</span><span class="nd">06</span><span class="p">:</span><span class="nd">2a</span> <span class="nt">brd</span> <span class="nt">ff</span><span class="p">:</span><span class="nd">ff</span><span class="p">:</span><span class="nd">ff</span><span class="p">:</span><span class="nd">ff</span><span class="p">:</span><span class="nd">ff</span><span class="p">:</span><span class="nd">ff</span> <span class="nt">link-netnsid</span> <span class="nt">0</span>
+</code></pre></div><p><code>ip link</code> 命令会输出该网络空间下所有的网络设备，每个设备的开头是设备的 ID，专业名词叫：<code>ifindex</code>，然后是设备名紧接着一个@后面跟着的是 veth pair 的对端 <code>ifindex</code>，如果不是 veth 类型就不会有。</p>
+<p>veth 类型的设备是两个一组，像一条隧道一样，一个设备收到的所有网络包都会立即被转发给另一个设备。</p>
+<p>可以看到这里有一个特殊的设备 <code>eth0</code>，它对端设备的 <code>ifindex</code> 是 135，很明显这就是宿主机和容器网络联通的桥梁，我们可以切换到宿主机空间下看一下这个对端设备：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@host-machine ~<span class="o">]</span><span class="c1"># ip -c link |grep -A 1 135</span>
+135: lxce37d234f154c@if134: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="m">1500</span> qdisc noqueue state UP mode DEFAULT group default qlen <span class="m">1000</span>
+    link/ether 4e:ef:52:ad:3a:e4 brd ff:ff:ff:ff:ff:ff link-netnsid <span class="m">6</span>
+</code></pre></div><p>容器中的 <code>eth0</code> 设备收到 ARP 广播包之后就会转发给宿主机上的设备 <code>lxce37d234f154c</code>。</p>
+<p>根据 Cilium 的源码我们可以知道， <code>lxce37d234f154c</code> 这个设备的 <code>tc ingress</code>点上有一段 eBPF 逻辑，会处理 ARP 的包响应。</p>
+<h2 id="ebpf-arp-应答">eBPF ARP 应答</h2>
+<p>我们可以通过 tc 命令查看上面提到的 eBPF 挂载逻辑：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># tc egress 上没有挂载</span>
+<span class="o">[</span>root@host-machine ~<span class="o">]</span><span class="c1"># tc filter show dev lxce37d234f154c egress</span>
+<span class="o">[</span>root@host-machine ~<span class="o">]</span><span class="c1"># tc filter show dev lxce37d234f154c ingress</span>
+filter protocol all pref <span class="m">1</span> bpf chain <span class="m">0</span>
+filter protocol all pref <span class="m">1</span> bpf chain <span class="m">0</span> handle 0x1 bpf_lxc.o:<span class="o">[</span>from-container<span class="o">]</span> direct-action not_in_hw tag 22adca600f7d1c7c
+<span class="o">[</span>root@host-machine ~<span class="o">]</span><span class="c1">#</span>
+</code></pre></div><p>可以看到 egress 点上并没有挂载代码，而 ingress 上则挂载了一段逻辑，section 为<code>from-container</code>，源码位于 <u>bpf_lxc.c</u> 文件中：<a href="https://github.com/cilium/cilium/blob/1.11.0/bpf/bpf_lxc.c#L973">源码地址</a>，其中跟 ARP 应答相关的部分逻辑如下：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">__section</span><span class="p">(</span><span class="s">&#34;from-container&#34;</span><span class="p">)</span>
+<span class="kt">int</span> <span class="n">handle_xgress</span><span class="p">(</span><span class="k">struct</span> <span class="n">__ctx_buff</span> <span class="o">*</span><span class="n">ctx</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">switch</span> <span class="p">(</span><span class="n">proto</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// 判断协议为 ARP
+</span><span class="c1"></span>  <span class="k">case</span> <span class="n">bpf_htons</span><span class="p">(</span><span class="n">ETH_P_ARP</span><span class="p">)</span><span class="o">:</span>
+		<span class="k">union</span> <span class="n">macaddr</span> <span class="n">mac</span> <span class="o">=</span> <span class="n">NODE_MAC</span><span class="p">;</span>
+	  <span class="k">union</span> <span class="n">macaddr</span> <span class="n">smac</span><span class="p">;</span>
+	  <span class="n">__be32</span> <span class="n">sip</span><span class="p">;</span>
+	  <span class="n">__be32</span> <span class="n">tip</span><span class="p">;</span>
+    <span class="c1">// 校验并填充 smac 为当前设备的物理地址
+</span><span class="c1"></span>	  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">arp_validate</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mac</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">smac</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sip</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tip</span><span class="p">))</span>
+		  <span class="k">return</span> <span class="n">CTX_ACT_OK</span><span class="p">;</span>
+
+	  <span class="k">if</span> <span class="p">(</span><span class="n">tip</span> <span class="o">==</span> <span class="n">LXC_IPV4</span><span class="p">)</span>
+		  <span class="k">return</span> <span class="n">CTX_ACT_OK</span><span class="p">;</span>
+
+     <span class="kt">int</span> <span class="n">ret</span> <span class="o">=</span> <span class="n">arp_prepare_response</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">smac</span><span class="p">,</span> <span class="n">sip</span><span class="p">,</span> <span class="n">dmac</span><span class="p">,</span> <span class="n">tip</span><span class="p">);</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">unlikely</span><span class="p">(</span><span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">))</span>
+		   <span class="k">goto</span> <span class="n">error</span><span class="p">;</span>
+	    
+	   <span class="n">ctx_redirect</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">ctx_get_ifindex</span><span class="p">(</span><span class="n">ctx</span><span class="p">),</span> <span class="n">direction</span><span class="p">);</span>
+     <span class="n">ret</span> <span class="o">=</span> <span class="n">DROP_MISSED_TAIL_CALL</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>判断出这是一个来自容器的 ARP 协议包之后，Cilium 会在代码中构建出一个 ARP 响应，将当前设备的 MAC 地址设置为结果，然后通过内核提供的 eBPF 辅助函数 <code>bpf_redirect</code>跳过后续的路径。</p>
+<h2 id="ebpf-网络策略">eBPF 网络策略</h2>
+<p>接收到 ARP 响应之后，容器端发出来的包就能正常被宿主机中的网卡  <code>lxce37d234f154c</code> 正确接收了。</p>
+<p>然后容器端就可以正常构造 TCP 包发出来了，TCP 包会根据路由走到容器 <code>eth0</code> 设备，然后出现在 <code>veth pair</code> 在宿主机的那一端 <code>lxce37d234f154c</code>，此时还是会经过其 tc ingress 的 eBPF 挂载点，除了我们上文中提到的 ARP 响应的逻辑，这里还有一段比较重要的逻辑：网络策略，如果我们配置了可能会限制该 Pod 对于 <code>1.1.1.1:80</code>的访问的话，那么发出的网络包就会在这段逻辑中被丢弃。</p>
+<h2 id="nat">NAT</h2>
+<p>通过网络策略之后，网络包就会按普通的流程流经内核网络栈，经过各种 hook 然后来到路由决策阶段，可以看到我们这个发往公网的包会经过机器初始化时配置的默认网关经由 bond0 网卡发出：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@host-machine ~<span class="o">]</span><span class="c1"># ip -c route show table main</span>
+<span class="c1"># 默认网关</span>
+default via 10.11.224.254 dev bond0
+<span class="c1"># vxlan模式不能把包直接发到默认网卡，所以需要单独路由处理</span>
+10.1.128.0/26 via 10.1.128.88 dev cilium_host src 10.1.128.88 mtu <span class="m">1450</span>
+10.1.128.64/26 via 10.1.128.88 dev cilium_host src 10.1.128.88
+10.1.128.88 dev cilium_host scope link
+10.1.128.128/26 via 10.1.128.88 dev cilium_host src 10.1.128.88 mtu <span class="m">1450</span>
+10.1.128.192/26 via 10.1.128.88 dev cilium_host src 10.1.128.88 mtu <span class="m">1450</span>
+10.1.129.0/26 via 10.1.128.88 dev cilium_host src 10.1.128.88 mtu <span class="m">1450</span>
+10.1.129.64/26 via 10.1.128.88 dev cilium_host src 10.1.128.88 mtu <span class="m">1450</span>
+10.11.224.0/24 dev bond0 proto kernel scope link src 10.11.224.56
+169.254.0.0/16 dev bond0 scope link metric <span class="m">1004</span>
+</code></pre></div><p>物理网卡上也挂载了一些 tc eBPF 代码，不过主要是为 NodePort、HostFirewall 等其他功能服务，和我们的当前的包场景关系不大。</p>
+<p>另外这里由于我们采用的是 overlay 网络模式，所以容器的 IP 地址外界是不认的，要经过 NAT 转换才行。</p>
+<p>Cilium 支持基于 eBPF 实现的 NAT 功能，但是要求内核版本 5.10 及以上，我们当前系统不满足，所以还是基于 <strong>iptables</strong> 来实现的。</p>
+<p>我们可以通过<code>iptables-save</code>命令查看当前所有的 <strong>iptables</strong> 规则，然后 grep 当前节点的 CIDR：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@host-machine ~<span class="o">]</span><span class="c1"># iptables-save |grep -i masquerade |grep &#39;10.1.128.64/26&#39;</span>
+-A CILIUM_POST_nat -s 10.1.128.64/26 ! -d 10.1.128.64/26 ! -o cilium_+ -m comment --comment <span class="s2">&#34;cilium masquerade non-cluster&#34;</span> -j MASQUERADE
+-A CILIUM_POST_nat ! -s 10.1.128.64/26 ! -d 10.1.128.64/26 -o cilium_host -m comment --comment <span class="s2">&#34;cilium host-&gt;cluster masquerade&#34;</span> -j SNAT --to-source 10.1.128.88
+</code></pre></div><p>可以看到有这么两条规则会对从容器出来的源 IP 为 <code>10.1.128.64/26</code> 网段的包进行<code>MASQUERADE</code>即 NAT。</p>
+<p>由于这些包是发往公网，而不是发往其他网段，所以也不涉及 vxlan 隧道的逻辑，接下来这些网络包就会继续走到物理网卡出主机，然后一路经过各个路由器最终到达 <code>1.1.1.1 的服务器了。</code></p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/kubernetes" role="button">kubernetes </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cilium" role="button">cilium </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/harbor-pull-principle/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>镜像仓库Harbor Pull实现原理</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#cilium">
+												 Cilium
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%95%b0%e6%8d%ae%e9%9d%a2%e8%b7%af%e5%be%84">
+												 数据面路径
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%bc%80%e5%a7%8b">
+												 开始
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%b9%e5%99%a8%e8%b7%af%e7%94%b1">
+												 容器路由
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#arp">
+												 ARP
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#veth-pair">
+												 veth pair
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ebpf-arp-%e5%ba%94%e7%ad%94">
+												 eBPF ARP 应答
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ebpf-%e7%bd%91%e7%bb%9c%e7%ad%96%e7%95%a5">
+												 eBPF 网络策略
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#nat">
+												 NAT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+    
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2022 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
