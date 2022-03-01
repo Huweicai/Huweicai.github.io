@@ -321,12 +321,12 @@
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># -v verbose 模式，输出更多日志</span>
 nc -v 1.1.1.1 <span class="m">80</span>
 </code></pre></div><p>第一步容器网络空间拿到包之后会进行路由判断，我们可以进入到容器网络空间，查看容器路由配置，虽然我们可以通过 kubectl/docker exec 打开 shell 进入容器，但是容器 rootfs 上配套的相应工具通常不是那么的齐全，因此我们可以在宿主机上切换到容器网络空间来操作：</p>
-<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="err">#</span> <span class="nt">获取容器</span> <span class="nt">namespec</span> <span class="nt">ID</span><span class="err">，</span><span class="nt">注意替换容器名称</span>
+<div class="highlight"><pre class="chroma"><code class="language-css" data-lang="css"><span class="err">#</span> <span class="nt">获取容器</span> <span class="nt">pid</span> <span class="err">，</span><span class="nt">注意替换容器名称</span>
 
 <span class="nt">docker</span> <span class="nt">inspect</span> <span class="nt">--format</span> <span class="s2">&#34;{{.State.Pid}}&#34;</span> <span class="o">$(</span><span class="nt">docker</span> <span class="nt">ps</span> <span class="o">|</span><span class="nt">grep</span> <span class="o">$</span><span class="p">{</span><span class="err">POD_NAME</span><span class="p">}</span> <span class="o">|</span> <span class="nt">grep</span> <span class="nt">-v</span> <span class="nt">pause</span> <span class="o">|</span> <span class="nt">awk</span> <span class="s1">&#39;{print $1}&#39;</span><span class="o">)</span>
 
-<span class="err">#</span> <span class="nt">拿到容器</span> <span class="nt">namespce</span> <span class="nt">ID</span> <span class="nt">后即可通过</span> <span class="nt">nsenter</span> <span class="nt">命令在该空间下创建进程执行命令</span>
-<span class="err">#</span> <span class="nt">-t</span> <span class="nt">指定</span> <span class="nt">namespace</span> <span class="nt">ID</span>
+<span class="err">#</span> <span class="nt">拿到容器</span> <span class="nt">pid</span> <span class="nt">后即可通过</span> <span class="nt">nsenter</span> <span class="nt">命令在该空间下创建进程执行命令</span>
+<span class="err">#</span> <span class="nt">-t</span> <span class="nt">指定要进去哪个</span> <span class="nt">pid</span> <span class="nt">对应进程的命名空间</span>
 <span class="err">#</span> <span class="nt">-n</span> <span class="nt">进入网络命令空间</span>
 <span class="err">#</span> <span class="nt">-u</span> <span class="nt">进入主机名命名空间</span><span class="err">（</span><span class="nt">让</span> <span class="nt">shell</span> <span class="nt">提示符更直观的跟宿主机的区分开来</span><span class="err">）</span>
 
