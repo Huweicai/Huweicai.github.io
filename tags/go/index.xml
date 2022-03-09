@@ -13,7 +13,7 @@
       <pubDate>Fri, 01 Jan 2021 01:20:00 +0800</pubDate>
       
       <guid>https://huweicai.com/go-linux-get-cpu-usage/</guid>
-      <description>如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，要是写代码获取时就不那么方便了。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，用于将</description>
+      <description>如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，但是代码解析时就不那么方便了。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process File System) 进程文件系统的概念，用于将内</description>
     </item>
     
     <item>

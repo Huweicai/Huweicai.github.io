@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，要是写代码获取时就不那么方便了。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，用于将">
+  <meta name="description" content="如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，但是代码解析时就不那么方便了。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process File System) 进程文件系统的概念，用于将内">
 
   <meta property="og:title" content="如何准确的获取CPU占用率[Linux][Go]" />
-<meta property="og:description" content="如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，要是写代码获取时就不那么方便了。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process FIle System) 进程文件系统的概念，用于将" />
+<meta property="og:description" content="如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，但是代码解析时就不那么方便了。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process File System) 进程文件系统的概念，用于将内" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/go-linux-get-cpu-usage/" />
 <meta property="article:published_time" content="2021-01-01T01:20:00+08:00" />
@@ -299,11 +299,11 @@
           <div class="post-content markdown">
             <p>如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统<code>“要”</code>的方式都不太一样，我们这里主要基于 Linux 场景来分析。</p>
 
-<p>虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，要是写代码获取时就不那么方便了。</p>
+<p>虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，但是代码解析时就不那么方便了。</p>
 
 <h1 id="process-文件系统">PROCESS 文件系统</h1>
 
-<p>在许多 Unix 类系统中，都存在一个 <code>procfs</code> <strong>(Process FIle System)</strong> 进程文件系统的概念，用于将内核中的一些信息通过文件的形式开放出来供用户使用，不过这个文件并不是我们平常指的狭义上的文件，这些信息是只存在于内存中的，所以也不用担心性能问题，类似内存文件系统的还有 sysfs、tmpfs 等。</p>
+<p>在许多 Unix 类系统中，都存在一个 <code>procfs</code> <strong>(Process File System)</strong> 进程文件系统的概念，用于将内核中的一些信息通过文件的形式开放出来供用户使用，不过这个文件并不是我们平常指的狭义上的文件，这些信息是只存在于内存中的，所以也不用担心性能问题，类似内存文件系统的还有 sysfs、tmpfs 等。</p>
 
 <p>我们可以通过 <code>df</code> 命令查看一个目录所使用的文件系统：
 <figure><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230185420.png" alt="image-20201230185420142"></figure></p>
@@ -321,9 +321,9 @@
 
 <p>这个指令执行器是只存在两种状态的，在执行指令 or 没有在执行指令，不存在像内存这种用了一半、用了百分之多少的说法。</p>
 
-<p>而我们通常看到的百分之多少的CPU使用，其实都省略了一个条件，采样周期，虽然 CPU 在一个特定的时刻只有 0 和 1 两种状态，但是如果我们定一个周期，比如 1秒钟，我们统计这一秒钟内 CPU 有多少时间在运行，除以总的时间单位数量就能得出一个可读性非常好的百分数字，这就是所有 CPU 使用率统计的原理。</p>
+<p>而我们通常看到的百分之多少的 CPU 使用，其实都省略了一个条件，采样周期，虽然 CPU 在一个特定的时刻只有 0 和 1 两种状态，但是如果我们定一个周期，比如 1秒钟，我们统计这一秒钟内 CPU 有多少时间在运行，除以总的时间单位数量就能得出一个比较直观的百分数字，这就是所有 CPU 使用率统计的原理。</p>
 
-<p>在 Linux 中，内核会将时间划分成一个最小单元：jiffy，直译成中文是瞬间，形容非常非常短，受 <code>USER_HZ</code>（频率）参数控制<code>jiffy = 1 / USER_HZ</code>，通常 USER_HZ 是 100，而对应的 jiffy 则是 <code>10ms</code>。</p>
+<p>在 Linux 中，内核会将时间划分成一个最小单元：<code>jiffy</code>，直译成中文是瞬间，形容非常非常短，受 <code>USER_HZ</code>（频率）参数控制<code>jiffy = 1 / USER_HZ</code>，通常 USER_HZ 是 100，而对应的 jiffy 则是 <code>10ms</code>。</p>
 
 <h1 id="process-statistics">PROCESS STATISTICS</h1>
 
@@ -541,7 +541,7 @@ usage = work / (work + idle)</code></pre>
 
 <p>我们可以写一个简单的小程序来验证一下我们代码的正确性。</p>
 
-<p>我的服务器拥有 两个 <code>Intel(R) Xeon(R) Gold 6148</code>CPU核心，主频都是 <code>2.40GHz</code>。上面没跑啥任务，正常情况下服务器的 CPU 占用情况都只有百分之几。</p>
+<p>这台服务器拥有 两个 <code>Intel(R) Xeon(R) Gold 6148</code>CPU核心，主频都是 <code>2.40GHz</code>。上面没跑什么其他任务，正常情况下服务器的 CPU 占用情况都只有百分之几。</p>
 
 <p>为了测试，我写了一段死循环累加代码，在另一个协程中执行，然后主协程中调用了我们上面写的多核版 CPU 占用率计算函数：</p>
 <div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
