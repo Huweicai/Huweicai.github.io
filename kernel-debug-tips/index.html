@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="内核 内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。 学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 &#43; 数据，看代码的同时了解其运行时数据能让我们更好的理解代码。 但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，本文分享两种调试内核的小技巧，帮助我们更好的观测其运行时状态。 内核模块">
+  <meta name="description" content="Kernel 内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。 学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 &#43; 数据，看代码的同时了解其运行时数据能让我们更好的理解代码。 但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，本文分享两种调试内核的小技巧，帮助我们更好的观测其运行时状态。 内核模块 我们通常写的代码都是运行在用">
 
   <meta property="og:title" content="Linux 内核调试小技巧" />
-<meta property="og:description" content="内核 内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。 学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 &#43; 数据，看代码的同时了解其运行时数据能让我们更好的理解代码。 但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，本文分享两种调试内核的小技巧，帮助我们更好的观测其运行时状态。 内核模块" />
+<meta property="og:description" content="Kernel 内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。 学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 &#43; 数据，看代码的同时了解其运行时数据能让我们更好的理解代码。 但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，本文分享两种调试内核的小技巧，帮助我们更好的观测其运行时状态。 内核模块 我们通常写的代码都是运行在用" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/kernel-debug-tips/" />
 <meta property="article:published_time" content="2022-03-13T00:00:00+08:00" />
@@ -288,7 +288,7 @@
 
     
       <li class="middot"></li>
-      <li>One minute read</li>
+      <li>5 minutes read</li>
     
   </ul>
   
@@ -297,13 +297,158 @@
 
 
           <div class="post-content markdown">
-            <h2 id="内核">内核</h2>
+            <h1 id="kernel">Kernel</h1>
 <p>内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210625150645.png" alt="image-20210625150638408"></p>
 <p>学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 + 数据，看代码的同时了解其运行时数据能让我们更好的理解代码。</p>
 <p>但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，本文分享两种调试内核的小技巧，帮助我们更好的观测其运行时状态。</p>
-<h2 id="内核模块">内核模块</h2>
+<h1 id="内核模块">内核模块</h1>
+<p>我们通常写的代码都是运行在用户态下的，在 Linux 系统内，这种程序运行时的指令会以 Ring 3 级别的权限运行，是无法访问到 Ring 0 级别的高地址内存空间的，也就无法窥探内核里面的数据。</p>
+<p>既然这样，我们想办法让我们的代码在内核运行不就好了。</p>
+<p>直接修改内核代码，在里面加我们想加的日志，编译安装运行肯定是可行的，可是改动起来难免有点复杂。</p>
+<p>宏内核的架构的 Linux 提供了一种热插拔的模块化扩展机制，我们可以开发一个内核模块，然后在里面读取我们感兴趣的变量，通过日志打印出来。</p>
+<p>比如一个进程在 Linux 内核中的数据结构是 <code>task_struct</code>，我们可以轻松在内核源代码中找到其数据结构，可是这些字段具体在每个进程中的值又是怎样的呢？我们可以来写个内核模块一探究竟。</p>
+<p>内核模块的接口非常简单，我们只需要实现初始化和清理两个函数即可，完整的开发教程可以参考这个文档：https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf。</p>
+<p>我们先编写模块代码如下，保存到 <code>kdebugger.c</code> 文件中：</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// 内核模块用不了标准库，需要引用内核专门的头文件
+</span><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;linux/module.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;linux/sched/signal.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="k">static</span> <span class="kt">int</span> <span class="nf">test_tasks_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">process_count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">current_task</span><span class="p">;</span>
+    
+    <span class="c1">// printk 的辅助函数，标注库 printf 的替代品
+</span><span class="c1"></span>    <span class="n">pr_info</span><span class="p">(</span><span class="s">&#34;%s: In init</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">__func__</span><span class="p">);</span>
 
+    <span class="k">for</span> <span class="p">(</span><span class="n">current_task</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">init_task</span><span class="p">;</span> <span class="p">(</span><span class="n">current_task</span> <span class="o">=</span> <span class="n">next_task</span><span class="p">(</span><span class="n">current_task</span><span class="p">))</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="n">init_task</span><span class="p">;</span> <span class="p">){</span>
+        <span class="n">pr_info</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">Command: %s PID: %d TGID: %d State: %ld Flags: %d Policy: %d Prio: %d StaticPrio: %d Current CPU: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">comm</span><span class="p">,</span>
+                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">pid</span><span class="p">,</span>
+                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">tgid</span><span class="p">,</span>
+                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span>
+                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">flags</span><span class="p">,</span>
+                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">policy</span><span class="p">,</span>
+                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">prio</span><span class="p">,</span>
+                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">static_prio</span><span class="p">,</span>
+                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">cpu</span><span class="p">);</span>
+        <span class="n">process_count</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+	
+    <span class="n">pr_info</span><span class="p">(</span><span class="s">&#34;Number of processes:%u</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">process_count</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">test_tasks_exit</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">pr_info</span><span class="p">(</span><span class="s">&#34;%s: In exit</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">__func__</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// 需要申明 LICENSE
+</span><span class="c1"></span><span class="n">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;GPL&#34;</span><span class="p">);</span>
+<span class="c1">// 申明初始化和清理的函数
+</span><span class="c1"></span><span class="n">module_init</span><span class="p">(</span><span class="n">test_tasks_init</span><span class="p">);</span>
+<span class="n">module_exit</span><span class="p">(</span><span class="n">test_tasks_exit</span><span class="p">);</span>
+</code></pre></div><p>然后编写 Makefile:</p>
+<div class="highlight"><pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">obj-m</span> <span class="o">+=</span> kdebugger.o
+<span class="nf">all</span><span class="o">:</span>
+	make -C /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/build -I /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/source/include <span class="nv">M</span><span class="o">=</span><span class="k">$(</span>PWD<span class="k">)</span> modules
+<span class="nf">clean</span><span class="o">:</span>
+	make -C /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/build <span class="nv">M</span><span class="o">=</span><span class="k">$(</span>PWD<span class="k">)</span> clean
+</code></pre></div><p>在开始编译之前我们还需要安装最重要的两个依赖：<code>gcc</code> 和内核头文件。</p>
+<p><code>gcc</code> 通常大部分发行版上都有预装，但是通常版本都比较老，较新版本的内核会对 <code>gcc</code> 版本有一定要求，建议先升级到新版本，以 CentOS 为例：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">yum install devtoolset-8-gcc
+
+<span class="c1"># 然后卸载掉老的 gcc 把新的 gcc 加入到 PATH 中</span>
+/opt/rh/devtoolset-8/root/usr/bin/gcc
+</code></pre></div><p>内核头文件也是必要的，不然我们 include 的那些库编译肯定是过不去的，可以直接通过 yum 安装，但是注意内核头文件一定要和内核版本严格匹配，因为内核的数据结构是经常变化的：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">yum install kernel-headers
+</code></pre></div><p>都顺利的话我们下一步就可以开始编译了，直接 <code>make</code> 即可，编译完之后我们会发现生成了一个 <code>kdebugger.ko</code> （<code>.ko</code> 文件对标的就是用户态程序编译出来的 <code>.o</code> 文件）的文件，这就是我们编译出来的内核模块了。</p>
+<p>编译完成之后通过 <code>insmod kdebugger.ko</code>即可将该模块安装到内核，我们可以查看内核模块列表验证一下 ：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">roo@dev# cat /proc/modules
+kdebugger <span class="m">16384</span> <span class="m">0</span> - Live 0xffffffffc0808000 <span class="o">(</span>O<span class="o">)</span>
+xt_statistic <span class="m">16384</span> <span class="m">3</span> - Live 0xffffffffc07fe000
+ip6table_mangle <span class="m">16384</span> <span class="m">0</span> - Live 0xffffffffc06b2000
+ip6table_filter <span class="m">16384</span> <span class="m">0</span> - Live 0xffffffffc06ad000
+nf_tables <span class="m">204800</span> <span class="m">0</span> - Live 0xffffffffc07a7000
+nfnetlink_queue <span class="m">24576</span> <span class="m">0</span> - Live 0xffffffffc06f8000
+nfnetlink_log <span class="m">20480</span> <span class="m">0</span> - Live 0xffffffffc06ca000
+bluetooth <span class="m">606208</span> <span class="m">0</span> - Live 0xffffffffc0712000
+ecdh_generic <span class="m">16384</span> <span class="m">1</span> bluetooth, Live 0xffffffffc06f3000
+....
+</code></pre></div><p>内核模块安装时会调用其 init 函数，即我们上面代码中的 <code>test_tasks_init</code>函数，执行我们的 debug 代码，<code>printk</code>会将输出打到内核的 Ring Buffer 中，我们可以通过 <code>dmesg</code> 命令来查看，即可得到我们想要的结果：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">roo@dev# demesg -TL
+....
+<span class="o">[</span>Sun Mar <span class="m">14</span> 18:25:52 2022<span class="o">]</span> test_tasks_exit: In <span class="nb">exit</span>
+<span class="o">[</span>Sun Mar <span class="m">14</span> 18:25:52 2022<span class="o">]</span> test_tasks_init: In init
+<span class="o">[</span>Sun Mar <span class="m">14</span> 18:25:52 2022<span class="o">]</span>
+Command: systemd PID: <span class="m">1</span> TGID: <span class="m">1</span> State: <span class="m">1</span> Flags: <span class="m">4194560</span> Policy: <span class="m">0</span> Prio: <span class="m">120</span> StaticPrio: <span class="m">120</span> Current CPU: <span class="m">1</span>
+<span class="o">[</span>Sun Mar <span class="m">14</span> 18:25:52 2022<span class="o">]</span>
+Command: kthreadd PID: <span class="m">2</span> TGID: <span class="m">2</span> State: <span class="m">1</span> Flags: <span class="m">2129984</span> Policy: <span class="m">0</span> Prio: <span class="m">120</span> StaticPrio: <span class="m">120</span> Current CPU: <span class="m">1</span>
+....
+<span class="o">[</span>Mon Mar <span class="m">14</span> 17:30:40 2022<span class="o">]</span> Number of processes:197
+</code></pre></div><h1 id="ebpf">eBPF</h1>
+<h2 id="ebpf-1">eBPF</h2>
+<p>要让我们的代码跑以 Ring 0 权限跑在内核态中，除了上文提到的内核模块之外，Linux 内核还提供了一种很酷的扩展方案 —— <strong>eBPF</strong>。</p>
+<p><code>eBPF </code>可以理解为内核提供的一个简单的虚拟机，可以让我们提交一些指令到内核运行，虽然 eBPF 有很多限制，内核仅暴露了有限的 API 给 <code>eBPF</code> 指令，但是相较于直接编写内核模块，<code>eBPF</code>更加的轻量和安全，已经有许多知名的应用是基于 eBPF 技术实现的，比如 Cilium、Falco 等。</p>
+<p>eBPF 执行的模型是事件驱动的，内核提供了很多的 hook 点，我们可以申明 eBPF 程序注册到指定的 hook 点上，当对应的事件发生时就会调用我们的 eBPF 代码执行，目前内核支持的 eBPF 程序类型枚举可以在这里查看 <a href="https://elixir.bootlin.com/linux/v5.13/source/include/uapi/linux/bpf.h#L908">https://elixir.bootlin.com/linux/v5.13/source/include/uapi/linux/bpf.h#L908</a>。</p>
+<h2 id="bpftrace">bpftrace</h2>
+<p>直接编写 eBPF 代码然后提交给内核执行复杂度和编译内核模块也差不多，但是我们有更便捷的工具：<a href="https://github.com/iovisor/bpftrace">bpftrace</a>，一个轻量级的 eBPF 执行框架。</p>
+<p>我们可以直接通过包管理器安装 bpftrace：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># RPM</span>
+curl https://repos.baslab.org/rhel/7/bpftools/bpftools.repo --output /etc/yum.repos.d/bpftools.repo
+yum install bpftrace bpftrace-tools bpftrace-doc bcc-static bcc-tools
+
+<span class="c1"># APT</span>
+apt install bpftrace
+</code></pre></div><p>我们上文中提到的各种各样的 hook 点在 bpftrace 中抽象成了 probe 的概念，当前系统支持的所有 probe 可以通过  <code>-l</code> 参数查看：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">bpftrace -l
+</code></pre></div><p><strong>bpftrace</strong> 脚本由<code>probe /filter/ { action }</code> 这几部分组成，probe 申明了一个或多个 hook 点，当对应的事件发生时如果满足了 filter 的条件，就会执行 action 里面的逻辑。</p>
+<p>完整语法可以参考其<a href="https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md">官方文档</a>。</p>
+<h2 id="have-a-try">Have a try</h2>
+<p>针对我们这里分析 <strong>task_struct</strong> 结构的需求，使用 bpftrace 可以非常方便的实现：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 遍历所有的 task</span>
+bpftrace -e <span class="s1">&#39;iter:task { printf(&#34;%s:%d\n&#34;, ctx-&gt;task-&gt;comm, ctx-&gt;task-&gt;pid); }&#39;</span>
+</code></pre></div><p>不过上面提到的 iter 是基于 eBPF<code>  TRACING</code> 类别的程序来实现的，至少需要内核版本 <strong>5.5</strong>，同时需要内核在编译时开启了 <strong>BTF</strong> 特性，要求相对来说比较高。</p>
+<p>内核提供了一种 <code>kprobe</code> 的 eBPF 能力，可以让我们在任意的内核函数之前或者之后插入我们的 eBPF 逻辑。</p>
+<p>我们可以在内核中找到我们感兴趣的函数，比如每个进程创建的时候都会调用 <a href="https://elixir.bootlin.com/linux/v5.12.13/source/include/linux/sched/task.h#L85">kernel_clone</a> 函数（在旧版本内核中为 do_fork，内核内部代码变动频繁，请对照当前版本源码分析），然后 <code>kernel_clone</code> 函数会返回一个 pid 来代表该进程（或者线程），那么我们就可以用 kprobe 来实时监测内核中的进程创建：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">root@dev# bpftrace -e <span class="s1">&#39;kretprobe:kernel_clone { printf(&#34;new process created, pid: %d\n&#34;, retval); }&#39;</span>
+Attaching <span class="m">1</span> probe...
+new process created, pid: <span class="m">21902</span>
+new process created, pid: <span class="m">21903</span>
+new process created, pid: <span class="m">21904</span>
+new process created, pid: <span class="m">21905</span>
+...
+</code></pre></div><p>同时我们看 kernel_clone 的代码会发现它内部还会调用一个 <code>copy_process</code> 的函数，实际执行 task_struct 的复制，且其返回值就是一个 <code>task_struct</code>，那么我们又能观测到这个熟悉的面孔了，由于这里我们要引用到具体的内核数据结构，因此需要 <strong>include</strong> 相关的头文件，不能一行写完，所以需要创建一个脚本文件，在传递给 <strong>bpftrace</strong> 执行：</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">root@dev# cat copy_process.bt
+<span class="c1">#include &lt;linux/sched/task.h&gt;</span>
+
+// kretprobe 表示在函数执行后回调， kprobe 是在函数执行之前回调
+kretprobe:copy_process
+<span class="o">{</span>
+   <span class="nv">$task</span> <span class="o">=</span> <span class="o">((</span>struct task_struct *<span class="o">)</span> retval<span class="o">)</span><span class="p">;</span>
+   printf<span class="o">(</span><span class="s2">&#34;\nCommand: %s PID: %d TGID: %d State: %ld Flags: %d Policy: %d Prio: %d StaticPrio: %d Current CPU: %d\n&#34;</span>,
+        <span class="nv">$task</span>-&gt;comm,
+        <span class="nv">$task</span>-&gt;pid,
+        <span class="nv">$task</span>-&gt;tgid,
+        <span class="nv">$task</span>-&gt;state,
+        <span class="nv">$task</span>-&gt;flags,
+        <span class="nv">$task</span>-&gt;policy,
+        <span class="nv">$task</span>-&gt;prio,
+        <span class="nv">$task</span>-&gt;static_prio,
+        <span class="nv">$task</span>-&gt;cpu<span class="o">)</span><span class="p">;</span>
+<span class="o">}</span>
+
+root@dev# bpftrace process_create.bt
+Attaching <span class="m">1</span> probe...
+
+Command: crond PID: <span class="m">22700</span> TGID: <span class="m">22700</span> State: <span class="m">2048</span> Flags: <span class="m">4194368</span> Policy: <span class="m">0</span> Prio: <span class="m">120</span> StaticPrio: <span class="m">120</span> Current CPU: <span class="m">0</span>
+
+Command: sh PID: <span class="m">22701</span> TGID: <span class="m">22701</span> State: <span class="m">2048</span> Flags: <span class="m">4194368</span> Policy: <span class="m">0</span> Prio: <span class="m">120</span> StaticPrio: <span class="m">120</span> Current CPU: <span class="m">0</span>
+
+Command: sh PID: <span class="m">22702</span> TGID: <span class="m">22702</span> State: <span class="m">2048</span> Flags: <span class="m">4194368</span> Policy: <span class="m">0</span> Prio: <span class="m">120</span> StaticPrio: <span class="m">120</span> Current CPU: <span class="m">1</span>
+...
+</code></pre></div>
           </div>
 
           
@@ -387,8 +532,8 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%86%85%e6%a0%b8">
-												 内核
+						 					<a class="nav-link" href="#kernel">
+												 Kernel
 											</a>
 										</li>
 						 
@@ -415,6 +560,106 @@
 										</li>
 						 
 								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ebpf">
+												 eBPF
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ebpf-1">
+												 eBPF
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#bpftrace">
+												 bpftrace
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#have-a-try">
+												 Have a try
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
 								
 									</ul>
 								
