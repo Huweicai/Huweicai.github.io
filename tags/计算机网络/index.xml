@@ -22,7 +22,7 @@
       <pubDate>Wed, 14 Apr 2021 16:20:00 +0800</pubDate>
       
       <guid>https://huweicai.com/run-linux-container-manual/</guid>
-      <description>容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我还依赖操作系统的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打</description>
+      <description>容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打</description>
     </item>
     
     <item>

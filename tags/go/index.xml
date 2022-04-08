@@ -17,15 +17,6 @@
     </item>
     
     <item>
-      <title>Go 64指针地址输出为何是40位</title>
-      <link>https://huweicai.com/troubleshotting-goroutine-leeking/</link>
-      <pubDate>Fri, 29 May 2020 19:58:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/troubleshotting-goroutine-leeking/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Golang 如何排查协程泄漏问题</title>
       <link>https://huweicai.com/troubleshotting-goroutine-leeking/</link>
       <pubDate>Fri, 29 May 2020 19:58:00 +0800</pubDate>

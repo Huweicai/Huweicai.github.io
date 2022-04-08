@@ -22,7 +22,7 @@
       <pubDate>Wed, 13 Nov 2019 00:13:31 +0800</pubDate>
       
       <guid>https://huweicai.com/mysql-create-options/</guid>
-      <description>这是一个很常见的 SQL 建表语句： CREATE TABLE `people` ( `id` int NOT NULL AUTO_INCREMENT, `name` varchar(40) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 SQL 建表语句结构如下： CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name (create_definition,...) [table_options] 我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一</description>
+      <description>这是一个很常见的 SQL 建表语句： CREATETABLE`people`(`id`intNOTNULLAUTO_INCREMENT,`name`varchar(40)DEFAULTNULL,PRIMARYKEY(`id`))ENGINE=InnoDBDEFAULTCHARSET=utf8SQL 建表语句结构如下： CREATE[TEMPORARY]TABLE[IFNOTEXISTS]tbl_name(create_definition,...)[table_options]我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一</description>
     </item>
     
     <item>

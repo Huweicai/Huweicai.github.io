@@ -7,14 +7,15 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="这是一个很常见的 SQL 建表语句： CREATE TABLE `people` ( `id` int NOT NULL AUTO_INCREMENT, `name` varchar(40) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 SQL 建表语句结构如下： CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name (create_definition,...) [table_options] 我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一">
+  <meta name="description" content="这是一个很常见的 SQL 建表语句： CREATETABLE`people`(`id`intNOTNULLAUTO_INCREMENT,`name`varchar(40)DEFAULTNULL,PRIMARYKEY(`id`))ENGINE=InnoDBDEFAULTCHARSET=utf8SQL 建表语句结构如下： CREATE[TEMPORARY]TABLE[IFNOTEXISTS]tbl_name(create_definition,...)[table_options]我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一">
 
   <meta property="og:title" content="MySQL建表选项" />
-<meta property="og:description" content="这是一个很常见的 SQL 建表语句： CREATE TABLE `people` ( `id` int NOT NULL AUTO_INCREMENT, `name` varchar(40) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 SQL 建表语句结构如下： CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name (create_definition,...) [table_options] 我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一" />
+<meta property="og:description" content="这是一个很常见的 SQL 建表语句： CREATETABLE`people`(`id`intNOTNULLAUTO_INCREMENT,`name`varchar(40)DEFAULTNULL,PRIMARYKEY(`id`))ENGINE=InnoDBDEFAULTCHARSET=utf8SQL 建表语句结构如下： CREATE[TEMPORARY]TABLE[IFNOTEXISTS]tbl_name(create_definition,...)[table_options]我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/mysql-create-options/" />
+<meta property="og:url" content="https://huweicai.com/mysql-create-options/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2019-11-13T00:13:31+08:00" />
 <meta property="article:modified_time" content="2019-11-13T00:13:31+08:00" />
+
 
    
 
@@ -50,33 +51,32 @@
   
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
 
   
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
 
 
   
   <link rel="shortcut icon"
   
-      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+      href="https://huweicai.com/img/profile.svg"
   
   >
 
 
-  
-  
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
 
   <style type="text/css">
       @media (min-width: 800px) and (max-width: 850px) {
               .navbar:not(.top-nav-collapse) {
-                  background: #1C2331!important;
+                  background: #000000!important;
               }
           }
   </style>
@@ -90,7 +90,7 @@
 
   
   
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
   
 
 </head>
@@ -110,7 +110,7 @@
       
       <a class="navbar-brand" href="https://huweicai.com">
           
-        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
         <strong> Huweicai</strong>
       </a>
@@ -132,6 +132,11 @@
              
             <li class="nav-item ">
               <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
             </li>
           
           
@@ -164,7 +169,7 @@
 
         
         <div class="carousel-item active">
-          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
 
             
             <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -193,7 +198,7 @@
       <div class="col-12 col-sm-5 align-middle">
         <a href="https://huweicai.com">
           
-            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
         </a>
       </div>
@@ -240,7 +245,7 @@
                 <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
             
     
-            
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
 
             
         </div>
@@ -298,38 +303,38 @@
 
           <div class="post-content markdown">
             <p>这是一个很常见的 SQL 建表语句：</p>
-<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">people</span><span class="o">`</span> <span class="p">(</span>
-  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span><span class="p">,</span>
-  <span class="o">`</span><span class="n">name</span><span class="o">`</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
-  <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">)</span>
-<span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="k">DEFAULT</span> <span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8</span>
-</code></pre></div><p>SQL 建表语句结构如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="p">[</span><span class="k">TEMPORARY</span><span class="p">]</span> <span class="k">TABLE</span> <span class="p">[</span><span class="k">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span><span class="p">]</span> <span class="n">tbl_name</span>
-    <span class="p">(</span><span class="n">create_definition</span><span class="p">,...)</span>
-    <span class="p">[</span><span class="n">table_options</span><span class="p">]</span>
-</code></pre></div><p>我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照<a href="https://dev.mysql.com/doc/refman/8.0/en/create-table.html">MySQL官方文档</a>，我们一起来看看。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">people</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8</span><span class="w">
+</span></span></span></code></pre></div><p>SQL 建表语句结构如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="p">[</span><span class="k">TEMPORARY</span><span class="p">]</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="p">[</span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="p">]</span><span class="w"> </span><span class="n">tbl_name</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">(</span><span class="n">create_definition</span><span class="p">,...)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">[</span><span class="n">table_options</span><span class="p">]</span><span class="w">
+</span></span></span></code></pre></div><p>我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照<a href="https://dev.mysql.com/doc/refman/8.0/en/create-table.html">MySQL官方文档</a>，我们一起来看看。</p>
 <h4 id="auto_increment">AUTO_INCREMENT</h4>
 <p>MySQL 一张表中可以指定一个字段为  auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过：</p>
-<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">select</span> <span class="n">LAST_INSERT_ID</span><span class="p">();</span>
-</code></pre></div><p>来获取 MySQL 自动生成的 ID。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="n">LAST_INSERT_ID</span><span class="p">();</span><span class="w">
+</span></span></span></code></pre></div><p>来获取 MySQL 自动生成的 ID。</p>
 <p>在建表的时候，可以通过 AUTO_INCREMENT 指定自增开始的值：</p>
-<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> <span class="n">peoples</span> <span class="p">(</span>
-    <span class="n">id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span> <span class="n">auto_increment</span><span class="p">,</span>
-    <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">null</span>
-<span class="p">)</span> <span class="n">AUTO_INCREMENT</span> <span class="o">=</span> <span class="mi">13</span><span class="p">;</span>
-</code></pre></div><h4 id="avg_row_length">AVG_ROW_LENGTH</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">peoples</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">auto_increment</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="k">null</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">13</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><h4 id="avg_row_length">AVG_ROW_LENGTH</h4>
 <h4 id="character-set">CHARACTER SET</h4>
 <p>可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据库的也没有设置的，MySQL Server 的默认字符集是 utf8mb4。</p>
 <p>MySQL 目前支持的字符集，可以通过：<code>SHOW CHARACTER SET</code> 查看，我们可能用到的：<code>ascii，gb2312，gbk，big5，utf16，utf8，utf8mb4</code> 等字符编码集都是支持的。</p>
 <p>指定 people 表的字符集为 utf8mb4</p>
-<pre><code>create table if not exists people (
+<pre tabindex="0"><code>create table if not exists people (
     id int primary key auto_increment,
     name varchar(40) null
-) character set = 'utf8mb4';
+) character set = &#39;utf8mb4&#39;;
 </code></pre><p>一个表的默认字符集指定之后也是可以修改的：</p>
-<pre><code>ALTER TABLE people CONVERT TO CHARACTER SET 'utf8'; # 不需要emoji，从 utf8mb4 修改为 utf8
+<pre tabindex="0"><code>ALTER TABLE people CONVERT TO CHARACTER SET &#39;utf8&#39;; # 不需要emoji，从 utf8mb4 修改为 utf8
 </code></pre><p>可以通过查看建表语句来查看一个表的字符集：</p>
-<pre><code>SHOW CREATE TABLE people;
+<pre tabindex="0"><code>SHOW CREATE TABLE people;
 
 输出：
 CREATE TABLE `people` (
@@ -384,17 +389,17 @@ CREATE TABLE `people` (
 </tbody>
 </table>
 <p>所以 <code>select * from table where string=&quot;xxx&quot;</code> 的时候就要注意了，默认是不区分大小写的，可以临时指定使用其他的字符序，或者根据业务场景判断是否需要在建表的时候就把表的字符序就设置为大小写敏感的字符序，比如：<code>utf8mb4_0900_as_cs</code> 等包含 _cs 的字符序：</p>
-<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> <span class="n">people</span> <span class="p">(</span>
-    <span class="n">id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span> <span class="n">auto_increment</span><span class="p">,</span>
-    <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">null</span>
-<span class="p">)</span> <span class="nb">character</span> <span class="k">set</span> <span class="o">=</span> <span class="s1">&#39;utf8mb4&#39;</span> <span class="k">collate</span> <span class="o">=</span> <span class="s1">&#39;utf8mb4_0900_as_cs&#39;</span><span class="p">;</span>
-</code></pre></div><h4 id="comment">COMMENT</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">people</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">auto_increment</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="k">null</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="nb">character</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;utf8mb4&#39;</span><span class="w"> </span><span class="k">collate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;utf8mb4_0900_as_cs&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><h4 id="comment">COMMENT</h4>
 <p>加个注释，方便日后维护，写注释是个好习惯，有的公司的 SQL 工单平台甚至会强制必须有注释。</p>
-<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> <span class="n">people</span> <span class="p">(</span>
-    <span class="n">id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span> <span class="n">auto_increment</span><span class="p">,</span>
-    <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">null</span>
-<span class="p">)</span> <span class="k">comment</span> <span class="s1">&#39;存储人物信息&#39;</span><span class="p">;</span>
-</code></pre></div><h4 id="compression">COMPRESSION</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">people</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">auto_increment</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="k">null</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="k">comment</span><span class="w"> </span><span class="s1">&#39;存储人物信息&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><h4 id="compression">COMPRESSION</h4>
 <p>开启表压缩选项，只对 InnoDB 引擎有效，支持：Zlib 和 LZ4两种压缩算法，可以置成 None 关闭。</p>
 <h4 id="connection">CONNECTION</h4>
 <p>FEDERATED 引擎可以远程连接到其他数据库映射到本地，可以通过这个字段来指定对应远程数据库的连接字符串。</p>
@@ -635,11 +640,11 @@ CREATE TABLE `people` (
 </table>
 <p>注：关于存储限制虽然上限都很高，但是将数据都存储在一个文件的引擎会受操作系统的文件大小限制（TB级别）。</p>
 <p>Example，创建一个 MyISAM 的表：</p>
-<div class="highlight"><pre class="chroma"><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">table</span> <span class="k">if</span> <span class="k">not</span> <span class="k">exists</span> <span class="n">people</span> <span class="p">(</span>
-    <span class="n">id</span> <span class="nb">int</span> <span class="k">primary</span> <span class="k">key</span> <span class="n">auto_increment</span><span class="p">,</span>
-    <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span> <span class="k">null</span><span class="p">,</span>
-<span class="p">)</span> <span class="k">comment</span> <span class="s1">&#39;存储人物信息&#39;</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;myisam;
-</span></code></pre></div><h4 id="engine_attribute">ENGINE_ATTRIBUTE</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">people</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">auto_increment</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="k">null</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="k">comment</span><span class="w"> </span><span class="s1">&#39;存储人物信息&#39;</span><span class="w"> </span><span class="n">engine</span><span class="o">=</span><span class="s1">&#39;myisam;
+</span></span></span></code></pre></div><h4 id="engine_attribute">ENGINE_ATTRIBUTE</h4>
 <p>保留字段，以后用于透传信息到引擎层。</p>
 <h4 id="insert_method">INSERT_METHOD</h4>
 <p>MERGE 存储引擎使用。</p>
@@ -1620,7 +1625,7 @@ CREATE TABLE `people` (
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
-    
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
 
     
 
@@ -1630,7 +1635,7 @@ CREATE TABLE `people` (
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2022 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2022 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
   </div>
   
 
@@ -1655,12 +1660,12 @@ CREATE TABLE `people` (
 
 <script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
 
 
 
 
-  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 

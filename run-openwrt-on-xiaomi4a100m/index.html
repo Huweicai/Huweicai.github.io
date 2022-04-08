@@ -12,9 +12,10 @@
   <meta property="og:title" content="小米路由器4A百兆版刷OpenWRT" />
 <meta property="og:description" content="我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此系统性的捋一下，分享给有缘人，我手上的型号是百兆版的，4A千兆版刷OpenWRT的流程也基本一样，不过需要注意镜像地址什么的自行替换一下。 前提：需要安装 git、python3 以及熟悉基本的终端操作。 OpenWRT 首先我们要对 OpenWRT 有一些最基本的概念，OpenWRT 是一种 Linux 发行版，本质上是一个操作系统，和我们的常见的 Windows、And" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/run-openwrt-on-xiaomi4a100m/" />
+<meta property="og:url" content="https://huweicai.com/run-openwrt-on-xiaomi4a100m/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2020-12-08T23:47:00+08:00" />
 <meta property="article:modified_time" content="2020-12-08T23:47:00+08:00" />
+
 
    
 
@@ -50,33 +51,32 @@
   
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
 
   
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
 
 
   
   <link rel="shortcut icon"
   
-      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+      href="https://huweicai.com/img/profile.svg"
   
   >
 
 
-  
-  
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
 
   <style type="text/css">
       @media (min-width: 800px) and (max-width: 850px) {
               .navbar:not(.top-nav-collapse) {
-                  background: #1C2331!important;
+                  background: #000000!important;
               }
           }
   </style>
@@ -90,7 +90,7 @@
 
   
   
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
   
 
 </head>
@@ -110,7 +110,7 @@
       
       <a class="navbar-brand" href="https://huweicai.com">
           
-        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
         <strong> Huweicai</strong>
       </a>
@@ -132,6 +132,11 @@
              
             <li class="nav-item ">
               <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
             </li>
           
           
@@ -164,7 +169,7 @@
 
         
         <div class="carousel-item active">
-          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
 
             
             <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -193,7 +198,7 @@
       <div class="col-12 col-sm-5 align-middle">
         <a href="https://huweicai.com">
           
-            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
         </a>
       </div>
@@ -240,7 +245,7 @@
                 <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
             
     
-            
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
 
             
         </div>
@@ -318,7 +323,7 @@
 <p>先记住这个下载地址。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201208185510.png" alt="image-20201208185510933"></p>
 <p>另外考虑到国内下载速度，如果觉得很慢的话，可以使用中科大的镜像源，把URL中 <code>downloads.openwrt.org</code> 替换成 <code>mirrors.ustc.edu.cn/openwrt</code>即可：</p>
-<pre><code>http://downloads.openwrt.org/releases/19.07.4/targets/ramips/mt76x8/openwrt-19.07.4-ramips-mt76x8-xiaomi_mir4a-100m-squashfs-sysupgrade.bin
+<pre tabindex="0"><code>http://downloads.openwrt.org/releases/19.07.4/targets/ramips/mt76x8/openwrt-19.07.4-ramips-mt76x8-xiaomi_mir4a-100m-squashfs-sysupgrade.bin
 
 =&gt;
 
@@ -329,7 +334,7 @@ http://mirrors.ustc.edu.cn/openwrt/releases/19.07.4/targets/ramips/mt76x8/openwr
 <p>这个脚本有 <code>0.0.2</code> 和 <code>0.0.1</code> 两个版本，默认是推荐 <code>0.0.2</code> 版本会省事一点，但是我使用 <code>0.0.2</code> 版本并没有成功，可能是依赖的一些 github 上面的脚本下载失败了，不过通过 <code>0.0.1</code> 倒是登上去了，也就没有仔细琢磨了，这里都把过程给大家列一下，可以都试试。</p>
 <h3 id="升级到有漏洞的版本">升级到有漏洞的版本</h3>
 <p>同时经过社区验证，适用于固件版本：<code>2.18.51</code> 和 <code>2.18.58</code>，其他版本可以先试一下如果不行的话刷到这两个版本就好，我自己实践在 <code>2.18.58</code> 成功运行了，对应的固件包我传到网盘上了大家有需要的可以自取：</p>
-<pre><code>小米4A路由器百兆版2.18.51固件：https://pan.baidu.com/s/1DXHZx9puoN9kEY7BDymxqA
+<pre tabindex="0"><code>小米4A路由器百兆版2.18.51固件：https://pan.baidu.com/s/1DXHZx9puoN9kEY7BDymxqA
 小米4A路由器百兆版2.18.58固件：https://pan.baidu.com/s/1DXHZx9puoN9kEY7BDymxqA
 提取码：debw
 </code></pre><p>下载好后点击常用设置-&gt;系统状态-&gt;手动升级即可，详细步骤可以参考<a href="https://www.mi.com/service/miwifi/miwifipro/update">官网教程</a>，这里就不赘述了。
@@ -338,64 +343,64 @@ http://mirrors.ustc.edu.cn/openwrt/releases/19.07.4/targets/ramips/mt76x8/openwr
 <p>正式开始执行脚本之前我们还需要或者一个东西 stok，打开我们的路由器管理后台，登录上去，找到地址栏形如 <strong>stok=ef443ae52875a6a442913bbbf38872</strong> 的这一串东西，其中的 <strong>ef443ae52875a6a442913bbbf38872</strong> 就是 stok，也就是我们登录的凭证，待会儿的脚本会需要用到这个参数来绕过路由器的登录认证限制。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201208221513.png" alt="image-20201208221513260"></p>
 <p>我们继续，先下载这个代码仓库：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">git clone https://github.com/acecilia/OpenWRTInvasion
-<span class="nb">cd</span> OpenWRTInvasion
-</code></pre></div><p>下面我们就可以来运行脚本了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git clone https://github.com/acecilia/OpenWRTInvasion
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> OpenWRTInvasion
+</span></span></code></pre></div><p>下面我们就可以来运行脚本了。</p>
 <h4 id="方式一002">方式一：0.0.2</h4>
 <ol>
 <li><strong>安装依赖</strong></li>
 </ol>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">pip3 install --upgrade pip
-pip3 install -r requirements.txt
-</code></pre></div><ol start="2">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">pip3 install --upgrade pip
+</span></span><span class="line"><span class="cl">pip3 install -r requirements.txt
+</span></span></code></pre></div><ol start="2">
 <li><strong>执行脚本</strong></li>
 </ol>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">python3 remote_command_execution_vulnerability.py
-</code></pre></div><p>按照提示输入路由器IP地址，如果没有改过的话不用管直接回车就行，然后输入 stok 值。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">python3 remote_command_execution_vulnerability.py
+</span></span></code></pre></div><p>按照提示输入路由器IP地址，如果没有改过的话不用管直接回车就行，然后输入 stok 值。</p>
 <ol start="3">
 <li><strong>尝试远程登录</strong></li>
 </ol>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">telnet 192.168.31.1
-</code></pre></div><p>用户名为 root 密码为空，如果能成功登录的话那就直接跳到“安装固件”部分即可，如果提示 Connection Confused，说明启动 telnet 服务失败了，我们可以尝试第二种方式。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">telnet 192.168.31.1
+</span></span></code></pre></div><p>用户名为 root 密码为空，如果能成功登录的话那就直接跳到“安装固件”部分即可，如果提示 Connection Confused，说明启动 telnet 服务失败了，我们可以尝试第二种方式。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201223113207.gif" alt="Alt Text"></p>
 <h4 id="方式二001">方式二：0.0.1</h4>
 <p>我们需要先切换到0.0.1版本然后再执行脚本：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 切换版本</span>
-git checkout -f 0.0.1
-<span class="c1"># 安装依赖</span>
-pip3 install --upgrade pip
-pip3 install -r requirements.txt
-<span class="c1"># 运行脚本</span>
-python3 remote_command_execution_vulnerability.py
-</code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211160654.png" alt="image-20201211160654006">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 切换版本</span>
+</span></span><span class="line"><span class="cl">git checkout -f 0.0.1
+</span></span><span class="line"><span class="cl"><span class="c1"># 安装依赖</span>
+</span></span><span class="line"><span class="cl">pip3 install --upgrade pip
+</span></span><span class="line"><span class="cl">pip3 install -r requirements.txt
+</span></span><span class="line"><span class="cl"><span class="c1"># 运行脚本</span>
+</span></span><span class="line"><span class="cl">python3 remote_command_execution_vulnerability.py
+</span></span></code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211160654.png" alt="image-20201211160654006">
 然后这里提示会需要在另一个窗口开一个Shell 用 nc 工具监听指定的接口，等待路由器将shell界面反向连接过来：</p>
-<pre><code>/usr/bin/nc -l 4444
+<pre tabindex="0"><code>/usr/bin/nc -l 4444
 </code></pre><p>开好了之后回到这个Shell继续输入路由器IP，stok即可，我使用这种方式成功了，脚本执行完后回到 nc 的那个窗口会发现已经可以执行命令了。
 <img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201223113139.gif" alt="Alt Text"></p>
 <h2 id="安装固件">安装固件</h2>
 <p>切换到 tmp 目录（其他分区空间不够放不下镜像）：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">cd</span> /tmp
-</code></pre></div><p>翻出来我们上面复制的那个固件地址，下载固件，如果是自己编译的话，找个地方放着把地址填进来就行：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">curl -o firmware.bin http://mirrors.ustc.edu.cn/openwrt/releases/19.07.4/targets/ramips/mt76x8/openwrt-19.07.4-ramips-mt76x8-xiaomi_mir4a-100m-squashfs-sysupgrade.bin
-</code></pre></div><p>安装：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 刷机有风险，请慎重</span>
-mtd -e OS1 -r write firmware.bin OS1
-</code></pre></div><p>等待命令执行完成后，我们安装 OpenWRT 就成功了~ 我们可以 ssh 登录到路由器上验证一下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> /tmp
+</span></span></code></pre></div><p>翻出来我们上面复制的那个固件地址，下载固件，如果是自己编译的话，找个地方放着把地址填进来就行：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -o firmware.bin http://mirrors.ustc.edu.cn/openwrt/releases/19.07.4/targets/ramips/mt76x8/openwrt-19.07.4-ramips-mt76x8-xiaomi_mir4a-100m-squashfs-sysupgrade.bin
+</span></span></code></pre></div><p>安装：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 刷机有风险，请慎重</span>
+</span></span><span class="line"><span class="cl">mtd -e OS1 -r write firmware.bin OS1
+</span></span></code></pre></div><p>等待命令执行完成后，我们安装 OpenWRT 就成功了~ 我们可以 ssh 登录到路由器上验证一下：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211161226.png" alt="image-20201211161225985"></p>
 <h2 id="扩展openwrt">扩展OpenWRT</h2>
 <p>OpenWRT 装好之后，是开箱即用的，我们连上网线就能直接上网了，不需要什么额外的配置，不过我们肯定不是冲着温饱来的，可以尽情的运行自己的代码才是最吸引我们的。</p>
 <p>Ubuntu 有 apt，CentOS 有 yum，而 OpenWRT 则使用 opkg 来管理软件包，所以我们可以直接使用 opkg 命令来安装一些有用的插件，比如神器Luci：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">ssh root@192.168.1.1
-opkg update <span class="o">&amp;&amp;</span> opkg install luci
-</code></pre></div><p>然后我们就可以打开管理页面（默认是：<a href="http://192.168.1.1">http://192.168.1.1</a>）来对路由器系统进行可视化的管理了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh root@192.168.1.1
+</span></span><span class="line"><span class="cl">opkg update <span class="o">&amp;&amp;</span> opkg install luci
+</span></span></code></pre></div><p>然后我们就可以打开管理页面（默认是：<a href="http://192.168.1.1">http://192.168.1.1</a>）来对路由器系统进行可视化的管理了。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211161301.png" alt="image-20201211161301530"></p>
 <p>想要安装其他插件的话，到控制台打开软件包管理界面，点击下载软件列表，然后自行搜索安装即可：
 <img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201223113944.png" alt="image-20201223113944508"></p>
 <p>OpenWRT 本质上是一个图灵完备的Linux系统，所以除了官方提供的软件包之外，我们也可以运行自己的代码，不过我们这款路由器的 CPU 是 mips 架构的，跟我们个人电脑通常使用的x86架构不同（Apple Silicon mac 除外），而路由器那一点点空间用不足以进行编译，所以我们需要在自己的电脑上交叉编译出对应的二进制包然后 <code>scp</code> 上去才行。</p>
 <p>Golang 代码的交叉编译就非常简单，加几个环境变量就行：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 开启软浮点 &amp; 小端mips架构 &amp; linux内核API</span>
-<span class="nv">GOMIPS</span><span class="o">=</span>softfloat <span class="nv">GOARCH</span><span class="o">=</span>mipsle <span class="nv">GOOS</span><span class="o">=</span>linux go build main.go
-</code></pre></div><p>如果是 C/C++的话，可以在官网下载SDK工具链进行交叉编译：https://openwrt.org/docs/guide-developer/using_the_sdk，或者自己从源码编译也是可以的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 开启软浮点 &amp; 小端mips架构 &amp; linux内核API</span>
+</span></span><span class="line"><span class="cl"><span class="nv">GOMIPS</span><span class="o">=</span>softfloat <span class="nv">GOARCH</span><span class="o">=</span>mipsle <span class="nv">GOOS</span><span class="o">=</span>linux go build main.go
+</span></span></code></pre></div><p>如果是 C/C++的话，可以在官网下载SDK工具链进行交叉编译：https://openwrt.org/docs/guide-developer/using_the_sdk，或者自己从源码编译也是可以的。</p>
 <p>OpenWRT 还有很多的功能可以去探索，比如：</p>
 <ul>
 <li>frp内网穿透: 你可以在自家电脑或者路由器上部署一个公网可达的服务</li>
@@ -771,7 +776,7 @@ opkg update <span class="o">&amp;&amp;</span> opkg install luci
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
-    
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
 
     
 
@@ -781,7 +786,7 @@ opkg update <span class="o">&amp;&amp;</span> opkg install luci
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2022 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2022 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
   </div>
   
 
@@ -806,12 +811,12 @@ opkg update <span class="o">&amp;&amp;</span> opkg install luci
 
 <script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
 
 
 
 
-  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 

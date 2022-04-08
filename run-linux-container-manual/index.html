@@ -7,14 +7,15 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我还依赖操作系统的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打">
+  <meta name="description" content="容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打">
 
   <meta property="og:title" content="手动实现一个Linux容器" />
-<meta property="og:description" content="容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我还依赖操作系统的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打" />
+<meta property="og:description" content="容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/run-linux-container-manual/" />
+<meta property="og:url" content="https://huweicai.com/run-linux-container-manual/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2021-04-14T16:20:00+08:00" />
 <meta property="article:modified_time" content="2021-04-14T16:20:00+08:00" />
+
 
    
 
@@ -50,33 +51,32 @@
   
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
 
   
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
 
 
   
   <link rel="shortcut icon"
   
-      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+      href="https://huweicai.com/img/profile.svg"
   
   >
 
 
-  
-  
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
 
   <style type="text/css">
       @media (min-width: 800px) and (max-width: 850px) {
               .navbar:not(.top-nav-collapse) {
-                  background: #1C2331!important;
+                  background: #000000!important;
               }
           }
   </style>
@@ -90,7 +90,7 @@
 
   
   
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
   
 
 </head>
@@ -110,7 +110,7 @@
       
       <a class="navbar-brand" href="https://huweicai.com">
           
-        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
         <strong> Huweicai</strong>
       </a>
@@ -132,6 +132,11 @@
              
             <li class="nav-item ">
               <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
             </li>
           
           
@@ -164,7 +169,7 @@
 
         
         <div class="carousel-item active">
-          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
 
             
             <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -193,7 +198,7 @@
       <div class="col-12 col-sm-5 align-middle">
         <a href="https://huweicai.com">
           
-            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
         </a>
       </div>
@@ -240,7 +245,7 @@
                 <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
             
     
-            
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
 
             
         </div>
@@ -302,47 +307,48 @@
 <blockquote>
 <p>Accelerate how you build, share and run modern applications.</p>
 </blockquote>
-<p>容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了<code>jdk 14.0.1</code>以及几个外部 jar包，同时我还依赖操作系统的一些特性，需要运行在 <code>debian buster</code>发行版上，那么我们可以把这些通通打入一个镜像中，或者叫一个静态的容器，任何会影响运行时的东西我们都可以打入镜像中，这使得其具有非常高的可移植性。容器运行起来的时候，会被彻底和底层机器以及其他的容器隔离起来，这又避免了许多可能的冲突。正是<code>可移植性</code>和<code>隔离性</code>这两个核心特性使得现代服务越来不越离不开容器化技术。</p>
-<p>容器领域现在一片欣欣向荣，<code>docker、containerd、kata</code>各种各样的容器运行时产品层出不穷，而为其提供支撑的核心技术，其实都万变不离其宗。</p>
+<p>容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了<code>jdk 14.0.1</code>以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 <code>debian buster</code>发行版上，那么我们可以把这些通通打入一个镜像中，或者叫一个静态的容器，任何会影响运行时的东西我们都可以打入镜像中，这使得其具有非常高的可移植性。</p>
+<p>容器运行起来的时候，会被彻底和底层机器以及其他的容器隔离起来，这又避免了许多可能的冲突。正是<code>可移植性</code>和<code>隔离性</code>这两个核心特性使得现代服务越来不越离不开容器化技术。</p>
+<p>容器领域现在一片欣欣向荣，<code>docker、containerd、kata</code>各种各样的容器运行时产品层出不穷，而为其提供支撑的核心技术，其实一直都万变不离其宗。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210727151924.jpg" alt="Snipaste_2021-04-13_18-20-32"></p>
 <p>本文会介绍用纯手动敲命令的方式，基于一个普通的 <code>Linux</code> 系统（注：基于 <code>centos 7.9</code>，其他发行版均可，注意替换包管理相关命令），以 <a href="https://hub.docker.com/layers/alpine/library/alpine/3.11/images/sha256-07301d64eb71d3470346f3965ac51d475b091b4c0b7ed7b9ed857176eb9d76f4?context=explore">alpine:3.11</a> 这个镜像为例，一步步运行起来一个“五脏俱全”的容器，将容器底层相关的核心技术都串联起来。</p>
 <h1 id="下载镜像">下载镜像</h1>
-<p>镜像是静态的容器，本质上就是一堆二进制文件打包在一起，而关于镜像具体如何组织，则出现了好几种镜像格式，目前主流镜像格式有三种：</p>
+<p>镜像是静态的容器，本质上就是一堆文件打包在一起，而关于镜像具体如何组织，则出现了好几种镜像格式，目前主流镜像格式有三种：</p>
 <ul>
-<li><code>Docker V2 Schema 1</code>主要为了与老版本兼容</li>
-<li><code>Docker V2 Schema 2</code>目前新版本 Docker 使用中</li>
-<li><code>OCI</code>开放镜像组织基于 <code>Docker V2 Schema 2</code>发布的业内统一镜像标准格式</li>
+<li><code>Docker V2 Schema 1</code>：主要为了与老版本兼容</li>
+<li><code>Docker V2 Schema 2</code>：目前新版本 Docker 使用中</li>
+<li><code>OCI</code>：开放容器组织 (<a href="https://opencontainers.org/">Open Container Initiative</a>) 基于 <code>Docker V2 Schema 2</code>发布的业内统一镜像标准格式</li>
 </ul>
 <p>这里以最常见的 <code>Docker V2 Schema 2</code>镜像格式为例，一个镜像会存在一个 <code>manifest.json</code>镜像描述文件用于描述诸如文件层数、容器入口命令、版本等信息，想要了解详细细节可以参考官方定义：https://docs.docker.com/registry/spec/manifest-v2-2/。</p>
 <p>我们可以直接拼出<code>alpine:3.11</code>镜像对应的描述文件地址，值得注意的是这里需要通过 Header 声明对新版镜像格式的支持，不然出于兼容考虑镜像服务默认只会下发 <code>v1</code>版本的描述文件，另外这里使用了网易的镜像，因为直接去 <code>Docker Hub</code> 拉需要先获取 <code>JWT Token</code>，稍稍麻烦一点：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ curl -H <span class="s2">&#34;Accept: application/vnd.docker.distribution.manifest.v2+json&#34;</span> https://hub-mirror.c.163.com/v2/library/alpine/manifests/3.11
-
-​<span class="sb">```</span>
-<span class="o">{</span>
-   <span class="s2">&#34;schemaVersion&#34;</span>: 2, // manifest格式的版本，2.2版本固定为2
-   <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>, // MIME格式，2.2版本的manifest对应的值也是固定的
-   <span class="s2">&#34;config&#34;</span>: <span class="o">{</span> // 描述了镜像配置文件
-      <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.container.image.v1+json&#34;</span>,
-      <span class="s2">&#34;size&#34;</span>: 1470,
-      <span class="s2">&#34;digest&#34;</span>: <span class="s2">&#34;sha256:44dc5a8658dc159bb1c78f9285feead8e0d375d13300f10e647152abf5f3c329&#34;</span> // 镜像配置文件的摘要，同时也是地址
-   <span class="o">}</span>,
-   <span class="s2">&#34;layers&#34;</span>: <span class="o">[</span>
-      <span class="o">{</span>
-         <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span>, // 也基本是固定的
-         <span class="s2">&#34;size&#34;</span>: 2815346,   // 该层的大小，单位字节
-         <span class="s2">&#34;digest&#34;</span>: <span class="s2">&#34;sha256:9b794450f7b6db7c944ba1f4161edb68cb535052fe7db8ac06e613516c4a658d&#34;</span> // 该层文件系统的摘要，同时也是地址
-      <span class="o">}</span>
-   <span class="o">]</span>
-<span class="o">}</span>
-​<span class="sb">```</span>
-</code></pre></div><p>镜像描述文件中的 <code>layers</code>则包含了容器对应每一层的文件对象地址，对应一个 tar 压缩包，容器运行时会通过联合文件系统将这些层关联起来，这里我们的 <code>alpine:3.11</code>是个基础镜像，只有一层。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ curl -H <span class="s2">&#34;Accept: application/vnd.docker.distribution.manifest.v2+json&#34;</span> https://hub-mirror.c.163.com/v2/library/alpine/manifests/3.11
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">​<span class="sb">```</span>
+</span></span><span class="line"><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="cl">   <span class="s2">&#34;schemaVersion&#34;</span>: 2, // manifest格式的版本，2.2版本固定为2
+</span></span><span class="line"><span class="cl">   <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>, // MIME格式，2.2版本的manifest对应的值也是固定的
+</span></span><span class="line"><span class="cl">   <span class="s2">&#34;config&#34;</span>: <span class="o">{</span> // 描述了镜像配置文件
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.container.image.v1+json&#34;</span>,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;size&#34;</span>: 1470,
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;digest&#34;</span>: <span class="s2">&#34;sha256:44dc5a8658dc159bb1c78f9285feead8e0d375d13300f10e647152abf5f3c329&#34;</span> // 镜像配置文件的摘要，同时也是地址
+</span></span><span class="line"><span class="cl">   <span class="o">}</span>,
+</span></span><span class="line"><span class="cl">   <span class="s2">&#34;layers&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">      <span class="o">{</span>
+</span></span><span class="line"><span class="cl">         <span class="s2">&#34;mediaType&#34;</span>: <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span>, // 也基本是固定的
+</span></span><span class="line"><span class="cl">         <span class="s2">&#34;size&#34;</span>: 2815346,   // 该层的大小，单位字节
+</span></span><span class="line"><span class="cl">         <span class="s2">&#34;digest&#34;</span>: <span class="s2">&#34;sha256:9b794450f7b6db7c944ba1f4161edb68cb535052fe7db8ac06e613516c4a658d&#34;</span> // 该层文件系统的摘要，同时也是地址
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">   <span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">​<span class="sb">```</span>
+</span></span></code></pre></div><p>镜像描述文件中的 <code>layers</code>则包含了容器对应每一层的文件对象地址，对应一个 tar 压缩包，容器运行时会通过联合文件系统将这些层关联起来，这里我们的 <code>alpine:3.11</code>是个基础镜像，只有一层。</p>
 <p>我们可以直接拼接出 URL 下载这一层并解压到 <code>alpine</code> 目录：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">wget -O alpine.tar <span class="se">\
-</span><span class="se"></span>https://hub-mirror.c.163.com/v2/library/alpine/blobs/<span class="se">\
-</span><span class="se"></span>sha256:9b794450f7b6db7c944ba1f4161edb68cb535052fe7db8ac06e613516c4a658d
-
-mkdir -p alpine <span class="o">&amp;&amp;</span> tar xf alpine.tar -C alpine
-</code></pre></div><blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">wget -O alpine.tar <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>https://hub-mirror.c.163.com/v2/library/alpine/blobs/<span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>sha256:9b794450f7b6db7c944ba1f4161edb68cb535052fe7db8ac06e613516c4a658d
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">mkdir -p alpine <span class="o">&amp;&amp;</span> tar xf alpine.tar -C alpine
+</span></span></code></pre></div><blockquote>
 <p><strong>注</strong>：如果网易镜像失效了，直接去 alpine 官网或者其他途径下载 <code>rootfs</code> 也是可以的：</p>
 <p>官网地址：</p>
 <p><a href="https://dl-cdn.alpinelinux.org/alpine/v3.11/releases/x86_64/alpine-minirootfs-3.11.0-x86_64.tar.gz">https://dl-cdn.alpinelinux.org/alpine/v3.11/releases/x86_64/alpine-minirootfs-3.11.0-x86_64.tar.gz</a></p>
@@ -351,10 +357,10 @@ mkdir -p alpine <span class="o">&amp;&amp;</span> tar xf alpine.tar -C alpine
 </blockquote>
 <h1 id="简单运行">简单运行</h1>
 <p>我们查看上文解压的结果，会发现这就是 <code>alpine</code> 的 <code>rootfs</code>：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210408171758.png" alt="image-20210408171753062" style="zoom:50%;" /></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210408171758.png" alt="image-20210408171753062" style="zoom:50%;" />
 <p>我们可以使用 <code>chroot</code> 修改根目录的地址，实现对文件视图的隔离，然后再启动一个<code>alpine</code>镜像中带的 <code>shell</code>：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">chroot . /bin/sh --login
-</code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210408172830.png" alt="image-20210408172830119"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">chroot . /bin/sh --login
+</span></span></code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210408172830.png" alt="image-20210408172830119"></p>
 <p>是不是瞬间感觉有模有样了，跟我们平常通过 <code>shell</code> 进入一个容器一样？</p>
 <p>不过这个时候还差的远呢，还有很多其他类型资源，需要我们进一步处理：</p>
 <ul>
@@ -366,9 +372,9 @@ mkdir -p alpine <span class="o">&amp;&amp;</span> tar xf alpine.tar -C alpine
 <p>下面我们来继续一步步的实现。</p>
 <h1 id="创建挂载点">创建挂载点</h1>
 <p>虽然我们可以直接在镜像上执行我们的业务操作，但是如果要再基于这个镜像启动一个容器的话就需要再拉取一份镜像下来，所以容器产品通常会使用一种叫做 <strong>联合文件系统 (Union File System)</strong> 的技术，可以将多个文件层联合起来，呈现出一层的视图供使用者使用，但使用者所有的修改删除新增等操作全部是只会实际对最上层产生影响的，底层全部是是只读的，这样有利于多个容器间共用镜像，减少文件传输和存储成本。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210414170953.png" alt="docker-filesystems" style="zoom: 67%;" /></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210414170953.png" alt="docker-filesystems" style="zoom: 67%;" />
 <p>就像普通文件系统一样，联合文件系统也有很多种，比如：aufs、devicemapper、zfs等，这里以 docker 推荐的 <code>OverlayFS</code> 为例，我们创建一个新的目录做为上层，底层则是我们的 <code>alpine</code> 镜像所在的目录，合并成挂载一个文件系统：</p>
-<pre><code># 确保 overlay 内核模块开启
+<pre tabindex="0"><code># 确保 overlay 内核模块开启
 modprobe overlay
 # 创建上层目录，同时 overlayfs 还需要一个临时目录
 mkdir ./alpine-workdir ./tmp
@@ -381,31 +387,31 @@ mkdir ./alpine-workdir ./tmp
 <h1 id="隔离">隔离</h1>
 <h2 id="进程主机名">进程&amp;主机名</h2>
 <p>Linux 社区为了支持容器化技术实现了一种资源视图分区机制：<code>namespace</code>，可以将操作系统管理的资源按进程组进行隔离， 使得进程能只看到跟它相关联的资源，支持如下六种资源：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413200128.png" alt="image-20210413200038969" style="zoom:50%;" /></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413200128.png" alt="image-20210413200038969" style="zoom:50%;" />
 <p>在代码层面，内核提供了<code>clone</code>、<code>unshare</code>、<code>setns</code>三个系统调用来提供命名空间的功能，不过我们今天并不是要直接写代码来实现，<a href="https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git/">util-linux</a> 提供了 <code>unshare</code>命令行工具能让我们手动直接使用这种能力，几乎所有的发行版都内置了这个包。</p>
 <p><code>unshare</code> 的用法如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ unshare --help
-
-命令格式：
- unshare <span class="o">[</span>选项<span class="o">]</span> &lt;程序&gt; <span class="o">[</span>&lt;参数&gt;...<span class="o">]</span>
-
-启动一个新的命名空间运行指定的程序，不再共享当前命名空间。
-
-选项
- -m, --mount               隔离文件挂载系统
- -u, --uts                 隔离主机名
- -i, --ipc                 隔离 System V 进程通信机制
- -n, --net                 隔离网络空间
- -p, --pid                 隔离进程号
- -U, --user                隔离用户
- -f, --fork                fork一个子进程运行程序而不是直接运行
-     --mount-proc<span class="o">[=</span>&lt;dir&gt;<span class="o">]</span>  在隔离完成后，运行程序之前，挂载 proc 系统（隔离后的）到指定位置
- -r, --map-root-user       将当前用户映射成 root
-</code></pre></div><p>那么我们可以通过 <code>unshare</code> 隔离了资源之后再通过上文的 <code>chroot</code> 隔离文件视图：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">unshare -muinp -f chroot . /bin/sh --login
-</code></pre></div><p>这里需要注意的是，我们需要通过 <code>-f</code>参数让我们的 shell 在新 <strong>fork</strong> 的进程中执行才能进入新的命名空间，因为这个命令的设计是调用 <code>unshare</code> 的进程会仍然留在原来的命名空间下，子进程才会被置入新空间。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ unshare --help
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">命令格式：
+</span></span><span class="line"><span class="cl"> unshare <span class="o">[</span>选项<span class="o">]</span> &lt;程序&gt; <span class="o">[</span>&lt;参数&gt;...<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">启动一个新的命名空间运行指定的程序，不再共享当前命名空间。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">选项
+</span></span><span class="line"><span class="cl"> -m, --mount               隔离文件挂载系统
+</span></span><span class="line"><span class="cl"> -u, --uts                 隔离主机名
+</span></span><span class="line"><span class="cl"> -i, --ipc                 隔离 System V 进程通信机制
+</span></span><span class="line"><span class="cl"> -n, --net                 隔离网络空间
+</span></span><span class="line"><span class="cl"> -p, --pid                 隔离进程号
+</span></span><span class="line"><span class="cl"> -U, --user                隔离用户
+</span></span><span class="line"><span class="cl"> -f, --fork                fork一个子进程运行程序而不是直接运行
+</span></span><span class="line"><span class="cl">     --mount-proc<span class="o">[=</span>&lt;dir&gt;<span class="o">]</span>  在隔离完成后，运行程序之前，挂载 proc 系统（隔离后的）到指定位置
+</span></span><span class="line"><span class="cl"> -r, --map-root-user       将当前用户映射成 root
+</span></span></code></pre></div><p>那么我们可以通过 <code>unshare</code> 隔离了资源之后再通过上文的 <code>chroot</code> 隔离文件视图：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">unshare -muinp -f chroot . /bin/sh --login
+</span></span></code></pre></div><p>这里需要注意的是，我们需要通过 <code>-f</code>参数让我们的 shell 在新 <strong>fork</strong> 的进程中执行才能进入新的命名空间，因为这个命令的设计是调用 <code>unshare</code> 的进程会仍然留在原来的命名空间下，子进程才会被置入新空间。</p>
 <p>这个时候我们新的进程就已经隔离好了，不过我们还需要再手动挂载一下 <code>/proc</code>文件系统，让内核把当前的进程、CPU、内存等系统运行时信息通过文件的方式暴露出来，供<code>ps、df</code> 等工具使用：</p>
-<pre><code>/bin/mount -t proc proc /proc
+<pre tabindex="0"><code>/bin/mount -t proc proc /proc
 </code></pre><p>现在我们就已经把新开的这个 <code>shell</code>进程隔离出来了，不过还有两个小问题需要再进一步处理：</p>
 <ol>
 <li>文件挂载表虽然隔离了，但是新的命名空间下会把老命名空间的挂载表原样复制过来，这意味着容器里还是能看到之前所有的挂载点，只是以后的修改两个空间不会互相影响罢了</li>
@@ -413,36 +419,36 @@ mkdir ./alpine-workdir ./tmp
 </ol>
 <h2 id="文件挂载">文件挂载</h2>
 <p>Linux 提供了 <a href="https://man7.org/linux/man-pages/man2/pivot_root.2.html">pivot_root</a> 系统调用可以将整个系统的挂载点以指定的目录为轴，进行“旋转”，子目录旋转到根的位置，而原来的根目录则会旋转到子目录的位置，然后我们再解除掉原来根目录的挂载，就能得到一个&quot;纯净&quot;的文件挂载表，只有我们子目录下的挂载点，同时也省去使用 <code>chroot</code> 来完成文件视图隔离的操作了。</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">cd</span> alpine/
-<span class="c1"># 在新的命名空间下启动宿主机 bash</span>
-unshare -umpn -f bash
-<span class="c1"># 创建一个目录用于挂载旧 root</span>
-mkdir -p old-root
-<span class="c1"># 修改 root 挂载点，将原来的 root 挂载到 old-root 下</span>
-pivot_root . old-root/
-<span class="c1"># 用 alpine 下的 sh 替换当前 bash 进程启动</span>
-<span class="nb">exec</span> /bin/sh --login
-<span class="c1"># 挂载 proc 系统</span>
-/bin/mount -t proc proc /proc
-<span class="c1"># 解除旧 root 挂载</span>
-umount -l old-root/
-</code></pre></div><p>我们可以再用 <code>df</code> 命令查看一下，会发现容器里面已经只剩我们 alpine目录对应的挂载点了，符合预期。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> alpine/
+</span></span><span class="line"><span class="cl"><span class="c1"># 在新的命名空间下启动宿主机 bash</span>
+</span></span><span class="line"><span class="cl">unshare -umpn -f bash
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建一个目录用于挂载旧 root</span>
+</span></span><span class="line"><span class="cl">mkdir -p old-root
+</span></span><span class="line"><span class="cl"><span class="c1"># 修改 root 挂载点，将原来的 root 挂载到 old-root 下</span>
+</span></span><span class="line"><span class="cl">pivot_root . old-root/
+</span></span><span class="line"><span class="cl"><span class="c1"># 用 alpine 下的 sh 替换当前 bash 进程启动</span>
+</span></span><span class="line"><span class="cl"><span class="nb">exec</span> /bin/sh --login
+</span></span><span class="line"><span class="cl"><span class="c1"># 挂载 proc 系统</span>
+</span></span><span class="line"><span class="cl">/bin/mount -t proc proc /proc
+</span></span><span class="line"><span class="cl"><span class="c1"># 解除旧 root 挂载</span>
+</span></span><span class="line"><span class="cl">umount -l old-root/
+</span></span></code></pre></div><p>我们可以再用 <code>df</code> 命令查看一下，会发现容器里面已经只剩我们 alpine目录对应的挂载点了，符合预期。</p>
 <h1 id="网络配置">网络配置</h1>
 <p>容器网络模型中存在一种 <code>host</code>网络模式，即容器和宿主机共用网络空间，不进行隔离，所以理论上我们不进行下面的操作也算勉强实现一个容器了，不过如果我们想要实现一个常规的使用 <code>bridge</code>网络模式具有自己独立 IP 的容器的话，那我们还有最后一步要做。</p>
 <p>利用 <code>linux namespace</code> 的功能，我们可以隔离出一个具有独立网络设备、IP协议栈、路由表、防火墙规则的网络空间，但是就像我们上文提到的，这个新的网络空间创建出来之后是空空如也的，需要我们配置。</p>
 <h2 id="物理层">物理层</h2>
 <p>我们首先需要创建一个网络空间，然后给它创建网卡，这个时候理论上我们可以直接把默认网络空间下的物理网卡搬到新的网络空间下，这样容器就能上网，但是宿主机的网络就瘫痪了，不过有多张物理网卡的话就没有这个问题。</p>
 <p>Linux 提供了 <code>veth pair</code>（<a href="https://man7.org/linux/man-pages/man4/veth.4.html">veth - Virtual Ethernet Device</a>）的虚拟网卡对机制，可以在两个网络空间间建立一条隧道，使得网络流量可以跨越不同的网络空间，我们可以创建一对 <code>veth</code>，一张放在默认网络空间，一张放在我们新的网络空间，连通两个网络空间。</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 创建网络空间</span>
-ip netns add ns0
-<span class="c1"># 创建 veht pair</span>
-ip link add veth0 <span class="nb">type</span> veth peer name veth1
-<span class="c1"># 将 veth1 放入新创建的网络空间中</span>
-ip link <span class="nb">set</span> veth1 netns ns0
-</code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413204604.png" alt="image-20210413204603899" style="zoom:50%;" /></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 创建网络空间</span>
+</span></span><span class="line"><span class="cl">ip netns add ns0
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建 veht pair</span>
+</span></span><span class="line"><span class="cl">ip link add veth0 <span class="nb">type</span> veth peer name veth1
+</span></span><span class="line"><span class="cl"><span class="c1"># 将 veth1 放入新创建的网络空间中</span>
+</span></span><span class="line"><span class="cl">ip link <span class="nb">set</span> veth1 netns ns0
+</span></span></code></pre></div><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413204604.png" alt="image-20210413204603899" style="zoom:50%;" />
 <h2 id="链路层">链路层</h2>
 <p>现在两个网络空间还只能视为“物理层”已连通，物理网卡之间链路层的打通是通过交换机，而我们的虚拟网卡，则也需要一个虚拟交换机——网桥，在 <code>docker</code>   的容器网络中，会把所有的容器都挂到 <code>docker0</code>网桥上，这样这些虚拟设备们就像串在一个交换机之下互相直接不需要经过路由即可直连。</p>
-<pre><code># 安装网桥操作工具
+<pre tabindex="0"><code># 安装网桥操作工具
 yum install -y bridge-utils
 # 创建一个网桥
 brctl addbr bridge0
@@ -450,7 +456,7 @@ brctl addbr bridge0
 brctl addif bridge0 veth0
 </code></pre><h2 id="网络层">网络层</h2>
 <p>下面我们需要继续来打通网络层，首先需要给容器配置 IP 地址，同时网桥也需要一个 IP 地址，我们可以随意选择一个不冲突的网段即可，另外还需要配置容器的路由表，让容器将流量全部转发到网桥上。</p>
-<pre><code># 配置网桥 IP 地址，使用 172.18.0.0/16 网段
+<pre tabindex="0"><code># 配置网桥 IP 地址，使用 172.18.0.0/16 网段
 ifconfig bridge0 172.18.0.1
 # 配置容器 IP 
 ip netns exec ns0 ifconfig veth1 172.18.0.2
@@ -459,46 +465,45 @@ ip netns exec ns0 ip route add default via 172.18.0.1
 # 启动网卡
 ip link set dev veth0 up
 </code></pre><p>为了便于理解，简单画了一下如果有多个容器，即多个 namespace  之间的网络是如何连通的，可以看到每个 namesapce 和带物理网卡的默认 namespace 之间都会有一对 veth pair，默认 namespace 上的 veth pari 会被 bridge0 网桥接管，从而打通各个容器之间的网络，网桥和物理网卡之间在一个 namespace 内本来在链路层就是可以彼此可见的，而网络层的话，物理网卡和网桥会通过直接路由的方式进行连通，路由表在我们给网桥配置 IP 的时候会自动生成。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413221130.png" alt="image-20210413221130507" style="zoom:50%;" /></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210413221130.png" alt="image-20210413221130507" style="zoom:50%;" />
 <p>现在理论上我们就能在容器里 ping 通宿主机了：<code>ping 172.18.0.1</code>，但是访问外部网络的话还是不行的，因为我们这只是一个局域网 IP，包出去之后外网的机器没有我们的路由不能把包传回来，需要利用 <code>iptables</code> 等工具进行 nat 转换，在包发出时修改 IP 包源地址为宿主机地址再发出去：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 开启宿主机 IP 包转发功能</span>
-sysctl -w net.ipv4.ip_forward<span class="o">=</span><span class="m">1</span>
-<span class="c1"># NAT 转换，MASQUERADE是一种动态源IP 的 NAT 转换</span>
-iptables -t nat -A POSTROUTING -s 172.18.0.0/16 ! -o bridge0 -j MASQUERADE
-</code></pre></div><h2 id="应用层">应用层</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 开启宿主机 IP 包转发功能</span>
+</span></span><span class="line"><span class="cl">sysctl -w net.ipv4.ip_forward<span class="o">=</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># NAT 转换，MASQUERADE是一种动态源IP 的 NAT 转换</span>
+</span></span><span class="line"><span class="cl">iptables -t nat -A POSTROUTING -s 172.18.0.0/16 ! -o bridge0 -j MASQUERADE
+</span></span></code></pre></div><h2 id="应用层">应用层</h2>
 <p>这个时候我们就能 ping 通外部机器了，但是还有一个小问题需要解决：DNS还没有配置，我们在隔离文件视图之前需要复制宿主机的 DNS 配置到容器中：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 复制宿主机 DNS 配置到容器</span>
-cp /etc/resolv.conf alpine/
-</code></pre></div><p>到这里，我们的网络配置就全部完成了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 复制宿主机 DNS 配置到容器</span>
+</span></span><span class="line"><span class="cl">cp /etc/resolv.conf alpine/
+</span></span></code></pre></div><p>到这里，我们的网络配置就全部完成了。</p>
 <h1 id="资源限制">资源限制</h1>
 <p>作为一个五脏俱全的容器，资源限制这个问题是无论如何也绕不过的，不然比如一个容器出了 bug 死循环跑满了 CPU 导致其他容器全部异常，甚至影响到了宿主机的安全，这种的没有资源限制机制容器肯定是没人敢用的。</p>
 <p>Linux 提供 <a href="https://en.wikipedia.org/wiki/Cgroups">cgroups</a> (Control Groups) 机制用来限制、控制与分离一个进程组的资源，其实现原理也不难猜测，每一份资源都是以进程为最小单元分配的，资源的用量内核也是能统计到的，那么在分配 CPU 和 内存等资源分配时，内核只需要稍微留意一下这个进程是否受限即可。</p>
 <p><code>cgroups</code> 的用户接口层实现为了一个文件系统，挂载在<code>/sys/fs/cgroup</code>路径下，这下面的一级子目录都对应一种资源控制子系统：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ ls /sys/fs/cgroup
-blkio  cpu  cpuacct  cpu,cpuacct  cpuset  devices  freezer hugetlb
-memory  net_cls  net_cls,net_prio  net_prio  perf_event  pids  systemd
-
-</code></pre></div><p>而限制要一组进程的资源的话，只需要在资源控制子系统下创建一个子目录，然后把进程号写到 <code>tasks</code>文件中 即可，找 PID 这个事情不太好自动化，我们可以配合 cgroups 相关工具使用：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 限制CPU使用</span>
-<span class="nb">cd</span> /sys/fs/cgroup/cpu
-
-<span class="c1"># 创建目录，cgroups 会帮我们自动生成很多信息</span>
-mkdir -p my-container
-<span class="c1"># 限制 20% 的资源利用率，默认总值100000</span>
-<span class="nb">echo</span> <span class="m">20000</span> &gt; my-container/cpu.cfs_quota_us 
-
-<span class="c1"># 限制内存使用</span>
-<span class="nb">cd</span> /sys/fs/cgroup/memory/
-mkdir -p my-container
-<span class="c1"># 限制内存 200M</span>
-<span class="nb">echo</span> <span class="s2">&#34;200M&#34;</span> &gt; memory.limit_in_bytes
-
-<span class="c1"># 安装 cgroups 工具集</span>
-yum install -y libcgroup libcgroup-tools
-
-<span class="c1"># 配合 cgroups 工具免去手动写入 PID 的过程</span>
-cgexec -g cpu,memory:my-container bash
-</code></pre></div><h1 id="总结">总结</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ ls /sys/fs/cgroup
+</span></span><span class="line"><span class="cl">blkio  cpu  cpuacct  cpu,cpuacct  cpuset  devices  freezer hugetlb
+</span></span><span class="line"><span class="cl">memory  net_cls  net_cls,net_prio  net_prio  perf_event  pids  systemd
+</span></span></code></pre></div><p>而限制要一组进程的资源的话，只需要在资源控制子系统下创建一个子目录，然后把进程号写到 <code>tasks</code>文件中 即可，找 PID 这个事情不太好自动化，我们可以配合 cgroups 相关工具使用：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 限制CPU使用</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> /sys/fs/cgroup/cpu
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建目录，cgroups 会帮我们自动生成很多信息</span>
+</span></span><span class="line"><span class="cl">mkdir -p my-container
+</span></span><span class="line"><span class="cl"><span class="c1"># 限制 20% 的资源利用率，默认总值100000</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="m">20000</span> &gt; my-container/cpu.cfs_quota_us 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 限制内存使用</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> /sys/fs/cgroup/memory/
+</span></span><span class="line"><span class="cl">mkdir -p my-container
+</span></span><span class="line"><span class="cl"><span class="c1"># 限制内存 200M</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;200M&#34;</span> &gt; memory.limit_in_bytes
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 安装 cgroups 工具集</span>
+</span></span><span class="line"><span class="cl">yum install -y libcgroup libcgroup-tools
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 配合 cgroups 工具免去手动写入 PID 的过程</span>
+</span></span><span class="line"><span class="cl">cgexec -g cpu,memory:my-container bash
+</span></span></code></pre></div><h1 id="总结">总结</h1>
 <p>我们实现了一个具有独立网络、进程、文件空间并能物理隔离于宿主机的容器，容器所依赖的底层技术基本就是这些了：</p>
 <ul>
 <li>通过 <strong>namespace</strong> 机制隔离进程、IPC、主机号、网络设备、网络协议栈</li>
@@ -508,9 +513,9 @@ cgexec -g cpu,memory:my-container bash
 <li><strong>联合文件系统</strong>实现底层镜像不变可共享</li>
 </ul>
 <p>最终效果演示：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210414162224.png" alt="image-20210414162224423" style="zoom:50%;" /></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210414162224.png" alt="image-20210414162224423" style="zoom:50%;" />
 <p>所有命令汇总：</p>
-<pre><code>######################### 镜像下载解压
+<pre tabindex="0"><code>######################### 镜像下载解压
 wget -O alpine.tar \
 https://hub-mirror.c.163.com/v2/library/alpine/blobs/\
 sha256:9b794450f7b6db7c944ba1f4161edb68cb535052fe7db8ac06e613516c4a658d
@@ -579,7 +584,7 @@ echo 20000 &gt; my-container/cpu.cfs_quota_us
 cd /sys/fs/cgroup/memory/
 mkdir -p my-container
 # 限制内存 200M
-echo &quot;200M&quot; &gt; memory.limit_in_bytes
+echo &#34;200M&#34; &gt; memory.limit_in_bytes
 
 # 安装 cgroups 工具集
 yum install -y libcgroup libcgroup-tools
@@ -1128,7 +1133,7 @@ ping -c 2 baidu.com
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
-    
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
 
     
 
@@ -1138,7 +1143,7 @@ ping -c 2 baidu.com
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2022 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2022 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
   </div>
   
 
@@ -1163,12 +1168,12 @@ ping -c 2 baidu.com
 
 <script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
 
 
 
 
-  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 

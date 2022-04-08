@@ -1,537 +1,376 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>https://huweicai.com/</loc>
     <lastmod>2022-03-13T00:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/ebpf/</loc>
     <lastmod>2022-03-13T00:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/kernel/</loc>
     <lastmod>2022-03-13T00:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/linux/</loc>
     <lastmod>2022-03-13T00:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/kernel-debug-tips/</loc>
     <lastmod>2022-03-13T00:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/</loc>
     <lastmod>2022-03-13T00:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/cilium/</loc>
     <lastmod>2022-02-19T11:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/cilium-container-datapath/</loc>
     <lastmod>2022-02-19T11:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/kubernetes/</loc>
     <lastmod>2022-02-19T11:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</loc>
     <lastmod>2022-02-19T11:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
     <lastmod>2022-02-19T11:00:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/cloudnative/</loc>
     <lastmod>2021-12-04T01:19:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/docker/</loc>
     <lastmod>2021-12-04T01:19:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/harbor/</loc>
     <lastmod>2021-12-04T01:19:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E9%95%9C%E5%83%8F/</loc>
     <lastmod>2021-12-04T01:19:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/harbor-pull-principle/</loc>
     <lastmod>2021-12-04T01:19:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/upgrade-centos-kernel-version/</loc>
     <lastmod>2021-06-24T21:29:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</loc>
     <lastmod>2021-06-24T21:29:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/fluent-bit/</loc>
     <lastmod>2021-05-05T13:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E6%97%A5%E5%BF%97/</loc>
     <lastmod>2021-05-05T13:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C/</loc>
     <lastmod>2021-04-14T16:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/run-linux-container-manual/</loc>
     <lastmod>2021-04-14T16:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/kubernetes-permissions-overview/</loc>
     <lastmod>2021-03-18T21:29:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</loc>
     <lastmod>2021-03-18T21:29:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/kubectl-concepts-and-commands/</loc>
     <lastmod>2021-01-28T15:01:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/cpu/</loc>
     <lastmod>2021-01-01T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/go/</loc>
     <lastmod>2021-01-01T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/go-linux-get-cpu-usage/</loc>
     <lastmod>2021-01-01T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/</loc>
     <lastmod>2021-01-01T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/ip/</loc>
     <lastmod>2020-12-22T23:42:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/how-vpn-works/</loc>
     <lastmod>2020-12-22T23:42:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/minikube-install-tutorial/</loc>
     <lastmod>2020-12-14T16:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/run-openwrt-on-xiaomi4a100m/</loc>
     <lastmod>2020-12-08T23:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6/</loc>
     <lastmod>2020-12-08T23:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/git/</loc>
     <lastmod>2020-11-11T01:43:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/git-implementation/</loc>
     <lastmod>2020-11-11T01:43:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E5%AD%98%E5%82%A8/</loc>
     <lastmod>2020-11-11T01:43:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/ethernet/</loc>
     <lastmod>2020-07-01T01:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/http/</loc>
     <lastmod>2020-07-01T01:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/tcp/</loc>
     <lastmod>2020-07-01T01:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/who-network-capture-analysis/</loc>
     <lastmod>2020-07-01T01:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/categories/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/series/go/</loc>
-    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/categories/go/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/troubleshotting-goroutine-leeking/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/troubleshotting-goroutine-leeking/</loc>
-    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/pprof/</loc>
     <lastmod>2020-05-29T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://huweicai.com/series/</loc>
-    <lastmod>2020-05-29T19:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/yuv/</loc>
     <lastmod>2020-04-09T01:27:11+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E5%9B%BE%E5%83%8F/</loc>
     <lastmod>2020-04-09T01:27:11+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/</loc>
     <lastmod>2020-04-09T01:27:11+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/how-color-present/</loc>
     <lastmod>2020-04-09T01:27:11+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/shell/</loc>
     <lastmod>2020-03-20T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/most-frequently-command/</loc>
     <lastmod>2020-03-20T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/process-thread-goroutine/</loc>
     <lastmod>2020-03-17T01:20:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/go-package-sync/</loc>
     <lastmod>2020-01-10T00:30:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E5%B9%B6%E5%8F%91/</loc>
     <lastmod>2020-01-10T00:30:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/go-switch/</loc>
     <lastmod>2020-01-02T12:09:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/innodb/</loc>
     <lastmod>2019-11-13T00:13:31+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/mysql/</loc>
     <lastmod>2019-11-13T00:13:31+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/mysql-create-options/</loc>
     <lastmod>2019-11-13T00:13:31+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</loc>
     <lastmod>2019-11-13T00:13:31+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/%E5%8A%9E%E5%85%AC%E6%95%88%E7%8E%87/</loc>
     <lastmod>2019-07-02T08:47:11+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/web-markdown-to-pdf-utils/</loc>
     <lastmod>2019-07-02T08:47:11+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/java/</loc>
     <lastmod>2019-05-20T23:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/java-platforms/</loc>
     <lastmod>2019-05-20T23:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/jvm/</loc>
     <lastmod>2019-05-20T23:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/go-knowledge-points/</loc>
     <lastmod>2019-04-05T23:55:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/tags/redis/</loc>
     <lastmod>2019-01-04T22:43:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/redis-faq/</loc>
     <lastmod>2019-01-04T22:43:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/computer-encodings/</loc>
     <lastmod>2018-05-26T12:47:11+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/confusion-betwwen-forwhiletrue/</loc>
     <lastmod>2018-03-04T21:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/about/</loc>
     <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
+    <loc>https://huweicai.com/archives/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
     <loc>https://huweicai.com/chubaofs-csi/</loc>
     <priority>0</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://huweicai.com/personal/</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/series/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
-  
 </urlset>

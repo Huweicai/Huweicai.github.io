@@ -58,7 +58,7 @@
       <pubDate>Wed, 14 Apr 2021 16:20:00 +0800</pubDate>
       
       <guid>https://huweicai.com/run-linux-container-manual/</guid>
-      <description>容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我还依赖操作系统的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打</description>
+      <description>容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打</description>
     </item>
     
     <item>
@@ -134,15 +134,6 @@
     </item>
     
     <item>
-      <title>Go 64指针地址输出为何是40位</title>
-      <link>https://huweicai.com/troubleshotting-goroutine-leeking/</link>
-      <pubDate>Fri, 29 May 2020 19:58:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/troubleshotting-goroutine-leeking/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Golang 如何排查协程泄漏问题</title>
       <link>https://huweicai.com/troubleshotting-goroutine-leeking/</link>
       <pubDate>Fri, 29 May 2020 19:58:00 +0800</pubDate>
@@ -202,7 +193,7 @@
       <pubDate>Wed, 13 Nov 2019 00:13:31 +0800</pubDate>
       
       <guid>https://huweicai.com/mysql-create-options/</guid>
-      <description>这是一个很常见的 SQL 建表语句： CREATE TABLE `people` ( `id` int NOT NULL AUTO_INCREMENT, `name` varchar(40) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 SQL 建表语句结构如下： CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name (create_definition,...) [table_options] 我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一</description>
+      <description>这是一个很常见的 SQL 建表语句： CREATETABLE`people`(`id`intNOTNULLAUTO_INCREMENT,`name`varchar(40)DEFAULTNULL,PRIMARYKEY(`id`))ENGINE=InnoDBDEFAULTCHARSET=utf8SQL 建表语句结构如下： CREATE[TEMPORARY]TABLE[IFNOTEXISTS]tbl_name(create_definition,...)[table_options]我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一</description>
     </item>
     
     <item>
@@ -283,7 +274,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://huweicai.com/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/</guid>
-      <description>slug: &amp;quot;stand-alone-network-model &amp;quot; tags: [&amp;quot;操作系统&amp;quot;,&amp;quot;网络&amp;quot;,&amp;quot;Linux&amp;quot;,&amp;quot;docker&amp;quot;,&amp;quot;容器&amp;quot;] date: 2021-06-20T01:20:00+08:00 toc: true title: 经典单机容器网络模型-Docker # 参考文档 1. https://docs.docker.com/network/bridge/ 2. https://docs.docker.com/network/iptables/</description>
+      <description>slug: &amp;#34;stand-alone-network-model &amp;#34; tags: [&amp;#34;操作系统&amp;#34;,&amp;#34;网络&amp;#34;,&amp;#34;Linux&amp;#34;,&amp;#34;docker&amp;#34;,&amp;#34;容器&amp;#34;] date: 2021-06-20T01:20:00+08:00 toc: true title: 经典单机容器网络模型-Docker # 参考文档 1. https://docs.docker.com/network/bridge/ 2. https://docs.docker.com/network/iptables/</description>
     </item>
     
   </channel>

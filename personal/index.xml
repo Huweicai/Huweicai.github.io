@@ -21,7 +21,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://huweicai.com/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/</guid>
-      <description>slug: &amp;quot;stand-alone-network-model &amp;quot; tags: [&amp;quot;操作系统&amp;quot;,&amp;quot;网络&amp;quot;,&amp;quot;Linux&amp;quot;,&amp;quot;docker&amp;quot;,&amp;quot;容器&amp;quot;] date: 2021-06-20T01:20:00+08:00 toc: true title: 经典单机容器网络模型-Docker # 参考文档 1. https://docs.docker.com/network/bridge/ 2. https://docs.docker.com/network/iptables/</description>
+      <description>slug: &amp;#34;stand-alone-network-model &amp;#34; tags: [&amp;#34;操作系统&amp;#34;,&amp;#34;网络&amp;#34;,&amp;#34;Linux&amp;#34;,&amp;#34;docker&amp;#34;,&amp;#34;容器&amp;#34;] date: 2021-06-20T01:20:00+08:00 toc: true title: 经典单机容器网络模型-Docker # 参考文档 1. https://docs.docker.com/network/bridge/ 2. https://docs.docker.com/network/iptables/</description>
     </item>
     
   </channel>

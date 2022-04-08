@@ -12,9 +12,10 @@
   <meta property="og:title" content="Git实现原理" />
 <meta property="og:description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/git-implementation/" />
+<meta property="og:url" content="https://huweicai.com/git-implementation/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2020-11-11T01:43:00+08:00" />
 <meta property="article:modified_time" content="2020-11-11T01:43:00+08:00" />
+
 
    
 
@@ -50,33 +51,32 @@
   
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
 
   
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
 
 
   
   <link rel="shortcut icon"
   
-      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+      href="https://huweicai.com/img/profile.svg"
   
   >
 
 
-  
-  
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
 
   <style type="text/css">
       @media (min-width: 800px) and (max-width: 850px) {
               .navbar:not(.top-nav-collapse) {
-                  background: #1C2331!important;
+                  background: #000000!important;
               }
           }
   </style>
@@ -90,7 +90,7 @@
 
   
   
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
   
 
 </head>
@@ -110,7 +110,7 @@
       
       <a class="navbar-brand" href="https://huweicai.com">
           
-        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
         <strong> Huweicai</strong>
       </a>
@@ -132,6 +132,11 @@
              
             <li class="nav-item ">
               <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
             </li>
           
           
@@ -164,7 +169,7 @@
 
         
         <div class="carousel-item active">
-          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
 
             
             <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -193,7 +198,7 @@
       <div class="col-12 col-sm-5 align-middle">
         <a href="https://huweicai.com">
           
-            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
         </a>
       </div>
@@ -240,7 +245,7 @@
                 <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
             
     
-            
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
 
             
         </div>
@@ -307,58 +312,58 @@
 <h2 id="object">Object</h2>
 <p>Object 是这个文件管理系统中最基本的单元，就代表了一个普通的文件，每一个被 git 管理的文件都会计算出一个 hash 值然后压缩放置于 <code>.git/objects</code> 目录中。</p>
 <p>同时一个提交和目录还有标签页被抽象成了对象的一种。</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go">	<span class="nx">CommitObject</span>  <span class="p">=</span> <span class="mi">1</span> <span class="c1">// 提交
-</span><span class="c1"></span>	<span class="nx">TreeObject</span>    <span class="p">=</span> <span class="mi">2</span> <span class="c1">// 目录
-</span><span class="c1"></span>	<span class="nx">BlobObject</span>    <span class="p">=</span> <span class="mi">3</span> <span class="c1">// 文件
-</span><span class="c1"></span>	<span class="nx">TagObject</span>     <span class="p">=</span> <span class="mi">4</span> <span class="c1">// 标签
-</span></code></pre></div><p>Object 的数据结构如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Object</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nf">ID</span><span class="p">()</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 哈希值
-</span><span class="c1"></span>	<span class="nf">Type</span><span class="p">()</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">ObjectType</span> <span class="c1">// 类型
-</span><span class="c1"></span>	<span class="nf">Decode</span><span class="p">(</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span><span class="p">)</span> <span class="kt">error</span> <span class="c1">// 写入
-</span><span class="c1"></span>	<span class="nf">Encode</span><span class="p">(</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span><span class="p">)</span> <span class="kt">error</span> <span class="c1">// 读取
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><h2 id="commit">Commit</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="nx">CommitObject</span>  <span class="p">=</span> <span class="mi">1</span> <span class="c1">// 提交
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">TreeObject</span>    <span class="p">=</span> <span class="mi">2</span> <span class="c1">// 目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">BlobObject</span>    <span class="p">=</span> <span class="mi">3</span> <span class="c1">// 文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">TagObject</span>     <span class="p">=</span> <span class="mi">4</span> <span class="c1">// 标签
+</span></span></span></code></pre></div><p>Object 的数据结构如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Object</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">ID</span><span class="p">()</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 哈希值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Type</span><span class="p">()</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">ObjectType</span> <span class="c1">// 类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Decode</span><span class="p">(</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span><span class="p">)</span> <span class="kt">error</span> <span class="c1">// 写入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Encode</span><span class="p">(</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span><span class="p">)</span> <span class="kt">error</span> <span class="c1">// 读取
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><h2 id="commit">Commit</h2>
 <p>Commit 是一个特殊的对象，代表了一个版本，指向了属于该版本对应的目录以及所有的文件。同时还记录着提交人、时间、注释等其他信息。</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Commit</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span class="nx">Hash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 哈希值
-</span><span class="c1"></span>	<span class="nx">Committer</span> <span class="nx">Signature</span> <span class="c1">// 提交者
-</span><span class="c1"></span>	<span class="nx">Message</span> <span class="kt">string</span>      <span class="c1">// 注释
-</span><span class="c1"></span>	<span class="nx">TreeHash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 对应目录对象的哈希值
-</span><span class="c1"></span>	<span class="nx">ParentHashes</span> <span class="p">[]</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 上一个commit哈希值的数组
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></div><p>同时 commit 也包含了指向上一个 commit 的指针，这样所有的 commit 就能串成一条线，但是我们可以看到上面的结构中 commit 的 parrent 是一个数组，也就意味着可能会有多个，比如说两个 commit merge 成一个等场景，这也就意味着 commit 其实是一个网状结构，而不只是单纯的一条线。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Commit</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Hash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 哈希值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">Committer</span> <span class="nx">Signature</span> <span class="c1">// 提交者
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">Message</span> <span class="kt">string</span>      <span class="c1">// 注释
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">TreeHash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 对应目录对象的哈希值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">ParentHashes</span> <span class="p">[]</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 上一个commit哈希值的数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>同时 commit 也包含了指向上一个 commit 的指针，这样所有的 commit 就能串成一条线，但是我们可以看到上面的结构中 commit 的 parrent 是一个数组，也就意味着可能会有多个，比如说两个 commit merge 成一个等场景，这也就意味着 commit 其实是一个网状结构，而不只是单纯的一条线。</p>
 <h2 id="blob">Blob</h2>
 <p>Blob 即一个普通的文件，不过是压缩过的，。</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Blob</span> <span class="kd">struct</span> <span class="p">{</span>
-   <span class="nx">Hash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
-   <span class="nx">Size</span> <span class="kt">int64</span>
-   <span class="nx">obj</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span>
-<span class="p">}</span>
-</code></pre></div><h2 id="tree">Tree</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Blob</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">Hash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">Size</span> <span class="kt">int64</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">obj</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="tree">Tree</h2>
 <p>Tree代表了一个目录，包含一个 entries 数组指向了当前目录下的文件或者其他目录，构成了一棵文件树，所以被称为 Tree。</p>
 <p>另外文件的文件名是存储在 Tree 中的，所以如果一个目录下有十个文件只有名字不一样，那么也只会产生一个 blob 对象，因为内容的 hash 值都是一样的。</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Tree</span> <span class="kd">struct</span> <span class="p">{</span>
-   <span class="nx">Entries</span> <span class="p">[]</span><span class="nx">TreeEntry</span>
-   <span class="nx">Hash</span>    <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
-<span class="p">}</span>
-
-<span class="kd">type</span> <span class="nx">TreeEntry</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span class="nx">Name</span> <span class="kt">string</span>
-	<span class="nx">Mode</span> <span class="nx">filemode</span><span class="p">.</span><span class="nx">FileMode</span>
-	<span class="nx">Hash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
-<span class="p">}</span>
-</code></pre></div><h2 id="branch">Branch</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Tree</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">Entries</span> <span class="p">[]</span><span class="nx">TreeEntry</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">Hash</span>    <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">TreeEntry</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Mode</span> <span class="nx">filemode</span><span class="p">.</span><span class="nx">FileMode</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Hash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="branch">Branch</h2>
 <p>branch 的底层结构非常简单，在 <code>.git/refs/heads</code>中的每一个文件都代表一个分支，文件里则是对应 commit 的hash值。</p>
 <p>远端的分支则存放在<code>.git/refs/remotes</code>中，轻量级 tag 的实现也是和分支一样的。</p>
 <h2 id="working-directory">Working Directory</h2>
 <p>工作区，其实就是一个目录路径，代表了你在当前实际可见的文件集合，区别于备份于.git目录中的文件。</p>
 <h2 id="index">Index</h2>
 <p>暂存区，指向的文件是工作区的文件，跟工作区唯一的区别就是，只有被 <code>git add</code> 过的文件才会出现在 index 中被 git 托管，所以 index 的实现也非常简单，保存一个 add 了的文件的列表即可。</p>
-<div class="highlight"><pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Index</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span class="nx">Entries</span> <span class="p">[]</span><span class="o">*</span><span class="nx">Entry</span>
-<span class="p">}</span>
-</code></pre></div><h1 id="常见命令">常见命令</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Index</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">Entries</span> <span class="p">[]</span><span class="o">*</span><span class="nx">Entry</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="常见命令">常见命令</h1>
 <h2 id="git-commit-原理">Git Commit 原理</h2>
 <p>在调用 git commit 命令时，git 会将 index 引用的所有文件全部计算 hash 值，然后将当前指向的 commit 作为父节点，创建一个新的 commit 对象，然后让当前分支指向新创建的 commit 对象。</p>
 <h2 id="git-merge-原理">Git Merge 原理</h2>
@@ -1166,7 +1171,7 @@
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
-    
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
 
     
 
@@ -1176,7 +1181,7 @@
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2022 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2022 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
   </div>
   
 
@@ -1201,12 +1206,12 @@
 
 <script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
 
 
 
 
-  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 

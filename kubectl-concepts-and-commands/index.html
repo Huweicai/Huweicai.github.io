@@ -12,9 +12,10 @@
   <meta property="og:title" content="Kubectl基本概念&amp;常用命令" />
 <meta property="og:description" content="基本概念 容器化 &#43; Kubernetes 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 kubectl 则提供了一种非常直观和强大的观察操控 k8s集群的方式。 kubectl 是 kubernetes自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 cobra 来解析命令行参数，读取 .kube/config中存储的认证信息经由 k8s restful api 和集群交互。 kubectl 命令基本格式如下： kubectl [子命令] [资源类型] [资源名称] [选项] 和 docker 、git这种复杂的命令行程序一样，kub" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/kubectl-concepts-and-commands/" />
+<meta property="og:url" content="https://huweicai.com/kubectl-concepts-and-commands/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2021-01-28T15:01:00+08:00" />
 <meta property="article:modified_time" content="2021-01-28T15:01:00+08:00" />
+
 
    
 
@@ -50,33 +51,32 @@
   
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
 
   
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
 
 
   
   <link rel="shortcut icon"
   
-      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+      href="https://huweicai.com/img/profile.svg"
   
   >
 
 
-  
-  
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
 
   <style type="text/css">
       @media (min-width: 800px) and (max-width: 850px) {
               .navbar:not(.top-nav-collapse) {
-                  background: #1C2331!important;
+                  background: #000000!important;
               }
           }
   </style>
@@ -90,7 +90,7 @@
 
   
   
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
   
 
 </head>
@@ -110,7 +110,7 @@
       
       <a class="navbar-brand" href="https://huweicai.com">
           
-        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
         <strong> Huweicai</strong>
       </a>
@@ -132,6 +132,11 @@
              
             <li class="nav-item ">
               <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
             </li>
           
           
@@ -164,7 +169,7 @@
 
         
         <div class="carousel-item active">
-          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
 
             
             <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -193,7 +198,7 @@
       <div class="col-12 col-sm-5 align-middle">
         <a href="https://huweicai.com">
           
-            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
         </a>
       </div>
@@ -240,7 +245,7 @@
                 <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
             
     
-            
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
 
             
         </div>
@@ -301,7 +306,7 @@
 <p>容器化 + <code>Kubernetes</code> 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 <code>kubectl</code> 则提供了一种非常直观和强大的观察操控 k8s集群的方式。</p>
 <p><a href="https://github.com/kubernetes/kubectl">kubectl</a> 是 <a href="https://github.com/kubernetes/kubernetes">kubernetes</a>自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 <a href="https://github.com/spf13/cobra">cobra</a> 来解析命令行参数，读取 <code>.kube/config</code>中存储的认证信息经由 <code>k8s restful api</code> 和集群交互。</p>
 <p>kubectl 命令基本格式如下：</p>
-<pre><code>kubectl [子命令] [资源类型] [资源名称] [选项]
+<pre tabindex="0"><code>kubectl [子命令] [资源类型] [资源名称] [选项]
 </code></pre><p>和 <code>docker </code>、<code>git</code>这种复杂的命令行程序一样，<code>kubectl</code>也采用了命令下再分子命令的形式，子命令声明了要执行的动作，如：增删改查，当然 kubeclt 能做的远不止这四个动作，下文会简单介绍一下它们分别都能干什么。</p>
 <p>确定了动作之后还需要声明这个动作的对象，在 k8s 中通过<code>资源类型 + 资源名称</code>唯一确定一个资源。</p>
 <p>最后这一部分用于声明命令选项，包括子命令独有的以及 <code>kubectl</code> 全局的一些选项。</p>
@@ -667,13 +672,13 @@
 <h1 id="常用操作">常用操作</h1>
 <h3 id="查看一个-deployment-所有实例的实时日志">查看一个 deployment 所有实例的实时日志</h3>
 <p><code>kubectl logs</code>命令指定资源类型和其他的命令还不一样，因为可以不传类型只传实例名称，一个实例有可能就是叫：“deployment”，所以类型和名称要通过 <code>/</code>符号连接而不是空格，通过 <code>-f</code>参数流式实时查看：</p>
-<pre><code>kubectl logs -f deployment/${deployment.name}
+<pre tabindex="0"><code>kubectl logs -f deployment/${deployment.name}
 </code></pre><h3 id="kubectl-获取所有实例">kubectl 获取所有实例</h3>
 <p>对于大部分的资源，默认都只会获取指定命名空间下的资源，不过可以添加 -A 参数来获取所有命名空间下的资源。</p>
-<pre><code>kubectl get pods -A
+<pre tabindex="0"><code>kubectl get pods -A
 </code></pre><h3 id="kubectl-自动补全">kubectl 自动补全</h3>
 <p>自动补全能极大的提高我们的输入效率，脑补一下像操作一个本地文件时文件名的自动补全能应用到 pod、service 名上时会多么的方便。</p>
-<pre><code># BASH
+<pre tabindex="0"><code># BASH
 source &lt;(kubectl completion bash)
 # ZSH
 source &lt;(kubectl completion zsh)
@@ -681,19 +686,19 @@ source &lt;(kubectl completion zsh)
 # 如果想要每次打开shell都生效的话，加入对应shell的初始化文件即可
 </code></pre><h3 id="为-kubectl-命令设置别名">为 kubectl 命令设置别名</h3>
 <p>kubectl 这个命令每次都要敲7个字符，虽然有自动补全但是会和其他的 kubeXXX 组件冲突，这个时候我们可以设置一个别名来提升 kubectl 这种高频命令的效率，在 .bashrc 或者 .zshrc 等shell初始化文件中加入：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">alias</span> <span class="nv">k</span><span class="o">=</span>kubectl
-</code></pre></div><h3 id="设置默认-namespace">设置默认 namespace</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">alias</span> <span class="nv">k</span><span class="o">=</span>kubectl
+</span></span></code></pre></div><h3 id="设置默认-namespace">设置默认 namespace</h3>
 <p>有两种方式可以设置默认的 namespace 来免去每次都要敲 -n xxx 的繁琐：</p>
 <p>方式一：</p>
 <ol>
 <li>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">kubectl config set-context --current --namespace<span class="o">=</span><span class="si">${</span><span class="nv">NAMESPACE</span><span class="si">}</span>
-</code></pre></div></li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl config set-context --current --namespace<span class="o">=</span><span class="si">${</span><span class="nv">NAMESPACE</span><span class="si">}</span>
+</span></span></code></pre></div></li>
 </ol>
 <p>方式二：</p>
 <p>直接修改 kubectl 的配置文件：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">vi ~/.kube/config
-</code></pre></div><p>然后修改当前Context下的namespace字段：
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vi ~/.kube/config
+</span></span></code></pre></div><p>然后修改当前Context下的namespace字段：
 <img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210122114451.png" alt="image-20210122114446510"></p>
 <h3 id="修改kubectl配置文件位置">修改kubectl配置文件位置</h3>
 <p>kubectl 默认会读取当前用户HOME目录下的：<code>.kube/config</code>作为配置文件，不过也可以通过</p>
@@ -704,16 +709,16 @@ source &lt;(kubectl completion zsh)
 <p>这两种方式来从其他文件中读取。</p>
 <h3 id="重启deploymentdaemonset">重启deployment、daemonset</h3>
 <p>我们可以直接使用 <code>rollout restart</code> 命令来实现重启：</p>
-<pre><code> kubectl rollout restart deployment ${DeploymentName}
+<pre tabindex="0"><code> kubectl rollout restart deployment ${DeploymentName}
 </code></pre><p>或者也可以修改配置文件中无关紧要的一些参数来让资源重新发布。</p>
 <h3 id="重启-pod">重启 Pod</h3>
 <p>如果要重启一个 <code>deployment</code> 下托管的 pod，直接删除即可，<code>replica-set controller</code> 会再拉起来一个同样的 pod；</p>
 <p>如果是无人托管的野实例，可以通过 replace 命令来删掉原有pod再拉起来一个同样配置的 pod 来实现重启：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">kubectl get pod <span class="si">${</span><span class="nv">PodName</span><span class="si">}</span>  -o yaml <span class="p">|</span> kubectl replace --force -f -
-</code></pre></div><h3 id="pod批量执行命令">Pod批量执行命令</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get pod <span class="si">${</span><span class="nv">PodName</span><span class="si">}</span>  -o yaml <span class="p">|</span> kubectl replace --force -f -
+</span></span></code></pre></div><h3 id="pod批量执行命令">Pod批量执行命令</h3>
 <p><code>exec</code> 子命令可以帮助我们在 pod 上执行命令，但是只支持一个实例的执行，我们可以 <code>get</code> 到所有的 pod 之后通过 <code>jsonpath</code> 取出 pod 名称，然后通过 shell for 循环来实现这个操作，比如：查看当前 <code>namespace</code> 下所有实例上的时间：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="k">for</span> a in <span class="k">$(</span>k get pod -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{range .items[*]}{.metadata.name}{&#34;\n&#34;}{end}&#39;</span><span class="k">)</span><span class="p">;</span> kubectl <span class="nb">exec</span> <span class="nv">$a</span> <span class="s2">&#34;date&#34;</span>
-</code></pre></div><h1 id="参考">参考</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="k">for</span> a in <span class="k">$(</span>k get pod -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{range .items[*]}{.metadata.name}{&#34;\n&#34;}{end}&#39;</span><span class="k">)</span><span class="p">;</span> kubectl <span class="nb">exec</span> <span class="nv">$a</span> <span class="s2">&#34;date&#34;</span>
+</span></span></code></pre></div><h1 id="参考">参考</h1>
 <ul>
 <li><a href="https://kubernetes.io/zh/docs/reference/kubectl/overview/">Kubernetes 官方文档：kubectl 概述</a></li>
 <li><a href="https://github.com/kubernetes/kubectl">kubectl github 源代码</a></li>
@@ -1460,7 +1465,7 @@ source &lt;(kubectl completion zsh)
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
-    
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
 
     
 
@@ -1470,7 +1475,7 @@ source &lt;(kubectl completion zsh)
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2022 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2022 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
   </div>
   
 
@@ -1495,12 +1500,12 @@ source &lt;(kubectl completion zsh)
 
 <script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
 
 
 
 
-  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 

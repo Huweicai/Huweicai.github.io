@@ -12,9 +12,10 @@
   <meta property="og:title" content="VPN是如何工作的" />
 <meta property="og:description" content="VPN 想象一下这两种场景： 你下班家，公司线上一台机器出事故了，这个时候你需要远程到这台机器上来排查并处理问题。 你在其他城市实习，这个时候学校需要选下学期的课了，但是教务网站只对校园网开放。 在这两种场景中，都离不开一种关键的技术：VPN（Virtual Private Network：虚拟局域网）。 VPN提供了一种在公网上安全的加入局域网的方式，可以我们这里就以开源的 OpenConnect VPN 为例，探讨一下 VPN 这种技术是如何安全的将局域网在互" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/how-vpn-works/" />
+<meta property="og:url" content="https://huweicai.com/how-vpn-works/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2020-12-22T23:42:00+08:00" />
 <meta property="article:modified_time" content="2020-12-22T23:42:00+08:00" />
+
 
    
 
@@ -50,33 +51,32 @@
   
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
 
   
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
 
 
   
   <link rel="shortcut icon"
   
-      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+      href="https://huweicai.com/img/profile.svg"
   
   >
 
 
-  
-  
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
 
   <style type="text/css">
       @media (min-width: 800px) and (max-width: 850px) {
               .navbar:not(.top-nav-collapse) {
-                  background: #1C2331!important;
+                  background: #000000!important;
               }
           }
   </style>
@@ -90,7 +90,7 @@
 
   
   
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
   
 
 </head>
@@ -110,7 +110,7 @@
       
       <a class="navbar-brand" href="https://huweicai.com">
           
-        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
         <strong> Huweicai</strong>
       </a>
@@ -132,6 +132,11 @@
              
             <li class="nav-item ">
               <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
             </li>
           
           
@@ -164,7 +169,7 @@
 
         
         <div class="carousel-item active">
-          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
 
             
             <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -193,7 +198,7 @@
       <div class="col-12 col-sm-5 align-middle">
         <a href="https://huweicai.com">
           
-            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
         </a>
       </div>
@@ -240,7 +245,7 @@
                 <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
             
     
-            
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
 
             
         </div>
@@ -321,10 +326,10 @@
 <p>我们正常加入一个网络的时候，DHCP服务器会下发给我们这些信息。而当我们通过 VPN 这种非常规的方式加入时，VPN server 就需要来承担这一部分工作。</p>
 <p>在 oscerv 中，它会读取一个指定格式的配置文件，配置文件中的 <code>ipv4-network</code> <code>ipv4-netmask</code> <code>dns</code></p>
 <p>这三个选项指定了提供给客户端的 IP 地址池和 DNS 地址。</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">ipv4-network <span class="o">=</span> 192.168.1.0 <span class="c1"># 每次会随机从 192.168.1 这个子网IP池中分配一个给客户端使用</span>
-ipv4-netmask <span class="o">=</span> 255.255.255.0
-<span class="nv">dns</span> <span class="o">=</span> 192.168.1.2
-</code></pre></div><p>VPN 身份认证完毕之后，openconnect 就会在计算机中创建一张 tun 虚拟网卡，之后 openconnect 就可以读取到发送到这张网卡的原始 IP 报文，处理封装后再经由真实的物理网卡发送出去，然后再由那边的 oscerv 服务端接收处理，再转发到真实的目标地址。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ipv4-network <span class="o">=</span> 192.168.1.0 <span class="c1"># 每次会随机从 192.168.1 这个子网IP池中分配一个给客户端使用</span>
+</span></span><span class="line"><span class="cl">ipv4-netmask <span class="o">=</span> 255.255.255.0
+</span></span><span class="line"><span class="cl"><span class="nv">dns</span> <span class="o">=</span> 192.168.1.2
+</span></span></code></pre></div><p>VPN 身份认证完毕之后，openconnect 就会在计算机中创建一张 tun 虚拟网卡，之后 openconnect 就可以读取到发送到这张网卡的原始 IP 报文，处理封装后再经由真实的物理网卡发送出去，然后再由那边的 oscerv 服务端接收处理，再转发到真实的目标地址。</p>
 <p>在创建虚拟网卡之后，我们需要将网络流量导到这张网卡上来，默认 openconnect 会在系统中添加一条路由规则，将虚拟网卡设置为默认出口，相当于命令：<code>route add 0.0.0.0 tun4</code>，不过有可能并不是所有的流量都需要流经 VPN，可以在 oscerv 服务端通过 <code>route</code> 配置项下发路由表规则指定哪些流量走 VPN。</p>
 <h2 id="网络传输">网络传输</h2>
 <p>客户端设好了 IP 地址虚拟网卡等配置后，客户端就可以正常发送数据包到服务端了，但是另一个问题来了，如果只是简单地把整个原始局域网 IP 包放在一个公网IP包中，那么这个风险是非常大的，任何一个中间的设备都可以轻松的窥探其中传输的数据。</p>
@@ -587,7 +592,7 @@ ipv4-netmask <span class="o">=</span> 255.255.255.0
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
-    
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
 
     
 
@@ -597,7 +602,7 @@ ipv4-netmask <span class="o">=</span> 255.255.255.0
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2022 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2022 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
   </div>
   
 
@@ -622,12 +627,12 @@ ipv4-netmask <span class="o">=</span> 255.255.255.0
 
 <script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
 
 
 
 
-  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 

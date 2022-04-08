@@ -12,9 +12,9 @@
   <meta property="og:title" content="Golang 如何排查协程泄漏问题" />
 <meta property="og:description" content="背景 周所周知，内存泄漏是一个很严重的问题，会导致系统运行占用资源越来越多，无法释放，直至崩溃。所幸 Go 语言是一门 具有垃圾回收的语言，能大大降低遇到内存泄漏的概率，而我们今天要说的是另外一个棘手的问题：协程泄漏。 协程泄漏：顾名思义就是出现了应该释放而没有被释放的协程，导致系统协程数量一直上升。不像对象回收需要引用计数、三色标记等手段，协程的回收是相当简单的，等待协程将代码从头到尾执行完毕之后这一块儿空" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/troubleshotting-goroutine-leeking/" />
+<meta property="og:url" content="https://huweicai.com/troubleshotting-goroutine-leeking/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2020-05-29T19:58:00+08:00" />
-<meta property="article:modified_time" content="2020-05-29T19:58:00+08:00" /><meta property="og:see_also" content="https://huweicai.com/go-package-sync/" /><meta property="og:see_also" content="https://huweicai.com/go-switch/" /><meta property="og:see_also" content="https://huweicai.com/go-knowledge-points/" />
+<meta property="article:modified_time" content="2020-05-29T19:58:00+08:00" />
 
 
    
@@ -51,33 +51,32 @@
   
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
 
   
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
 
 
   
   <link rel="shortcut icon"
   
-      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+      href="https://huweicai.com/img/profile.svg"
   
   >
 
 
-  
-  
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
 
   <style type="text/css">
       @media (min-width: 800px) and (max-width: 850px) {
               .navbar:not(.top-nav-collapse) {
-                  background: #1C2331!important;
+                  background: #000000!important;
               }
           }
   </style>
@@ -91,7 +90,7 @@
 
   
   
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
   
 
 </head>
@@ -111,7 +110,7 @@
       
       <a class="navbar-brand" href="https://huweicai.com">
           
-        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
         <strong> Huweicai</strong>
       </a>
@@ -133,6 +132,11 @@
              
             <li class="nav-item ">
               <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
             </li>
           
           
@@ -165,7 +169,7 @@
 
         
         <div class="carousel-item active">
-          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
 
             
             <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -194,7 +198,7 @@
       <div class="col-12 col-sm-5 align-middle">
         <a href="https://huweicai.com">
           
-            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
         </a>
       </div>
@@ -241,7 +245,7 @@
                 <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
             
     
-            
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
 
             
         </div>
@@ -282,10 +286,6 @@
       
     
     
-      
-        <li><a href="https://huweicai.com/series/go"><i class="fas fa-bookmark pr-1" aria-hidden="true"></i>go</a></li>
-      
-    
   </ul>
 
   <div class="px-4 post-heading">Golang 如何排查协程泄漏问题</div>
@@ -315,29 +315,29 @@
 <h2 id="制造协程泄漏">制造协程泄漏</h2>
 <p>http.pprof 会在 init 的时候注册一些路由到 <strong>http.DefaultServeMux</strong> 上，所以要使用这个库，我们要做的只需要引入这个包，并且使用 DefaultServeMux 监控一个端口即可，具体的话调用：<strong>http.ListenAndServe</strong> 时 handler 传空即可，传空的时候会默认使用 DefaultServeMux 来处理。</p>
 <p>一下是一个协程泄漏的例子，分别在第 11 行和 14 行泄漏了 1000 个协程。</p>
-<div class="highlight"><pre class="chroma"><code class="language-golang" data-lang="golang"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;net/http&#34;</span>
-	<span class="nx">_</span> <span class="s">&#34;net/http/pprof&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-			<span class="k">select</span> <span class="p">{}</span> <span class="c1">// 泄漏了 1000 个协程
-</span><span class="c1"></span>		<span class="p">}()</span>
-		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-			<span class="k">select</span> <span class="p">{}</span> <span class="c1">// 泄漏了 1000 个协程
-</span><span class="c1"></span>		<span class="p">}()</span>
-	<span class="p">}</span>
-        
-        <span class="c1">// 启动一个 pprof http server
-</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:7899&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
-	<span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div><p>下面我们把这个服务跑起来：<code>go run pprof.go</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">_</span> <span class="s">&#34;net/http/pprof&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">select</span> <span class="p">{}</span> <span class="c1">// 泄漏了 1000 个协程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">select</span> <span class="p">{}</span> <span class="c1">// 泄漏了 1000 个协程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 启动一个 pprof http server
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">ListenAndServe</span><span class="p">(</span><span class="s">&#34;:7899&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>下面我们把这个服务跑起来：<code>go run pprof.go</code></p>
 <h2 id="分析泄漏问题">分析泄漏问题</h2>
 <p>我们先打开协程 Debug 的地址，我的服务监听在本地 7899 端口，所以地址是：http://127.0.0.1:7899/debug/pprof/goroutine?debug=1，通过这个我们已经可以很明显看到，我们的问题就发生在 pprof.go 11 行和 14 行这里，泄漏了 2000 个协程，那么我们就重点去排查这一段代码即可。</p>
 <p>这个页面很简单，可读性不高，不过当程序内存状态很复杂的时候，可以考虑配合可视化工具使用。
@@ -398,10 +398,10 @@
             
             <div class="col-md-6 text-right" >
               
-                <a href=https://huweicai.com/troubleshotting-goroutine-leeking/ class="post-meta">Next
+                <a href=https://huweicai.com/who-network-capture-analysis/ class="post-meta">Next
                   <div class="pt-2 pb-5 flex-reverse">
                     <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>Go 64指针地址输出为何是40位</span>
+                    <span>完整网络请求包自底向上分析</span>
                   </div>
                 </a>
               
@@ -606,7 +606,7 @@
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
-    
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
 
     
 
@@ -616,7 +616,7 @@
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2022 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2022 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
   </div>
   
 
@@ -641,12 +641,12 @@
 
 <script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
 
 
 
 
-  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 

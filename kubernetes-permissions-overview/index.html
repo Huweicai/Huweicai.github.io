@@ -12,9 +12,10 @@
   <meta property="og:title" content="Kubernetes权限管理概述" />
 <meta property="og:description" content="对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。 以 Git 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。 通常在校验权限中分为两个流程，认证和鉴权。 即先判断你是谁：认证，然后再鉴权，判断你有没有这个资源的权限。 毫无疑问，复杂的Kubernetes也具" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/kubernetes-permissions-overview/" />
+<meta property="og:url" content="https://huweicai.com/kubernetes-permissions-overview/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2021-03-18T21:29:00+08:00" />
 <meta property="article:modified_time" content="2021-03-18T21:29:00+08:00" />
+
 
    
 
@@ -50,33 +51,32 @@
   
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/font.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
 
   
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/mdb/style.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/main.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
 
 
   
   <link rel="shortcut icon"
   
-      href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png"
+      href="https://huweicai.com/img/profile.svg"
   
   >
 
 
-  
-  
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
 
   <style type="text/css">
       @media (min-width: 800px) and (max-width: 850px) {
               .navbar:not(.top-nav-collapse) {
-                  background: #1C2331!important;
+                  background: #000000!important;
               }
           }
   </style>
@@ -90,7 +90,7 @@
 
   
   
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/css/vendors/highlight/github-gist.css">
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
   
 
 </head>
@@ -110,7 +110,7 @@
       
       <a class="navbar-brand" href="https://huweicai.com">
           
-        <img class="avatar" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/logo.png" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
         <strong> Huweicai</strong>
       </a>
@@ -132,6 +132,11 @@
              
             <li class="nav-item ">
               <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
             </li>
           
           
@@ -164,7 +169,7 @@
 
         
         <div class="carousel-item active">
-          <div class="view" style="background-image: url('https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/header-slides/raw_1515147341.jpg'); background-repeat: no-repeat; background-size: cover;">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
 
             
             <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -193,7 +198,7 @@
       <div class="col-12 col-sm-5 align-middle">
         <a href="https://huweicai.com">
           
-            <img class="pull-right avatar avatar-md" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/img/profile.jpg" alt="" >
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
         </a>
       </div>
@@ -240,7 +245,7 @@
                 <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
             
     
-            
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
 
             
         </div>
@@ -323,7 +328,7 @@
 <p>主要方便快速地为一组用户授予权限。</p>
 <h3 id="service-account">Service Account</h3>
 <p>相对于外部用户 User 而言，Service Account 则是集群内部的用户，我们可以使用 k8s api 来查看和管理这种用户。</p>
-<pre><code>增：kubectl create serviceaccount my-test-sa
+<pre tabindex="0"><code>增：kubectl create serviceaccount my-test-sa
 删：kubectl delete serviceaccounts my-test-sa
 改：kubectl edit serviceaccounts my-test-sa
 查：kubectl get serviceaccounts
@@ -366,69 +371,69 @@
 <p>k8s 支持我们使用客户端证书的方式，来证明我们自己客户端的身份</p>
 <p>用集群的CA私钥签署一张证书，证书的 CommonName 填上用户名，Organization 填用户组，这样一张客户端证书就签好了。</p>
 <p>只要管理员手中的私钥没有泄露，那么持有CA签署过的证书同时持有对应私钥的用户，就是可信的，我们只需要在跟 API Server 进行 TLS 握手时提供我们的证书，即可证明我们的身份，比如使用 curl 的话我们可以这样来带上：</p>
-<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># client.crt 客户端证书</span>
-<span class="c1"># client.key 客户端私钥</span>
-<span class="c1"># 127.0.0.1:60002 API Server 地址</span>
-curl -k --cert  ./client.crt  --key ./client.key https://127.0.0.1:60002
-</code></pre></div><p>不过签发证书的操作还是比较繁琐的，同时证书一旦签发出去就再也无法回收了，最多也只能把这个证书对应用户的权限撤销，适合用于签发一些低频的系统账号。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># client.crt 客户端证书</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># client.key 客户端私钥</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 127.0.0.1:60002 API Server 地址</span>
+</span></span><span class="line"><span class="cl">curl -k --cert  ./client.crt  --key ./client.key https://127.0.0.1:60002
+</span></span></code></pre></div><p>不过签发证书的操作还是比较繁琐的，同时证书一旦签发出去就再也无法回收了，最多也只能把这个证书对应用户的权限撤销，适合用于签发一些低频的系统账号。</p>
 <h3 id="serviceaccount-令牌">ServiceAccount 令牌</h3>
 <p>ServiceAccount 是我们上面提到的一种特殊的身份，一种以 <code>system:serviceaccount</code>开头的用户，而 ServiceAccount 令牌则是这种机制使用的认证方式。创建 ServiceAccount 时会同时创建一个 Secret，里面存着的就是对应的 ServiceAccount令牌，在 ServiceAccount 被绑定到 POD 后，这个令牌也会自动挂载到 POD 内供其使用。</p>
 <p>ServiceAccount令牌也是一种 BerearToken，对于 API Server 从 HTTP 协议角度的来说，k8s 集群内外是没有区别的，所以我们其实也可以把 ServiceAccount令牌拿到集群外用，比如配到 kubeconfig 里。</p>
 <p>一个 ServcieAccount令牌实例：</p>
-<pre><code>Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImhZeXFZbG1QSlFKQjBKRkdLd0t6cWw0SG8tSVQ1QzJLbjFvMnJBYTRrZzgifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJ0ZXN0LXRlcyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLXpibW03Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJiOWRhY2RlNi05MzkzLTRkYjUtOTk4Yi03NzU3N2QzZGYxNTMiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6dGVzdC10ZXM6ZGVmYXVsdCJ9.mAHVlldUxlJD4dUOp2LTG37H3Jp0P4neYmv7A-bL-lrhFJ9XznLah4UuYIrgutCJ4clXcZnlsvrzDEnoWXSrK4bi62ztJuFneaJb0oczekU8YUligBWBpAHwfgYNXEDAWEVDrPayggF0TZdKfpHhQ0iOisvUO8XEo24fP1VYWtsr8SibyFJ-qOAuMUMi2C54KHY8-NAhbpkRM0d7awH-hU2Zkg-oYrK8U-RbNkWEIgUfxKByal0SXzF-KH24bO0_8XWSazAqi3vpElK2a5h4j7_qNv88UjX21gZtzpkOTXkZsDtiPKihfpXyWRHpo877-AUuC1Ct0ln4o7AbQpADEg
+<pre tabindex="0"><code>Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImhZeXFZbG1QSlFKQjBKRkdLd0t6cWw0SG8tSVQ1QzJLbjFvMnJBYTRrZzgifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJ0ZXN0LXRlcyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLXpibW03Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJiOWRhY2RlNi05MzkzLTRkYjUtOTk4Yi03NzU3N2QzZGYxNTMiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6dGVzdC10ZXM6ZGVmYXVsdCJ9.mAHVlldUxlJD4dUOp2LTG37H3Jp0P4neYmv7A-bL-lrhFJ9XznLah4UuYIrgutCJ4clXcZnlsvrzDEnoWXSrK4bi62ztJuFneaJb0oczekU8YUligBWBpAHwfgYNXEDAWEVDrPayggF0TZdKfpHhQ0iOisvUO8XEo24fP1VYWtsr8SibyFJ-qOAuMUMi2C54KHY8-NAhbpkRM0d7awH-hU2Zkg-oYrK8U-RbNkWEIgUfxKByal0SXzF-KH24bO0_8XWSazAqi3vpElK2a5h4j7_qNv88UjX21gZtzpkOTXkZsDtiPKihfpXyWRHpo877-AUuC1Ct0ln4o7AbQpADEg
 </code></pre><p>ServiceAccount令牌是一种JWT Token，所以我们可以直接通过 JWT 解析的<a href="https://jwt.io/">工具</a>来查看里面的内容。</p>
 <h3 id="静态令牌文件">静态令牌文件</h3>
 <p>和 BasicAuth 一样，通过 <code>--token-auth-file</code>指定静态令牌文件地址，每次修改文件也一样需要重启才能生效，只不过认证方式由 BasicAuth 改成了 Bearer Token。</p>
 <h3 id="bootstrap-引导令牌认证">Bootstrap 引导令牌认证</h3>
 <p>Bootstrap令牌是最近才出来的一种认证机制，在 <code>1.18 </code>版本之后才支持。</p>
 <p>和上面两种令牌一样，也是通过 HTTP 头部<code>Authorization</code>传递该令牌，形如：</p>
-<pre><code># 07401b 是 ID
+<pre tabindex="0"><code># 07401b 是 ID
 # f395accd246ae52d 是密钥
 Authorization: Bearer 07401b.f395accd246ae52d
 </code></pre><p>密钥存在<code>kube-system</code>命名空间下的 Secrte 里，名字形如<code>&quot;bootstrap-token-&lt;token id&gt;&quot;</code>格式，同时可以设置过期时间，一个例子如下：</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
-</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Secret</span><span class="w">
-</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="c"># name 必须是 &#34;bootstrap-token-&lt;token id&gt;&#34; 格式的</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">bootstrap-token-07401b</span><span class="w">
-</span><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">kube-system</span><span class="w">
-</span><span class="w">
-</span><span class="w"></span><span class="c"># type 必须是 &#39;bootstrap.kubernetes.io/token&#39;</span><span class="w">
-</span><span class="w"></span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">bootstrap.kubernetes.io/token</span><span class="w">
-</span><span class="w"></span><span class="nt">stringData</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="c"># 供人阅读的描述，可选。</span><span class="w">
-</span><span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;The default bootstrap token generated by &#39;kubeadm init&#39;.&#34;</span><span class="w">
-</span><span class="w">
-</span><span class="w">  </span><span class="c"># 令牌 ID 和秘密信息，必需。</span><span class="w">
-</span><span class="w">  </span><span class="nt">token-id</span><span class="p">:</span><span class="w"> </span><span class="l">07401b</span><span class="w">
-</span><span class="w">  </span><span class="nt">token-secret</span><span class="p">:</span><span class="w"> </span><span class="l">base64(f395accd246ae52d)</span><span class="w">
-</span><span class="w">
-</span><span class="w">  </span><span class="c"># 可选的过期时间字段</span><span class="w">
-</span><span class="w">  </span><span class="nt">expiration</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2017-03-10T03:22:11Z&#34;</span><span class="w">
-</span><span class="w">  </span><span class="c"># 允许的用法</span><span class="w">
-</span><span class="w">  </span><span class="nt">usage-bootstrap-authentication</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;true&#34;</span><span class="w">
-</span><span class="w">  </span><span class="nt">usage-bootstrap-signing</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;true&#34;</span><span class="w">
-</span><span class="w">
-</span><span class="w">  </span><span class="c"># 令牌要认证为的额外组，必须以 &#34;system:bootstrappers:&#34; 开头</span><span class="w">
-</span><span class="w">  </span><span class="nt">auth-extra-groups</span><span class="p">:</span><span class="w"> </span><span class="l">system:bootstrappers:worker,system:bootstrappers:ingress</span><span class="w">
-</span></code></pre></div><p>Bootstrap token一般会绑定一个 <code>system:node-bootstrapper</code>的角色，该角色只有证书签署对象（certificatesigningrequests.certificates.k8s.io）相关的权限：</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io/v1</span><span class="w">
-</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ClusterRole</span><span class="w">
-</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;system:node-bootstrapper&#39;</span><span class="w">
-</span><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
-</span><span class="w">    </span><span class="nt">kubernetes.io/bootstrapping</span><span class="p">:</span><span class="w"> </span><span class="l">rbac-defaults</span><span class="w">
-</span><span class="w"></span><span class="nt">rules</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span>- <span class="nt">verbs</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span>- <span class="l">create</span><span class="w">
-</span><span class="w">      </span>- <span class="l">get</span><span class="w">
-</span><span class="w">      </span>- <span class="l">list</span><span class="w">
-</span><span class="w">      </span>- <span class="l">watch</span><span class="w">
-</span><span class="w">    </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span>- <span class="l">certificates.k8s.io</span><span class="w">
-</span><span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w">
-</span><span class="w">      </span>- <span class="l">certificatesigningrequests</span><span class="w">
-</span></code></pre></div><p>然后一个组件使用该 <code>token</code>连到 <code>apiserver</code> 上后会创建一个证书签署对象，管理员在内部<code>approve</code>了之后会下发一组证书给组件，之后组件就能使用安全性更好的客户端证书的校验方式和 <code>apiserver</code>协同工作了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Secret</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># name 必须是 &#34;bootstrap-token-&lt;token id&gt;&#34; 格式的</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">bootstrap-token-07401b</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">kube-system</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># type 必须是 &#39;bootstrap.kubernetes.io/token&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">bootstrap.kubernetes.io/token</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">stringData</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 供人阅读的描述，可选。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;The default bootstrap token generated by &#39;kubeadm init&#39;.&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 令牌 ID 和秘密信息，必需。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">token-id</span><span class="p">:</span><span class="w"> </span><span class="l">07401b</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">token-secret</span><span class="p">:</span><span class="w"> </span><span class="l">base64(f395accd246ae52d)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 可选的过期时间字段</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">expiration</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2017-03-10T03:22:11Z&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 允许的用法</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">usage-bootstrap-authentication</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;true&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">usage-bootstrap-signing</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;true&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 令牌要认证为的额外组，必须以 &#34;system:bootstrappers:&#34; 开头</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">auth-extra-groups</span><span class="p">:</span><span class="w"> </span><span class="l">system:bootstrappers:worker,system:bootstrappers:ingress</span><span class="w">
+</span></span></span></code></pre></div><p>Bootstrap token一般会绑定一个 <code>system:node-bootstrapper</code>的角色，该角色只有证书签署对象（certificatesigningrequests.certificates.k8s.io）相关的权限：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ClusterRole</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;system:node-bootstrapper&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">kubernetes.io/bootstrapping</span><span class="p">:</span><span class="w"> </span><span class="l">rbac-defaults</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">rules</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">verbs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">create</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">get</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">list</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">watch</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">certificates.k8s.io</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">certificatesigningrequests</span><span class="w">
+</span></span></span></code></pre></div><p>然后一个组件使用该 <code>token</code>连到 <code>apiserver</code> 上后会创建一个证书签署对象，管理员在内部<code>approve</code>了之后会下发一组证书给组件，之后组件就能使用安全性更好的客户端证书的校验方式和 <code>apiserver</code>协同工作了。</p>
 <p>最典型的一个应用场景就是新的节点接入集群上面的<code>kubelet</code>要和 <code>apiserver</code>通信通常就是通过这种认证方式。</p>
 <h3 id="oidc令牌">OIDC令牌</h3>
 <p>OAuth 应该是我们经常见到的一种授权协议，用于在用户许可的情况下将系统的资源权限授予给第三方平台。</p>
@@ -446,7 +451,7 @@ Authorization: Bearer 07401b.f395accd246ae52d
 <p>如果想要彻底搭建自己的认证系统，Webhook令牌绝对是最合适的选择。</p>
 <p>k8s 支持在提交 Token 时将 Token 转发至指定的 Webhook 回调地址，然后根据约定好的回调响应来判断此次认证的结果。</p>
 <h1 id="资源resources">资源：Resources</h1>
-<p>当 <code>API Server</code> 完成了认证，确认了**“你是谁”**之后，下一步就是鉴权了，但是在此之前，API Server 还需要知道**“你想要什么”**，才能判断能不能给你你想要的东西。具体就是你想要访问的资源，再具体一点，就是你发起的 HTTP 请求中的字段。</p>
+<p>当 <code>API Server</code> 完成了认证，确认了**“你是谁”<strong>之后，下一步就是鉴权了，但是在此之前，API Server 还需要知道</strong>“你想要什么”**，才能判断能不能给你你想要的东西。具体就是你想要访问的资源，再具体一点，就是你发起的 HTTP 请求中的字段。</p>
 <p>一个资源具体包含以下核心属性，权限分配时也是根据这些属性来进行配置的。</p>
 <blockquote>
 <p>以访问 deployments coredns 资源的 URL为例：</p>
@@ -522,8 +527,8 @@ Authorization: Bearer 07401b.f395accd246ae52d
 <h2 id="属性鉴权abac">属性鉴权：ABAC</h2>
 <p><code>Attribute-based access control</code>基于属性的权限控制，通过一个静态文件通过 <a href="https://jsonlines.org/">JSONL</a>的格式来声明权限授予，需要直接写死给哪个用户或者组分配什么权限，不太灵活，已经不推荐使用了，一个例子如下：</p>
 <p>用户 <code>test-admin</code> 具有 test namespace 下所有资源的权限：</p>
-<div class="highlight"><pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span><span class="nt">&#34;apiVersion&#34;</span><span class="p">:</span> <span class="s2">&#34;abac.authorization.kubernetes.io/v1beta1&#34;</span><span class="p">,</span> <span class="nt">&#34;kind&#34;</span><span class="p">:</span> <span class="s2">&#34;Policy&#34;</span><span class="p">,</span> <span class="nt">&#34;spec&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;user&#34;</span><span class="p">:</span> <span class="s2">&#34;test-admin&#34;</span><span class="p">,</span> <span class="nt">&#34;namespace&#34;</span><span class="p">:</span> <span class="s2">&#34;test&#34;</span><span class="p">,</span> <span class="nt">&#34;resource&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span><span class="p">,</span> <span class="nt">&#34;apiGroup&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span><span class="p">}}</span>
-</code></pre></div><h2 id="角色鉴权rabc">角色鉴权：RABC</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;apiVersion&#34;</span><span class="p">:</span> <span class="s2">&#34;abac.authorization.kubernetes.io/v1beta1&#34;</span><span class="p">,</span> <span class="nt">&#34;kind&#34;</span><span class="p">:</span> <span class="s2">&#34;Policy&#34;</span><span class="p">,</span> <span class="nt">&#34;spec&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;user&#34;</span><span class="p">:</span> <span class="s2">&#34;test-admin&#34;</span><span class="p">,</span> <span class="nt">&#34;namespace&#34;</span><span class="p">:</span> <span class="s2">&#34;test&#34;</span><span class="p">,</span> <span class="nt">&#34;resource&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span><span class="p">,</span> <span class="nt">&#34;apiGroup&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span><span class="p">}}</span>
+</span></span></code></pre></div><h2 id="角色鉴权rabc">角色鉴权：RABC</h2>
 <p><code>Role-based access control</code>基于角色的权限控制，<code>RABC</code> 是一种非常经典的权限管理模型，它在 <code>ABAC</code>的基础上将要被授权的<code>属性</code>（或者叫<code>资源</code>）抽象出了一层<code>角色</code>，用户不再直接与资源建立联系，而是先将一系列资源绑定到角色上，用户再与角色建立联系。</p>
 <p>举个例子，假设我有两台机器，给小明和小红开了一个机器管理员的权限，如果是 <code>ABAC</code> 模式的话，如果新加了一台机器，那么我需要分别给小明和小红都加一下权限，如果机器和人一多，那就会非常的乱。</p>
 <p>而如果我们在机器资源之上抽象出来一层机器管理的角色，那么下次再新加机器只需要将这台机器加入到这个角色下即可，拥有机器管理员身份的所有人就都能自动获得这台机器的权限了，这就是 <code>RABC</code>用户和资源不再直接耦合，更加灵活方便。</p>
@@ -534,47 +539,47 @@ Authorization: Bearer 07401b.f395accd246ae52d
 <p>角色：Role</p>
 <p>在 k8s 中，角色主要通过 Role 对象来申明资源的集合，Role 通过 Rule 对象来申明具体的权限，一条 Rule 即我们上文提到的资源，<code>*</code>是通配符。</p>
 <p>一个 Role 的例子如下，声明了一个 <code>default</code>命名空间的只读角色：</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io/v1</span><span class="w">
-</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Role</span><span class="w">
-</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="c"># Role 是分命名空间的</span><span class="w">
-</span><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">default-viewer</span><span class="w">
-</span><span class="w"></span><span class="nt">rules</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span>- <span class="c"># 资源API组</span><span class="w">
-</span><span class="w">    </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;*&#34;</span><span class="p">]</span><span class="w">
-</span><span class="w">    </span><span class="c"># 资源类型</span><span class="w">
-</span><span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;*&#34;</span><span class="p">]</span><span class="w">
-</span><span class="w">    </span><span class="c"># 动作</span><span class="w">
-</span><span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> 
-</span><span class="w">      </span>- <span class="l">get</span><span class="w">
-</span><span class="w">      </span>- <span class="l">list</span><span class="w">
-</span><span class="w">      </span>- <span class="l">watch</span><span class="w">
-</span><span class="w">    </span><span class="c"># 可以申明具体某一个资源的权限，不填代表拥有所有权限</span><span class="w">
-</span><span class="w">    </span><span class="nt">resourceNames</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
-</span></code></pre></div><p>另外存在全局版本的 <code>ClusterRole</code>可以声明整个集群范围内的权限。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Role</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Role 是分命名空间的</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">default-viewer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">rules</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="c"># 资源API组</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;*&#34;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 资源类型</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;*&#34;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 动作</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">get</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">list</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">watch</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 可以申明具体某一个资源的权限，不填代表拥有所有权限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">resourceNames</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+</span></span></span></code></pre></div><p>另外存在全局版本的 <code>ClusterRole</code>可以声明整个集群范围内的权限。</p>
 <h3 id="角色绑定rolebinding">角色绑定：RoleBinding</h3>
 <p>有了角色之后，我们还需要完成角色到用户联系集的建立，在 k8s 中可以通过 <code>RoleBinding</code>来实现绑定，对应的全局集群版本为<code>ClusterRolebinding</code>，另外 <code>RoleBinding</code> 也是可以引用<code>ClusterRole</code>的，但是会自动在 <code>ClusterRole</code> 上加上当前命名空间的限制。</p>
 <p>我们可以通过如下的<code>RoleBinding</code>对象申明来将我们上文创建的角色绑定到小明和小红这两个用户上：</p>
-<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io/v1</span><span class="w">
-</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">RoleBinding</span><span class="w">
-</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">default-viewers</span><span class="w">
-</span><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
-</span><span class="w"></span><span class="nt">subjects</span><span class="p">:</span><span class="w">
-</span><span class="w"></span><span class="c"># 可以同时将角色绑定到多个主体上</span><span class="w">
-</span><span class="w"></span>- <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">User</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">xiaoming</span><span class="w"> </span><span class="c"># 不区分大小写</span><span class="w">
-</span><span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io</span><span class="w">
-</span><span class="w"></span>- <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">User</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">xiaohongs</span><span class="w">
-</span><span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io</span><span class="w">
-</span><span class="w"></span><span class="nt">roleRef</span><span class="p">:</span><span class="w">
-</span><span class="w">  </span><span class="c"># 要绑定的角色</span><span class="w">
-</span><span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Role</span><span class="w"> </span><span class="c"># Role 或 ClusterRole</span><span class="w">
-</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">default-viewer</span><span class="w">
-</span><span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io</span><span class="w">
-</span></code></pre></div><h2 id="node">Node</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">RoleBinding</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">default-viewers</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">subjects</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># 可以同时将角色绑定到多个主体上</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">User</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">xiaoming</span><span class="w"> </span><span class="c"># 不区分大小写</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">User</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">xiaohongs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">roleRef</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 要绑定的角色</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Role</span><span class="w"> </span><span class="c"># Role 或 ClusterRole</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">default-viewer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io</span><span class="w">
+</span></span></span></code></pre></div><h2 id="node">Node</h2>
 <p>Node鉴权方式其实算是一种 RABC 的变种，它的提出可以参考<a href="https://github.com/kubernetes/kubernetes/issues/40476">kubernetes issue40476</a>，具体实现于 <a href="https://github.com/kubernetes/kubernetes/pull/46076">pr46076</a>，主要是出于安全考虑，早期一台机器上的 kubelet 拥有任意修改其他 node 的资源的权限，存在一定的风险，需要限制 node 即 kubelet 只能访问它这个节点上的资源。</p>
 <p>理论上最好的方式肯定是创建一个 Role 叫 <code>system:node</code>，然后该角色只具有该节点的权限，这样就能直接复用 RABC 机制了，但是很遗憾，我们在上文资源那一节提到了一个资源都有哪些属性，很明显是无法直接配置出来这种角色的，所以只能单独写一种鉴权规则到代码里给 kubelet 等内部组件鉴权使用。</p>
 <h2 id="自定义">自定义</h2>
@@ -1468,7 +1473,7 @@ Authorization: Bearer 07401b.f395accd246ae52d
         <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
     
 
-    
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
 
     
 
@@ -1478,7 +1483,7 @@ Authorization: Bearer 07401b.f395accd246ae52d
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2022 &copy; | Theme <a href='https://github.com/orianna-zzo/AllinOne' target="_blank">AllinOne</a> by <a href='https://github.com/orianna-zzo' target="_blank">Orianna</a>  </span>
+    <span>  2016 - 2022 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
   </div>
   
 
@@ -1503,12 +1508,12 @@ Authorization: Bearer 07401b.f395accd246ae52d
 
 <script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/main.js"></script>
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
 
 
 
 
-  <script src="https://cdn.jsdelivr.net/gh/Huweicai/Huweicai.github.io/js/vendors/highlight.pack.js"> </script>
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 
