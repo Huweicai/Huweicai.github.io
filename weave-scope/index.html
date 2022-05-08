@@ -7,14 +7,14 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？ 人眼如何感知色彩 众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，颜色的本质就是电磁波的频率，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。 人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，">
+  <meta name="description" content="Scope 简介 scope 是 weavework 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还提供对容器进行简单的详情查看、销毁、远程登录等管理功能。 功能 Overview 下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表容器，而容器之前的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之间有流量">
 
-  <meta property="og:title" content="颜色是如何呈现的" />
-<meta property="og:description" content="现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？ 人眼如何感知色彩 众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，颜色的本质就是电磁波的频率，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。 人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，" />
+  <meta property="og:title" content="容器网络可视化：Weave Scope" />
+<meta property="og:description" content="Scope 简介 scope 是 weavework 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还提供对容器进行简单的详情查看、销毁、远程登录等管理功能。 功能 Overview 下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表容器，而容器之前的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之间有流量" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/how-color-present/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2020-04-09T01:27:11+08:00" />
-<meta property="article:modified_time" content="2020-04-09T01:27:11+08:00" />
+<meta property="og:url" content="https://huweicai.com/weave-scope/" /><meta property="article:section" content="" />
+<meta property="article:published_time" content="2022-04-27T23:42:00+08:00" />
+<meta property="article:modified_time" content="2022-04-27T23:42:00+08:00" />
 
 
    
@@ -41,11 +41,11 @@
 
   <title>
   
-       颜色是如何呈现的 | Anonymous&#39; Blog 
+       容器网络可视化：Weave Scope | Anonymous&#39; Blog 
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/how-color-present/">
+  <link rel="canonical" href="https://huweicai.com/weave-scope/">
 
   
   
@@ -284,18 +284,18 @@
         
     </ul>
 
-    <div class="px-4 post-heading">颜色是如何呈现的</div>
+    <div class="px-4 post-heading">容器网络可视化：Weave Scope</div>
 
     <ul class="post-meta li-x mt-1">
         
-            <li>2020-04-09</li>
+            <li>2022-04-27</li>
         
 
         
             <li class="middot"></li>
-            <li>5 minutes read</li>
+            <li>4 minutes read</li>
         
-        <li>2163 words</li>
+        <li>1586 words</li>
 
     </ul>
     
@@ -304,102 +304,91 @@
 
 
           <div class="post-content markdown">
-            <p>现实的世界是丰富多彩的，然而我们又是怎么将这种色彩呈现到我们的显示器上的呢？</p>
-<h1 id="人眼如何感知色彩">人眼如何感知色彩</h1>
-<p>众所周知，光是一种电磁波，可见光是人眼所能处理的一个电磁波频率区间子集，人眼看到事物是通过光来感知的，<strong>颜色的本质就是电磁波的频率</strong>，不同频率的光即我们语言中所定义的不同种类的颜色。本质上我们的眼睛和雷达并没有任何区别，只是大脑的解码渲染能力强一点罢了。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001733.png" alt="电磁波谱"></p>
-<p>人的眼睛中有视锥细胞和视杆细胞，视杆细胞负责感受光的强度，而视锥细胞则负责感受光的色彩。</p>
-<h2 id="视锥细胞">视锥细胞</h2>
-<p>人类眼睛中有三种对不同电磁波频率敏感的视锥细胞，分别是 <strong>Small</strong> <strong>Mediam</strong> <strong>Long</strong>，所有的颜色就是对这三种细胞不同强度刺激的组合结果，比如：</p>
+            <h1 id="scope">Scope</h1>
+<h2 id="简介">简介</h2>
+<p>scope 是 <a href="https://www.weave.works">weavework</a> 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还提供对容器进行简单的详情查看、销毁、远程登录等管理功能。</p>
+<h2 id="功能-overview">功能 Overview</h2>
+<p>下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表容器，而容器之前的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之间有流量依赖，一目了然。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220508195106.png" alt="image-20220508193905687"></p>
+<p>容器六边形里的阴影部分代表内存使用量，也可以切换成 CPU。</p>
+<p>最上面正中间我们可以看到还能切换网络中节点的视角，当前我们选择的是容器，也可以切换到进程、主机、DNS  名、容器名称（服务）、镜像等视角，比如进程视角：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220508195042.png" alt="image-20220508195042933"></p>
+<p>另外除了图，也能切换到表格视图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220508195334.png" alt="image-20220508195334702"></p>
+<h1 id="部署">部署</h1>
+<p>这一段我们介绍一下如何快速部署 scope 进行体验，scope 同时支持 k8s 容器集群和非 k8s 容器集群的部署模式。</p>
+<h2 id="裸-docker">裸 Docker</h2>
+<p>Docker 单机版部署体验可以直接使用官网提供的脚本：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo curl -L git.io/scope -o /usr/local/bin/scope
+</span></span><span class="line"><span class="cl">sudo chmod a+x /usr/local/bin/scope
+</span></span><span class="line"><span class="cl"><span class="c1"># 这里的 &#39;scope&#39; 是个辅助脚本</span>
+</span></span><span class="line"><span class="cl">scope launch
+</span></span></code></pre></div><p>这个脚本会判断当前的操作系统来拼接不同的 docker 启动参数，如果是在 linux 下，最终会使用如下参数启动一个容器，我们可以直接复制这条命令启动：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 因为 agent 需要采集宿主机信息，所以需要共用宿主机网络和PID空间，以及映射一些重要的挂载点</span>
+</span></span><span class="line"><span class="cl">docker run -d --name<span class="o">=</span>weavescope --privileged --userns<span class="o">=</span>host --net<span class="o">=</span>host --pid<span class="o">=</span>host -v /var/run/docker.sock:/var/run/docker.sock -v /sys/kernel/debug:/sys/kernel/debug -e CHECKPOINT_DISABLE weaveworks/scope:1.13.2 --probe.docker<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">.
+</span></span></code></pre></div><p>然后容器启动后打开地址：http://localhost:4040 即可访问。</p>
+<h2 id="kubernetes">Kubernetes</h2>
+<p>可能绝大部分 scope 的用户都是基于 k8s 的方式部署，官网也准备好了对应的部署脚本，直接运行即可：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 这里的 version 变量主要是要将 k8s 集群的版本 base64 之后传过去，然后它会重定向到对应 scope 版本的资源地址</span>
+</span></span><span class="line"><span class="cl">kubectl apply -f <span class="s2">&#34;https://cloud.weave.works/k8s/scope.yaml?k8s-version=</span><span class="k">$(</span>kubectl version <span class="p">|</span> base64 <span class="p">|</span> tr -d <span class="s1">&#39;\n&#39;</span><span class="k">)</span><span class="s2">&#34;</span>
+</span></span></code></pre></div><p>除开最基本的 Namespace 和 RBAC 类资源，这里会创建三个计算资源：</p>
 <ul>
-<li>黄色就是同时刺激 M 细胞和 L 细胞的结果</li>
-<li>同时刺激三种细胞时，我们就会得到白色</li>
-<li>如果都没有刺激，那就是黑色</li>
+<li><code>DaemonSet</code>: weave-scope-agent</li>
+<li><code>Deployment</code>: weave-scope-cluster-agent</li>
+<li><code>Deployment</code>: weave-scope-app</li>
 </ul>
-<p>这三种基本的光就是我们通常意义上所说的三原色，通过这三种原色，基于同时用540nm 和 570 nm 波长的光刺激锥状细胞在人类大脑看来大约等价于用 560nm光刺激的原理我们可以模拟出任意颜色的效果。不过这种等价只基于人类成立，鸡只有两种视锥细胞，而皮皮虾则有足足十六对，人类眼中相同的颜色在其他生物眼中可能差异非常大，不过这并不重要，只要能骗过我们的大脑就行，这种原理就是我们现代彩色显示器的理论基础。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001738.png" alt="视锥细胞敏感频率"></p>
-<p>M 细胞和 L 细胞依赖的光敏色素蛋白基因编码于 X 染色体上，如果出现问题，这会导致这两种细胞无法正常运转，即我们通常意义上说的红绿色盲症，另外它还是一种隐性遗传病，根据高中遗传学知识，患这种病的男性会比较多。
-红绿色盲世界模拟如下图右：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001743.png" alt="红绿色盲世界模拟"></p>
-<p>还有一种全色色盲症，即三种视锥细胞全无法正常工作，此时依靠视杆细胞维持视觉运行，只能看到黑白的世界。</p>
-<h1 id="色彩表示方式">色彩表示方式</h1>
-<h2 id="rgb">RGB</h2>
-<p>利用按一定强度刺激人眼三种锥细胞即可等效模拟出颜色效果的原理，当前几乎所有的彩色显示器全部是使用的 RGB 颜色模型来渲染色彩。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001753.png" alt="RGB Example"></p>
-<p>具体传输时我们一般是用三个数字表示一个彩色像素点，对应其：Red Green Blue 的比例，例如：</p>
+<p>另外这个资源描述文件中的镜像是存放在 <code>ghcr.io</code>上的，国内理论上能拉下来但是会比较慢，可以直接改成 DockerHub 上的镜像，内容摘要是一样的：</p>
+<pre tabindex="0"><code>ghcr.io/weaveworks/launcher/scope:1.13.2 -&gt; weaveworks/scope:1.13.2
+</code></pre><h1 id="实现原理">实现原理</h1>
+<h2 id="架构">架构</h2>
+<p>这里以 Kubernetes 集群内部署架构为例来分析 scope 的实现原理。</p>
+<p>代码上，scope 由 app 和 probe 两部分组成，probe 负责采集机器上的信息，然后上报给 app，app 聚合后提供 UI 展示。</p>
+<p>app 和 probe 会对应到部署时的 App 和 Agent 这两个组件，agent 还有一个特殊的版本：cluster-agent 专门采集 k8s 相关信息。它们用的都是同一个编译二进制产物，只是传入的启动参数不一样：</p>
 <ul>
-<li>0 0 0 代表黑色，没有光</li>
-<li>1 1 1 代表白色，三种光混合</li>
-<li>0 0 255 纯蓝色</li>
-<li>255 255 0 黄色</li>
+<li><strong>app</strong>: <code>/home/weave/scope --mode=app</code></li>
+<li><strong>agent</strong>: <code>/home/weave/scope --mode=probe --probe.kubernetes.role=host</code></li>
+<li><strong>cluster-agent</strong>: <code>/home/weave/scope --mode=probe --probe.kubernetes.role=cluster</code></li>
 </ul>
-<h3 id="rgbw">RGBW</h3>
-<p>考虑到白光是一种非常常见的颜色，而在 RGB 模型下显示白光时需要三种光全力运作，少数显示器出于省电考虑加入了 White：白色灯，在需要显示白色时只需亮起白灯一个即可，达到省电的效果。所以这也是说为什么黑色的背景可以省电的原理，黑色时一个灯都不需要亮，不过只有 OLED （Organic Light Emitting Display）这种每个像素点单独发光的显示技术才可以，对于像 LCD （Liquid Crystal Display）这种使用一块背光板通过遮罩来调整光大小的技术来说什么颜色耗电量都是一样的。</p>
-<h3 id="yuv">YUV</h3>
-<p>YUV色彩模型使用 Y 亮度，U 色度，V 浓度来表示颜色。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001805.png" alt="YUV亮度模型"></p>
-<p>同样的 UV 分量，Y 不同时效果如下：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001813.png" alt=""></p>
-<p>这种格式不同于 RGB 的地方在于，在缺失了 UV 只有 Y 值时，也能进行显示，不过看到的图像就是黑白图像，所以这种格式刚开始被提出用于黑白电视到彩色电视的过渡。</p>
-<p>另外人类眼中的视杆细胞比视锥细胞多很多，所以相对于色彩的变化，人眼要对亮度的变化更加敏感，利用这种特性，可以让多个 UV 分量共用一个 Y 分量，在基本保持色彩还原度的前提下尽可能的压缩空间，根据不同的采样率，常见的 YUV 格式有这几种：</p>
+<p>架构图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220509023150.png" alt="image-20220509023150325"></p>
+<h2 id="app">App</h2>
+<p>App 会实时接收来自 agent 上报的信息，然后聚合，scope 在设计上是只展示实时信息的，app 中有一个参数：<code>app.window</code>，scope 只会保存在这个窗口大小内的数据，默认是十五秒钟，即管理后台图上的拓扑关系是根据最近十五秒内存在过的网络连接分析出来的。</p>
+<p>临时数据的存储介质上支持：	内存存储（默认）、文件存储和AWS DynamoDB，通过参数<code>app.collector</code>设置。</p>
+<p>App 相关代码逻辑的入口位于：<code>/prog/app.go</code>文件的<code>appMain</code>函数。</p>
+<h2 id="agent">Agent</h2>
+<p>Agent 负责采集信息通过 WebSockt 上报给 app，在 agent 的内部，要采集的信息都抽象成了一个个的 Repoter，scope 目前实现了的 reporter 如下：</p>
 <ul>
-<li>4:4:4 完全采样，Y:UV = 1:1</li>
-<li>4:2:2 2:1的水平取样，垂直完全采样，Y:UV = 2:1</li>
-<li>4:2:0 垂直与水平均为 2:1 采样，Y:UV =4:1</li>
-</ul>
-<p>在 RGB 格式下，四个像素点存储需要的空间为：4 * 3 = 12B，而使用 YUV420P 格式则只需要 4 * 1 + 1 + 1 = 8B，可以节约三分之一的空间，这是一个非常可观的数字，所以 YUV 格式基本也是网络传输的首选颜色编码格式。
-不过基于现代显示器的工作原理，YUV 格式很明显是无法直接被显示器渲染的，需要转化成 RGB 格式才可以，以 YUV444 格式为例，可以通过 NTSC 给出的如下公式在这两种格式之间进行换算：</p>
-<pre tabindex="0"><code>Y = ( (  66 * R + 129 * G +  25 * B + 128) &gt;&gt; 8) +  16
-U = ( ( -38 * R -  74 * G + 112 * B + 128) &gt;&gt; 8) + 128
-V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
-</code></pre><p>公式看的头大也不要紧，只需要知道，RGB 和 YUV 以及下方的 CMYK 都是可以互相换算的就可以。</p>
-<h2 id="cmyk">CMYK</h2>
-<p>不同于 RGB 这一套基于光源自身发光的颜色编码体系，我们现实世界中看到的很多东西其实是并不能发光的，然而我们又有自由组合色彩的需求，比如：彩印。利用色料的三原色混色原理，加上黑色油墨，共计四种颜色混合叠加，形成所谓“全彩印刷”，这种颜色编码方式就是 CMYK：</p>
-<ul>
-<li>C：Cyan ＝ 青色</li>
-<li>M：Magenta ＝ 洋红</li>
-<li>Y：Yellow ＝ 黄色</li>
-<li>K：blacK ＝ 黑色</li>
-</ul>
-<p>CMYK 和 RGB 之间也是可以互相转换的，在我们打印 RGB 图片的时候就会发生这个转换过程：
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001821.png" alt=""></p>
-<h2 id="hslhsv">HSL(HSV)</h2>
-<p>RGB 编码方式虽然可以很好的完成自然颜色到显示器展示的映射，然而这种模式是基于光源的角度出发的，对于人类来说并不友好。HSL 模型在1978年由埃爾維·雷·史密斯提出，它是一种 RGB 的非线性映射：</p>
-<ul>
-<li>H: Hue，色调</li>
-<li>S: Saturation, 饱和度</li>
-<li>L: Lightness，亮度
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001829.png" alt=""></li>
-</ul>
-<p>这个模型以人类更加熟悉的方式封装了颜色的特性：什么颜色？深浅如何？明暗如何？
-所以这也是在颜色调整的人机交互界面上所使用的最为广泛的模型，例如：Photoshop，显示器色彩调整，Windows颜色选择器等。</p>
-<h1 id="总结">总结</h1>
-<p>看到这里，相信诸如下列问题大家都能找到想要的答案了：</p>
-<ul>
-<li>RGB、YUV、CMYK、HSL的关系</li>
-<li>RGB显示器的工作原理</li>
-<li>人如何感知颜色</li>
-<li>色盲症的原因</li>
-</ul>
-<p>五彩斑斓的精彩世界。</p>
-<p>参考链接：</p>
-<ol>
 <li>
-<p><a href="https://www.ixueshu.com/document/6f6ebb7bc153a6a89a4103ed4acdcdd2318947a18e7f9386.html">印刷世界：人眼与色彩</a></p>
+<p><code>CRI</code> / <code>Docker</code>: 采集该容器运行时托管的所有容器信息，包括容器ID、状态、名称、创建时间、镜像等，支持 Docker 和标准 CRI 接口，不过这也使得需要将宿主机上的 CRI Socket 文件挂载到 agent 容器中</p>
 </li>
 <li>
-<p><a href="https://zh.wikipedia.org/wiki/%E5%BD%A9%E8%89%B2%E8%A7%86%E8%A7%89">维基百科：彩色视觉</a></p>
+<p><code>Endpoint</code>: 最核心的模块，采集机器上的网络连接相关信息，找到每个进程都在和哪些 IP 连接，然后上报的时候会附带上这个进程对应的容器信息，然后 app 端聚合，根据连接的 IP 分析是不是集群中的其他组件，这样就能分析出来整个集群的网络拓扑关系。</p>
+<p>支持两种实现方式：</p>
+<ul>
+<li>eBPF：性能更好，占用资源更少，但是至少需要内核 4.4 版本</li>
+<li>遍历 proc 文件系统中每个进程的 /proc/<pid>/net/tcp 文件，里面有 TCP 连接信息</li>
+</ul>
 </li>
 <li>
-<p><a href="https://zh.wikipedia.org/zh-sg/%E8%A7%86%E6%9D%86%E7%BB%86%E8%83%9E">维基百科：视杆细胞</a></p>
+<p><code>Host</code>: 采集宿主机自身相关信息：</p>
+<ul>
+<li>CPU / 内存 / Load</li>
+<li>内核信息</li>
+<li>网络设备</li>
+</ul>
 </li>
 <li>
-<p><a href="https://www.fourcc.org/yuv.php">YUV pixel formats</a></p>
+<p><code>Process</code>: 采集宿主机上所有的进程信息：pid, command, parent pid, threads, cpu, memory, open files</p>
 </li>
 <li>
-<p><a href="https://www.lg.com/us/experience-tvs/oled-tv/oled-vs-lcd">LG: OLED vs. LCD</a></p>
+<p><code>Weave</code>: overlay 架构时可以用到</p>
 </li>
-</ol>
+<li>
+<p><code>Kubernetes</code>: cluster agent 会用到，调用 k8s 的 apiserver 采集集群拓扑</p>
+</li>
+</ul>
 
           </div>
 
@@ -413,13 +402,10 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
   <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
   <div class="tags-sm">
     
-      <li><a href="https://huweicai.com/tags/yuv" role="button">yuv </a></li>
+      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
       
     
-      <li><a href="https://huweicai.com/tags/%E5%9B%BE%E5%83%8F" role="button">图像 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E9%9F%B3%E8%A7%86%E9%A2%91" role="button">音视频 </a></li>
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
       
     
   </div>
@@ -435,10 +421,10 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
           <div class="row pt-3">
             <div class="col-md-6">
               
-                <a href=https://huweicai.com/most-frequently-command/ class="post-meta">Previous
+                <a href=https://huweicai.com/kernel-debug-tips/ class="post-meta">Previous
                   <div class="pt-2 pb-5 d-flex">
                     <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
-                    <span>找出使用最频繁的Shell命令</span>
+                    <span>Linux 内核调试小技巧</span>
                   </div>
                 </a>
               
@@ -446,10 +432,10 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
             
             <div class="col-md-6 text-right" >
               
-                <a href=https://huweicai.com/troubleshotting-goroutine-leeking/ class="post-meta">Next
+                <a href=https://huweicai.com/vmagent-relabel/ class="post-meta">Next
                   <div class="pt-2 pb-5 flex-reverse">
                     <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>Golang 如何排查协程泄漏问题</span>
+                    <span>VMAgent Relabel 实现原理分析</span>
                   </div>
                 </a>
               
@@ -497,8 +483,8 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e4%ba%ba%e7%9c%bc%e5%a6%82%e4%bd%95%e6%84%9f%e7%9f%a5%e8%89%b2%e5%bd%a9">
-												 人眼如何感知色彩
+						 					<a class="nav-link" href="#scope">
+												 Scope
 											</a>
 										</li>
 						 
@@ -521,142 +507,8 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e8%a7%86%e9%94%a5%e7%bb%86%e8%83%9e">
-												 视锥细胞
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#%e8%89%b2%e5%bd%a9%e8%a1%a8%e7%a4%ba%e6%96%b9%e5%bc%8f">
-												 色彩表示方式
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#rgb">
-												 RGB
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#rgbw">
-												 RGBW
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-									</ul>
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#yuv">
-												 YUV
-											</a>
-										</li>
-						 
-								
-								
-									</ul>
-								
-									</ul>
-								
-									</ul>
-								
-							
-						
-				 
-						
-						
-							
-								
-								
-									<ul class="nav">
-								
-									<ul class="nav">
-								
-								
-
-										<li class="nav-item">
-						 					<a class="nav-link" href="#cmyk">
-												 CMYK
+						 					<a class="nav-link" href="#%e7%ae%80%e4%bb%8b">
+												 简介
 											</a>
 										</li>
 						 
@@ -681,8 +533,8 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#hslhsv">
-												 HSL(HSV)
+						 					<a class="nav-link" href="#%e5%8a%9f%e8%83%bd-overview">
+												 功能 Overview
 											</a>
 										</li>
 						 
@@ -705,12 +557,164 @@ V = ( ( 112 * R -  94 * G -  18 * B + 128) &gt;&gt; 8) + 128
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
-												 总结
+						 					<a class="nav-link" href="#%e9%83%a8%e7%bd%b2">
+												 部署
 											</a>
 										</li>
 						 
 								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%a3%b8-docker">
+												 裸 Docker
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#kubernetes">
+												 Kubernetes
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9e%b6%e6%9e%84">
+												 架构
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#app">
+												 App
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#agent">
+												 Agent
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
 								
 									</ul>
 								

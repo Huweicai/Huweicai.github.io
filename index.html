@@ -158,14 +158,16 @@
 <div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" >  
 
   
-  <ol class="carousel-indicators">
 
-    
-      
-        <li data-target="#site-header" data-slide-to="0" class="active"></li>
-      
-    
-  </ol>
+
+
+
+
+
+
+
+
+
   
 
   
@@ -175,7 +177,7 @@
 
         
         <div class="carousel-item active">
-          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+          <div class="view" style="background-color: #000000; background-repeat: no-repeat; background-size: cover;">
 
             
             <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -213,7 +215,7 @@
       <div class="col-12 col-sm-7 text-left pl-5">
         
         <a href="https://huweicai.com">
-          <h1 class="display-4 mb-2 mt-2 h1 text-neon text-hover-scale">
+          <h1 class="display-4 mb-2 mt-2 h1" style="width: fit-content">
             <strong>Huweicai</strong>
           </h1>
         </a>
@@ -274,17 +276,6 @@
       </div>
     </div>
   </div>
-  
-
-  
-  <a class="carousel-control-prev" href="#site-header" role="button" data-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="carousel-control-next" href="#site-header" role="button" data-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
   
 
 </div>
@@ -409,6 +400,10 @@
 
   
 
+  
+
+  
+
 
 
 
@@ -432,15 +427,15 @@
         
             <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (6)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" role="button"><span>编程语言 (6)</span></a></li>
+            <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button"><span>容器 (6)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button"><span>容器 (5)</span></a></li>
+            <li><a href="https://huweicai.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" role="button"><span>编程语言 (6)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button"><span>操作系统 (5)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/cloudnative" role="button"><span>cloudnative (4)</span></a></li>
+            <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (5)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (4)</span></a></li>
+            <li><a href="https://huweicai.com/tags/cloudnative" role="button"><span>cloudnative (4)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (3)</span></a></li>
         
@@ -478,11 +473,15 @@
         
             <li><a href="https://huweicai.com/tags/pprof" role="button"><span>pprof (1)</span></a></li>
         
+            <li><a href="https://huweicai.com/tags/prometheus" role="button"><span>prometheus (1)</span></a></li>
+        
             <li><a href="https://huweicai.com/tags/redis" role="button"><span>redis (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/shell" role="button"><span>shell (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/tcp" role="button"><span>tcp (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/victoriametrics" role="button"><span>victoriametrics (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/yuv" role="button"><span>yuv (1)</span></a></li>
         
@@ -497,6 +496,8 @@
             <li><a href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97" role="button"><span>日志 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button"><span>权限管理 (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/%E7%9B%91%E6%8E%A7" role="button"><span>监控 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6" role="button"><span>硬件 (1)</span></a></li>
         
@@ -564,6 +565,115 @@
       </li>
     </ul>
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/vmagent-relabel/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">VMAgent Relabel 实现原理分析</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2022-04-28</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>One minute read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      VMAgent vmagnet 是 VictoriaMetrics 旗下一款的开源的指标采集服务，兼容（但不完全） prometheus 采集配置， 可以理解为在 prometheus 的基础上减去了时序数据库的功能，资源占用更少，更加轻量，专注于服务 VictoriaMetircs这种远端存储。 就像 VictoriaMetircs也支持通过 Graphite、influxDB、OpenTSDB 等协议格式写入存储一样，vmagent 也支持通过这些格式采集，然后写入到 vm 中。 Relabel Prometheus VMAgent自己实现的......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/prometheus" role="button">Prometheus </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E7%9B%91%E6%8E%A7" role="button">监控 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/victoriametrics" role="button">VictoriaMetrics </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/weave-scope/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">容器网络可视化：Weave Scope</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2022-04-27</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>4 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      Scope 简介 scope 是 weavework 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还提供对容器进行简单的详情查看、销毁、远程登录等管理功能。 功能 Overview 下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表容器，而容器之前的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之间有流量......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -835,127 +945,6 @@
       
     
       <li><a href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97" role="button">日志 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/run-linux-container-manual/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">手动实现一个Linux容器</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-04-14</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>12 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/docker" role="button">Docker </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button">命令行 </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/kubernetes-permissions-overview/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Kubernetes权限管理概述</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-03-18</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>14 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。 以 Git 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。 通常在校验权限中分为两个流程，认证和鉴权。 即先判断你是谁：认证，然后再鉴权，判断你有没有这个资源的权限。 毫无疑问，复杂的Kubernetes也具......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/kubernetes" role="button">Kubernetes </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button">权限管理 </a></li>
       
     
       <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>

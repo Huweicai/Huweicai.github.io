@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Prometheus on Anonymous&#39; Blog</title>
+    <link>https://huweicai.com/tags/prometheus/</link>
+    <description>Recent content in Prometheus on Anonymous&#39; Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Thu, 28 Apr 2022 22:42:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/prometheus/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>VMAgent Relabel 实现原理分析</title>
+      <link>https://huweicai.com/vmagent-relabel/</link>
+      <pubDate>Thu, 28 Apr 2022 22:42:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/vmagent-relabel/</guid>
+      <description>VMAgent vmagnet 是 VictoriaMetrics 旗下一款的开源的指标采集服务，兼容（但不完全） prometheus 采集配置， 可以理解为在 prometheus 的基础上减去了时序数据库的功能，资源占用更少，更加轻量，专注于服务 VictoriaMetircs这种远端存储。 就像 VictoriaMetircs也支持通过 Graphite、influxDB、OpenTSDB 等协议格式写入存储一样，vmagent 也支持通过这些格式采集，然后写入到 vm 中。 Relabel Prometheus VMAgent自己实现的</description>
+    </item>
+    
+  </channel>
+</rss>

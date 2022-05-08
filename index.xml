@@ -6,7 +6,25 @@
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sun, 13 Mar 2022 00:00:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 28 Apr 2022 22:42:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>VMAgent Relabel 实现原理分析</title>
+      <link>https://huweicai.com/vmagent-relabel/</link>
+      <pubDate>Thu, 28 Apr 2022 22:42:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/vmagent-relabel/</guid>
+      <description>VMAgent vmagnet 是 VictoriaMetrics 旗下一款的开源的指标采集服务，兼容（但不完全） prometheus 采集配置， 可以理解为在 prometheus 的基础上减去了时序数据库的功能，资源占用更少，更加轻量，专注于服务 VictoriaMetircs这种远端存储。 就像 VictoriaMetircs也支持通过 Graphite、influxDB、OpenTSDB 等协议格式写入存储一样，vmagent 也支持通过这些格式采集，然后写入到 vm 中。 Relabel Prometheus VMAgent自己实现的</description>
+    </item>
+    
+    <item>
+      <title>容器网络可视化：Weave Scope</title>
+      <link>https://huweicai.com/weave-scope/</link>
+      <pubDate>Wed, 27 Apr 2022 23:42:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/weave-scope/</guid>
+      <description>Scope 简介 scope 是 weavework 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还提供对容器进行简单的详情查看、销毁、远程登录等管理功能。 功能 Overview 下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表容器，而容器之前的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之间有流量</description>
+    </item>
+    
     <item>
       <title>Linux 内核调试小技巧</title>
       <link>https://huweicai.com/kernel-debug-tips/</link>
