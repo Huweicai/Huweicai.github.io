@@ -6,34 +6,7 @@
     <description>Recent content in Tags on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Thu, 28 Apr 2022 22:42:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Prometheus</title>
-      <link>https://huweicai.com/tags/prometheus/</link>
-      <pubDate>Thu, 28 Apr 2022 22:42:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/tags/prometheus/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>VictoriaMetrics</title>
-      <link>https://huweicai.com/tags/victoriametrics/</link>
-      <pubDate>Thu, 28 Apr 2022 22:42:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/tags/victoriametrics/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>监控</title>
-      <link>https://huweicai.com/tags/%E7%9B%91%E6%8E%A7/</link>
-      <pubDate>Thu, 28 Apr 2022 22:42:00 +0800</pubDate>
-      
-      <guid>https://huweicai.com/tags/%E7%9B%91%E6%8E%A7/</guid>
-      <description></description>
-    </item>
-    
+    <lastBuildDate>Wed, 27 Apr 2022 23:42:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>容器</title>
       <link>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</link>
