@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="Scope 简介 scope 是 weavework 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还提供对容器进行简单的详情查看、销毁、远程登录等管理功能。 功能 Overview 下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表容器，而容器之前的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之间有流量">
+  <meta name="description" content="Scope 简介 scope 是 weavework 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还能提供对容器进行简单的详情查看、销毁、远程登录等管理功能。 功能 Overview 下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表一个个容器，而容器之间的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之">
 
   <meta property="og:title" content="容器网络可视化：Weave Scope" />
-<meta property="og:description" content="Scope 简介 scope 是 weavework 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还提供对容器进行简单的详情查看、销毁、远程登录等管理功能。 功能 Overview 下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表容器，而容器之前的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之间有流量" />
+<meta property="og:description" content="Scope 简介 scope 是 weavework 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还能提供对容器进行简单的详情查看、销毁、远程登录等管理功能。 功能 Overview 下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表一个个容器，而容器之间的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/weave-scope/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2022-04-27T23:42:00+08:00" />
@@ -295,7 +295,7 @@
             <li class="middot"></li>
             <li>4 minutes read</li>
         
-        <li>1586 words</li>
+        <li>1588 words</li>
 
     </ul>
     
@@ -306,11 +306,11 @@
           <div class="post-content markdown">
             <h1 id="scope">Scope</h1>
 <h2 id="简介">简介</h2>
-<p>scope 是 <a href="https://www.weave.works">weavework</a> 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还提供对容器进行简单的详情查看、销毁、远程登录等管理功能。</p>
+<p>scope 是 <a href="https://www.weave.works">weavework</a> 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还能提供对容器进行简单的详情查看、销毁、远程登录等管理功能。</p>
 <h2 id="功能-overview">功能 Overview</h2>
-<p>下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表容器，而容器之前的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之间有流量依赖，一目了然。</p>
+<p>下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表一个个容器，而容器之间的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之间有流量依赖，一目了然。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220508195106.png" alt="image-20220508193905687"></p>
-<p>容器六边形里的阴影部分代表内存使用量，也可以切换成 CPU。</p>
+<p>容器六边形里的阴影部分代表该容器的内存使用量，也可以切换成 CPU。</p>
 <p>最上面正中间我们可以看到还能切换网络中节点的视角，当前我们选择的是容器，也可以切换到进程、主机、DNS  名、容器名称（服务）、镜像等视角，比如进程视角：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220508195042.png" alt="image-20220508195042933"></p>
 <p>另外除了图，也能切换到表格视图：</p>
@@ -354,8 +354,9 @@
 <p>架构图：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220509023150.png" alt="image-20220509023150325"></p>
 <h2 id="app">App</h2>
-<p>App 会实时接收来自 agent 上报的信息，然后聚合，scope 在设计上是只展示实时信息的，app 中有一个参数：<code>app.window</code>，scope 只会保存在这个窗口大小内的数据，默认是十五秒钟，即管理后台图上的拓扑关系是根据最近十五秒内存在过的网络连接分析出来的。</p>
-<p>临时数据的存储介质上支持：	内存存储（默认）、文件存储和AWS DynamoDB，通过参数<code>app.collector</code>设置。</p>
+<p>App 会实时接收来自 agent 上报的信息，然后聚合。</p>
+<p>scope 在设计上是只展示实时信息的，app 中有一个参数：<code>app.window</code>，scope 只会保存在这个窗口大小内的数据，默认是十五秒钟，即管理后台图上的拓扑关系是根据最近十五秒内存在过的网络连接分析出来的。</p>
+<p>临时数据的存储介质上支持：	内存存储（默认）、文件存储和 AWS DynamoDB，通过参数<code>app.collector</code>设置。</p>
 <p>App 相关代码逻辑的入口位于：<code>/prog/app.go</code>文件的<code>appMain</code>函数。</p>
 <h2 id="agent">Agent</h2>
 <p>Agent 负责采集信息通过 WebSockt 上报给 app，在 agent 的内部，要采集的信息都抽象成了一个个的 Repoter，scope 目前实现了的 reporter 如下：</p>
