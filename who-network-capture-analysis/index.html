@@ -306,7 +306,7 @@
           <div class="post-content markdown">
             <p>我们都知道网络是分层的，国际标准化组织将网络划分了七层，定义于 <a href="https://www.iso.org/standard/20269.html">ISO/IEC 7498-1</a>，也就是我们所熟知的 ISO 七层模型。</p>
 <p>自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200910165651.png" alt="网络分层 (1)"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20200910165651.png" alt="网络分层 (1)"></p>
 <p>而我们所熟知的超文本传输协议（HTTP: HyperText Transfer Protocol）便位于这个模型中的第七层，HTTP 请求包发出的时候会一层一层往下叠加头部知道最终变成最底层的物理信号在网线上传输，那么最终的网络包到底是长什么样呢？我们今天就来实践探索一下。</p>
 <p>先在服务器上起一个简单的 HTTP 服务：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">python -m SimpleHTTPServer <span class="m">8001</span>
@@ -337,12 +337,12 @@ e4 75 c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c
 </code></pre><p>接下来我们一步一步分析这些值的含义。</p>
 <h2 id="ethernet">Ethernet</h2>
 <p>首先整个协议栈的最底层是以太网协议，标准定义于 <a href="https://ieeexplore.ieee.org/document/8457469">IEEE 802.3</a>，具体以太网帧的格式是这样的：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001714.png" alt="image.png"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20200812001714.png" alt="image.png"></p>
 <p>在我们抓到的包中，前八个字节的前导码和帧开始符已经被网卡过滤掉了所以我们抓不到。</p>
 <p>接着就是 6 个字节 48 位的 MAC 目标地址：<code>78 c3 13 95 f7 82</code> ，这是我家路由器的网卡 MAC 地址。</p>
 <p>然后是 MAC 源地址：<code> 88 e9 fe 67 bc 7c</code>，这是我 Mac 的 MAC。网卡的 MAC 地址是全球唯一的，在出厂时就已经确定了，MAC 地址总共 6 个字节，48位，前 24 位代表厂商 ID ，由 IEEE （电子电气工程师协会）分配，后 24 位则由厂家自行分配，内部确认唯一即可。</p>
 <p>可以在 <a href="https://regauth.standards.ieee.org/">IEEE 官网网站</a>上 查到注册的厂商信息，我家路由器的 MAC 地址前六位是：<code> 78 c3 13</code>，在官网上搜可以搜到，这个地址是分给了中国移动，注册地址在北京宣武门，我家的路由器也确实是移动的。
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001701.png" alt="image.png"></p>
+<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20200812001701.png" alt="image.png"></p>
 <p>现在移除了两个 MAC 地址之后，我们还剩这些字节：</p>
 <pre tabindex="0"><code>08 00 45 00 00 87 00 00 40 00 40 06 1d f6 c0 a8 01 04 76 59 e4 75 c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c fd 61 c7 95 6b 55 91 47 45 54 20 2f 20 48 54 54 50 2f 31 2e 31 0d 0a 48 6f 73 74 3a 20 31 31 38 2e 38 39 2e 32 32 38 2e 31 31 37 3a 38 30 30 31 0d 0a 55 73 65 72 2d 41 67 65 6e 74 3a 20 63 75 72 6c 2f 37 2e 36 34 2e 31 0d 0a 41 63 63 65 70 74 3a 20 2a 2f 2a 0d 0a 0d 0a 
 </code></pre><p>我们继续分析以太网协议，下面是两个字节的以太网帧类型，表明了该帧封装了何种协议，常见取值如下：</p>
@@ -383,7 +383,7 @@ e4 75 c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c
 <p>我们的帧类型：<code> 0800</code> 是一个 IPv4 的封装帧，后面的冗余校验也和前导码一样，已经被网卡删掉了，所以捕获不到，以太网的头部就已经全部抽离了，我们继续分析下一层协议：IPv4。</p>
 <h2 id="ipv4">IPv4</h2>
 <p>IPv4 协议最新的规范定义于：<a href="https://tools.ietf.org/html/rfc791">RFC 791</a>，包格式如下：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001007.png" alt="image-20200812000253235"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20200812001007.png" alt="image-20200812000253235"></p>
 <p>因为 IP 头部的字段很多都是复用一个字节的，所以我们需要把十六进制转成 2 进制来分析，先取头 32 位，也就是 8 个 十六进制数字：</p>
 <pre tabindex="0"><code>45 		   00       00       87
 01000101 00000000 00000000 10000111
@@ -483,7 +483,7 @@ Active MTU: 1500 (Current Setting: 1500)
 <h2 id="tcp">TCP</h2>
 <p>这是我们现在剩余的数据流：<code>c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c fd 61 c7 95 6b 55 91 47 45 54 20 2f 20 48 54 54 50 2f 31 2e 31 0d 0a 48 6f 73 74 3a 20 31 31 38 2e 38 39 2e 32 32 38 2e 31 31 37 3a 38 30 30 31 0d 0a 55 73 65 72 2d 41 67 65 6e 74 3a 20 63 75 72 6c 2f 37 2e 36 34 2e 31 0d 0a 41 63 63 65 70 74 3a 20 2a 2f 2a 0d 0a 0d 0a</code>，还有 115 个字节，根据网络层 IPv4 头部的第 72 到第 79 位的协议类型我们得知这是一个 TCP 协议的包，下面我们就基于 TCP 的协议规范：<a href="https://tools.ietf.org/html/rfc793">RFC 793</a> 来逐位的进行分析。</p>
 <p>TCP 的头部格式如下：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200813013333.png" alt="image-20200813010547774"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20200813013333.png" alt="image-20200813010547774"></p>
 <p>首先一开始是 16 位的源端口和 16 位的目的端口，转化成十进制分别是：</p>
 <pre tabindex="0"><code>c8 07 -&gt; 51207
 1f 41 -&gt; 8001

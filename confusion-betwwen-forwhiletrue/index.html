@@ -322,8 +322,8 @@
     }
 }
 </code></pre><p>通过IDEA的jclasslib插件查看到的字节码如下：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001838.png" alt="while"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001842.png" alt="for"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20200812001838.png" alt="while"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20200812001842.png" alt="for"></p>
 <p>观察可以发现他们的字节码是一模一样的，所以这两种无限循环的实现方式在Java中其实是没有任何却别的，所以在源码中大量出现的for(;;)可能只是Doung Lea 先生的个人代码习惯。因此想用何种方式实现就全看个人喜好吧。</p>
 <blockquote>
 <p>但在某些语言中这两者可能是有区别的：在c语言中for(;;)指令较少，没有判断跳转，更能够节省内存</p>

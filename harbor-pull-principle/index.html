@@ -307,7 +307,7 @@
             <h1 id="harbor简介">Harbor简介</h1>
 <p><a href="https://github.com/goharbor/harbor">Harbor</a> 是 <a href="https://www.vmware.com/">VMWare</a> 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 <a href="https://www.docker.com/">docker</a> 开源的 <a href="https://github.com/distribution/distribution">registry</a> (后更名为 <code>distribution</code>)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。</p>
 <p>Harbor 的系统架构如下图所示，箭头所指方向为数据流向：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211119181205.png" alt="image-20211119181205666"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20211119181205.png" alt="image-20211119181205666"></p>
 <p>一个镜像仓库最核心的功能就是<code>推送</code>和<code>拉取</code>，本文主要讨论 <code>Harbor</code> 镜像拉取具体的实现细节。</p>
 <h1 id="在开始之前">在开始之前</h1>
 <p>我们先申明一些基本信息，避免版本更迭引入的改动给大家带来困扰：</p>
@@ -327,11 +327,11 @@
 </ul>
 <h1 id="harbor-pull-实现原理">Harbor Pull 实现原理</h1>
 <p>我们可以先尝试<code>pull</code> <code>harbor.huweicai.com/test/nginx:1.20.2-alpine</code>这个镜像，从外部观察一下 <code>pull</code>的行为，我们可以在终端看到一段这样的输出，直观的看起来就是，这个镜像的被存储在多个对象中，可以并行拉取：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211125164032.png" alt="image-20211125164032898"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20211125164032.png" alt="image-20211125164032898"></p>
 <p>为了进一步的了解其中发生了什么，我们可以给<code>docker daemon</code>进程（不是 docker cli 命令行工具，真正执行镜像拉取动作的是 daemon 进程所以给 cli 设置代理没有用）设置代理到 <code>Charles</code> 或者 <code>Fiddler</code>等七层抓包工具来分析，可以看到<code>docker</code>向<code>harbor</code>共发送了如下请求：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211125174102.png" alt="image-20211125174102116"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20211125174102.png" alt="image-20211125174102116"></p>
 <p>harbor 这边对于请求的处理的链路大概是这样的：流量从 nginx 代理进来匹配规则后转发到 <code>core</code>服务（还有一部分前端页面流量会被转发到<code>portal</code>服务），然后<code>core</code>会从 <code>redis</code> 和 <code>pg</code> 中查询它所想要的数据，同时有可能会将流量再进一步转发给 <code>registry</code>，<code>registry</code>则会再继续调用<code>s3</code>和<code>redis</code>完成整个请求的处理逻辑。</p>
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211206005911.png" alt="image-20211206005905550" style="zoom:40%;-moz-transform:scale(0.4);-moz-transform-origin: left top;" />
+<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20211206005911.png" alt="image-20211206005905550" style="zoom:40%;-moz-transform:scale(0.4);-moz-transform-origin: left top;" />
 <p>这些请求可以被大致被归类一下，整理成下面四个接口：</p>
 <ul>
 <li><code>/v2/</code></li>
@@ -343,13 +343,13 @@
 <h2 id="v2接口">/v2/接口</h2>
 <p><code>/v2/</code>接口<code>harbor</code>并不会做任何的处理，会直接透传给<code>registry</code>，而<code>registry</code>这一侧也没有什么特殊的逻辑，铁定会返回 <code>401</code> ，这里稍微展开一下讲一下整体的认证流程：</p>
 <p>其实整个 <code>harbor</code> 系统里面是分为两层认证的，首先 <code>harbor</code> 自己有一套账号系统，存在数据库中，然后 <code>registry</code>是一套独立的组件，也有一套自己的认证，不过用户只会感知到第一层<code>harbor</code>的账号，然后<code>habor</code>初始化的时候会和<code>registry</code>一起配置一个固定密码的用户进行它到<code>registry</code>的认证。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211125195538.png" alt="image-20211125195538356"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20211125195538.png" alt="image-20211125195538356"></p>
 <p>所以当用户的请求透传到 registry，registry 肯定是不认 harbor 的凭证的，这个接口最大的意义在于和<strong>客户端协商API版本</strong>，当前版本的 registry 这里会返回一个 <strong>HTTP Header:</strong> <code>Docker-Distribution-Api-Version: registry/2.0</code>告知客户端使用的是 <code>v2</code>版本的接口，而<code>v1</code>版本该接口会直接<code>404</code>，客户端就将降级调用老版本的接口来进行之后的流程。</p>
 <h2 id="servicetoken接口">/service/token接口</h2>
 <p><code>401</code>之后，紧接着<code>docker</code>客户端就会向镜像中心发起登录请求，根据约定，客户端传入自己的账号和密码调用<code>/service/token</code>接口，这个接口对应的代码实现在这个包内：<a href="https://github.com/goharbor/harbor/blob/v2.1.5/src/core/service/token">score/service/token</a>。</p>
 <p>这个接口的逻辑也非常简单主要是做<code>authentication</code> 的事情，即鉴别用户的身份，然后返回一个<code>JWT</code>Token 做为凭证进行接下来的 <code>pull</code>操作。</p>
 <p>你在 docker login 时传入的账号和密码，会通过 BasicAuth 的方式传递给 harbor，harbor会根据预先配置好的鉴权方式，如：LDAP、数据库、OIDC等，对账号密码进行比对，通过之后就会将用户名签在<code>JWT</code>Token中返回，整体请求截图如下：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211130002448.png" alt="image-20211130002448712"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20211130002448.png" alt="image-20211130002448712"></p>
 <p>解析出来的Token有效载荷如下，其中 <code>sub</code> 字段就是账号：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="nt">&#34;iss&#34;</span><span class="p">:</span> <span class="s2">&#34;harbor-token-issuer&#34;</span><span class="p">,</span>
@@ -364,7 +364,7 @@
 </span></span></code></pre></div><p>有一种特殊的场景，当没传账号密码时<code>harbor</code>也会给它签发一个 Token 的，当一个项目的权限配置成公开时，其镜像这种 <code>anonymous</code> 的用户也是能 pull 的。</p>
 <p>做完<code>authentication</code>之后，这个接口的逻辑就到此结束了，而<code>authorization</code>的操作则会发生在之后的每一次请求当中，harbor 里面有一个 middleware：<a href="https://github.com/goharbor/harbor/blob/v2.1.5/src/server/middleware/v2auth/auth.go">/src/server/middleware/v2auth.auth.go</a>，会根据 JWT Token 中的用户，以及要访问的项目，进行 rbac 权限校验，如果权限校验失败，就不会有下面的流程了。</p>
 <p>因为鉴权的操作每次请求都是独立进行的，所以有时候我们会看到一个让人困惑的情况，比如下图中的例子，我们尝试推送一个镜像一开始提示层已存在，看起来流程是成功开始走了，却紧接着又接着来了一个提示无权限。这是因为每个对象push之前都会调用一个 <code>HEAD</code>判断对象是否存在，避免重复推送，所以一开始的读请求有权限，而之后真正尝试写入对象文件的时候就报错了。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211130010810.png" alt="image-20211130010810449"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20211130010810.png" alt="image-20211130010810449"></p>
 <h2 id="v2manifests接口">/v2/*/manifests/*接口</h2>
 <h3 id="manifest">manifest</h3>
 <p>完成认证之后，拉取镜像的下一步就是拉取镜像的描述文件了，专有名词叫做：<code>manifest</code>，<a href="https://docs.docker.com/registry/spec/manifest-v2-2/">manifest</a> 主要包含了镜像的元信息配置和文件层对象的摘要，现在基本都是<code>v2</code>版本格式，相对<code>v1</code>来说更通用，还可以塞入一些拓展的信息。</p>

@@ -318,7 +318,7 @@
 <li>路由部分会决策这个包应该发送到哪些输出</li>
 <li>输出将日志真正转发出去</li>
 </ul>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210421173801.png" alt="image-20210421173801544"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20210421173801.png" alt="image-20210421173801544"></p>
 <h1 id="数据流">数据流</h1>
 <h2 id="输入input">输入：INPUT</h2>
 <p>一个<strong>Fluent Bit</strong> 可以有多个输入，输入部分是插件化的，提供了许多种常用的插件供我们使用，常见的日志采集方式，如：文件、TCP、HTTP、MQTT、标准输入这些都是支持的，除此之外，<strong>Fluent Bit</strong>还支持一些带业务含义的插件，如：采集内存、CPU、磁盘、温度等信息；采集进程状态；采集 Linux 内核、systemd 日志；采集 windows 事件等等。</p>
@@ -405,7 +405,7 @@
 </span></span><span class="line"><span class="cl">    <span class="nx">Format</span> <span class="nx">json</span>
 </span></span></code></pre></div><p>值得一提的是，output 插件还支持用 Go 语言开发，只需要实现指定的几个方法，编译出一个动态链接库即可，详情参考：<a href="https://docs.fluentbit.io/manual/development/golang-output-plugins">https://docs.fluentbit.io/manual/development/golang-output-plugins</a>。</p>
 <h1 id="fluent-bit-和-fluentd">Fluent Bit 和 Fluentd</h1>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210506172014.png" alt="image-20210506171952172"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20210506172014.png" alt="image-20210506171952172"></p>
 <p><code>fluentd</code> 和 <code>fluent bit</code> 师出同门，先有的 <code>fluentd</code>，后来 <a href="https://www.treasuredata.com/">Treasure Data</a> 基于 <code>fluentd</code> 的架构思想 又设计开源了更轻量的 <code>fluent bit</code>，功能虽然没有前者多，但是基本够用，胜在轻量，<code>fluent bit</code> 之于 <code>fluentd</code> 类似 <code>filebeat</code> 之于 <code>logstash</code>。</p>
 <p>很常见的一种应用场景是在边缘部署更轻量 <code>fluent-bit</code> 然后汇总到中心的 <code>fluentd</code> 处理：</p>
 <img src="https://dytvr9ot2sszz.cloudfront.net/wp-content/uploads/2018/06/kuberbetes-monitoring-arch-1.jpg" alt="img" style="zoom:50%;" />

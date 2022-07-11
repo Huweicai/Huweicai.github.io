@@ -318,12 +318,12 @@
 <p>首先，我们需要一个 OpenWRT 的系统镜像，不同的路由器可能 CPU、网卡等硬件设备都不一样，所以需要不同的指令集和驱动，同时嵌入式的小空间决定了我们不能写一个超级大的镜像兼容所有的场景，因此我们需要找到最适合我们路由器的那一款固件。</p>
 <p>固件可以自己编译，参考官网教程：<a href="https://openwrt.org/zh/docs/guide-developer/quickstart-build-images">https://openwrt.org/zh/docs/guide-developer/quickstart-build-images</a>，OpenWRT提供了一个可视化的CLI编译配置工具，照着来就是了，自由度会高一些，可以自己提前把一些特性打开，编入一些内核模块等。</p>
 <p>同时 OpenWRT 也提供了一些已经编译好的固件供大家使用：<a href="https://openwrt.org/toh/views/toh_fwdownload">https://openwrt.org/toh/views/toh_fwdownload</a>，图省事的话，我们直接使用即可。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201208184834.png" alt="image-20201208184834711"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201208184834.png" alt="image-20201208184834711"></p>
 <p>可以搜到我们的小米4A百兆版也在列表中（注意和 Gigabit Edition千兆版区分开），使用了一颗联发科MT7628的处理器，我们在表格后面找到它的稳定版固件下载即可，注意尽量不要下 snapshot 版本的，snapshost 是主分支最近打出来的包，我之前下了一个最新的分支，Linux内核版本居然是才发布半个月的 5.4.80，稳定性和兼容性都有待验证。</p>
 <p>我们就直接用这个稳定版的固件：</p>
 <p><code>http://downloads.openwrt.org/releases/19.07.4/targets/ramips/mt76x8/openwrt-19.07.4-ramips-mt76x8-xiaomi_mir4a-100m-squashfs-sysupgrade.bin</code></p>
 <p>先记住这个下载地址。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201208185510.png" alt="image-20201208185510933"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201208185510.png" alt="image-20201208185510933"></p>
 <p>另外考虑到国内下载速度，如果觉得很慢的话，可以使用中科大的镜像源，把URL中 <code>downloads.openwrt.org</code> 替换成 <code>mirrors.ustc.edu.cn/openwrt</code>即可：</p>
 <pre tabindex="0"><code>http://downloads.openwrt.org/releases/19.07.4/targets/ramips/mt76x8/openwrt-19.07.4-ramips-mt76x8-xiaomi_mir4a-100m-squashfs-sysupgrade.bin
 
@@ -340,10 +340,10 @@ http://mirrors.ustc.edu.cn/openwrt/releases/19.07.4/targets/ramips/mt76x8/openwr
 小米4A路由器百兆版2.18.58固件：https://pan.baidu.com/s/1DXHZx9puoN9kEY7BDymxqA
 提取码：debw
 </code></pre><p>下载好后点击常用设置-&gt;系统状态-&gt;手动升级即可，详细步骤可以参考<a href="https://www.mi.com/service/miwifi/miwifipro/update">官网教程</a>，这里就不赘述了。
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201223112759.jpg" alt="img"></p>
+<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201223112759.jpg" alt="img"></p>
 <h3 id="执行脚本">执行脚本</h3>
 <p>正式开始执行脚本之前我们还需要或者一个东西 stok，打开我们的路由器管理后台，登录上去，找到地址栏形如 <strong>stok=ef443ae52875a6a442913bbbf38872</strong> 的这一串东西，其中的 <strong>ef443ae52875a6a442913bbbf38872</strong> 就是 stok，也就是我们登录的凭证，待会儿的脚本会需要用到这个参数来绕过路由器的登录认证限制。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201208221513.png" alt="image-20201208221513260"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201208221513.png" alt="image-20201208221513260"></p>
 <p>我们继续，先下载这个代码仓库：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git clone https://github.com/acecilia/OpenWRTInvasion
 </span></span><span class="line"><span class="cl"><span class="nb">cd</span> OpenWRTInvasion
@@ -364,7 +364,7 @@ http://mirrors.ustc.edu.cn/openwrt/releases/19.07.4/targets/ramips/mt76x8/openwr
 </ol>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">telnet 192.168.31.1
 </span></span></code></pre></div><p>用户名为 root 密码为空，如果能成功登录的话那就直接跳到“安装固件”部分即可，如果提示 Connection Confused，说明启动 telnet 服务失败了，我们可以尝试第二种方式。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201223113207.gif" alt="Alt Text"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201223113207.gif" alt="Alt Text"></p>
 <h4 id="方式二001">方式二：0.0.1</h4>
 <p>我们需要先切换到0.0.1版本然后再执行脚本：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 切换版本</span>
@@ -374,11 +374,11 @@ http://mirrors.ustc.edu.cn/openwrt/releases/19.07.4/targets/ramips/mt76x8/openwr
 </span></span><span class="line"><span class="cl">pip3 install -r requirements.txt
 </span></span><span class="line"><span class="cl"><span class="c1"># 运行脚本</span>
 </span></span><span class="line"><span class="cl">python3 remote_command_execution_vulnerability.py
-</span></span></code></pre></div><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211160654.png" alt="image-20201211160654006">
+</span></span></code></pre></div><p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201211160654.png" alt="image-20201211160654006">
 然后这里提示会需要在另一个窗口开一个Shell 用 nc 工具监听指定的接口，等待路由器将shell界面反向连接过来：</p>
 <pre tabindex="0"><code>/usr/bin/nc -l 4444
 </code></pre><p>开好了之后回到这个Shell继续输入路由器IP，stok即可，我使用这种方式成功了，脚本执行完后回到 nc 的那个窗口会发现已经可以执行命令了。
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201223113139.gif" alt="Alt Text"></p>
+<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201223113139.gif" alt="Alt Text"></p>
 <h2 id="安装固件">安装固件</h2>
 <p>切换到 tmp 目录（其他分区空间不够放不下镜像）：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> /tmp
@@ -388,16 +388,16 @@ http://mirrors.ustc.edu.cn/openwrt/releases/19.07.4/targets/ramips/mt76x8/openwr
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 刷机有风险，请慎重</span>
 </span></span><span class="line"><span class="cl">mtd -e OS1 -r write firmware.bin OS1
 </span></span></code></pre></div><p>等待命令执行完成后，我们安装 OpenWRT 就成功了~ 我们可以 ssh 登录到路由器上验证一下：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211161226.png" alt="image-20201211161225985"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201211161226.png" alt="image-20201211161225985"></p>
 <h2 id="扩展openwrt">扩展OpenWRT</h2>
 <p>OpenWRT 装好之后，是开箱即用的，我们连上网线就能直接上网了，不需要什么额外的配置，不过我们肯定不是冲着温饱来的，可以尽情的运行自己的代码才是最吸引我们的。</p>
 <p>Ubuntu 有 apt，CentOS 有 yum，而 OpenWRT 则使用 opkg 来管理软件包，所以我们可以直接使用 opkg 命令来安装一些有用的插件，比如神器Luci：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh root@192.168.1.1
 </span></span><span class="line"><span class="cl">opkg update <span class="o">&amp;&amp;</span> opkg install luci
 </span></span></code></pre></div><p>然后我们就可以打开管理页面（默认是：<a href="http://192.168.1.1">http://192.168.1.1</a>）来对路由器系统进行可视化的管理了。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201211161301.png" alt="image-20201211161301530"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201211161301.png" alt="image-20201211161301530"></p>
 <p>想要安装其他插件的话，到控制台打开软件包管理界面，点击下载软件列表，然后自行搜索安装即可：
-<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201223113944.png" alt="image-20201223113944508"></p>
+<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201223113944.png" alt="image-20201223113944508"></p>
 <p>OpenWRT 本质上是一个图灵完备的Linux系统，所以除了官方提供的软件包之外，我们也可以运行自己的代码，不过我们这款路由器的 CPU 是 mips 架构的，跟我们个人电脑通常使用的x86架构不同（Apple Silicon mac 除外），而路由器那一点点空间用不足以进行编译，所以我们需要在自己的电脑上交叉编译出对应的二进制包然后 <code>scp</code> 上去才行。</p>
 <p>Golang 代码的交叉编译就非常简单，加几个环境变量就行：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 开启软浮点 &amp; 小端mips架构 &amp; linux内核API</span>

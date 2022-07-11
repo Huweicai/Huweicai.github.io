@@ -314,12 +314,12 @@
 <p>VPN提供了一种在公网上安全的加入局域网的方式，可以我们这里就以开源的 OpenConnect VPN 为例，探讨一下 VPN 这种技术是如何安全的将局域网在互联网中横向扩展的。</p>
 <p>需要说明的一点是，通常大家会将能实现访问 Google 等网站的技术都叫做 VPN，但比如常见的 ShadowSocks，v2ray(vmess)等其实只是一种加密部分常用流量的代理技术，并不能真正构建一个局域网，严格意义上来说他们并不是VPN。</p>
 <p>常见的 VPN 技术按照主要使用的传输协议可以分为 L2TP/IPSec VPN、PPTP VPN、TLS VPN等，我们这次则主要分析 <strong>openconnect</strong> 这个 TLS VPN 产品来概览 VPN 技术的实现全流程。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201222231236.png" alt="OpenConnect"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201222231236.png" alt="OpenConnect"></p>
 <h2 id="架设服务端">架设服务端</h2>
 <p>要在公网中接入到某个特定的局域网，首先我们需要在局域网中找一台服务器，这个服务器需要一张网卡在局域网一张网卡在公网，然后我们在上面需要一个 VPN 服务。OpenConnect 开源的 <a href="https://github.com/openconnect/ocserv">ocserv</a> 就是一个不错的选择，接着我们就可以通过客户端在公网上和服务端交互建立隧道来实现远程局域网访问，openconnect 组织开源了一个同名的 <a href="https://github.com/openconnect/openconnect">openconnect</a> 客户端用于和 ocserv 配套使用。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201222234058.png" alt="image-20201222234058831"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201222234058.png" alt="image-20201222234058831"></p>
 <p><strong>ocserv服务端模块图:</strong></p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201222231044.png" alt="ocserv服务端模块图"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201222231044.png" alt="ocserv服务端模块图"></p>
 <h2 id="身份认证">身份认证</h2>
 <p>并不是所有的连接请求 server 都要接受，不然这会是一个非常大的安全隐患，这就需要 server 能提供一套身份认证机制，识别出来哪些想要蒙混过关的恶意攻击者。</p>
 <p><strong>ocserv</strong> 支持密码认证、GSSAPI、公钥+证书等身份认证机制，通常安全级别较高的企业还会对认证进行定制化的开发配合动态令牌进行使用。</p>
@@ -341,7 +341,7 @@
 <p>所以 openconnect 主要使用 udp 传输数据，基于 DTLS 实现的可靠传输来保证数据的完整性，在 UDP 不可用的时候才会降级到 TCP 的 TLS 通道。</p>
 <p>通道建立好之后，就可以传输数据了，由于我们要传输的虚拟 IP 数据包在物理传输链路上直到到达 VPN 服务端之前都是不会有人关心的，所以这就有了压缩的空间，我传输的时候把 VPN 网络层的报文压缩了，VPN 服务端再解开，对于网络协议这种具有明显规律的数据，压缩的收益还是比较高的，这样就能在一定程度上提高传输速度。</p>
 <p>具体到 openconnect，它支持目前压缩效率比较高 LZ4 和 LZS 两种压缩算法。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201222233502.png" alt="image-20201222233502643"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201222233502.png" alt="image-20201222233502643"></p>
 <p>这样，一个安全、可靠、高效的VPN通道就建立完成了~</p>
 
           </div>
