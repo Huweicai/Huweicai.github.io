@@ -402,6 +402,8 @@
 
   
 
+  
+
 
 
 
@@ -435,9 +437,11 @@
         
             <li><a href="https://huweicai.com/tags/cloudnative" role="button"><span>cloudnative (4)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (3)</span></a></li>
+            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (4)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button"><span>存储 (3)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/cilium" role="button"><span>cilium (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/docker" role="button"><span>docker (2)</span></a></li>
         
@@ -446,8 +450,6 @@
             <li><a href="https://huweicai.com/tags/java" role="button"><span>java (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button"><span>命令行 (2)</span></a></li>
-        
-            <li><a href="https://huweicai.com/tags/cilium" role="button"><span>cilium (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/cpu" role="button"><span>cpu (1)</span></a></li>
         
@@ -729,6 +731,59 @@
           
           <div class="post-wrapper white-bg post-card">
   
+  <a href="https://huweicai.com/cilium-config/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">cilium配置详解</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2022-02-02</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>11 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      Cilium Cilium 可以说是当下最流行的基于 eBPF 的容器网络方案，基于eBPF 这种内核黑魔法 Cilium 极大地提升了容器网络的可玩性。 Cilium 的参数配置项都是通过 ConfigMapcilium-config配置的 中，，下面我们来一个个的分析一下这个 ConfigMap 里面的参数都有何意义。 本文基于cilium 1.11版本进行分析。 Cilium Config 配置项 意义 kvstore 当使用 KV 数据库存储元信息而不是CRD时，需要设置此项申明具体的KV存储，原来支持 etcd 和 consul 两种选择，不过 1.11 版......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/kubernetes" role="button">kubernetes </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cilium" role="button">cilium </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
   <a href="https://huweicai.com/harbor-pull-principle/">
     <div class="post-header text-center">
       <div class="px-4 post-heading">镜像仓库Harbor Pull实现原理</div>
@@ -884,68 +939,6 @@
       
     
       <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/run-linux-container-manual/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">手动实现一个Linux容器</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-04-14</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>12 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/docker" role="button">Docker </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button">命令行 </a></li>
       
     
   </div>

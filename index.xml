@@ -35,6 +35,15 @@
     </item>
     
     <item>
+      <title>cilium配置详解</title>
+      <link>https://huweicai.com/cilium-config/</link>
+      <pubDate>Wed, 02 Feb 2022 02:26:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/cilium-config/</guid>
+      <description>Cilium Cilium 可以说是当下最流行的基于 eBPF 的容器网络方案，基于eBPF 这种内核黑魔法 Cilium 极大地提升了容器网络的可玩性。 Cilium 的参数配置项都是通过 ConfigMapcilium-config配置的 中，，下面我们来一个个的分析一下这个 ConfigMap 里面的参数都有何意义。 本文基于cilium 1.11版本进行分析。 Cilium Config 配置项 意义 kvstore 当使用 KV 数据库存储元信息而不是CRD时，需要设置此项申明具体的KV存储，原来支持 etcd 和 consul 两种选择，不过 1.11 版</description>
+    </item>
+    
+    <item>
       <title>镜像仓库Harbor Pull实现原理</title>
       <link>https://huweicai.com/harbor-pull-principle/</link>
       <pubDate>Sat, 04 Dec 2021 01:19:00 +0800</pubDate>

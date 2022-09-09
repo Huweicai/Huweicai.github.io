@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="Cilium Cilium 可以说是当下最流行的基于 eBPF 的容器网络方案，基于eBPF 这种内核黑魔法 Cilium 极大地提升了容器网络的可玩性。 Cilium 的参数配置项都是通过 ConfigMapcilium-config配置的 中，，下面我们来一个个的分析一下这个 ConfigMap 里面的参数都有何意义。 本文基于cilium 1.11版本进行分析。 Cilium Config 配置项 意义 kvstore 当使用 KV 数据库存储元信息而不是CRD时，需要设置此项申明具体的KV存储，原来支持 etcd 和 consul 两种选择，不过 1.11 版">
+
+  <meta property="og:title" content="cilium配置详解" />
+<meta property="og:description" content="Cilium Cilium 可以说是当下最流行的基于 eBPF 的容器网络方案，基于eBPF 这种内核黑魔法 Cilium 极大地提升了容器网络的可玩性。 Cilium 的参数配置项都是通过 ConfigMapcilium-config配置的 中，，下面我们来一个个的分析一下这个 ConfigMap 里面的参数都有何意义。 本文基于cilium 1.11版本进行分析。 Cilium Config 配置项 意义 kvstore 当使用 KV 数据库存储元信息而不是CRD时，需要设置此项申明具体的KV存储，原来支持 etcd 和 consul 两种选择，不过 1.11 版" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/cilium-config/" /><meta property="article:section" content="" />
+<meta property="article:published_time" content="2022-02-02T02:26:00+08:00" />
+<meta property="article:modified_time" content="2022-02-02T02:26:00+08:00" />
+
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       cilium配置详解 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/cilium-config/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://huweicai.com/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">cilium配置详解</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2022-02-02</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>11 minutes read</li>
+        
+        <li>5137 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="cilium">Cilium</h1>
+<p>Cilium 可以说是当下最流行的基于 eBPF 的容器网络方案，基于eBPF 这种内核黑魔法 Cilium 极大地提升了容器网络的可玩性。</p>
+<p>Cilium 的参数配置项都是通过 <strong>ConfigMap</strong><code>cilium-config</code>配置的 中，，下面我们来一个个的分析一下这个 <strong>ConfigMap</strong> 里面的参数都有何意义。</p>
+<blockquote>
+<p>本文基于cilium 1.11版本进行分析。</p>
+</blockquote>
+<h1 id="cilium-config">Cilium Config</h1>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">配置项</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">kvstore</td>
+<td>当使用 KV 数据库存储元信息而不是CRD时，需要设置此项申明具体的KV存储，原来支持 <strong>etcd</strong> 和 <strong>consul</strong> 两种选择，不过 1.11 版后 consul 存储已经废弃不再支持。</td>
+</tr>
+<tr>
+<td style="text-align:left">kvstore-opt</td>
+<td>KV 存储的参数，会透传给对应的 etcd 和 consul 的实现对象</td>
+</tr>
+<tr>
+<td style="text-align:left">etcd-config</td>
+<td>ETCD 配置文件，存储了 ETCD 的地址和证书等连接信息，格式是一个 yaml 文件，会被挂载到 cilium 实例的 <strong>/var/lib/etcd-config/etcd.config</strong>位置供读取</td>
+</tr>
+<tr>
+<td style="text-align:left">conntrack-gc-interval</td>
+<td>conntrack gc 间隔，默认五分钟</td>
+</tr>
+<tr>
+<td style="text-align:left">disable-envoy-version-check</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">identity-allocation-mode</td>
+<td>cilium id 存储结构，<code>crd</code> or <code>kvstore</code>，通常情况下直接使用 CRD 存储元信息会是一个更为便利的选择，不过在大规模集群下，拆分一组独立的 ETCD 给 cilium 单独使用会是一个更高效的选择。</td>
+</tr>
+<tr>
+<td style="text-align:left">identity-heartbeat-timeout</td>
+<td>Identity 失去心跳达到一定的时间之后就会在 GC 中被删除。</td>
+</tr>
+<tr>
+<td style="text-align:left">identity-gc-interval</td>
+<td>Identity 资源删除时只是标记删除，此参数指定了定期运行 GC 删除底层资源的周期，默认一分钟</td>
+</tr>
+<tr>
+<td style="text-align:left">cilium-endpoint-gc-interval</td>
+<td>Cilium Endpoint （CEP）资源定期删除周期，默认五分钟，会遍历所有 CEP 去检查其在 k8s 集群中是否存在，不存在就清除该资源；正常情况下是会直接 watch k8s 资源变更，然后删除的，CEP GC 算是一种补偿逻辑。</td>
+</tr>
+<tr>
+<td style="text-align:left">disable-endpoint-crd</td>
+<td>关闭 CEP GC。</td>
+</tr>
+<tr>
+<td style="text-align:left">identity-change-grace-period</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">labels</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">debug</td>
+<td>默认false，设置debug为true，将把日志级别从默认的 INFO 改为 DEBUG，输出更多的细节日志，同时会输出更多的 event，可以通过 <strong>cilium monitor</strong> 查看</td>
+</tr>
+<tr>
+<td style="text-align:left">debug-verbose</td>
+<td>在debug的基础上，可以再单独开启某些模块的详细日志，输入模块名称通过逗号分隔，目前支持的模块有：<strong>flow,kvstore,envoy,datapath,policy</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">agent-health-port</td>
+<td>cilium daemonset agent 上的健康检查HTTP端口，供<strong>kubelet</strong>探测使用，默认是<code>9876</code></td>
+</tr>
+<tr>
+<td style="text-align:left">cluster-health-port</td>
+<td>cilium 有一个 <a href="https://cilium.io/blog/2018/2/6/cilium-troubleshooting-cluster-health-monitor">cilium-health</a>机制，节点之间会周期性地发送<code>TCP</code>和<code>ICMP</code>包互相探测用来进行连通性检测，<strong>cluster-health-port</strong>参数就是用来申明该机制所使用的端口的。</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-policy</td>
+<td><a href="https://docs.cilium.io/en/latest/policy/">网络策略</a>执行模式，支持以下三种模式：<br />- <code>default</code>白名单模式，当一个容器没有任何网络策略时默认是无阻拦的，但是果一个容器如果申明开放了<code>6789</code> ，那么其他端口就默认封禁了<br />- <code>always</code> 开放模式，上文申明的例子在开放模式下，其他端口也能访问，除非明确申明了禁止的规则<br />- <code>never</code> 关闭网络策略特性，即使申明了网络策略的CRD也不会执行</td>
+</tr>
+<tr>
+<td style="text-align:left">prometheus-serve-addr</td>
+<td>默认是空，不暴露 <code>agent</code> 上的<code>metrics</code>，设置地址即可开启，例如：   <code>0.0.0.0:9090</code>，因为 cilium agent 的容器是共用宿主机网络的，所以要注意端口冲突</td>
+</tr>
+<tr>
+<td style="text-align:left">proxy-prometheus-port</td>
+<td>envoy metric  端口，不设置即不暴露<code>metrics</code></td>
+</tr>
+<tr>
+<td style="text-align:left">metrics</td>
+<td>参数为一个字符串数组，在默认启用的 <strong>metric</strong> 基础上可以额外启用或禁用一些 <strong>metric</strong> 来捕获关注的信息或者提升性能，<code>+ </code>为启用，<code>-</code>为弃用，例：<br />+cilium_endpoint_state,-cilium_event_ts,-cilium_forward_count_total</td>
+</tr>
+<tr>
+<td style="text-align:left">operator-prometheus-serve-addr</td>
+<td>设置 <strong>operator</strong> 的 <strong>metrics</strong> 地址</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-metrics</td>
+<td>启用 <strong>operator</strong> <strong>metrics</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">skip-crd-creation</td>
+<td>operator 启动的时候跳过自动创建 CRD 的阶段，当我们想要单独定制然后部署 CRD 的时候可以开启此选项</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-ipv4</td>
+<td>启用 ipv4，启用之后会为每个 pod 分配 ipv4 的地址以及处理对应的路由等配置</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-ipv6</td>
+<td>同 ipv4，启用 ipv6，之后会为每个 pod 都分配 ipv4 的地址，支持同时启用 v4 和 v6，如果不需要的话可以关闭以提高性能</td>
+</tr>
+<tr>
+<td style="text-align:left">clean-cilium-state</td>
+<td>开启这个选项之后，agent 将会在启动时 initContainer 内清空机器上的所有 cilium 数据，包括 eBPF 相关、路由虚拟网卡等等，适用于重装或者卸载 cilium 等场景，会触发 <strong>clean-cilium-bpf-state</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">clean-cilium-bpf-state</td>
+<td>同 clean-cilium-state，不过只清理 eBPF 相关状态</td>
+</tr>
+<tr>
+<td style="text-align:left">custom-cni-conf</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-bpf-clock-probe</td>
+<td>布尔值，自动嗅探使用的时钟，<code>jiffies</code> or <code>ktime</code></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-bpf-tproxy</td>
+<td>布尔值，默认 false，基于 eBPF 实现 netfilter TPROXY 透明代理功能</td>
+</tr>
+<tr>
+<td style="text-align:left">monitor-aggregation</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">monitor-aggregation-interval</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">monitor-aggregation-flags</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-map-dynamic-size-ratio</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-host-legacy-routing</td>
+<td>- <strong>true</strong> 走内核网络栈路由<br />- <strong>false</strong> 走 eBPF 路由，性能更好，但是需要内核 5.10 之后才支持，不然就算设置为 false 也会自动降级到内核路由</td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-ct-global-tcp-max</td>
+<td>conntrack 最大跟踪 TCP 协议连接条目数，默认是<strong>524288</strong>，cilium 绕开了netfilter，所以基于 eBPF 自己实现了一套 conntrack，该参数的具体实现是存储 conntrack 的 bpf map 的最大长度</td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-ct-global-any-max</td>
+<td>conntrack最大跟踪非TCP协议连接条目数，默认<strong>262144</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-nat-global-max</td>
+<td>同 conntrack，cilium 也是基于自己实现的 conntrack 实现的 NAT，该参数限制了最大的 NAT 条目数，默认为: <strong>524288</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-neigh-global-max</td>
+<td>ARP邻居表的最大条目数，默认<strong>524288</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-policy-map-max</td>
+<td>最大网络策略条目数：默认<strong>16384</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-lb-map-max</td>
+<td>最大LB数量：默认<strong>65536</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-lb-bypass-fib-lookup</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-lb-external-clusterip</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">preallocate-bpf-maps</td>
+<td>布尔值，1.4之后默认为 false，设置为 true 代表启用，在 bpf map 定义的时候就分配好内存，可以降低包处理延迟，但是会提高内存占用</td>
+</tr>
+<tr>
+<td style="text-align:left">sidecar-istio-proxy-image</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">cluster-name</td>
+<td>使用 cluster-mesh 特性时该集群的名称</td>
+</tr>
+<tr>
+<td style="text-align:left">cluster-id</td>
+<td>使用 cluster-mesh 特性时该集群的 ID，1-255 中选一个数字</td>
+</tr>
+<tr>
+<td style="text-align:left">tunnel</td>
+<td>对于在 node 之间传输的 pod 间流量启用 overlay 网络通信，当我们没有用 BGP 打通容器网络和物理网络时就需要开启此配置，可选的配置有：<br />- vxlan (默认)<br />- geneve (Generic Network Virtualization Encapsulation)<br />- disabled</td>
+</tr>
+<tr>
+<td style="text-align:left">tunnel-port</td>
+<td>设置 tunnel 协议的端口，VXLAN 默认为 8472，Geneve 默认为 6081</td>
+</tr>
+<tr>
+<td style="text-align:left">auto-create-cilium-node-resource</td>
+<td>布尔值，默认会自动创建 CiliumNode 资源，CiliumNode 代表了 k8s 中的一个节点，持有节点 CIDR 段，内部IP等信息，关闭该选项则在集群中加入新节点时需要手动管理和创建该资源</td>
+</tr>
+<tr>
+<td style="text-align:left">update-ec2-adapter-limit-via-api</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">aws-release-excess-ips</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">ec2-api-endpoint</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">eni-tags</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">subnet-ids-filter</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">subnet-tags-filter</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-local-node-route</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">azure-user-assigned-identity-id</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-endpoint-routes</td>
+<td>cilium 默认会通过 cilium_host 虚拟设备来实现路由，将此参数设置为  <strong>true</strong> 可以关闭该特性转而为每个 endpoint (即POD) 在路由表中创建相关条目来实现</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-l7-proxy</td>
+<td>启动 L7 策略的支持，开启后 cilium 会基于 enovy 实现对于 HTTP 报文级别的安全策略，比如</td>
+</tr>
+<tr>
+<td style="text-align:left">cni-chaining-mode</td>
+<td>将 cilium 嵌套在其他 CNI 插件上使用，cilium 不处理基本的网络联通性配置和 IPAM，只提供可观测性和网络策略特性，支持配合如下 CNI 插件：<br />- none: 禁用<br />- aws-cni<br />- portmap<br />- generic-veth<br />- flannel</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-identity-mark</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-local-node-route</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-ipv4-masquerade</td>
+<td>masquerading，跟 iptables 里面那个 masquerading 概念一样，对于 POD 访问外界的流量做源地址转换，如果使用 tunnel 模式需要开启此选项，如果是通过 BGP 等打通了物理网络则可以禁用</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-ipv6-masquerade</td>
+<td>同 IPv4</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-bpf-masquerade</td>
+<td>设置该参数为 true 之后，如果使用了 masquerading 特性，那么会基于 eBPF 来替代 iptables 的实现，需要内核 5.10 及之后版本，否则就算开启也会降级到 iptables 实现</td>
+</tr>
+<tr>
+<td style="text-align:left">egress-masquerade-interfaces</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-ip-masq-agent</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-ipsec</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">ipsec-key-file</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">encrypt-interface</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">encrypt-node</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-wireguard</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-wireguard-userspace-fallback</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">datapath-mode</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">ipvlan-master-device</td>
+<td>ipvlan 虚拟设备名称</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-xt-socket-fallback</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">install-iptables-rules</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">install-no-conntrack-iptables-rules</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">iptables-random-fully</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">iptables-lock-timeout</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">auto-direct-node-routes</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-bandwidth-manager</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-local-redirect-policy</td>
+<td>开启本地转发功能，开启之后可以通过配置 CRD <strong>CiliumLocalRedirectPolicy</strong> 将指定的 Service 或者 IP 流量优先劫持到本地的 Pod，比如 NodeLocalDNS 等组件就会依赖这个功能。</td>
+</tr>
+<tr>
+<td style="text-align:left">ipv4-native-routing-cidr</td>
+<td>默认情况下所有 Pod 流量出主机都会被 masquerade 做 NAT 再转入宿主机网络，不过可以单独配置 <code>native-routing-cidr</code>来将这个变量定义的 CIDR 段不转换直接发送，不过如果全部 Pod 段路由都打通到了宿主机网络的话，其实可以直接将 <code>enable-ipv4-masquerade</code> 设置为 false 关闭地址转换，这样调整 PodCIDR 的时候就不用再额外维护这个字段了。</td>
+</tr>
+<tr>
+<td style="text-align:left">ipv6-native-routing-cidr</td>
+<td>同 ipv4-native-routing-cidr。</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-ipv4-fragment-tracking</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-host-firewall</td>
+<td>为宿主机 namespace 下的流量也启动网络策略，启用了之后我们就可以通过 CRD 配置一些 host 侧的网络规则。</td>
+</tr>
+<tr>
+<td style="text-align:left">devices</td>
+<td>逗号分隔的字符串数组，宿主机出口网卡设备名。</td>
+</tr>
+<tr>
+<td style="text-align:left">kube-proxy-replacement</td>
+<td>cilium 基于 eBPF 完全实现了 kube-proxy 的 ClusterIP, NodePort, ExternalIP, HostPort 等功能，所以理论上可以直接替换掉 kube-proxy 组件，不过对于内核版本是有一定要求的，详见：https://docs.cilium.io/en/stable/gettingstarted/kubeproxy-free/#kubeproxy-free，参数可选值：<br />- strict 强制尝试替换，如果无法替换 cilium 会启动失败<br />- probe 自动嗅探判断能否替换，如果有些特性缺失，那么就会尽力替换掉能替换的功能<br />- partial 替换部分特性的实现，具体替换哪些特性需要通过参数手动指定：如 enable-node-port 等，如果指定了替换特性但是内核无法满足则会启动失败<br />- disabled 不替换</td>
+</tr>
+<tr>
+<td style="text-align:left">kube-proxy-replacement-healthz-bind-address</td>
+<td>使用 cilium 替换了 kube-proxy 如果原有的健康检查机制不便调整的话，可以将该参数设置为跟原来的 kube-proxy 一样，默认为：&ldquo;0.0.0.0:10256&rdquo; ，让 cilium 也提供一个跟原来一样的健康检查接口</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-host-reachable-services</td>
+<td>替换 kube-proxy 实现 <strong>HostReachableServices</strong> 这个特性，顾名思义就是使得 K8S 的 ClusterIP 在 host namespace 下（即宿主机上）也能访问到，这个特性也是对内核版本有一定要求的</td>
+</tr>
+<tr>
+<td style="text-align:left">host-reachable-services-protos</td>
+<td>启用 HostReachableServices 特性的协议，可选 <code>tcp</code> <code>udp</code>，因为 UDP 协议的该项特性会对于内核版本有较高的要求同时大部分人又用不到 UDP Service 的特性，所以可以通过这个选项只开启 TCP 协议的 HostReachableServices 特性</td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-lb-sock-hostns-only</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-host-port</td>
+<td>替换 kube-proxy 实现 HostPort 特性，就是我们通常在 pod.spec.container.ports.hostPort 那个参数，将容器的端口映射到宿主机的某个端口</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-external-ips</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-node-port</td>
+<td>代替 kube-proxy 来实现 NodePort 特性，需要内核版本不低于 <code>4.17.0</code></td>
+</tr>
+<tr>
+<td style="text-align:left">node-port-range</td>
+<td>NodePort 的端口范围，同 K8S APIServer 的<code>--service-node-port-range</code>参数，Cilium 默认值和 K8S 的默认是保持一致的： <strong>30000,32767</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">direct-routing-device</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-health-check-nodeport</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">node-port-bind-protection</td>
+<td>禁止其他应用程序 bind NodePort 范围内的端口</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-auto-protect-node-port-range</td>
+<td>将 NodePort 范围的端口加入到内核的 <strong>net.ipv4.ip_local_reserved_ports</strong> 参数内来避免其他应用程序占用</td>
+</tr>
+<tr>
+<td style="text-align:left">datapath-mode</td>
+<td>容器和宿主机网络空间连接的方式，支持 <strong>veth</strong> 和 <strong>ipvlan</strong> 两种选项，默认是 <strong>veth</strong>，不过这个参数将在下一个版本废弃，因为 ipvlan 使用者少，维护者也少，所以 <a href="https://github.com/cilium/cilium/pull/17993/commits/1fb2dbb3293a962f7f7358eacb527e12afd86c31">Cilium 团队计划停止对 ipvlan 的支持</a>，只支持 veht pair 的方式，这个参数也就没有意义了</td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-lb-mode</td>
+<td>NodePort 和 LoadBalancer 等服务转发特性具体的实现模式( 只有替换了 kube-proxy 该参数才有意义) <br /><code>snat</code>默认模式，普通的负载均衡流量代理<br /><code>dsr</code> Direct Server Return 模式，后端真实服务器返回的包不经过 Cilium 直接返回给客户端，性能更好，同时后端能准确的感知到客户端的 IP，不过 tunnel 模式下无法使用<br /><code>hybird</code> 对于 TCP 协议包使用 <code>dsr</code> 模式，UDP 包则使用 <code>snat</code> 模式</td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-lb-algorithm</td>
+<td>负载均衡使用的算法，支持：<br /><code>random</code> 随机<br /><code>maglev</code>Maglev 一致性哈希算法</td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-lb-acceleration</td>
+<td>通过 XDP 提升负载均衡性能</td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-lb-dsr-dispatch</td>
+<td>在 DSR 模式可以通过 IPIP 的模式将包传递给后端，支持选项：<code>ipip</code> <code>opt</code></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-service-topology</td>
+<td>流量负载均衡时启用 K8S 拓扑感知功能，比如可以实现让流量就近访问等，详见：<a href="https://kubernetes.io/zh/docs/concepts/services-networking/topology-aware-hints/">拓扑感知提示</a></td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-lb-maglev-table-size</td>
+<td>Maglev 一致性哈希算法调优参数，每个 service 的哈希表大小</td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-lb-maglev-hash-seed</td>
+<td>Maglev 一致性哈希算法调优参数，hash 种子</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-session-affinity</td>
+<td>启用替换 SessionAffinity，依赖内核版本 5.7.0</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-svc-source-range-check</td>
+<td>启用 Service 源地址检查，默认启用，启用后会根据 Service 中 LoadBalancerSourceRanges 字段来对流量来源进行检查</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-l2-neigh-discovery</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">arping-refresh-period</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">pprof</td>
+<td>启用 Go pprof 功能，可以帮助分析排查 Go 程序运行时问题，agent 的默认 pprof 端口为 6060，operator 的默认端口为 6061</td>
+</tr>
+<tr>
+<td style="text-align:left">log-system-load</td>
+<td>布尔值，每隔五秒日志记录一次操作系统 Load</td>
+</tr>
+<tr>
+<td style="text-align:left">log-opt</td>
+<td>一些额外的日志自定义参数</td>
+</tr>
+<tr>
+<td style="text-align:left">sockops-enable</td>
+<td><code>SOCK_OPS</code> 是许多钟 eBPF 程序类型的一种，可以基于 socket 事件，比如：超时、建联、重传等，来设置一些回调逻辑</td>
+</tr>
+<tr>
+<td style="text-align:left">k8s-require-ipv4-pod-cidr</td>
+<td>校验 <code>v1.Node</code>资源上的 CIDR 是否存在，不存在的话则阻塞 cilium 的启动，通常会配合 k8s 原生的 ipam 模式使用。</td>
+</tr>
+<tr>
+<td style="text-align:left">k8s-require-ipv6-pod-cidr</td>
+<td>同 <code>k8s-require-ipv4-pod-cidr</code></td>
+</tr>
+<tr>
+<td style="text-align:left">endpoint-status</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">read-cni-conf</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">write-cni-conf-when-ready</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">k8s-kubeconfig-path</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-endpoint-health-checking</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-health-checking</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-well-known-identities</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-remote-node-identity</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">synchronize-k8s-nodes</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">policy-audit-mode</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">operator-api-serve-addr</td>
+<td>Operator API 服务监听地址，默认为：<code>localhost:9234</code></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-hubble</td>
+<td>启用 Hubble gRPC 服务</td>
+</tr>
+<tr>
+<td style="text-align:left">hubble-socket-path</td>
+<td>Hubble gRCP 服务本地 UNIX domain socket 监听地址</td>
+</tr>
+<tr>
+<td style="text-align:left">hubble-listen-address</td>
+<td>Hubble 供 relay 服务跨机器调用的 gRPC 监听地址，默认: <strong>:4244</strong></td>
+</tr>
+<tr>
+<td style="text-align:left">hubble-disable-tls</td>
+<td>Hubble gRPC 服务默认是开启 TLS 的，可以将此参数设置为 true 以关闭 TLS</td>
+</tr>
+<tr>
+<td style="text-align:left">hubble-tls-cert-file</td>
+<td>Hubble TLS 证书文件位置</td>
+</tr>
+<tr>
+<td style="text-align:left">hubble-tls-key-file</td>
+<td>Hubble TLS 私钥文件位置</td>
+</tr>
+<tr>
+<td style="text-align:left">hubble-tls-client-ca-files</td>
+<td>Hubble TLS CA证书文件位置</td>
+</tr>
+<tr>
+<td style="text-align:left">hubble-event-queue-size</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">hubble-flow-buffer-size</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">hubble-event-buffer-capacity</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">hubble-metrics-server</td>
+<td>Hubble 的 metrics 服务地址，默认：&quot;:9091&quot;，由于 Hubble 实现于 agent 内部，所以该端口也是需要在所有机器上都占用的，注意冲突</td>
+</tr>
+<tr>
+<td style="text-align:left">hubble-metrics</td>
+<td>配置要采集哪些 metrics，为空则默认不采集，可选项如下：<br/>    dns<br/>    drop<br/>    tcp<br/>    flow<br/>    icmp<br/>    http</td>
+</tr>
+<tr>
+<td style="text-align:left">disable-iptables-feeder-rules</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">ipam</td>
+<td><strong>ipam</strong> (IP Address Management), 选择 Cilium 的 IP 管理策略，支持如下选择：<br />- <strong>cluster-pool</strong> <strong>默认</strong>的IP管理策略，会为每个节点分配一段 CIDR，然后分配 IP 时从这个节点的子网中选择IP，但是不如 calico 一点的是，这并不是动态分配的 IP 池，每个节点的 IP 之后不会自动补充新的 CIDR 进去<br />- **crd **用户手动通过 CRD 定义每个节点可用的 IP 池，方便扩展开发，自定义IP管理策略<br />- <strong>kubernetes</strong> 从 k8s v1.Node 对象的 podCIDR 字段读取可用 IP 池，不再自己维护 IP 池，在 1.11 使用 cilium 自己集成的 BGP Speaker 宣告 CIDR 时就只支持这种模式<br />- <strong>alibabacloud</strong>, <strong>azure</strong>, <strong>eni</strong> 各大公有云自己定制的 ipam 插件</td>
+</tr>
+<tr>
+<td style="text-align:left">cluster-pool-ipv4-cidr</td>
+<td>(如果申明了 ipam 策略为 <code>cluster-pool</code>，那么下面这几个 <code>cluster-pool</code>开头的参数才有意义)<br />整个集群的可用 IP CIDR大池子，数组格式，可以申明多个段，空格分隔，例：<br />&lsquo;10.1.0.0/16 10.2.0.0/16&rsquo;</td>
+</tr>
+<tr>
+<td style="text-align:left">cluster-pool-ipv4-mask-size</td>
+<td>每个 Node 分配的IPv4 CIDR 掩码长度，这决定了每个 Node 的 Pod 数量上限，默认是 <strong>24</strong>，即可以分配 2^(32-24) = 256 个 IP，稍稍有点大，可以试实际情况调整</td>
+</tr>
+<tr>
+<td style="text-align:left">cluster-pool-ipv6-cidr</td>
+<td>同 IPv4, 集群 IP CIDR 池</td>
+</tr>
+<tr>
+<td style="text-align:left">cluster-pool-ipv6-mask-size</td>
+<td>同 IPv4，每个 Node 分配的IPv6 CIDR 掩码长度</td>
+</tr>
+<tr>
+<td style="text-align:left">disable-cnp-status-updates</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-ipv4-egress-gateway</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-k8s-event-handover</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">crd-wait-timeout</td>
+<td>系统初始化时等待 CRD 安装继续的时长，超过之后 Cilium 将自动退出，默认 5分钟</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-k8s-endpoint-slice</td>
+<td>启用对于 EndpointSlice 的支持，默认启用</td>
+</tr>
+<tr>
+<td style="text-align:left">k8s-service-proxy-name</td>
+<td>默认情况下 cilium 会接管和转发所有的 Service，设置该选项之后，cilium 将只接管设置了<code>service.kubernetes.io/service-proxy-name</code>标签且值相同的 Service，其他的将被忽略</td>
+</tr>
+<tr>
+<td style="text-align:left">enable-custom-calls</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">bgp-announce-lb-ip</td>
+<td>布尔值，Cilium 集成了 metallb 使其将 k8s 集群内部的路由通过 BGP 同步到外部去，<strong>bgp-announce-lb-ip</strong> 开启之后将会把 LoadBalancer 类型 Service 的 ExternalIP 宣告到宿主机网络，除了开启这个选项之外还需要配置一个 metallb 的 configmap 申明 BGP peer 和给其分配的 ippool，基于 BGP 的 multihop 特性，这样我们就能轻松拥有高可用的 VIP 了，是一个非常实用的高级功能</td>
+</tr>
+<tr>
+<td style="text-align:left">bgp-announce-pod-cidr</td>
+<td>布尔值，同上，通过 BGP 同步 Pod CIDR 到外界，1.11 版本才加入的新特性，之后打通物理网络就不再需要安装 <strong>bird</strong> 之类的 BGP speaker 了</td>
+</tr>
+<tr>
+<td style="text-align:left">bpf-root</td>
+<td>BPF文件系统挂载的位置，BPF程序可以通过 <code>BPF_OBJ_PIN</code>指令将 map 固定到 BPF 文件系统的指定路径上，极大地方便了BPF程序之间以及和用户态程序交换数据，默认挂载位置为：<code>/sys/fs/bpf</code>，不过也可以自行挂载到其他位置</td>
+</tr>
+<tr>
+<td style="text-align:left">cgroup-root</td>
+<td>cgroup2 文件系统在宿主机上挂载的位置</td>
+</tr>
+<tr>
+<td style="text-align:left">vlan-bpf-bypass</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-cilium-endpoint-slice</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:left">enable-k8s-terminating-endpoint</td>
+<td>在 EndpointSlice 特性启用时，自动检测 terminating 状态的 endpoint</td>
+</tr>
+</tbody>
+</table>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/kubernetes" role="button">kubernetes </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cilium" role="button">cilium </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/harbor-pull-principle/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>镜像仓库Harbor Pull实现原理</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://huweicai.com/cilium-container-datapath/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>Cilium 容器数据路径</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#cilium">
+												 Cilium
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#cilium-config">
+												 Cilium Config
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2022 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

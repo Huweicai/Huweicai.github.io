@@ -402,6 +402,8 @@
 
   
 
+  
+
 
 
 
@@ -435,9 +437,11 @@
         
             <li><a href="https://huweicai.com/tags/cloudnative" role="button"><span>cloudnative (4)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (3)</span></a></li>
+            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (4)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button"><span>存储 (3)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/cilium" role="button"><span>cilium (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/docker" role="button"><span>docker (2)</span></a></li>
         
@@ -446,8 +450,6 @@
             <li><a href="https://huweicai.com/tags/java" role="button"><span>java (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button"><span>命令行 (2)</span></a></li>
-        
-            <li><a href="https://huweicai.com/tags/cilium" role="button"><span>cilium (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/cpu" role="button"><span>cpu (1)</span></a></li>
         
@@ -557,6 +559,59 @@
       </li>
     </ul>
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/confusion-betwwen-forwhiletrue/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">for{;;}与while(true)的困惑</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2018-03-04</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>One minute read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序： public class Test2 { public void whileTest() { int i = 0; while (true) { i&#43;&#43;; } } public......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/java" role="button">java </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" role="button">编程语言 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
