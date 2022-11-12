@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="磁盘 磁盘是一种非常常见的持久化存储设备，相较于计算机上另外一种主要的存储设备：内存，磁盘则主要具有断电数据不丢失、容量通常更大、价格低廉等特点；当然我们今天这里主要聊的是广义上的磁盘，而不是特指利用磁性来存储的狭义上的概念。 存储介质 理论上任何能够表达两种状态，且能持久性的保持的东西都可以用来造磁盘；不过我们通常还要考虑成本等其他实际的问题。 我们通常指的磁盘，按照存储介质来分，主要能分为固态硬盘和机">
+
+  <meta property="og:title" content="聊一聊磁盘" />
+<meta property="og:description" content="磁盘 磁盘是一种非常常见的持久化存储设备，相较于计算机上另外一种主要的存储设备：内存，磁盘则主要具有断电数据不丢失、容量通常更大、价格低廉等特点；当然我们今天这里主要聊的是广义上的磁盘，而不是特指利用磁性来存储的狭义上的概念。 存储介质 理论上任何能够表达两种状态，且能持久性的保持的东西都可以用来造磁盘；不过我们通常还要考虑成本等其他实际的问题。 我们通常指的磁盘，按照存储介质来分，主要能分为固态硬盘和机" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/something-about-disk/" /><meta property="article:section" content="" />
+<meta property="article:published_time" content="2022-06-13T18:20:55+08:00" />
+<meta property="article:modified_time" content="2022-06-13T18:20:55+08:00" />
+
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       聊一聊磁盘 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/something-about-disk/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://huweicai.com/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">聊一聊磁盘</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2022-06-13</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>19 minutes read</li>
+        
+        <li>9142 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="磁盘">磁盘</h1>
+<p>磁盘是一种非常常见的持久化存储设备，相较于计算机上另外一种主要的存储设备：内存，磁盘则主要具有断电数据不丢失、容量通常更大、价格低廉等特点；当然我们今天这里主要聊的是广义上的磁盘，而不是特指利用磁性来存储的狭义上的概念。</p>
+<h1 id="存储介质">存储介质</h1>
+<p>理论上任何能够表达两种状态，且能持久性的保持的东西都可以用来造磁盘；不过我们通常还要考虑成本等其他实际的问题。</p>
+<p>我们通常指的磁盘，按照存储介质来分，主要能分为固态硬盘和机械硬盘（狭义磁盘）这两种，分别对应的存储介质为浮栅晶体管和磁性颗粒。另外还有一些很常见的存储介质，虽然基于它们造出来的存储设备我们通常不叫磁盘，不过这里我们也可以顺带对比了解一下。</p>
+<h2 id="磁性颗粒">磁性颗粒</h2>
+<p>磁是一种非常重要且使用非常广泛的存储介质，我们常说的狭义上的磁盘、磁带等都是通过这种物质来存储的数据。</p>
+<p>磁性颗粒通常是由铁的混合氧化物组成（比如BaFe12O19），这些氧化物在被施加电磁场磁化之后，内部原子的偶极子从无序变成按顺序排列，即使断电磁场撤去，部分排列仍能被长期保留，这种现象叫做<a href="https://zh.wikipedia.org/zh-cn/%E7%A3%81%E6%BB%9E%E7%8E%B0%E8%B1%A1">磁滞现象</a>，这就是磁性颗粒可以长久保存数据的物理学理论基础。</p>
+<p>磁场是分为南北两级有两种朝向的，所以一个颗粒中磁场的方向就能对应我们需要存储的 0 和 1。</p>
+<p>要读取数据的时候，通过电磁感应现象的应用（放在变化磁通量中的导体，会产生电动势），我们可以根据产生的感应电流的方向来将磁性颗粒中存储的 0 和 1 加载成我们半导体电路中的 0 和 1，进而进一步被计算读取。</p>
+<p>写入数据时，只需要施加一个反向的大电磁场就能让原子的偶极子反向排列。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221112132652.png" alt="image-20221112132652919"></p>
+<h2 id="浮栅半导体">浮栅半导体</h2>
+<p>浮栅半导体通常被用来制作闪存颗粒，即固态硬盘的重要组成单元。</p>
+<p>浮栅半导体全称浮栅金属氧化物半导体场效应晶体管（Floating-gate MOSFET），通过捕获在浮栅层中的电子的数量来代表 0 和 1。</p>
+<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221111175051.svg" alt="Floating_gate_transistor-en" style="zoom:150%;" />
+<p>浮栅层被氧化物绝缘层包围，在未施加高电压的情况下进去的电子很难出去，同时外面的电子也进不来，这样即使断电数据也还是能保存在其中。但是并不是说完全不会有电子能逃逸出去，所以这也是为什么大家说固态硬盘并不能永久的存储数据，不过一般十年左右逃逸电子的数量才会多到无法区分原始的 0 和 1 的程度。</p>
+<p>需要写入数据时，只需要给到一个足够大的电压，浮栅外的电子在电场的作用下就会进入浮栅层，断掉电压之后电子就会变成数据被保存起来。</p>
+<p>需要读取数据时，将晶体管导通，随着其中电子数量的不同，导通后能读到的电压也是不一样的，这样就能根据电压的数值来判断其中存储的数据位了。</p>
+<p>根据一个特定的阈值，根据电压是否高于这个阈值来判断 0/1，后续存储厂商们为了进一步节约成本，陆续又出现了将电压划分成四份一个晶体管可存储 2 bit 信息的 MLC (Multi Level Cell)结构，可以存储 3 bit 的 TLC (Tripple Level Cell)结构，甚至可以存储 4 bit 的 QLC (Quadra Level Cell)结构。</p>
+<h2 id="sr锁存器">SR锁存器</h2>
+<p>锁存器（Latch）是组成静态随机存取存储器（Static Random Access Memory）的核心部件，SRAM 利用锁存器其中锁住的电平高低来表示 0 和 1。</p>
+<p>和电容一样，锁存器也是一种纯电路结构，一旦断电数据就全丢失了，所以不怎么用来造磁盘。</p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220619211005.png" alt="image-20220619211005412" style="zoom:67%;" />
+<h2 id="电容">电容</h2>
+<p>动态随机存取存储器（Dynamice Random Access Memory: DRAM） 是我们目前主要用到的内存结构，DRAM 利用<strong>电容</strong>内存储电荷的数量来代表 0 或 1。</p>
+<p>基于锁存器的 SRAM 存储一比特需要六个晶体管，而 DRAM 则只需要一个晶体管，所以 DRAM 相对来说造价和同等容量的体积上都有很大的优势，尽管性能会要差一些。</p>
+<p>另外 DRAM 需要不断地刷新给电容充电不然数据就会丢失，所以其被称为“动态” RAM，而“静态”的 SRAM 则没有这种烦恼。</p>
+<p>我们目前所用的内存条基本都是基于电容的 DRAM 型，主流架构为<strong>双倍数据率同步动态随机存取存储器</strong>（Double Data Rate Synchronous Dynamic Random Access Memory，简称DDR SDRAM）。</p>
+<p>而 SRAM 则常见于 CPU 缓存这种性能要求非常高且能接受其昂贵造价的场景。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220619210057.png" alt="img"></p>
+<h2 id="打孔纸带">打孔纸带</h2>
+<p>严格意义上来说，纸带算是最早的存储介质了，通过有孔和无孔的区别来代表 0 和 1，可持久化存储，无需担心掉电丢失。</p>
+<h1 id="传输链路">传输链路</h1>
+<p>了解了数据是如何存储之后，我们下一步要关心的问题就是，磁盘中的数据又是怎么到达内存、CPU 等其他设备中供其使用的呢？</p>
+<p>简单地来说就是，磁盘通过物理接口插入到计算机中，然后经由总线，按照某种协议和其他设备交换数据。</p>
+<table>
+<thead>
+<tr>
+<th>NAME</th>
+<th>全称</th>
+<th>诞生时间</th>
+<th>理论性能上限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PATA</td>
+<td><strong>Parallel ATA</strong></td>
+<td>1986</td>
+<td>133 MB/s</td>
+</tr>
+<tr>
+<td>SATA</td>
+<td><strong>Serial ATA</strong></td>
+<td>2000</td>
+<td>750 MB/s</td>
+</tr>
+<tr>
+<td>M.2</td>
+<td></td>
+<td>2013</td>
+<td>8 GB/s</td>
+</tr>
+<tr>
+<td>USB</td>
+<td><strong>Universal Serial Bus</strong></td>
+<td>1996</td>
+<td>1.21 GB/s</td>
+</tr>
+<tr>
+<td>SAS</td>
+<td><strong>Serial Attached SCSI</strong></td>
+<td>2004</td>
+<td>1.2 GB/s</td>
+</tr>
+</tbody>
+</table>
+<h2 id="接口-interface">接口: INTERFACE</h2>
+<p>接口即我们平常看到的磁盘上暴露出来的那一部分金属块，磁盘插到主板上对应母口之后，形成电流和数据通路，从而使用硬盘可以被计算机识别并传输数据。</p>
+<p>目前存在好几种主流的接口规范，不同的接口电路设计不一样，其特点和性能也大不相同。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221113022429.png" alt="image-20221113022429884"></p>
+<h3 id="pata">PATA</h3>
+<p>Parallel ATA （简称 PATA，也被称为: ATA、IDE），是早期常见的一种磁盘接口格式，不过由于并行设计的性能缺陷如今已经被 SATA 取代了。</p>
+<p>ATA 的全称是 <code>Advanced Technology Attachment </code>：AT 的接口，AT 是 IBM 于 1984 年发布的一款计算机：<a href="https://en.wikipedia.org/wiki/IBM_Personal_Computer/AT">IBM Personal Computer/AT</a>，后面逐渐演变成了一种通用的标准。</p>
+<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220624153102.png" style="zoom:50%;" />
+<h4 id="串行与并行">串行与并行</h4>
+<p>传输接口通常分为串行传输的和并行传输的，比如 <code>PATA</code> 和 <code>SATA</code> 这两种典型的代表，然而跟我们通常在软件上认知不太一样的是，并行的并不一定快：</p>
+<p>并行传输需要额外的时钟信号来协调，来确保数据不会乱序，而每根线收到时钟信号会有一定的先后顺序，所以需要准备一个误差区间，这限制了时钟的频率上限，而串行传输面对的问题则更加纯粹，不需要考虑这么复杂的问题。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220625003544.png" alt="image-20220625003544073"></p>
+<p>以 PATA 为例，它有十六根数据传输线，如果时钟频率能到 100MHz 那么它的传输速度上限就是 1600b/s 但是很遗憾几百 MHz 就是时钟频率当前的工艺上限了。当然实际实现的时候也会有一些其他的优化，但是即使是最新的  PATA 极限性能也只有 130MB/s。</p>
+<h3 id="sata">SATA</h3>
+<p><a href="https://en.wikipedia.org/wiki/Serial_ATA">Serial ATA</a> (SATA) 应该是目前最常见的硬件接口类型之一了，是一种串行传输的接口，旨在取代老旧的 PATA 接口，众多半导体厂商一起创立了<strong>Serial ATA Working Group</strong> （SATA工作小组），并于 2000 年发布了 SATA 接口标准，之后 SATA 就顺其自然的占领了绝大部分的市场份额，在 2008 年一度占据了 99% 的 PC 磁盘份额，不过后面随着固态的普及，SATA 接口的性能也逐渐显得落伍了。</p>
+<p>SATA 迭代至今总共推出了三个大版本，SATA 1.0、SATA 2.0、SATA 3.0，各自的性能上限分别为 150MB/s 300MB/s 600MB/s。</p>
+<p>另外 SATA 还衍生出来了适用于特定场景的变种，但是基本都没能获得太大的成功：</p>
+<ul>
+<li><code>mSATA</code> （Mini SATA）小型化了，对移动设备更加友好，M.2 普及后就逐渐销声匿迹了</li>
+<li><code>eSATA</code>（External SATA）适用于移动外接设备的 SATA 接口，对标 USB 系列，很显然绝大部分人都只听过后者</li>
+<li><code>SATA Express</code> 基于 PCIe 总线的 SATA 接口，但是大家通常会选择直接用没有 ATA 包袱的 <code>M.2</code></li>
+</ul>
+<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220624103238.png" alt="image-20220624103238209" style="zoom:40%;" />
+<h3 id="m2">M.2</h3>
+<p>M.2 原名 <strong>NGFF</strong> (Next Generation Form Factor)，最早是由 Intel 用以取代 mSATA 同时推进系统小型化的一种全新接口规范。</p>
+<p>目前随着固态硬盘的普及，M.2 接口的磁盘也越来越常见，大家通常会觉得上了 M.2 接口的硬盘就一定很快，但是除了 NVMe 协议，出现使用 SATA 协议的 M.2 磁盘也不是完全不可能出现的。</p>
+<h3 id="usb">USB</h3>
+<p><strong>通用串行总线</strong>（<strong>U</strong>niversal <strong>S</strong>erial <strong>B</strong>us）是一种为外部设备连接设计的总线，首先从定义上而言它是一种“总线”，这里既包括了内部通往南桥的计算机内部的总线，计算机外部的“USB数据线”也同样在此规范的范畴内，同时 USB 标准中也包含了物理接口的规范。</p>
+<p>在 USB 诞生之前，当时各种各样的外部电子设备，如鼠标、键盘、打印机、照相机等各自都有各自的接口标准，给用户带来了极大的困扰，所以 USB 就应运而生了，目前 USB 已经几乎完全统一了所有的外部设备接口市场，甚至相当多的非数据传输纯供电场景，比如小台灯、风扇之类的也在使用。</p>
+<p>虽然我们可能感觉还是有好几种接口，但是其实它们都是 USB，只是不同的子类别而已：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>Type-A</th>
+<th>Type-B</th>
+<th>Type-C</th>
+<th>Mini-A</th>
+<th>Mini-B</th>
+<th>Mini-AB</th>
+<th>Micro-A</th>
+<th>Micro-B</th>
+<th>Micro-AB</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>插头（公头）</td>
+<td>2.0</td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-A.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/USB_Type-A.svg/75px-USB_Type-A.svg.png" alt="USB Type-A.svg"></a></td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/USB_Type-B.svg/58px-USB_Type-B.svg.png" alt="USB Type-B.svg"></a></td>
+<td>不存在</td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-A.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/USB_Mini-A.svg/90px-USB_Mini-A.svg.png" alt="USB Mini-A.svg"></a></td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/USB_Mini-B.svg/90px-USB_Mini-B.svg.png" alt="USB Mini-B.svg"></a></td>
+<td>不存在</td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-A.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/USB_Micro-A.svg/90px-USB_Micro-A.svg.png" alt="USB Micro-A.svg"></a></td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/USB_Micro-B.svg/90px-USB_Micro-B.svg.png" alt="USB Micro-B.svg"></a></td>
+<td>不存在</td>
+</tr>
+<tr>
+<td>3.2</td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-A_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/USB_3.0_Type-A_blue.svg/85px-USB_3.0_Type-A_blue.svg.png" alt="USB 3.0 Type-A blue.svg"></a></td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-B_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/USB_3.0_Type-B_blue.svg/65px-USB_3.0_Type-B_blue.svg.png" alt="USB 3.0 Type-B blue.svg"></a></td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-C_icon.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/USB_Type-C_icon.svg/75px-USB_Type-C_icon.svg.png" alt="USB Type-C icon.svg"></a></td>
+<td>已弃用</td>
+<td>已弃用</td>
+<td>已弃用</td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Micro-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/USB_3.0_Micro-B.svg/120px-USB_3.0_Micro-B.svg.png" alt="USB 3.0 Micro-B.svg"></a></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>插座（母头）</td>
+<td>2.0</td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-A_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/USB_Type-A_receptacle.svg/83px-USB_Type-A_receptacle.svg.png" alt="USB Type-A receptacle.svg"></a></td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/USB_Type-B_receptacle.svg/58px-USB_Type-B_receptacle.svg.png" alt="USB Type-B receptacle.svg"></a></td>
+<td>不存在</td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-A_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/USB_Mini-A_receptacle.svg/75px-USB_Mini-A_receptacle.svg.png" alt="USB Mini-A receptacle.svg"></a></td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/USB_Mini-B_receptacle.svg/80px-USB_Mini-B_receptacle.svg.png" alt="USB Mini-B receptacle.svg"></a></td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-AB_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/USB_Mini-AB_receptacle.svg/83px-USB_Mini-AB_receptacle.svg.png" alt="USB Mini-AB receptacle.svg"></a></td>
+<td>不存在</td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/USB_Micro-B_receptacle.svg/80px-USB_Micro-B_receptacle.svg.png" alt="USB Micro-B receptacle.svg"></a></td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-AB_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/USB_Micro-AB_receptacle.svg/75px-USB_Micro-AB_receptacle.svg.png" alt="USB Micro-AB receptacle.svg"></a></td>
+</tr>
+<tr>
+<td>3.2</td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-A_receptacle_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/USB_3.0_Type-A_receptacle_blue.svg/75px-USB_3.0_Type-A_receptacle_blue.svg.png" alt="USB 3.0 Type-A receptacle blue.svg"></a></td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-B_receptacle_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/USB_3.0_Type-B_receptacle_blue.svg/60px-USB_3.0_Type-B_receptacle_blue.svg.png" alt="USB 3.0 Type-B receptacle blue.svg"></a></td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-C_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/USB_Type-C_receptacle.svg/75px-USB_Type-C_receptacle.svg.png" alt="USB Type-C receptacle.svg"></a></td>
+<td>已弃用</td>
+<td>已弃用</td>
+<td>已弃用</td>
+<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Micro-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/USB_3.0_Micro-B_receptacle.svg/100px-USB_3.0_Micro-B_receptacle.svg.png" alt="USB 3.0 Micro-B receptacle.svg"></a></td>
+<td>已弃用</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>应用范围</td>
+<td>计算机</td>
+<td>扫描仪、打印机等</td>
+<td>新式计算机、移动电话、平板电脑等</td>
+<td></td>
+<td>旧式便携设备</td>
+<td>仅作为万能接头</td>
+<td></td>
+<td>移动电话、平板电脑等</td>
+<td>仅作为万能接头</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="总线-bus">总线: BUS</h2>
+<p>总线是计算机内部设备和设备之间通信的线路，比如磁盘到内存、内存到 CPU之间的信号和数据的传输。</p>
+<h3 id="sata-1">SATA</h3>
+<p>SATA 总线是 SATA 系列规范中的一员，是一种半双工总线。</p>
+<p>和 USB 总线一样，SATA 也是通过南桥芯片连到 CPU 上。</p>
+<h3 id="pcie">PCIe</h3>
+<p>PCI Express，是 PCI 总线基础上诞生的一个高级版本。</p>
+<p>PCIe 在设计上性能相对于 SATA 总线有非常大的优势，目前 PCIe 6.0 版本 4 通道理论的性能上限已经达到了 31.51 GB/s。</p>
+<p>PCIe 是多通道的，一组 PCIe 总线最多可以有 32 个通道，每个都通可以独立全双工通信，因此传输效果可以随通道数量线性叠加，比如显卡这种对性能要求高的通常会一次性分配 16 个通道给其使用，而硬盘则四个通道就已经非常</p>
+<h2 id="协议-protocol">协议: PROTOCOL</h2>
+<h3 id="scsi">SCSI</h3>
+<p>SCSI (Small Computer System Interface) 在设计上是一种通用设备通信协议，但是目前主要还是用在存储设备上，以块为单位控制存储设备读写数据。</p>
+<p>SCSI 也是一种经典的<code>客户端/服务器</code> 架构，在 SCSI 协议的概念中，客户端被称为 <code>Initiator</code>，服务端被叫做 <code>Target</code>，一个<code>Target</code>内部可能还有多种逻辑设备（LUN: Logic Unit）。</p>
+<p>客户端向服务的请求被称为 CDB （Command Descriptor Block），每个 CDB 包含一个长为一字节的操作码，以及操作码附带的一些参数，操作码代表了这是一个什么请求，目前总共有 60 多种，比如常见的：WRITE、READ、Read capacity 、Inquiry、Start/Stop 等等。</p>
+<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221111014714.png" alt="SCSI" style="zoom:50%;" />
+<p>除此之外，SCSI 还存在一些变种，比如许多分布式块存储（Ceph、Longhorn、OpenEBS等）都在使用的能在 TCP/IP 协议栈上传输的 iSCSI (Internet SCSI) 协议等。</p>
+<h3 id="ahci">AHCI</h3>
+<p>AHCI （<a href="https://en.wikipedia.org/wiki/Advanced_Host_Controller_Interface">Advanced Host Controller Interface</a>） 和 SCSI 比较像，是从 SATA 3 规范中单独剥离出来的上层传输协议，目前也主要还是配合 SATA 总线在使用，SATA 硬盘当下市场占用量还是不小的，所以 AHCI 协议也还是比较常见的。</p>
+<h3 id="nvme">NVMe</h3>
+<p>NVMe (Non-Volatile Memory Express) ，NVE 非易失性存储通常是指断电后数据不会丢失的半导体存储，即 FLASH，FLASH 颗粒是固态硬盘的底层存储介质，所以我们通过名字就不难知道，这是一种为了 SSD 存储场景设计的传输协议。</p>
+<p>在固态硬盘发展初期，固态硬盘都是和机械硬盘一样用着 SATA 接口，然后通过 AHCI 协议传输，但是随着固态硬盘工艺发展带来的性能提升，这些为了传统机械硬盘设计的规范逐渐成为了制约性能继续提升的瓶颈，所以后来就有了 NVMe 协议。</p>
+<p>不像 SCSI/AHCI 命令请求都是单队列，队列深度也只有 32/64，而NVMe 最多支持 64k 条深度为 64k 的队列；同时 NVMe 读写的指令则更加精简，可以用更少的交互次数完成读写请求；此外 NVMe支持同时从多核处理器接受命令和优先处理请求，这样能更加充分地发挥现代多核处理的性能。</p>
+<p>和 SCSI 一样，NVMe 在设计时也不是绑定在 PCIe 总线的，NVMe over TCP、NVMe over RDMA 目前逐渐被许多追求极致性能的分布式块存储采用。</p>
+<h1 id="逻辑结构">逻辑结构</h1>
+<p>上面说完了磁盘的物理结构，其实现可以说是五花八门的，但是其实干的其实就是存数据这一件事，所以操作系统引入了一种统一的逻辑结构来更好的操作磁盘。</p>
+<h3 id="寻址">寻址</h3>
+<p>首先最关键的问题就是寻址，即：我的数据存在哪里？</p>
+<p>目前主流的寻址算法是 LBA (Logic Block Accessing)，把磁盘分成 512 字节的一个个块（有的标准中块大小也可能是 1024 或者 2028 字节），然后用一个正整数来标识块的编号，当操作系统要访问一块具体的数据时，只需要告知磁盘控制器快号，磁盘控制器就会根据块号换算出来其对应的物理地址（比如柱面、磁头、扇区）。</p>
+<p>其实这种逻辑结构跟内存一样，用一个一维数组来表示数据的位置，不过磁盘的一个单元是 512B 而内存则是 1B。</p>
+<p>早期还存在一种过 CHS （Cylinder/Head/Sector）寻址方式，但是存在 8GB 的大小限制而且也耦合于旋转式磁面盘这一种介质，所以很快就被 LBA  所取代了。</p>
+<h3 id="分区与引导">分区与引导</h3>
+<p>明确了地址管理机制之后，人们又在磁盘上迭代了两个高级逻辑功能：分区和引导。</p>
+<p>分区是在底层磁盘空间之上的一层逻辑抽象，能把一个磁盘在逻辑上分成几个区，分区之间容量和数据都是隔离的。</p>
+<p>有了分区之后我们就能在一块盘上不同的分区用不同的文件系统、或者装几个操作系统，而且彼此之间完全隔离，即使一个分区使用不当甚至是损坏也不会影响到其他的分区。比如我们使用 Windows 电脑的时候拿到新电脑的第一件事情就是分区，C 盘用来装系统，其他盘装数据，这样电脑重装系统了其他盘中数据也不会受影响。</p>
+<p>磁盘开头的一段空间会记录这块盘上的分区信息，常见分区信息的组织格式有两个：<code>MBR</code> 和 <code>GPT</code>。</p>
+<p>MBR 早期电脑用得比较多，但是存在分区数和卷大小的限制，数据相对来说也比较容易损坏，所以后面有了 GPT，目前新的电脑上 MBR 就比较少见了，除非引导程序还是老的 BIOS 出于兼容性考虑。</p>
+<p>GPT 出于兼容性考虑，避免不支持 GPT 的系统直接识别成坏盘导致数据丢失，磁盘的第一个扇区（前 512 字节）还是留给了 MBR，不过只做保护用，分区数据还是写入在之后的空间中。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>诞生时间</th>
+<th>最大分区大小</th>
+<th>最大主分区数</th>
+<th>总大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MBR (Master Boot Record)</td>
+<td>1983</td>
+<td>2TB</td>
+<td>4</td>
+<td>512字节</td>
+</tr>
+<tr>
+<td>GPT (GUID Partition Table )</td>
+<td>1998</td>
+<td>18 EB</td>
+<td>128</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p>大致的磁盘逻辑结构如下图所示，至于每个分区里面的逻辑结构，这就是文件系统负责去组织的事情了。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221110182259.svg" alt="未命名文件(5)"></p>
+<p>我们的操作系统那一堆数据也是需要放到磁盘上的，但是分区之后这就引入了另一个问题，如果一块盘上两个分区一个装了 Linux 一个装了 Windows 该选择加载哪一个系统呢？</p>
+<p>所以磁盘还有一个引导的功能，在开头第一个扇区的 MBR 区域内，有一段<code>446 字节</code>的空间，在 BIOS 根据配置的顺序尝试从该磁盘上加载操作系统时会被执行，比如我们常见的 grub、windows BOOTMGR 等，由用户配置引导程序来决定要启动哪个系统。</p>
+<h1 id="raid">RAID</h1>
+<p>磁盘相对于其他计算机硬件而言其实算是非常容易损坏的，为了减少潜在的磁盘损坏带来的影响，大家自然而然就有了把一份数据放多块盘上，一块坏了另一块顶上这种朴素的想法，后来不断规范化之后，就有了我们现在的 RAID 系列标准。</p>
+<p>RAID (Redundant Array of Independent Disks) 冗余磁盘阵列，依据磁盘排列组合的方式不同，分为 0到6 7个级别，目前 0 1 5 6 会比较常见一点。</p>
+<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221103182705.svg" alt="raid" style="zoom:70%;" />
+<h3 id="raid0"><strong>RAID0</strong></h3>
+<p>就是简单地把磁盘组合一起形成一块大盘，数据并没有任何冗余，甚至危险性还提升了，因为任何一块盘不可用都会导致整个 RAID 后的盘数据全部丢失，好处就是文件会散落多块盘上，整体的 IOPS 和带宽都会提升，适合对性能和容量要求比较高的临时存储场景，或者有的主板只能通过 RAID 插盘又不想做 RAID 浪费空间的话可以做单盘 RAID 0。</p>
+<h3 id="raid1">RAID1</h3>
+<p>RAID 1 会把一块磁盘中的数据完全复制到另一块磁盘中，虽然会浪费一半的空间，甚至会损耗部分写性能，但是只有两块盘又想要可用的时候就只能考虑 RAID 1了，通常我们做服务器系统盘的时候会考虑这种方式。</p>
+<h3 id="raid-5">RAID 5</h3>
+<p>RAID 5 会在每一块盘中存一部分数据的奇偶校验码，这样即使一块盘挂了，也能根据其他盘的数据和奇偶校验码算出来缺失的数据进行恢复，至少需要三块盘，综合成本、性能、可用性下的最佳选择。</p>
+<h3 id="raid-6">RAID 6</h3>
+<p>RAID 6 在 5 的基础上又引入了一种校验码，能容忍两块盘挂掉，至少需要 4 块盘。</p>
+<h3 id="raid-组合">RAID 组合</h3>
+<p>最基础的 RAID 级别就只有 0-6 这 7种了，但是 RAID 之间也是能组合的，比如常见的 RAID 10，就是先做 RAID 1 把盘两两一组互备，然后再做RAID 0 拼成一块，类似的还有 RAID 50、RAID 60 等等。</p>
+<h3 id="整体对比">整体对比</h3>
+<table>
+<thead>
+<tr>
+<th>RAID等级</th>
+<th>最少硬盘</th>
+<th>最大容错</th>
+<th>可用容量</th>
+<th>读取性能</th>
+<th>写入性能</th>
+<th>安全性</th>
+<th>目的</th>
+<th>应用产业</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单一硬盘</td>
+<td>(参考)</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>无</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0</td>
+<td>2</td>
+<td>0</td>
+<td>n</td>
+<td>n</td>
+<td>n</td>
+<td>一个硬盘异常，全部硬盘都会异常</td>
+<td>追求最大容量、速度</td>
+<td>视频剪接缓存用途</td>
+</tr>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>n-1</td>
+<td>1</td>
+<td>n</td>
+<td>1</td>
+<td>高，一个正常即可</td>
+<td>追求最大安全性</td>
+<td>个人、企业备份</td>
+</tr>
+<tr>
+<td>5</td>
+<td>3</td>
+<td>1</td>
+<td>n-1</td>
+<td>n-1</td>
+<td>n-1</td>
+<td>中下至中</td>
+<td>追求最大容量、最小预算</td>
+<td>个人、小型企业备份</td>
+</tr>
+<tr>
+<td>6</td>
+<td>4</td>
+<td>2</td>
+<td>n-2</td>
+<td>n-2</td>
+<td>n-2</td>
+<td>中至中高,仅安全性较RAID 5高</td>
+<td>同RAID 5，但较安全</td>
+<td>个人、企业备份</td>
+</tr>
+<tr>
+<td>10</td>
+<td>4</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>高</td>
+<td>综合RAID 0/1优点，理论速度较快</td>
+<td>大型数据库、服务器</td>
+</tr>
+<tr>
+<td>50</td>
+<td>6</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>高</td>
+<td>提升资料安全</td>
+<td></td>
+</tr>
+<tr>
+<td>60</td>
+<td>8</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>高</td>
+<td>提升资料安全</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h1 id="文件系统">文件系统</h1>
+<p>磁盘只是提供了最基本的基于块的读写接口，它只关心怎么保存好写入进来的 01 比特流，而我们日常使用时肯定不可能直接肉眼去使用比特流，所以中间还需要引入一层抽象——文件系统。</p>
+<p>文件系统提供了<code>目录</code>和<code>文件</code>这种虚拟的概念，替我们屏蔽了底层磁盘的细节，使得我们不需要再关心我们的数据到底存在物理上哪个磁道哪个扇区等。</p>
+<p>我们可以通过<code>cat /proc/filesystems</code>来查看当前内核支持的文件系统。</p>
+<p>常见的文件系统如下：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>开发者</th>
+<th>诞生时间</th>
+<th>最大文件大小</th>
+<th>最大卷大小</th>
+<th>稀疏文件</th>
+<th>硬链接</th>
+<th>Copy On Write</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZFS</td>
+<td>Sun</td>
+<td>2004</td>
+<td>16 EB</td>
+<td>256 ZB</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>EXT4</td>
+<td>-</td>
+<td>2006</td>
+<td>16 TB</td>
+<td>1 EB</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td></td>
+</tr>
+<tr>
+<td>NTFS</td>
+<td>Microsoft</td>
+<td>1993</td>
+<td>16 EB</td>
+<td>16 EB</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>BtrFS</td>
+<td>Oracle</td>
+<td>2007</td>
+<td>16 EB</td>
+<td>16 EB</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>exFAT</td>
+<td>Microsoft</td>
+<td>2006</td>
+<td>127 PB</td>
+<td>64 ZB</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td></td>
+</tr>
+<tr>
+<td>FAT32</td>
+<td>Microsoft</td>
+<td>1996</td>
+<td>2 GB</td>
+<td>2 TB</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td></td>
+</tr>
+<tr>
+<td>XFS</td>
+<td>Silicon Graphics</td>
+<td>1994</td>
+<td>8 EB</td>
+<td>8 EB</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td></td>
+</tr>
+<tr>
+<td>APFS</td>
+<td>Apple</td>
+<td>2017</td>
+<td>8 EB</td>
+<td></td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>HFS</td>
+<td>Apple</td>
+<td>1985</td>
+<td>2 GB</td>
+<td>2 TB</td>
+<td></td>
+<td>❌</td>
+<td>❌</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="xfs">XFS</h2>
+<p>XFS 是一款为了最大化并行 IO 能力和支持海量存储场景而设计的高性能文件系统，于内核 2.4 版本合入主线，我们很熟悉的发行版 CentOS 7 的默认文件系统就是 XFS。</p>
+<p>一个 XFS 文件系统会被分为一些大小相同的 Allocation Group，在初始化文件系统时指定，默认是 4 个；每个 AG 可以视为一个单独的文件系统，每个 AG 有自己独立的 B+ 树数据结构维护着其空闲块列表、inodes 等元信息，可以很大程度上的提升系统的并发度。</p>
+<p>XFS 文件通过 Extent 数组来管理真实数据所在的块，在文件大到一定程度会转化为一棵 B+ 树，这使得 XFS 能很好的应对巨型文件。</p>
+<p>XFS 支持 WAL 日志，会在写入变更之前把元数据先写日志，降低了元数据断电丢失导致系统出现不一致，引起文件系统崩溃的风险。</p>
+<p>不过 XFS 文件系统一旦创建就无法缩容，只能扩容，好在通常我们也比较少会遇到需要缩容的场景。</p>
+<h2 id="ext">EXT</h2>
+<p>EXT (Extended Filesystem) 目前总共有四代文件系统了：ext1、ext2、ext3、ext4，Linux 阵营的元老级文件系统了，ext4 目前仍广泛活跃于互联网世界众多服务器之中，虽然目前可扩展性和巨大规模场景略显不足，新特性上支持也比较少，但是论稳定性而言还是非常靠谱的。</p>
+<h2 id="fat">FAT</h2>
+<p>FAT 系列文件系统是微软为了 windows 不断迭代设计的一系列文件系统，有 <strong>FAT12</strong>、<strong>FAT16</strong>、<strong>FAT32</strong>、<strong>ExFAT</strong> 四名成员。不过后面其固定硬盘的份额逐渐被 NTFS 所取代，目前主要活跃于移动存储领域。</p>
+<p>FAT 文件系统由四部分区域组成：<strong>保留扇区</strong>、<strong>文件分配表</strong>、<strong>根目录区域</strong>、<strong>数据区域</strong>。</p>
+<p>FAT 系列是用簇（Cluster, 默认 4K） 来做为存储的最小单元，使用 <code>File Allocation Table</code> 表来记录簇号，各个表项之间串成一条条链表。</p>
+<p>另外 FAT 系列有一个很实用的点在于，它是同时被 Windows 和 OS X 原生支持的，所以用来格式化到移动存储设备上在两种系统传输文件就很方便，不过其不支持日志记录，所以在使用移动设备时注意不要直接拔出设备，系统损坏的风险会比较大。</p>
+<h2 id="ntfs">NTFS</h2>
+<p>NTFS (<a href="https://zh.wikipedia.org/wiki/NTFS">New Technology File System</a>) 是我们目前绝大多数 windows 设备的默认文件系统，广泛的运行于大量个人电脑上。</p>
+<h1 id="磁盘性能测试">磁盘性能测试</h1>
+<p>拿到一块磁盘之后，知道它的性能大概是什么样的，确认厂商提供给我们的参数有没有虚标，这个时候我们可以使用一些工具来对磁盘进行性能测试。</p>
+<p>最常用的磁盘性能测试工具莫过于 <a href="https://github.com/axboe/fio">fio</a> （Flexible IO Tester）了，它支持非常多的参数以只支持不同场景的测试需求，具体各参数用法可以参考其官方文档：https://fio.readthedocs.io/en/latest/fio_doc.htm。</p>
+<p>这里我们一起来看一个顺序读性能测试的例子。</p>
+<p>先安装 fio：<code>yum install fio -y</code>或者<code>apt-get install fio</code> 。</p>
+<p>然后准备我们的测试命令：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">fio -directory<span class="o">=</span>/root/test-dir  <span class="se">\ </span><span class="c1"># 测试的目录，会在该目录下生成测试文件，需要确保该目录在目标测试磁盘上</span>
+</span></span><span class="line"><span class="cl">    -rw<span class="o">=</span><span class="nb">read</span> <span class="se">\ </span>  <span class="c1"># IO模式（读测试 or 写测试）,常见项：read write randwrite randrw</span>
+</span></span><span class="line"><span class="cl">    -bs<span class="o">=</span>4k <span class="se">\ </span>  <span class="c1"># blocksize IO 的块大小，默认为 4KB</span>
+</span></span><span class="line"><span class="cl">    -direct<span class="o">=</span><span class="m">1</span> <span class="se">\ </span> <span class="c1"># 设置开启 Direct ID，不走内核缓存，只看磁盘本身的性能</span>
+</span></span><span class="line"><span class="cl">    -time_based<span class="o">=</span><span class="m">1</span> <span class="se">\ </span><span class="c1"># 根据运行时长来停止程序</span>
+</span></span><span class="line"><span class="cl">    -runtime<span class="o">=</span><span class="m">120</span> <span class="se">\ </span><span class="c1"># 运行时间 120 秒</span>
+</span></span><span class="line"><span class="cl">    -name<span class="o">=</span>core-test <span class="se">\ </span><span class="c1"># 这个任务的名称，随便起</span>
+</span></span><span class="line"><span class="cl">    -numjobs<span class="o">=</span><span class="m">1</span> <span class="se">\ </span><span class="c1"># 并发任务数量 </span>
+</span></span><span class="line"><span class="cl">    -nrfiles<span class="o">=</span><span class="m">1</span> <span class="se">\ </span><span class="c1"># 文件数量，测大文件顺序读写可以设置为1，测小文件场景时设置为多个</span>
+</span></span><span class="line"><span class="cl">    -size<span class="o">=</span>1000M <span class="c1"># 总共测试的文件大小</span>
+</span></span></code></pre></div><p>命令设置的是运行 120 秒，两分钟后我们就能拿到测试报告了，如下图所示，图中标红的就是我们最关心的核心指标：带宽和 IOPS：</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220706220548.png" alt="image-20220706220542878"></p>
+<h1 id="磁盘性能监控">磁盘性能监控</h1>
+<p>除了在刚拿到磁盘之后的性能测试，在线上运行期间对磁盘的性能进行监控，及时暴露问题也是很有必要的。</p>
+<h2 id="iostat">iostat</h2>
+<p>iostat 是一个可以用来查看磁盘瞬时状态的命令行工具，各大发行版应该都有预装，它的数据来源主要来源于 <code>/proc/diskstats</code>文件。</p>
+<p>输入 <code>iostat -x</code> 即可看到每块磁盘的详细监控指标：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@cloudnative-core:~ <span class="c1"># iostat -x</span>
+</span></span><span class="line"><span class="cl">Linux 3.10.0-862.14.4.el7.x86_64 <span class="o">(</span>cloudnative-core<span class="o">)</span> 	09/09/2022 	_x86_64_	<span class="o">(</span><span class="m">4</span> CPU<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+</span></span><span class="line"><span class="cl">          40.98    0.02    2.18    0.03    0.00   56.79
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
+</span></span><span class="line"><span class="cl">vda               0.00     3.42    0.35    5.16    12.82    59.64    26.32     0.02  qq  4.27    3.99    4.29   0.35   0.19
+</span></span><span class="line"><span class="cl">vdb               0.00     0.20    0.29    0.37     7.86    48.93   172.0     0.02   28.85    8.11   45.05   0.63   0.04
+</span></span><span class="line"><span class="cl">scd0              0.00     0.00    0.00    0.00     0.00     0.00    17.45     0.00    0.31    0.31    0.00   0.30   0.00
+</span></span></code></pre></div><p>磁盘设备相关列含义如下：</p>
+<ul>
+<li><code>rrqm/s</code>：每秒发起的读IO请求</li>
+<li><code>wrqm/s </code>：每秒发起的写IO请求/秒</li>
+<li><code>r/s</code>: 每秒完成的读 IO 数，即我们通常关注的 IOPS</li>
+<li><code>w/s</code>: 每秒完成的写 IO 数</li>
+<li><code>rkB/s</code>：每秒读了多少 KB 数据，即我们通常关注的 IO 带宽</li>
+<li><code>wkB/s</code>：每秒写了多少 KB 数据</li>
+<li><code>avgrq-sz</code>：每个请求的平均扇区数，一个扇区通常是 512B，所以如果 <code>avgrq-sz</code> 是 <code>172</code> 的话，那么对应的平均请求大小就是 172*512B = 88.06KB，可以基于该参数分析使用该磁盘的业务 IO 场景是 大 IO 多还是小 IO 多</li>
+<li><code>avgqu-sz</code>：该磁盘的平均队列长度，即平均下来每秒在处理中 or 等待中的 IO 请求数量，可以基于此参数来判断磁盘的繁忙程度</li>
+<li><code>await</code> ：IO 平均处理时间（包括在队列等待时间），单位毫秒</li>
+<li><code>r_await</code>： 读 IO 请求的平均处理时间（包括在队列等待时间），单位毫秒</li>
+<li><code>w_await：</code>写 IO 请求的平均处理时间（包括在队列等待时间），单位毫秒</li>
+<li><code>svctm：</code>已废弃</li>
+<li><code>%util</code>：(IO Usage Times) 该设备有 IO 的时间占比，100% 意味着设备所有的时间都有 IO 可能过载，不过通常现在的磁盘设备支持并发处理，所以就算每时每刻都在处理 IO 请求，也有可能是只有一个队列在处理其他的队列是空闲的，但是除了这种特殊的场景，大致也是能反映磁盘负载的</li>
+</ul>
+<h2 id="node-exporter">node-exporter</h2>
+<p>除了排除故障的瞬时监控，常驻监控也是有必要的，最常用的系统监控利器莫过于 <a href="https://github.com/prometheus/node_exporter">node-exporter</a> 了，node-exporter 会不断的捕获系统中各种指标，比如 CPU、内存、IO、网络等，然后由 prometheus 抓取存储在时序数据库中供监控或者报警组件查询。</p>
+<p>iostat 中的指标基本都能在 node-exporter 提供的 metrics 中找到对应的映射：</p>
+<ul>
+<li><code>rrqm/s</code>：<strong>rate(node_disk_reads_merged_total[5m])</strong></li>
+<li><code>wrqm/s </code>：<strong>rate(node_disk_writes_merged_total[5m])</strong></li>
+<li><code>r/s</code>: <strong>rate(node_disk_reads_completed_total[5m])</strong></li>
+<li><code>w/s</code>: <strong>rate(node_disk_writes_completed_total[5m])</strong></li>
+<li><code>rkB/s</code>：<strong>rate(node_disk_read_bytes_total[5m]) / 1024</strong></li>
+<li><code>wkB/s</code>： <strong>rate(node_disk_written_bytes_total[5m]) / 1024</strong></li>
+<li><code>avgrq-sz</code>：<strong>(rate(node_disk_read_bytes_total[5m]) + rate(node_disk_written_bytes_total[5m])) / (rate(node_disk_reads_completed_total[5m]) + rate(node_disk_writes_completed_total[5m]))</strong></li>
+<li><code>avgqu-sz</code>：<strong>rate(node_disk_io_time_weighted_seconds_total[5m])</strong></li>
+<li><code>await</code> ：<strong>(rate(node_disk_read_time_seconds_total[5m]) + rate(node_disk_write_time_seconds_total[5m])) / (rate(node_disk_reads_completed_total[5m]) + rate(node_disk_writes_completed_total[5m]))</strong></li>
+<li><code>r_await</code> ：<strong>rate(node_disk_read_time_seconds_total[5m]) / rate(node_disk_reads_completed_total[5m])</strong></li>
+<li><code>w_await</code>：<strong>rate(node_disk_write_time_seconds_total[5m]) / rate(node_disk_writes_completed_total[5m])</strong></li>
+<li><code>svctm</code>：已废弃</li>
+<li><code>%util</code>：<strong>rate(node_disk_io_time_seconds_total[5m])</strong></li>
+</ul>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E7%A3%81%E7%9B%98" role="button">磁盘 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button">存储 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/weave-scope/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>容器网络可视化：Weave Scope</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%a3%81%e7%9b%98">
+												 磁盘
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ad%98%e5%82%a8%e4%bb%8b%e8%b4%a8">
+												 存储介质
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%a3%81%e6%80%a7%e9%a2%97%e7%b2%92">
+												 磁性颗粒
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%b5%ae%e6%a0%85%e5%8d%8a%e5%af%bc%e4%bd%93">
+												 浮栅半导体
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#sr%e9%94%81%e5%ad%98%e5%99%a8">
+												 SR锁存器
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%94%b5%e5%ae%b9">
+												 电容
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%89%93%e5%ad%94%e7%ba%b8%e5%b8%a6">
+												 打孔纸带
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%a0%e8%be%93%e9%93%be%e8%b7%af">
+												 传输链路
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8e%a5%e5%8f%a3-interface">
+												 接口: INTERFACE
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#pata">
+												 PATA
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%b2%e8%a1%8c%e4%b8%8e%e5%b9%b6%e8%a1%8c">
+												 串行与并行
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#sata">
+												 SATA
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#m2">
+												 M.2
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#usb">
+												 USB
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%ba%bf-bus">
+												 总线: BUS
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#sata-1">
+												 SATA
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#pcie">
+												 PCIe
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8d%8f%e8%ae%ae-protocol">
+												 协议: PROTOCOL
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#scsi">
+												 SCSI
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ahci">
+												 AHCI
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#nvme">
+												 NVMe
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%80%bb%e8%be%91%e7%bb%93%e6%9e%84">
+												 逻辑结构
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%af%bb%e5%9d%80">
+												 寻址
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%88%86%e5%8c%ba%e4%b8%8e%e5%bc%95%e5%af%bc">
+												 分区与引导
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#raid">
+												 RAID
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#raid0">
+												 RAID0
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#raid1">
+												 RAID1
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#raid-5">
+												 RAID 5
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#raid-6">
+												 RAID 6
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#raid-%e7%bb%84%e5%90%88">
+												 RAID 组合
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%95%b4%e4%bd%93%e5%af%b9%e6%af%94">
+												 整体对比
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%96%87%e4%bb%b6%e7%b3%bb%e7%bb%9f">
+												 文件系统
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#xfs">
+												 XFS
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ext">
+												 EXT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#fat">
+												 FAT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#ntfs">
+												 NTFS
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%a3%81%e7%9b%98%e6%80%a7%e8%83%bd%e6%b5%8b%e8%af%95">
+												 磁盘性能测试
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%a3%81%e7%9b%98%e6%80%a7%e8%83%bd%e7%9b%91%e6%8e%a7">
+												 磁盘性能监控
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#iostat">
+												 iostat
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#node-exporter">
+												 node-exporter
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2022 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

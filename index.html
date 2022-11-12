@@ -404,6 +404,8 @@
 
   
 
+  
+
 
 
 
@@ -423,9 +425,9 @@
       <div class="li-x post-meta tags-md" style="margin-left: -8px;">
 
         
-            <li><a href="https://huweicai.com/tags/go" role="button"><span>go (6)</span></a></li>
+            <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (7)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (6)</span></a></li>
+            <li><a href="https://huweicai.com/tags/go" role="button"><span>go (6)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button"><span>容器 (6)</span></a></li>
         
@@ -439,7 +441,7 @@
         
             <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (4)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button"><span>存储 (3)</span></a></li>
+            <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button"><span>存储 (4)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/cilium" role="button"><span>cilium (2)</span></a></li>
         
@@ -494,6 +496,8 @@
             <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button"><span>权限管理 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6" role="button"><span>硬件 (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/%E7%A3%81%E7%9B%98" role="button"><span>磁盘 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F" role="button"><span>镜像 (1)</span></a></li>
         
@@ -559,6 +563,62 @@
       </li>
     </ul>
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/something-about-disk/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">聊一聊磁盘</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2022-06-13</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>19 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      磁盘 磁盘是一种非常常见的持久化存储设备，相较于计算机上另外一种主要的存储设备：内存，磁盘则主要具有断电数据不丢失、容量通常更大、价格低廉等特点；当然我们今天这里主要聊的是广义上的磁盘，而不是特指利用磁性来存储的狭义上的概念。 存储介质 理论上任何能够表达两种状态，且能持久性的保持的东西都可以用来造磁盘；不过我们通常还要考虑成本等其他实际的问题。 我们通常指的磁盘，按照存储介质来分，主要能分为固态硬盘和机......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E7%A3%81%E7%9B%98" role="button">磁盘 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button">存储 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -883,62 +943,6 @@
   <div class="tags-sm">
     
       <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/fluent-bit/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Fluent Bit介绍</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-05-05</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>6 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。 基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。 Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97" role="button">日志 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
       
     
   </div>

@@ -6,7 +6,16 @@
     <description>Recent content in 存储 on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 11 Nov 2020 01:43:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 13 Jun 2022 18:20:55 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>聊一聊磁盘</title>
+      <link>https://huweicai.com/something-about-disk/</link>
+      <pubDate>Mon, 13 Jun 2022 18:20:55 +0800</pubDate>
+      
+      <guid>https://huweicai.com/something-about-disk/</guid>
+      <description>磁盘 磁盘是一种非常常见的持久化存储设备，相较于计算机上另外一种主要的存储设备：内存，磁盘则主要具有断电数据不丢失、容量通常更大、价格低廉等特点；当然我们今天这里主要聊的是广义上的磁盘，而不是特指利用磁性来存储的狭义上的概念。 存储介质 理论上任何能够表达两种状态，且能持久性的保持的东西都可以用来造磁盘；不过我们通常还要考虑成本等其他实际的问题。 我们通常指的磁盘，按照存储介质来分，主要能分为固态硬盘和机</description>
+    </item>
+    
     <item>
       <title>Git实现原理</title>
       <link>https://huweicai.com/git-implementation/</link>
