@@ -8,12 +8,12 @@
     <language>zn-Hans</language>
     <lastBuildDate>Sun, 13 Mar 2022 00:00:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/ebpf/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Linux 内核调试小技巧</title>
+      <title>Linux 内核轻量级调试小技巧</title>
       <link>https://huweicai.com/kernel-debug-tips/</link>
       <pubDate>Sun, 13 Mar 2022 00:00:00 +0800</pubDate>
       
       <guid>https://huweicai.com/kernel-debug-tips/</guid>
-      <description>Kernel 内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。 学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 + 数据，看代码的同时了解其运行时数据能让我们更好的理解代码。 但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，本文分享两种调试内核的小技巧，帮助我们更好的观测其运行时状态。 内核模块 我们通常写的代码都是运行在用</description>
+      <description>Kernel 内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。 学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 + 数据，看代码的同时了解其运行时数据能让我们更好的理解整体逻辑。 但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，虽然也可以通过 kgdb + qemu 实现在 IDE 中的断点调式，不过这样实在是太重了，而且也不能分析正在运行中的线上</description>
     </item>
     
   </channel>
