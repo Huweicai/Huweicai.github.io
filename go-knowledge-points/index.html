@@ -437,7 +437,7 @@ for ; hv1 &lt; hn; hv1++ {
 <p>复杂类型的可比较性的实现原理是，它的类型 _type 中会有一个 equal 方法：<code>func(unsafe.Pointer, unsafe.Pointer) bool</code>，如果为 nil，则代表这个类型是不可比较的。</p>
 <p>内置类型的 equal 方法实现于 <code>src/runtime/alg.go</code> 文件中。</p>
 <p>另外有一个特殊的地方，即使是 map slice 这种不能比较的类型，也是可以和 nil 判等的。Go 变量初始化的执行顺序</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20200902154225.png" alt="这里写图片描述"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200902154225.png" alt="这里写图片描述"></p>
 <p>main 函数是系统的入口，从 main 函数所在的包开始初始化：</p>
 <p>**包之间：**一个包在初始化之前，会按照引入顺序先初始化其所依赖的的包，一直递归下去；</p>
 <p>**包内：**一个包内不同的文件之间会按照文件名字符顺序初始化：a.go &gt; b.go</p>

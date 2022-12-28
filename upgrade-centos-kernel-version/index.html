@@ -306,7 +306,7 @@
           <div class="post-content markdown">
             <h1 id="内核">内核</h1>
 <p>一个 Linux 操作系统，或者叫做 Linux 发行版，比如常见的：<code>CentOS</code>、<code>Debian</code>、<code>Unbuntu</code> 等等，都是由如下五部分构成的，如下图所示，Linux发行版在外层封装了了大量的库、包和工具供用户使用，而底层硬件设备控制相关的能力则仍是由内核提供：</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20210625150645.png" alt="image-20210625150638408"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210625150645.png" alt="image-20210625150638408"></p>
 <h1 id="为什么要升级版本">为什么要升级版本</h1>
 <p>内核也是一个软件， 软件在不断的迭代的过程中会开发很多新的特性，当我们不论是主动还是被动的对内核的新特性有需求而当前版本不支持时，我们就需要升级版本，来满足我们的需求了。</p>
 <p>我们可以通过 <code>uname -msr</code>命令，来确认当前系统的内核版本。</p>
@@ -323,7 +323,7 @@
 <li><code>5.7</code>exFAT文件系统支持</li>
 </ul>
 <p><code>Linux内核版本时间线：</code></p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20210625154211.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210625154211.png" alt="img"></p>
 <h1 id="开始升级">开始升级</h1>
 <p><strong>注：</strong></p>
 <ol>
@@ -373,7 +373,7 @@
 grub2-set-default 0
 # 设置完成之后可以再确认一下
 grub2-editenv list
-</code></pre><p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20211026202133.png" alt="image-20211026202133584"></p>
+</code></pre><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20211026202133.png" alt="image-20211026202133584"></p>
 <h2 id="重启">重启</h2>
 <p>修改完启动项之后，我们只需要重启机器，就可以用上新版本的内核了：</p>
 <pre tabindex="0"><code>reboot

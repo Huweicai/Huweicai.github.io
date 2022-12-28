@@ -315,11 +315,11 @@
 <p>磁场是分为南北两级有两种朝向的，所以一个颗粒中磁场的方向就能对应我们需要存储的 0 和 1。</p>
 <p>要读取数据的时候，通过电磁感应现象的应用（放在变化磁通量中的导体，会产生电动势），我们可以根据产生的感应电流的方向来将磁性颗粒中存储的 0 和 1 加载成我们半导体电路中的 0 和 1，进而进一步被计算读取。</p>
 <p>写入数据时，只需要施加一个反向的大电磁场就能让原子的偶极子反向排列。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221112132652.png" alt="image-20221112132652919"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221112132652.png" alt="image-20221112132652919"></p>
 <h2 id="浮栅半导体">浮栅半导体</h2>
 <p>浮栅半导体通常被用来制作闪存颗粒，即固态硬盘的重要组成单元。</p>
 <p>浮栅半导体全称浮栅金属氧化物半导体场效应晶体管（Floating-gate MOSFET），通过捕获在浮栅层中的电子的数量来代表 0 和 1。</p>
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221111175051.svg" alt="Floating_gate_transistor-en" style="zoom:150%;" />
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221111175051.svg" alt="Floating_gate_transistor-en" style="zoom:150%;" />
 <p>浮栅层被氧化物绝缘层包围，在未施加高电压的情况下进去的电子很难出去，同时外面的电子也进不来，这样即使断电数据也还是能保存在其中。但是并不是说完全不会有电子能逃逸出去，所以这也是为什么大家说固态硬盘并不能永久的存储数据，不过一般十年左右逃逸电子的数量才会多到无法区分原始的 0 和 1 的程度。</p>
 <p>需要写入数据时，只需要给到一个足够大的电压，浮栅外的电子在电场的作用下就会进入浮栅层，断掉电压之后电子就会变成数据被保存起来。</p>
 <p>需要读取数据时，将晶体管导通，随着其中电子数量的不同，导通后能读到的电压也是不一样的，这样就能根据电压的数值来判断其中存储的数据位了。</p>
@@ -334,7 +334,7 @@
 <p>另外 DRAM 需要不断地刷新给电容充电不然数据就会丢失，所以其被称为“动态” RAM，而“静态”的 SRAM 则没有这种烦恼。</p>
 <p>我们目前所用的内存条基本都是基于电容的 DRAM 型，主流架构为<strong>双倍数据率同步动态随机存取存储器</strong>（Double Data Rate Synchronous Dynamic Random Access Memory，简称DDR SDRAM）。</p>
 <p>而 SRAM 则常见于 CPU 缓存这种性能要求非常高且能接受其昂贵造价的场景。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220619210057.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220619210057.png" alt="img"></p>
 <h2 id="打孔纸带">打孔纸带</h2>
 <p>严格意义上来说，纸带算是最早的存储介质了，通过有孔和无孔的区别来代表 0 和 1，可持久化存储，无需担心掉电丢失。</p>
 <h1 id="传输链路">传输链路</h1>
@@ -385,15 +385,15 @@
 <h2 id="接口-interface">接口: INTERFACE</h2>
 <p>接口即我们平常看到的磁盘上暴露出来的那一部分金属块，磁盘插到主板上对应母口之后，形成电流和数据通路，从而使用硬盘可以被计算机识别并传输数据。</p>
 <p>目前存在好几种主流的接口规范，不同的接口电路设计不一样，其特点和性能也大不相同。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221113022429.png" alt="image-20221113022429884"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221113022429.png" alt="image-20221113022429884"></p>
 <h3 id="pata">PATA</h3>
 <p>Parallel ATA （简称 PATA，也被称为: ATA、IDE），是早期常见的一种磁盘接口格式，不过由于并行设计的性能缺陷如今已经被 SATA 取代了。</p>
 <p>ATA 的全称是 <code>Advanced Technology Attachment </code>：AT 的接口，AT 是 IBM 于 1984 年发布的一款计算机：<a href="https://en.wikipedia.org/wiki/IBM_Personal_Computer/AT">IBM Personal Computer/AT</a>，后面逐渐演变成了一种通用的标准。</p>
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220624153102.png" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220624153102.png" style="zoom:50%;" />
 <h4 id="串行与并行">串行与并行</h4>
 <p>传输接口通常分为串行传输的和并行传输的，比如 <code>PATA</code> 和 <code>SATA</code> 这两种典型的代表，然而跟我们通常在软件上认知不太一样的是，并行的并不一定快：</p>
 <p>并行传输需要额外的时钟信号来协调，来确保数据不会乱序，而每根线收到时钟信号会有一定的先后顺序，所以需要准备一个误差区间，这限制了时钟的频率上限，而串行传输面对的问题则更加纯粹，不需要考虑这么复杂的问题。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220625003544.png" alt="image-20220625003544073"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220625003544.png" alt="image-20220625003544073"></p>
 <p>以 PATA 为例，它有十六根数据传输线，如果时钟频率能到 100MHz 那么它的传输速度上限就是 1600b/s 但是很遗憾几百 MHz 就是时钟频率当前的工艺上限了。当然实际实现的时候也会有一些其他的优化，但是即使是最新的  PATA 极限性能也只有 130MB/s。</p>
 <h3 id="sata">SATA</h3>
 <p><a href="https://en.wikipedia.org/wiki/Serial_ATA">Serial ATA</a> (SATA) 应该是目前最常见的硬件接口类型之一了，是一种串行传输的接口，旨在取代老旧的 PATA 接口，众多半导体厂商一起创立了<strong>Serial ATA Working Group</strong> （SATA工作小组），并于 2000 年发布了 SATA 接口标准，之后 SATA 就顺其自然的占领了绝大部分的市场份额，在 2008 年一度占据了 99% 的 PC 磁盘份额，不过后面随着固态的普及，SATA 接口的性能也逐渐显得落伍了。</p>
@@ -404,7 +404,7 @@
 <li><code>eSATA</code>（External SATA）适用于移动外接设备的 SATA 接口，对标 USB 系列，很显然绝大部分人都只听过后者</li>
 <li><code>SATA Express</code> 基于 PCIe 总线的 SATA 接口，但是大家通常会选择直接用没有 ATA 包袱的 <code>M.2</code></li>
 </ul>
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220624103238.png" alt="image-20220624103238209" style="zoom:40%;" />
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220624103238.png" alt="image-20220624103238209" style="zoom:40%;" />
 <h3 id="m2">M.2</h3>
 <p>M.2 原名 <strong>NGFF</strong> (Next Generation Form Factor)，最早是由 Intel 用以取代 mSATA 同时推进系统小型化的一种全新接口规范。</p>
 <p>目前随着固态硬盘的普及，M.2 接口的磁盘也越来越常见，大家通常会觉得上了 M.2 接口的硬盘就一定很快，但是除了 NVMe 协议，出现使用 SATA 协议的 M.2 磁盘也不是完全不可能出现的。</p>
@@ -510,7 +510,7 @@
 <p>SCSI (Small Computer System Interface) 在设计上是一种通用设备通信协议，但是目前主要还是用在存储设备上，以块为单位控制存储设备读写数据。</p>
 <p>SCSI 也是一种经典的<code>客户端/服务器</code> 架构，在 SCSI 协议的概念中，客户端被称为 <code>Initiator</code>，服务端被叫做 <code>Target</code>，一个<code>Target</code>内部可能还有多种逻辑设备（LUN: Logic Unit）。</p>
 <p>客户端向服务的请求被称为 CDB （Command Descriptor Block），每个 CDB 包含一个长为一字节的操作码，以及操作码附带的一些参数，操作码代表了这是一个什么请求，目前总共有 60 多种，比如常见的：WRITE、READ、Read capacity 、Inquiry、Start/Stop 等等。</p>
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221111014714.png" alt="SCSI" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221111014714.png" alt="SCSI" style="zoom:50%;" />
 <p>除此之外，SCSI 还存在一些变种，比如许多分布式块存储（Ceph、Longhorn、OpenEBS等）都在使用的能在 TCP/IP 协议栈上传输的 iSCSI (Internet SCSI) 协议等。</p>
 <h3 id="ahci">AHCI</h3>
 <p>AHCI （<a href="https://en.wikipedia.org/wiki/Advanced_Host_Controller_Interface">Advanced Host Controller Interface</a>） 和 SCSI 比较像，是从 SATA 3 规范中单独剥离出来的上层传输协议，目前也主要还是配合 SATA 总线在使用，SATA 硬盘当下市场占用量还是不小的，所以 AHCI 协议也还是比较常见的。</p>
@@ -561,13 +561,13 @@
 </tbody>
 </table>
 <p>大致的磁盘逻辑结构如下图所示，至于每个分区里面的逻辑结构，这就是文件系统负责去组织的事情了。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221110182259.svg" alt="未命名文件(5)"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221110182259.svg" alt="未命名文件(5)"></p>
 <p>我们的操作系统那一堆数据也是需要放到磁盘上的，但是分区之后这就引入了另一个问题，如果一块盘上两个分区一个装了 Linux 一个装了 Windows 该选择加载哪一个系统呢？</p>
 <p>所以磁盘还有一个引导的功能，在开头第一个扇区的 MBR 区域内，有一段<code>446 字节</code>的空间，在 BIOS 根据配置的顺序尝试从该磁盘上加载操作系统时会被执行，比如我们常见的 grub、windows BOOTMGR 等，由用户配置引导程序来决定要启动哪个系统。</p>
 <h1 id="raid">RAID</h1>
 <p>磁盘相对于其他计算机硬件而言其实算是非常容易损坏的，为了减少潜在的磁盘损坏带来的影响，大家自然而然就有了把一份数据放多块盘上，一块坏了另一块顶上这种朴素的想法，后来不断规范化之后，就有了我们现在的 RAID 系列标准。</p>
 <p>RAID (Redundant Array of Independent Disks) 冗余磁盘阵列，依据磁盘排列组合的方式不同，分为 0到6 7个级别，目前 0 1 5 6 会比较常见一点。</p>
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221103182705.svg" alt="raid" style="zoom:70%;" />
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221103182705.svg" alt="raid" style="zoom:70%;" />
 <h3 id="raid0"><strong>RAID0</strong></h3>
 <p>就是简单地把磁盘组合一起形成一块大盘，数据并没有任何冗余，甚至危险性还提升了，因为任何一块盘不可用都会导致整个 RAID 后的盘数据全部丢失，好处就是文件会散落多块盘上，整体的 IOPS 和带宽都会提升，适合对性能和容量要求比较高的临时存储场景，或者有的主板只能通过 RAID 插盘又不想做 RAID 浪费空间的话可以做单盘 RAID 0。</p>
 <h3 id="raid1">RAID1</h3>
@@ -837,7 +837,7 @@
 </span></span><span class="line"><span class="cl">    -nrfiles<span class="o">=</span><span class="m">1</span> <span class="se">\ </span><span class="c1"># 文件数量，测大文件顺序读写可以设置为1，测小文件场景时设置为多个</span>
 </span></span><span class="line"><span class="cl">    -size<span class="o">=</span>1000M <span class="c1"># 总共测试的文件大小</span>
 </span></span></code></pre></div><p>命令设置的是运行 120 秒，两分钟后我们就能拿到测试报告了，如下图所示，图中标红的就是我们最关心的核心指标：带宽和 IOPS：</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220706220548.png" alt="image-20220706220542878"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220706220548.png" alt="image-20220706220542878"></p>
 <h1 id="磁盘性能监控">磁盘性能监控</h1>
 <p>除了在刚拿到磁盘之后的性能测试，在线上运行期间对磁盘的性能进行监控，及时暴露问题也是很有必要的。</p>
 <h2 id="iostat">iostat</h2>

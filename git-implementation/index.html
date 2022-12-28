@@ -309,7 +309,7 @@
 <p>Git 是一个<strong>基于快照的文件版本管理系统</strong>，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。</p>
 <p>commit 的上层还有一个概念叫<strong>分支</strong>，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。</p>
 <p>这是一个<a href="https://github.com/Huweicai/gitdemo">简单仓库</a>的示意图，我们会在文章末尾详细分析其构成。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201111120427.png" alt="image-20201110005626068"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201111120427.png" alt="image-20201110005626068"></p>
 <p>下面我基于 go 语言版本的 git 实现源码（相较于C语言版更面向对象，可读性更好）来分析一下这些概念的底层实现。</p>
 <h2 id="object">Object</h2>
 <p>Object 是这个文件管理系统中最基本的单元，就代表了一个普通的文件，每一个被 git 管理的文件都会计算出一个 hash 值然后压缩放置于 <code>.git/objects</code> 目录中。</p>
@@ -369,17 +369,17 @@
 <h2 id="git-commit-原理">Git Commit 原理</h2>
 <p>在调用 git commit 命令时，git 会将 index 引用的所有文件全部计算 hash 值，然后将当前指向的 commit 作为父节点，创建一个新的 commit 对象，然后让当前分支指向新创建的 commit 对象。</p>
 <h2 id="git-merge-原理">Git Merge 原理</h2>
-<p>假设当前分支为 master ，当前 git 树是这样的，有一个 master 分支和一个 topic 分支：<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201230231004.png" alt="image-20201230231004625"></p>
+<p>假设当前分支为 master ，当前 git 树是这样的，有一个 master 分支和一个 topic 分支：<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230231004.png" alt="image-20201230231004625"></p>
 <p>如果我在 master 分支执行了：<code>git merge topic</code></p>
 <p>然后 git 会把 topic 相对于它和 master 的公共 commit 之后的修改打包成一个新的 commit 提交到 master 分支上面，不过对于 topic 没有任何影响，只是说这个新的 commit 会有两个父节点，一个指向 master，一个指向 topic，新的 git 树会长这样：
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201230230942.png" alt="image-20201230230942517"></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230230942.png" alt="image-20201230230942517"></p>
 <p>这也是为什么很多人吐槽 merge 的一点，会导致本来直直的一条提交线出现分叉，如果只有一两条分支还好，但是如果上图中 E F G 这几个 commit 也都是其他分支合入的，甚至 topic 分支上的 A B commit 也是其他分支合并进去的，那么分支树可能会变成这样，真是一场噩梦啊：
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201230231922.png" alt="image-20201230231922138"></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230231922.png" alt="image-20201230231922138"></p>
 <p>可以通过 <code>git cat-file commit hash</code> 来查看 commit 内容，比如这是一个 merge 的 commit，同时有两个 parent，对应到我们上面的 commit 结构中，commit 的 parent 也确实是一个数组：<code>ParentHashes []plumbing.Hash</code>。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201111010952.png" alt="image-20201111010952453"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201111010952.png" alt="image-20201111010952453"></p>
 <h2 id="git-rebase-原理">Git Rebase 原理</h2>
 <p>实现原理，假设当前分支为：topic，当前的 git 树是这样的：</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201111011202.png" alt="image (3)"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201111011202.png" alt="image (3)"></p>
 <p>git rebase master 的实现逻辑是这样的：</p>
 <ul>
 <li>将本分支独有的 commits 移到一个临时区域</li>
@@ -387,7 +387,7 @@
 <li>将临时区域的 commit 再一个一个提交回来</li>
 </ul>
 <p>这样，一次 rebase 就完成了，当前的 git 树就变成了这个样子。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201111011138.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201111011138.png" alt=""></p>
 <p>如果是使用 gitlab 的话，这个时候我们就可以在 gtilab 上合并了，因为我们分支相对于 master 而言只有新增，所以可以会进入 Fast-forward merge 模式，即直接把 master 指针指向 topic 指针所指向的 tree 对象即可。</p>
 <p>但是呢，Gtilab 默认是把这个 Fast-foward 给禁用的，所以即使你的分支只有新增，也还是会有一个分支树，保留这里，需要手动打开这个配置才行。</p>
 <p>另外对于 topic 分支而言，如果之前的提交已经提交到了远端仓库的话，会产生不兼容，需要使用 git  push -f 才能推送上去，或者废弃这条分支。</p>
@@ -435,17 +435,17 @@
 <h2 id="分析">分析</h2>
 <p>首先我们来到 <code>.git/refs/heads</code>目录下面，会发现下面有 dev 和 master 两个文件，heads 目录下面的文件代表了一个分支，每个分支里面都是对象 commit 对象的哈希值。</p>
 <p>我们可以在 objects 目录下找到对应的 commit 对象文件。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201110003814.png" alt="image-20201110003814492"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201110003814.png" alt="image-20201110003814492"></p>
 <p>git对象都是经过压缩的，所以直接查看会发现乱码，可以通过 cat-file 工具查看里面的内容</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201110004046.png" alt="image-20201110004046677"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201110004046.png" alt="image-20201110004046677"></p>
 <p>可以看到这个 commit 对象里面包含了一些诸如提交者、提交时间、提交注释之类的元信息，同时还包括一个指向前一个 commit 对象的指针，这样这些 commit 就能通过这个字段串起来成一条线。</p>
 <p>tree 字段则指向了当前 commit 对应文件目录的目录对象，这样就能通过这个指针找到这个版本对应的所有文件。</p>
 <p>继续跟踪这个目录对象，它就像一个普通的目录一样，指向了两个 blob 文件对象，当然目录也可能有目录，在查看一个文件对象，就能得到具体的文件内容了。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201110004601.png" alt="image-20201110004601075"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201110004601.png" alt="image-20201110004601075"></p>
 <p>继续查看上一个commit的信息，我们就能彻底了解整个仓库的历史，最终整理出来的指向图如下。</p>
 <h2 id="示意图">示意图</h2>
 <p>这个仓库我推送到了远端，可以拉下来自己对比：<a href="https://github.com/Huweicai/gitdemo">https://github.com/Huweicai/gitdemo</a>。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201110005626.png" alt="image-20201110005626068"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201110005626.png" alt="image-20201110005626068"></p>
 
           </div>
 

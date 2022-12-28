@@ -345,13 +345,13 @@
 <h2 id="分析泄漏问题">分析泄漏问题</h2>
 <p>我们先打开协程 Debug 的地址，我的服务监听在本地 7899 端口，所以地址是：http://127.0.0.1:7899/debug/pprof/goroutine?debug=1，通过这个我们已经可以很明显看到，我们的问题就发生在 pprof.go 11 行和 14 行这里，泄漏了 2000 个协程，那么我们就重点去排查这一段代码即可。</p>
 <p>这个页面很简单，可读性不高，不过当程序内存状态很复杂的时候，可以考虑配合可视化工具使用。
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20200812001928.png" alt="image.png"></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001928.png" alt="image.png"></p>
 <p>输入命令：<code>go tool pprof -http=:8001 http://127.0.0.1:7899/debug/pprof/goroutine\?debug\=1</code>
 在本地 8001 端口启动一个 HTTP 可视化分析工具，打开 http://127.0.0.1:8001/ui/ 地址，我们就能更直观的看到所有的协程启动的情况：
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20200812001905.png" alt="协程分析"></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001905.png" alt="协程分析"></p>
 <p>同时这个可视化分析工具还支持火焰图、类 TOP 图表等格式进行分析，点击左上角 VIEW 切换即可：
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201209130707.png" alt="img"></p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20200812001900.png" alt="类 TOP 图表"></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201209130707.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001900.png" alt="类 TOP 图表"></p>
 <h2 id="总结">总结</h2>
 <p>pprof 可以很方便帮助我们排查协程泄漏问题，同时这套工具能干的不止如此，几乎所有在程序性能上遇到的问题都可以使用其进行分析，想了解其他功能的话可以参考以下官方文章进行进一步的学习：
 <a href="https://blog.golang.org/pprof">https://blog.golang.org/pprof</a>

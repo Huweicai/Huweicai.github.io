@@ -309,12 +309,12 @@
 <p>scope 是 <a href="https://www.weave.works">weavework</a> 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还能提供对容器进行简单的详情查看、销毁、远程登录等管理功能。</p>
 <h2 id="功能-overview">功能 Overview</h2>
 <p>下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表一个个容器，而容器之间的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之间有流量依赖，一目了然。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220508195106.png" alt="image-20220508193905687"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220508195106.png" alt="image-20220508193905687"></p>
 <p>容器六边形里的阴影部分代表该容器的内存使用量，也可以切换成 CPU。</p>
 <p>最上面正中间我们可以看到还能切换网络中节点的视角，当前我们选择的是容器，也可以切换到进程、主机、DNS  名、容器名称（服务）、镜像等视角，比如进程视角：</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220508195042.png" alt="image-20220508195042933"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220508195042.png" alt="image-20220508195042933"></p>
 <p>另外除了图，也能切换到表格视图：</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220508195334.png" alt="image-20220508195334702"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220508195334.png" alt="image-20220508195334702"></p>
 <h1 id="部署">部署</h1>
 <p>这一段我们介绍一下如何快速部署 scope 进行体验，scope 同时支持 k8s 容器集群和非 k8s 容器集群的部署模式。</p>
 <h2 id="裸-docker">裸 Docker</h2>
@@ -352,7 +352,7 @@
 <li><strong>cluster-agent</strong>: <code>/home/weave/scope --mode=probe --probe.kubernetes.role=cluster</code></li>
 </ul>
 <p>架构图：</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20220509023150.png" alt="image-20220509023150325"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20220509023150.png" alt="image-20220509023150325"></p>
 <h2 id="app">App</h2>
 <p>App 会实时接收来自 agent 上报的信息，然后聚合。</p>
 <p>scope 在设计上是只展示实时信息的，app 中有一个参数：<code>app.window</code>，scope 只会保存在这个窗口大小内的数据，默认是十五秒钟，即管理后台图上的拓扑关系是根据最近十五秒内存在过的网络连接分析出来的。</p>

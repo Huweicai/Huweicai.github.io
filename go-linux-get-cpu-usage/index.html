@@ -309,7 +309,7 @@
 <h1 id="process-文件系统">PROCESS 文件系统</h1>
 <p>在许多 Unix 类系统中，都存在一个 <code>procfs</code> <strong>(Process File System)</strong> 进程文件系统的概念，用于将内核中的一些信息通过文件的形式开放出来供用户使用，不过这个文件并不是我们平常指的狭义上的文件，这些信息是只存在于内存中的，所以也不用担心性能问题，类似内存文件系统的还有 sysfs、tmpfs 等。</p>
 <p>我们可以通过 <code>df</code> 命令查看一个目录所使用的文件系统：
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201230185420.png" alt="image-20201230185420142"></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230185420.png" alt="image-20201230185420142"></p>
 <p>而在 Linux 系统，这个文件系统默认挂载在  <code>/proc</code> 目录下，除了进程信息 Linux 还塞了很多诸如<strong>IO、总线设备、内存、CPU、cgroups</strong> 等其他系统信息在里面，这并不是我们关心的重点，就不详细展开了。</p>
 <p>在这个目录下的 <code>stat</code>文件中，则保存着一些内核的统计数据，其中就有我们关心的 CPU 运行统计数据。</p>
 <p>这个文件里面有一些数字，在分析这些数字之前我们需要有一些关于CPU的基本概念。</p>
@@ -321,7 +321,7 @@
 <p>在 Linux 中，内核会将时间划分成一个最小单元：<code>jiffy</code>，直译成中文是瞬间，形容非常非常短，受 <code>USER_HZ</code>（频率）参数控制<code>jiffy = 1 / USER_HZ</code>，通常 USER_HZ 是 100，而对应的 jiffy 则是 <code>10ms</code>。</p>
 <h1 id="process-statistics">PROCESS STATISTICS</h1>
 <p>再回到我们的 <code>/proc/stat</code>文件，一个 <code>/proc/stat</code>文件实例如下（红字是我标注的）：
-<img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201230223811.png" alt="image-20201230223811735"></p>
+<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230223811.png" alt="image-20201230223811735"></p>
 <p>关于 Linux proc 文件系统的目录和文件结构描述我们可以在 Linux 的在线文档站找到：<a href="https://man7.org/linux/man-pages/man5/procfs.5.html">https://man7.org/linux/man-pages/man5/procfs.5.html</a> ，其中也包括关于 <code>/proc/stat</code> 的详细描述。</p>
 <p>这个文件前面 cpu 开头的几行是代表 CPU 相关的一些信息：</p>
 <ul>
@@ -342,7 +342,7 @@
 <li><code>guest_nice</code>虚拟宿主机nice</li>
 </ol>
 <p>在网上流传的很多 CPU 利用率计算的公式中，要么就是版本太老只有前五项或者前七项，要么就是粗暴的把所有数字加到一起然后用 <code>idle</code>相除，但是这些其实都不准确，比如在<a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/sched/cputime.c?h=v4.8#n169">内核代码</a>中统计虚拟宿主机的<code>guest_nice</code>和<code>guest</code>时间时（截图如下），对应的<code>user_nice</code>和<code>user</code>值也会增加，那么全部加一块儿很明显就会导致 CPU 占用率偏高，这并不科学。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201230183831.png" alt="image-20201230183043703"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230183831.png" alt="image-20201230183043703"></p>
 <p>参考这个<a href="https://stackoverflow.com/questions/11356330/how-to-get-cpu-usage">帖子</a>以及<a href="https://github.com/htop-dev/htop/blob/15652e7b8102e86b3405254405d8ee5d2a239004/linux/LinuxProcessList.c">htop</a>的实现：</p>
 <ol>
 <li>guest 和 guest_nice 的时间片已经算在用户态时间中了</li>
@@ -533,7 +533,7 @@ usage = work / (work + idle)
 </span></span></code></pre></div><p>由于不存在任何的 IO、锁以及任何条件的等待，那么这段死循环累加会一直执行下去，持续不断的提供指令让 CPU 执行。因为没有什么其他任务会来抢占 CPU，所以预期这个程序会吃掉一整个核的 CPU，至于为什么不是两个核都吃满，因为我段代码是线性的，这意味着同一时间只会有一条指令在被执行。</p>
 <p>我们知道在 Go 语言的协程调度机制中，协程会被绑定在线程上运行，而在 Linux 下线程则使用了 <code>CFS 可抢占支持优先级时间片动态轮转调度算法</code> 来决策哪个线程将要运行，每个核心都有一条调度队列，当我们的代码在一个核上被其他进程抢占了之后，在没有设置 CPU 核心亲和度（affinity）绑定核心的时候是有可能被移到另一个核上执行的。</p>
 <p>因此预期的现象就是，虽然代码能跑满一个核，但是有可能前半段跑满了第一个核，然后后半段是跑满了第二个核，两个 CPU 利用率总和加起来一直在一百多一点徘徊，实际测试结果，基本符合预期：</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20201230222426.png" alt="image-20201230222426596"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230222426.png" alt="image-20201230222426596"></p>
 
           </div>
 

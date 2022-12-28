@@ -306,7 +306,7 @@
           <div class="post-content markdown">
             <h1 id="kernel">Kernel</h1>
 <p>内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20210625150645.png" alt="image-20210625150638408"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210625150645.png" alt="image-20210625150638408"></p>
 <p>学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 + 数据，看代码的同时了解其运行时数据能让我们更好的理解整体逻辑。</p>
 <p>但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，虽然也可以通过 kgdb + qemu 实现在 IDE 中的断点调式，不过这样实在是太重了，而且也不能分析正在运行中的线上系统，本文分享两种比较轻量级的内核调试小技巧，帮助我们快速地观测其运行时状态。</p>
 <h1 id="内核模块">内核模块</h1>
@@ -399,7 +399,7 @@
 <h2 id="ebpf-1">eBPF</h2>
 <p>要让我们的代码跑以 Ring 0 权限跑在内核态中，除了上文提到的内核模块之外，Linux 内核还提供了一种很酷的扩展方案 —— <strong>eBPF</strong> ()。</p>
 <p><code>eBPF </code>可以理解为内核提供的一个简单的虚拟机，可以让我们提交一些指令到内核运行，虽然 eBPF 有很多限制，会限制指令条数，循环次数不能过多，运行时间、堆栈大小和字节码大小均有要求，另外内核也仅暴露了有限的 API 给 <code>eBPF</code> 指令，但是也基本都够用了，这么严苛的限制反倒可以让我们放开手脚不用担心一不小心让操作系统崩溃，同时相较于直接编写内核模块，<code>eBPF</code>更加的轻量和安全，已经有许多知名的应用是基于 eBPF 技术实现的，比如网络插件 <code>Cilium</code>、安全检测应用 <code>Falco</code> 、可观测性加强应用<code>Pixie</code>等等。</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20221129114451.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221129114451.png" alt="img"></p>
 <p>eBPF 程序执行的模型是事件驱动的，说白了就能在内核里面插很多回调函数。</p>
 <p>内核提供了很多的 hook 点，我们可以申明 eBPF 程序注册到指定的 hook 点上，当对应的事件发生时就会调用我们的 eBPF 代码执行，目前内核支持的 eBPF 程序类型枚举可以在这里查看 <a href="https://elixir.bootlin.com/linux/v5.13/source/include/uapi/linux/bpf.h#L908">https://elixir.bootlin.com/linux/v5.13/source/include/uapi/linux/bpf.h#L908</a>。</p>
 <h2 id="bpftrace">bpftrace</h2>

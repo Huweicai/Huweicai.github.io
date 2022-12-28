@@ -313,7 +313,7 @@
 <p>客户端经过认证，确认了身份之后，再经过鉴权，就可以访问资源了。</p>
 </blockquote>
 <p><strong>k8s 权限管理机制概览：</strong></p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20210318210936.png" alt="image-20210318210936820"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210318210936.png" alt="image-20210318210936820"></p>
 <p>下文我们会逐一详细介绍各个环节。</p>
 <h1 id="认证authentication">认证：Authentication</h1>
 <p>权限管理系统的第一步肯定是需要确认访问者的身份，如果访问者的身份是伪造的的话，那么后面的一切也就无从谈起。</p>
@@ -460,7 +460,7 @@ Authorization: Bearer 07401b.f395accd246ae52d
 <p>http://127.0.0.1:8001/apis/extensions/v1beta1/namespaces/kube-system/deployments/coredns</p>
 <p>对应资源属性到 HTTP 协议字段位置映射如下图：</p>
 </blockquote>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20210318012750.png" alt="image-20210318012750159"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210318012750.png" alt="image-20210318012750159"></p>
 <h3 id="资源类型资源名称">资源类型+资源名称</h3>
 <p>资源类型包括常见的 <code>POD</code>、<code>Service</code>、<code>Deployment</code>、<code>Secret</code> 等，同时一个资源可能还包含子资源，比如 <code>POD</code> 的日志这种资源类型：&ldquo;pod/logs&rdquo;，</p>
 <p>同时 k8s 也是支持针对某一个具体的资源来进行授权的，所以资源名称也是必要的参考属性。</p>
@@ -535,9 +535,9 @@ Authorization: Bearer 07401b.f395accd246ae52d
 <p>举个例子，假设我有两台机器，给小明和小红开了一个机器管理员的权限，如果是 <code>ABAC</code> 模式的话，如果新加了一台机器，那么我需要分别给小明和小红都加一下权限，如果机器和人一多，那就会非常的乱。</p>
 <p>而如果我们在机器资源之上抽象出来一层机器管理的角色，那么下次再新加机器只需要将这台机器加入到这个角色下即可，拥有机器管理员身份的所有人就都能自动获得这台机器的权限了，这就是 <code>RABC</code>用户和资源不再直接耦合，更加灵活方便。</p>
 <p><strong>ABAC</strong>:</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20210318203921.png" alt="image-20210318203921086"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210318203921.png" alt="image-20210318203921086"></p>
 <p><strong>RBAC:</strong></p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20210318204053.png" alt="image-20210318204053595"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210318204053.png" alt="image-20210318204053595"></p>
 <p>角色：Role</p>
 <p>在 k8s 中，角色主要通过 Role 对象来申明资源的集合，Role 通过 Rule 对象来申明具体的权限，一条 Rule 即我们上文提到的资源，<code>*</code>是通配符。</p>
 <p>一个 Role 的例子如下，声明了一个 <code>default</code>命名空间的只读角色：</p>
