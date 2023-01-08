@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>文件系统 on Anonymous&#39; Blog</title>
+    <link>https://huweicai.com/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</link>
+    <description>Recent content in 文件系统 on Anonymous&#39; Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Thu, 22 Dec 2022 20:47:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>CubeFS&amp;Kubernetes实践</title>
+      <link>https://huweicai.com/cubefs-with-kubernetes/</link>
+      <pubDate>Thu, 22 Dec 2022 20:47:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/cubefs-with-kubernetes/</guid>
+      <description>Kubernetes （K8S） 是目前容器编排领域事实上的标准，在全球范围内有着广泛的应用。 CubeFS 既可以在 K8S 集群中部署客户端，通过 CSI 接口为 K8S 提供持久卷存储能力，也可以直接将 CubeFS 服务端集群整个部署在 K8S 中。 本文将分别介绍一下如何在 K8S 集群中部署 CubeFS 客户端、服务端，以及一些常见的运维操作和注意事项。 服务端 随着容器化的普及，基础设施全部上 K8S 是未来的趋势，这样所有的资源可以统一调度，且有着云原生庞大生态的加持，基础设施的运维成本也将大幅</description>
+    </item>
+    
+  </channel>
+</rss>

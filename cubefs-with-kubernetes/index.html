@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="Kubernetes （K8S） 是目前容器编排领域事实上的标准，在全球范围内有着广泛的应用。 CubeFS 既可以在 K8S 集群中部署客户端，通过 CSI 接口为 K8S 提供持久卷存储能力，也可以直接将 CubeFS 服务端集群整个部署在 K8S 中。 本文将分别介绍一下如何在 K8S 集群中部署 CubeFS 客户端、服务端，以及一些常见的运维操作和注意事项。 服务端 随着容器化的普及，基础设施全部上 K8S 是未来的趋势，这样所有的资源可以统一调度，且有着云原生庞大生态的加持，基础设施的运维成本也将大幅">
+
+  <meta property="og:title" content="CubeFS&amp;Kubernetes实践" />
+<meta property="og:description" content="Kubernetes （K8S） 是目前容器编排领域事实上的标准，在全球范围内有着广泛的应用。 CubeFS 既可以在 K8S 集群中部署客户端，通过 CSI 接口为 K8S 提供持久卷存储能力，也可以直接将 CubeFS 服务端集群整个部署在 K8S 中。 本文将分别介绍一下如何在 K8S 集群中部署 CubeFS 客户端、服务端，以及一些常见的运维操作和注意事项。 服务端 随着容器化的普及，基础设施全部上 K8S 是未来的趋势，这样所有的资源可以统一调度，且有着云原生庞大生态的加持，基础设施的运维成本也将大幅" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/cubefs-with-kubernetes/" /><meta property="article:section" content="" />
+<meta property="article:published_time" content="2022-12-22T20:47:00+08:00" />
+<meta property="article:modified_time" content="2022-12-22T20:47:00+08:00" />
+
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       CubeFS&amp;Kubernetes实践 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/cubefs-with-kubernetes/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://huweicai.com/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">CubeFS&amp;Kubernetes实践</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2022-12-22</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>8 minutes read</li>
+        
+        <li>3544 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p><a href="https://kubernetes.io">Kubernetes</a> （K8S） 是目前容器编排领域事实上的标准，在全球范围内有着广泛的应用。</p>
+<p>CubeFS 既可以在 K8S 集群中部署客户端，通过 CSI 接口为 K8S 提供持久卷存储能力，也可以直接将 CubeFS 服务端集群整个部署在 K8S 中。</p>
+<p>本文将分别介绍一下如何在 K8S 集群中部署 CubeFS 客户端、服务端，以及一些常见的运维操作和注意事项。</p>
+<h1 id="服务端">服务端</h1>
+<p>随着容器化的普及，基础设施全部上 K8S 是未来的趋势，这样所有的资源可以统一调度，且有着云原生庞大生态的加持，基础设施的运维成本也将大幅降低。</p>
+<p>CubeFS 除了在物理机上通过 Ansible、SaltStack 等工具管理部署，同时也可以部署在 Kubernetes 集群中，享受云原生加持，且我们会直接使用宿主机网络，通过 <a href="https://kubernetes.io/zh-cn/docs/concepts/storage/volumes/#hostpath">hostPath</a> 将磁盘映射到容器中的挂载点，理论上是不会有任何性能损耗的。</p>
+<h2 id="大致架构">大致架构</h2>
+<p>CubeFS 目前由这四部分组成：</p>
+<p><code>StatefulSet Master</code> <em>资源管理节点</em>，负责维护整个集群的元信息</p>
+<p><code>DaemonSet DataNode</code> 数据存储节点，需要挂载大量磁盘负责文件数据的实际存储</p>
+<p><code>DaemonSet MetaNode</code> 元数据节点，负责存储所有的文件元信息</p>
+<p><code>Deployment ObjectNode</code>负责提供转换 S3 协议提供对象存储的能力，无状态服务</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221228014935.png" alt="CubeFS架构(1)"></p>
+<h2 id="部署">部署</h2>
+<h3 id="准备机器">准备机器</h3>
+<p>在我们开始部署之前，我们需要拥有一个至少有 4 个节点的 Kubernetes 集群，且版本大于 1.14。</p>
+<p>然后就可以开始规划准备机器了，需要设置为 DataNode 角色的机器需要先初始化好磁盘，可以参考传统化部署中的<a href="https://cubefs.readthedocs.io/zh_CN/latest/manual-deploy.html#id8">准备数据目录章节</a>。</p>
+<p>然后我们需要给机器打上各自的标签，标明这台机器要在 CubeFS 集群中承担的角色：</p>
+<pre tabindex="0"><code># Master 节点，至少三个，建议为奇数个
+kubectl label node &lt;nodename&gt; component.cubefs.io/master=enabled
+# MetaNode 元数据节点，至少四个，奇偶无所谓
+kubectl label node &lt;nodename&gt; component.cubefs.io/metanode=enabled
+# Dataode 数据节点，至少四个，奇偶无所谓
+kubectl label node &lt;nodename&gt; component.cubefs.io/datanode=enabled
+# ObjectNod 对象存储节点，至少一个，可自由水平扩容
+kubectl label node &lt;nodename&gt; component.cubefs.io/objectnode=enabled
+</code></pre><p>后续安装时就会根据这些标签通过 <code>nodeSelector</code>进行匹配，然后在机器创建起对应的 <a href="https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/">Pod</a>。</p>
+<p>下面我们将使用 Helm 配置并安装 CubeFS，请确保你的操作机器上安装了 <code>Helm3</code>(Helm 安装请参考其<a href="https://helm.sh/docs/intro/install/">官方文档</a>)。</p>
+<p>我们都知道 K8S 是接收 yaml 做为输入来应用资源的，然而 YAML 是纯静态的，当我们的 YAML 比较复杂，当需要变量、逻辑判断、循环等高级功能的时候，普通的 YAML 就做不到了，这时候就需要用到 Helm 这种能对 YAML 进行模板化管理的工具了。</p>
+<h3 id="拉取-cubefs-helm-仓库">拉取 Cubefs Helm 仓库</h3>
+<pre tabindex="0"><code>git clone https://github.com/cubefs/cubefs-helm
+cd cubefs-helm
+</code></pre><h3 id="设置配置">设置配置</h3>
+<p>我们的项目存在大量的配置，所有的可配置项位于<code>./cubefs/values.yaml</code>中，其中包含有详细的注释，这里我们只单独创建一个配置，覆盖其中常见的关键配置项。</p>
+<pre tabindex="0"><code>vi ~/cubefs.yaml 
+</code></pre><p>按照你的需要编辑该文件：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># 要安装哪些组件，如果只安装服务端的话保持下方配置即可，如果要安装客户端的话，把 csi 设置为 true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">component</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">master</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">datanode</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">metanode</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">objectnode</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">client</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">csi</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">monitor</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ingress</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># path.data: Master、MetaNode 的元数据存储路径，会以 hostPath 的方式存储在宿主机上，建议使用性能较高的底层磁盘</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># path.log: 所有组件的日志在宿主机上的存储路径</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">path</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="l">/var/lib/cubefs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">log</span><span class="p">:</span><span class="w"> </span><span class="l">/var/log/cubefs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">master</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Master 组件实例数量</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Master Ingres 配置使用的域名，记得需要将该域名 DNS 解析到 Ingres Controller 的入口，当然也可以不配置，</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 在客户端处直接将所有 Master 的 IP + 端口配置上</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l">master.cubefs.com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">objectnode</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ObjectNode 组件实例数量</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metanode</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Metanode 可以使用的总内存，单位字节，建议设置为机器可以内存的 80%，也可以按需减少</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">total_mem</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;26843545600&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">datanode</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># DataNode 要使用的磁盘，可以挂载多块</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 格式: 挂载点:保留的空间</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 保留的空间: 单位字节，当磁盘剩余空间小于该值时将不会再在该磁盘上写入数据</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">disks</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="l">/data0:21474836480</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="l">/data1:21474836480</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># CSI 客户端配置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">provisioner</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Kubelet 的主目录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">kubelet_path</span><span class="p">:</span><span class="w"> </span><span class="l">/var/lib/kubelet</span><span class="w">
+</span></span></span></code></pre></div><h3 id="安装">安装</h3>
+<p>编辑好配置文件之后，直接输入下方命令即可开始安装：</p>
+<pre tabindex="0"><code>helm upgrade --install cubefs ./cubefs -f ~/cubefs.yaml -n cubefs --create-namespace
+</code></pre><p>等待所有组件状态变为 <code>Running</code> 即可：</p>
+<pre tabindex="0"><code>$ kubectl -n cubefs get pods
+NAME                         READY   STATUS    RESTARTS   AGE
+datanode-2rcmz                      1/1     Running   0          2m40s
+datanode-7c9gv                      1/1     Running   0          2m40s
+datanode-s2w8z                      1/1     Running   0          2m40s
+master-0                            1/1     Running   0          2m40s
+master-1                            1/1     Running   0          2m34s
+master-2                            1/1     Running   0          2m27s
+metanode-bwr8f                      1/1     Running   0          2m40s
+metanode-hdn5b                      1/1     Running   0          2m40s
+metanode-w9snq                      1/1     Running   0          2m40s
+objectnode-6598bd9c87-8kpvv         1/1     Running   0          2m40s
+objectnode-6598bd9c87-ckwsh         1/1     Running   0          2m40s
+objectnode-6598bd9c87-pj7fc         1/1     Running   0          2m40s
+</code></pre><p>服务端组件的关键日志会在容器标准输出中输出，运行起来后详细日志会存储在上文提到的 <code>path.log</code>配置地址，如果启动失败可以配合日志查看，常见的启动失败原因可能有：</p>
+<ul>
+<li>DataNode 数据盘路径配置错误</li>
+<li>组件端口被占用</li>
+<li>配置的 Metanode 可用总内存大于实际物理内存</li>
+<li>等等</li>
+</ul>
+<h2 id="运维操作">运维操作</h2>
+<h3 id="扩容">扩容</h3>
+<p>DataNode 和 MetaNode 是通过 <code>DaemonSet</code> 类型部署的，只需要给新加的机器打上标签即可扩容：</p>
+<pre tabindex="0"><code>kubectl label node &lt;nodename&gt; component.cubefs.io/master=enabled
+kubectl label node &lt;nodename&gt; component.cubefs.io/metanode=enabled
+</code></pre><p>Objectnode 和 Master 则除了标签之外还需要同步修改配置文件中的副本数，并重新执行 helm 更新命令。</p>
+<h3 id="缩容">缩容</h3>
+<p>缩容下线节点之前需要先将节点上面的数据迁移走：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -s <span class="s2">&#34;http://{{MasterAddr}}/metaNode/decommission?addr={{MetaNodeIP:MetaNodePort}}&#34;</span>
+</span></span><span class="line"><span class="cl">curl -s <span class="s2">&#34;http://{{MasterAddr}}/dataNode/decommission?addr={{DataNodeIP:DataNodePort}}&#34;</span>
+</span></span></code></pre></div><p>然后只需要删除掉节点上面的标签即可下线完成：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl label node &lt;nodename&gt; component.cubefs.io/master-
+</span></span><span class="line"><span class="cl">kubectl label node &lt;nodename&gt; component.cubefs.io/metanode-
+</span></span></code></pre></div><h3 id="重启">重启</h3>
+<p>想要重启哪一个实例，只需要将那个 Pod 直接删除掉即可。</p>
+<pre tabindex="0"><code>kubectl delete -n cubefs datanode-s2w8z
+</code></pre><p>删除命令下达后，kubelet 会发送 <code>SIGTERM</code>给 CubeFS 应用进程，然后 CubeFS 应用进程在完成了首尾工作之后就会自行结束，实现优雅退出。</p>
+<h3 id="升级">升级</h3>
+<p>CubeFS 所有工作负载的更新策略都是 <code>OnDelete</code> 而不是滚动更新，避免误操作，所以当我们更新了配置或者版本需要让其生效时，一个一个地将 Pod 删除掉等待其他即可完成升级，切忌不要一口气全删了，会导致服务瞬间不可用。</p>
+<h3 id="异构机型">异构机型</h3>
+<p>当我们的集群中有个别机型比如磁盘配置，或者内存大小和其他机器不一致的时候，我们可以通过编辑 ConfigMap <code>cubefs-config-override</code> 来实现，配置覆盖，在该 ConfigMap 中的配置项将会以更高的优先级合并入原来的配置，对应的 helm 配置为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">datanode</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">config_override</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">    {
+</span></span></span><span class="line"><span class="cl"><span class="sd">      &#34;1.1.1.1&#34;: {
+</span></span></span><span class="line"><span class="cl"><span class="sd">      &#34;logDir&#34;: &#34;/data/cfs/logx&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="sd">      &#34;disks&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="sd">        &#34;/disk/nvme0n1:59000000000&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="sd">        &#34;/disk/nvme1n1:59000000000&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="sd">        &#34;/disk/nvme2n1:59000000000&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      ]
+</span></span></span><span class="line"><span class="cl"><span class="sd">      }
+</span></span></span><span class="line"><span class="cl"><span class="sd">    }</span><span class="w">    
+</span></span></span></code></pre></div><p>不过这需要我们 DataNode 和 MetaNode 的配置项有所了解，可以在这两篇文档中找到详细描述：<a href="https://cubefs.readthedocs.io/zh_CN/latest/user-guide/metanode.html">MetaNode</a> <a href="https://cubefs.readthedocs.io/zh_CN/latest/user-guide/datanode.html">DataNode</a>。</p>
+<h3 id="磁盘损坏">磁盘损坏</h3>
+<p>对于高吞吐分布式存储系统而言，底层物理磁盘损坏会是家常便饭，在 CubeFS on Kubernetes 的部署方式中，更换磁盘步骤和传统部署的方式差不多:</p>
+<ol>
+<li>
+<p>下线磁盘：<code>curl -v &quot;http://{{MasterAddr}}/dataNode/migrate?srcAddr=src&amp;targetAddr=dst&amp;count=3&quot;</code></p>
+</li>
+<li>
+<p>将磁盘报修，在磁盘维修期间，在 <code>cubefs-config-override</code> 中覆盖该节点的磁盘配置，将损坏的判断那一行删掉</p>
+</li>
+<li>
+<p>删除 <code>Pod</code> 重启节点，这样在磁盘维修期间，该节点也能正常提供服务</p>
+</li>
+<li>
+<p>磁盘维修或更换完成后，删掉配置覆盖项，再重启节点，这样就修复完成了</p>
+</li>
+</ol>
+<h1 id="客户端">客户端</h1>
+<p>CubeFS 实现了 CSI 的接口，可以动态的为 K8S 集群提供 PersistentVolume。</p>
+<h2 id="大致架构-1">大致架构</h2>
+<p>CSI 由负责控制逻辑的 Controller 和负责实际提供挂载服务的 CSI Node Daemonset 两部分组成，逻辑相对来说比较简单。</p>
+<p>Controller 由如下四个容器组成：</p>
+<ul>
+<li><code>cfs-driver</code> 核心逻辑容器</li>
+<li><code>csi-provisioner</code>官方提供的 Sidecar 容器，主要负责监听 PVC 资源的创建和删除，然后调用 <code>cfs-dirver</code> 上对应的接口</li>
+<li><code>csi-attacher</code>官方提供的 Sidecar 容器，主要负责监听 VolumeAttachment 对象，要挂载卷时，调用 <code>cfs-driver</code></li>
+<li><code>csi-resizer</code>官方提供的 Sidecar 容器，顾名思义主要负责 PVC 扩容相关的动作转换</li>
+</ul>
+<p>CSI Node 是一个 Daemonset，其中的每一个 Pod 由如下两个容器组成：</p>
+<ul>
+<li><code>cfs-driver</code> 核心逻辑容器，所有的 <code>cfs-client</code> 客户端都将会在这个容器中启动，并挂载卷然后映射到业务容器中</li>
+<li><code>csi-node-driver-registrar</code> 官方提供的 Sidecar 容器，负责将 CSI 注册到 Kubelet 上，告知 Kubelet 这台机器上能提供 CubeFS 的存储服务</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221229171636.png" alt="CubeFS CSI架构 (1)"></p>
+<h2 id="部署-1">部署</h2>
+<p>CSI 支持通过 Helm 部署，同时由于逻辑比较简单，CSI 也可以直接 apply yaml 文件进行部署。</p>
+<h3 id="直接部署">直接部署</h3>
+<p>直接部署步骤如下：</p>
+<ol>
+<li>
+<p>拉取 CSI 源代码：<code>git clone https://github.com/cubefs/cubefs-csi</code></p>
+</li>
+<li>
+<p>给需要部署的节点打标签：<code>kubectl label node &lt;nodename&gt; component.cubefs.io/csi=enabled</code></p>
+</li>
+<li>
+<p>apply 相关资源文件：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ kubectl apply -f deploy/csi-rbac.yaml
+</span></span><span class="line"><span class="cl">$ kubectl apply -f deploy/csi-controller-deployment.yaml
+</span></span><span class="line"><span class="cl">$ kubectl apply -f deploy/csi-node-daemonset.yaml	
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">不过如果 kubelet 路径不是默认的 /var/lib/kubelet 的话需要全局替换成新的路径，例如替换成 /data1/k8s/lib/kubelet:
+</span></span><span class="line"><span class="cl">sed -i <span class="s1">&#39;s#/var/lib/kubelet#/data1/k8s/lib/kubelet#g&#39;</span>  deploy/csi-controller-deployment.yaml
+</span></span><span class="line"><span class="cl">sed -i <span class="s1">&#39;s#/var/lib/kubelet#/data1/k8s/lib/kubelet#g&#39;</span>  deploy/csi-node-daemonset.yaml
+</span></span></code></pre></div></li>
+<li>
+<p>编辑 <code>deploy/storageclass.yaml</code> 中设置对应的 Master 地址，然后将其 apply 即可完成部署</p>
+</li>
+</ol>
+<h3 id="helm-部署">Helm 部署</h3>
+<p>和通过 Helm 部署服务端一样，CSI 的部署只是参数不同而已：</p>
+<ol>
+<li>
+<p>git clone <a href="https://github.com/cubefs/cubefs-helm">https://github.com/cubefs/cubefs-helm</a> &amp;&amp; cd cubefs-helm</p>
+</li>
+<li>
+<p><code>vi ~/cubefs.yaml</code>  如果只安装 CSI 的话，只需要填写以下参数即可：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">component</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">master</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">datanode</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">metanode</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">objectnode</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">client</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">csi</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">monitor</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ingress</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">image</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># CSI related images</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">csi_driver</span><span class="p">:</span><span class="w"> </span><span class="l">ghcr.io/cubefs/cfs-csi-driver:3.2.0.150.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">csi_provisioner</span><span class="p">:</span><span class="w"> </span><span class="l">k8s.gcr.io/sig-storage/csi-provisioner:v2.2.2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">csi_attacher</span><span class="p">:</span><span class="w"> </span><span class="l">k8s.gcr.io/sig-storage/csi-attacher:v3.4.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">csi_resizer</span><span class="p">:</span><span class="w"> </span><span class="l">k8s.gcr.io/sig-storage/csi-resizer:v1.3.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">driver_registrar</span><span class="p">:</span><span class="w"> </span><span class="l">k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.5.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">csi</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">driverName</span><span class="p">:</span><span class="w"> </span><span class="l">csi.cubefs.com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">logLevel</span><span class="p">:</span><span class="w"> </span><span class="l">error</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># If you changed the default kubelet home path, this</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># value needs to be modified accordingly</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">kubeletPath</span><span class="p">:</span><span class="w"> </span><span class="l">/var/lib/kubelet</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">controller</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">tolerations</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">nodeSelector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">&#34;component.cubefs.io/csi&#34;: </span><span class="s2">&#34;enabled&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">node</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">tolerations</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">nodeSelector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">&#34;component.cubefs.io/csi&#34;: </span><span class="s2">&#34;enabled&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">resources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">requests</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;4048Mi&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2000m&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">limits</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;4048Mi&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;2000m&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">storageClass</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># Whether automatically set this StorageClass to default volume provisioner</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">setToDefault</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># StorageClass reclaim policy, &#39;Delete&#39; or &#39;Retain&#39; is supported</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">reclaimPolicy</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Delete&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># Override the master address parameter to connect to external cluster</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 如果是要连接外部 CubeFS 集群的设置该参数，否则可以忽略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">masterAddr</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">otherParameters</span><span class="p">:</span><span class="w">
+</span></span></span></code></pre></div></li>
+</ol>
+<h2 id="验证">验证</h2>
+<p>部署完成之后，我们可以创建一个测试的卷并进行挂载验证一下流程：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">PersistentVolumeClaim</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">pvc-for-verify</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="l">ReadWriteMany</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l">2Gi</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l">cfs-sc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">volumeMode</span><span class="p">:</span><span class="w"> </span><span class="l">Filesystem</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nn">---</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Deployment</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">pod-for-verify-cubefs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">pod-for-verify-cubefs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">pod-for-verify-cubefs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">pod-for-verify-cubefs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">cubefs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">pod-for-verify-cubefs</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">pvc-for-verify</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l">pvc-for-verify</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:alpine</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">pvc-for-verify</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l">/data/pv</span><span class="w">
+</span></span></span></code></pre></div><p>Pod 创建出来后，我们可以进入容器，<code>df -Th</code> 看一下容器中挂载的文件系统，我们可以注意到其中有一行：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Filesystem                                       Type Size Used Avail Use% Mounted on
+</span></span><span class="line"><span class="cl">cubefs-pvc-606dd219-617d-45d8-a43d-725a568310c5  fuse  2G   <span class="m">0</span>    2G    0%   /data/pv
+</span></span></code></pre></div><p>这就代表 CubeFS 文件系统在 <code>/data/pv</code> 这个挂载点挂载的好好的，然后我们可以进一步在该目录下创建、修改文件，在另外一个 Pod 看是否能同步观察到。</p>
+<h2 id="日志">日志</h2>
+<p>CSI 的日志均位于 cfs-driver 容器的 <code>/cfs/logs</code> 目录下，除了 CSI Driver 本身的日志，<code>cfs-client</code> 挂载后的日志也在该目录下。</p>
+<h2 id="风险">风险</h2>
+<p>FUSE 类的 CSI 都会面临一个问题，客户端一旦崩溃之后就无法恢复，所以我们需要尽可能的避免 CSI 容器的崩溃：</p>
+<ol>
+<li>尽量先预先分配好足够的内存和 CPU</li>
+<li>尽量将 Pod 的 QOS 级别设置为 <code>Guaranteed</code></li>
+</ol>
+<p>同时 CubeFS CSI 支持在容器重启后对异常退出的卷进行重挂载，给 csi-node 注入环境变量：<code>REMOUNT_DAMAGED: true</code> ，同时在 Pod 挂载时将卷的挂载传播级别设置为 <code>HostToContainer</code>，例如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:alpine</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">pvc-for-verify8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l">/data/pv</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">mountPropagation</span><span class="p">:</span><span class="w"> </span><span class="l">HostToContainer</span><span class="w">
+</span></span></span></code></pre></div><p>但是只能保证新打开的文件能正常读取，所以需要上层业务能处理重试逻辑。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221229180013.png" alt="image-20221229180012981"></p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F" role="button">文件系统 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button">存储 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/something-about-disk/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>聊一聊磁盘</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%9c%8d%e5%8a%a1%e7%ab%af">
+												 服务端
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%a7%e8%87%b4%e6%9e%b6%e6%9e%84">
+												 大致架构
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%83%a8%e7%bd%b2">
+												 部署
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%87%86%e5%a4%87%e6%9c%ba%e5%99%a8">
+												 准备机器
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8b%89%e5%8f%96-cubefs-helm-%e4%bb%93%e5%ba%93">
+												 拉取 Cubefs Helm 仓库
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%ae%be%e7%bd%ae%e9%85%8d%e7%bd%ae">
+												 设置配置
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%89%e8%a3%85">
+												 安装
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%bf%90%e7%bb%b4%e6%93%8d%e4%bd%9c">
+												 运维操作
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%89%a9%e5%ae%b9">
+												 扩容
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bc%a9%e5%ae%b9">
+												 缩容
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%87%8d%e5%90%af">
+												 重启
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8d%87%e7%ba%a7">
+												 升级
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%bc%82%e6%9e%84%e6%9c%ba%e5%9e%8b">
+												 异构机型
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%a3%81%e7%9b%98%e6%8d%9f%e5%9d%8f">
+												 磁盘损坏
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%a2%e6%88%b7%e7%ab%af">
+												 客户端
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%a7%e8%87%b4%e6%9e%b6%e6%9e%84-1">
+												 大致架构
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%83%a8%e7%bd%b2-1">
+												 部署
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%9b%b4%e6%8e%a5%e9%83%a8%e7%bd%b2">
+												 直接部署
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#helm-%e9%83%a8%e7%bd%b2">
+												 Helm 部署
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%aa%8c%e8%af%81">
+												 验证
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%97%a5%e5%bf%97">
+												 日志
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%a3%8e%e9%99%a9">
+												 风险
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2023 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
