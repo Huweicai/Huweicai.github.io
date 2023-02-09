@@ -6,11 +6,11 @@
     <description>Recent content in ebpf on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Thu, 17 Mar 2022 00:00:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/ebpf/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 17 Jan 2023 00:00:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/ebpf/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Linux Kernel Debug Tips</title>
       <link>https://huweicai.com/kernel-debug-tips_en/</link>
-      <pubDate>Thu, 17 Mar 2022 00:00:00 +0800</pubDate>
+      <pubDate>Tue, 17 Jan 2023 00:00:00 +0800</pubDate>
       
       <guid>https://huweicai.com/kernel-debug-tips_en/</guid>
       <description>Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.

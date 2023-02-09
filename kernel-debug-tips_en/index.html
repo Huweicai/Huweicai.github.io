@@ -27,8 +27,8 @@ In that case, why not try to run our code inside the Kernel?
 It&rsquo;s possible to edit the source code of kernel, adding log to print the information we concerned, but it&rsquo;s a long tedious step." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/kernel-debug-tips_en/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2022-03-17T00:00:00+08:00" />
-<meta property="article:modified_time" content="2022-03-17T00:00:00+08:00" />
+<meta property="article:published_time" content="2023-01-17T00:00:00+08:00" />
+<meta property="article:modified_time" content="2023-01-17T00:00:00+08:00" />
 
 
    
@@ -308,7 +308,7 @@ It&rsquo;s possible to edit the source code of kernel, adding log to print the i
 
     <ul class="post-meta li-x mt-1">
         
-            <li>2022-03-17</li>
+            <li>2023-01-17</li>
         
 
         
@@ -408,7 +408,7 @@ It&rsquo;s possible to edit the source code of kernel, adding log to print the i
 </span></span><span class="line"><span class="cl">bluetooth <span class="m">606208</span> <span class="m">0</span> - Live 0xffffffffc0712000
 </span></span><span class="line"><span class="cl">ecdh_generic <span class="m">16384</span> <span class="m">1</span> bluetooth, Live 0xffffffffc06f3000
 </span></span><span class="line"><span class="cl">....
-</span></span></code></pre></div><p>Kernel will call the <strong>init</strong> function of the module while installing, which is the <code>test_tasks_init</code> function is our above debug code, <code>printk</code> will send the output to kernel Ring Buffer, we can check it by <code>dmesg</code> command, and the information we concerned will show up:</p>
+</span></span></code></pre></div><p>Kernel will call the <strong>init</strong> function of the module while installing, which is the <code>test_tasks_init</code> function is our above debug code, <code>printk</code> will send the output to kernel Ring Buffer, we can check it by <code>dmesg</code> command, and the information we concerned will shows up:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@dev# demesg -TL
 </span></span><span class="line"><span class="cl">....
 </span></span><span class="line"><span class="cl"><span class="o">[</span>Sun Mar <span class="m">14</span> 18:25:52 2022<span class="o">]</span> test_tasks_exit: In <span class="nb">exit</span>
@@ -540,23 +540,16 @@ It&rsquo;s possible to edit the source code of kernel, adding log to print the i
           <div class="row pt-3">
             <div class="col-md-6">
               
-                <a href=https://huweicai.com/kernel-debug-tips/ class="post-meta">Previous
+                <a href=https://huweicai.com/cubefs-with-kubernetes/ class="post-meta">Previous
                   <div class="pt-2 pb-5 d-flex">
                     <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
-                    <span>Linux 内核轻量级调试小技巧</span>
+                    <span>CubeFS&amp;Kubernetes实践</span>
                   </div>
                 </a>
               
             </div>
             
             <div class="col-md-6 text-right" >
-              
-                <a href=https://huweicai.com/weave-scope/ class="post-meta">Next
-                  <div class="pt-2 pb-5 flex-reverse">
-                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>容器网络可视化：Weave Scope</span>
-                  </div>
-                </a>
               
             </div>
           </div>
