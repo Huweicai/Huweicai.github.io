@@ -7,14 +7,28 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="Kernel 内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。 学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 &#43; 数据，看代码的同时了解其运行时数据能让我们更好的理解整体逻辑。 但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，虽然也可以通过 kgdb &#43; qemu 实现在 IDE 中的断点调式，不过这样实在是太重了，而且也不能分析正在运行中的线上">
+  <meta name="description" content="Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
+So, knowing more about how the kernel works will contribute to the construction of our user mode system.
+The best method to learn software code is debugging while watching, software = code &#43; data, know more about the runtime data while learning code can help us understand it better.
+However the Kernel is not a normal software system, we can&rsquo;t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb &#43; QEMU, it&rsquo; still too heavy, and not available for online systems.
+This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.
+Kernel Module Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can&rsquo;t snoop the data inside Kernel.
+In that case, why not try to run our code inside the Kernel?
+It&rsquo;s possible to edit the source code of kernel, adding log to print the information we concerned, but it&rsquo;s a long tedious step.">
 
-  <meta property="og:title" content="Linux 内核轻量级调试小技巧" />
-<meta property="og:description" content="Kernel 内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。 学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 &#43; 数据，看代码的同时了解其运行时数据能让我们更好的理解整体逻辑。 但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，虽然也可以通过 kgdb &#43; qemu 实现在 IDE 中的断点调式，不过这样实在是太重了，而且也不能分析正在运行中的线上" />
+  <meta property="og:title" content="Linux Kernel Debug Tips" />
+<meta property="og:description" content="Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
+So, knowing more about how the kernel works will contribute to the construction of our user mode system.
+The best method to learn software code is debugging while watching, software = code &#43; data, know more about the runtime data while learning code can help us understand it better.
+However the Kernel is not a normal software system, we can&rsquo;t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb &#43; QEMU, it&rsquo; still too heavy, and not available for online systems.
+This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.
+Kernel Module Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can&rsquo;t snoop the data inside Kernel.
+In that case, why not try to run our code inside the Kernel?
+It&rsquo;s possible to edit the source code of kernel, adding log to print the information we concerned, but it&rsquo;s a long tedious step." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/kernel-debug-tips/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2022-03-13T00:00:00+08:00" />
-<meta property="article:modified_time" content="2022-03-13T00:00:00+08:00" />
+<meta property="og:url" content="https://huweicai.com/kernel-debug-tips_en/" /><meta property="article:section" content="" />
+<meta property="article:published_time" content="2022-03-17T00:00:00+08:00" />
+<meta property="article:modified_time" content="2022-03-17T00:00:00+08:00" />
 
 
    
@@ -41,11 +55,11 @@
 
   <title>
   
-       Linux 内核轻量级调试小技巧 | Anonymous&#39; Blog 
+       Linux Kernel Debug Tips | Anonymous&#39; Blog 
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/kernel-debug-tips/">
+  <link rel="canonical" href="https://huweicai.com/kernel-debug-tips_en/">
 
   
   
@@ -281,21 +295,27 @@
           <div class="post-header text-center">
     <ul class="post-meta li-x">
         
+            
+                <li><a href="https://huweicai.com/categories/english"><i class="fas fa-folder-open pr-1"
+                                                                                  aria-hidden="true"></i> english </a>
+                </li>
+            
+        
         
     </ul>
 
-    <div class="px-4 post-heading">Linux 内核轻量级调试小技巧</div>
+    <div class="px-4 post-heading">Linux Kernel Debug Tips</div>
 
     <ul class="post-meta li-x mt-1">
         
-            <li>2022-03-13</li>
+            <li>2022-03-17</li>
         
 
         
             <li class="middot"></li>
-            <li>6 minutes read</li>
+            <li>9 minutes read</li>
         
-        <li>2923 words</li>
+        <li>1723 words</li>
 
     </ul>
     
@@ -305,19 +325,22 @@
 
           <div class="post-content markdown">
             <h1 id="kernel">Kernel</h1>
-<p>内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。</p>
+<p>Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.</p>
+<p>So, knowing more about how the kernel works will contribute to the construction of our user mode system.</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20210625150645.png" alt="image-20210625150638408"></p>
-<p>学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 + 数据，看代码的同时了解其运行时数据能让我们更好的理解整体逻辑。</p>
-<p>但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，虽然也可以通过 kgdb + qemu 实现在 IDE 中的断点调式，不过这样实在是太重了，而且也不能分析正在运行中的线上系统，本文分享两种比较轻量级的内核调试小技巧，帮助我们快速地观测其运行时状态。</p>
-<h1 id="内核模块">内核模块</h1>
-<p>我们通常写的代码都是运行在用户态下的，在 Linux 系统内，用户态程序运行时的指令会以 Ring 3 级别的权限运行，是无法访问到 Ring 0 级别的高地址位内存空间的，也就无法窥探内核里面的数据。</p>
-<p>既然这样，想办法让我们的代码在内核运行不就好了。</p>
-<p>直接修改内核代码，在里面加我们感兴趣的日志，编译安装运行肯定是可行的，可是改动起来难免有点繁琐。</p>
-<p>宏内核的架构的 Linux 提供了一种热插拔的模块化扩展机制，我们可以开发一个内核模块，然后在里面读取我们感兴趣的变量，通过日志打印出来。</p>
-<p>比如一个进程在 Linux 内核中的数据结构是 <code>task_struct</code>，我们可以轻松在内核源代码中找到其<a href="https://elixir.bootlin.com/linux/v5.13/source/include/linux/sched.h#L657">数据结构</a>，可是这些字段具体在每个进程中的值又是怎样的呢？我们可以写一个内核模块一探究竟。</p>
-<p>内核模块的接口非常简单，我们只需要实现初始化和清理两个函数即可，完整的开发教程可以参考文档：https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf。</p>
-<p>我们先编写模块代码如下，保存到 <code>kdebugger.c</code> 文件中：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 内核模块用不了标准库，需要引用内核专门的头文件
+<p>The best method to learn software code is debugging while watching, software = code + data, know more about the runtime data while learning code can help us understand it better.</p>
+<p>However the Kernel is not a normal software system, we can&rsquo;t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb + QEMU, it&rsquo; still too heavy, and not available for online systems.</p>
+<p>This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.</p>
+<h1 id="kernel-module">Kernel Module</h1>
+<p>Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level <code>Ring 3</code> , they do not have the permission to acces the data in level <code>Ring 0</code> high memory address space, which means that they can&rsquo;t snoop the data inside Kernel.</p>
+<p>In that case, why not try to run our code inside the Kernel?</p>
+<p>It&rsquo;s possible to edit the source code of kernel, adding log to print the information we concerned, but it&rsquo;s a long tedious step.</p>
+<p>Macro kernel architecture Linux provides hot-swappable modular extension mechanism, we can develop a kernel module, in which we can read and print the insterested variables, without compile and reload the whole operating system.</p>
+<p>For example, the datastructure of each program progress inside kernel is <code>task_struct</code>, we can find <a href="https://elixir.bootlin.com/linux/v5.13/source/include/linux/sched.h#L657">it&rsquo;s definition</a> in kernel source code easily, however, what&rsquo;s the actual value of those fields in definition while program running in different situation ?</p>
+<p>Let&rsquo;s implement a kernel module to find out what it looks like.</p>
+<p>It&rsquo;s very easy to develop a kernel module, we only need to implement two functions, one for initialization and another for clean up, the complete module developing tutorial we can refer to this document: <a href="https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf">https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf</a>.</p>
+<p>First of all, we should write the module code as below, and save it to file <code>kdebugger.c</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// we have to reference the kernel header file, since the standard lib is not avaiable here
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;linux/module.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;linux/sched/signal.h&gt;</span><span class="cp">
@@ -326,7 +349,7 @@
 </span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">process_count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">current_task</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    
-</span></span><span class="line"><span class="cl">    <span class="c1">// printk 的辅助函数，标准库 printf 的替代品
+</span></span><span class="line"><span class="cl">    <span class="c1">// printk is the alternative for printf inside kernel
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">pr_info</span><span class="p">(</span><span class="s">&#34;%s: In init</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">__func__</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">current_task</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">init_task</span><span class="p">;</span> <span class="p">(</span><span class="n">current_task</span> <span class="o">=</span> <span class="n">next_task</span><span class="p">(</span><span class="n">current_task</span><span class="p">))</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="n">init_task</span><span class="p">;</span> <span class="p">){</span>
@@ -351,27 +374,29 @@
 </span></span><span class="line"><span class="cl">    <span class="n">pr_info</span><span class="p">(</span><span class="s">&#34;%s: In exit</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">__func__</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">// 需要申明 LICENSE
+</span></span><span class="line"><span class="cl"><span class="c1">// declare the LICENSE
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;GPL&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="c1">// 申明初始化和清理的函数
+</span></span><span class="line"><span class="cl"><span class="c1">// indicate which function will do the init and exit job
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">module_init</span><span class="p">(</span><span class="n">test_tasks_init</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="n">module_exit</span><span class="p">(</span><span class="n">test_tasks_exit</span><span class="p">);</span>
-</span></span></code></pre></div><p>然后编写 Makefile:</p>
+</span></span></code></pre></div><p>And then write the <code>Makefile</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nv">obj-m</span> <span class="o">+=</span> kdebugger.o
 </span></span><span class="line"><span class="cl"><span class="nf">all</span><span class="o">:</span>
 </span></span><span class="line"><span class="cl">	make -C /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/build -I /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/source/include <span class="nv">M</span><span class="o">=</span><span class="k">$(</span>PWD<span class="k">)</span> modules
 </span></span><span class="line"><span class="cl"><span class="nf">clean</span><span class="o">:</span>
 </span></span><span class="line"><span class="cl">	make -C /lib/modules/<span class="k">$(</span>shell uname -r<span class="k">)</span>/build <span class="nv">M</span><span class="o">=</span><span class="k">$(</span>PWD<span class="k">)</span> clean
-</span></span></code></pre></div><p>在开始编译之前我们还需要安装最重要的两个依赖：<code>gcc</code> 和内核头文件。</p>
-<p><code>gcc</code> 通常大部分发行版上都有预装，但是一般版本都比较老，较新版本的内核会对 <code>gcc</code> 版本有一定要求，建议先升级到新版本，以 CentOS 为例：</p>
+</span></span></code></pre></div><p>Now the code part was finished, but before compilation we have to install some dependencies: <code>gcc</code> and kernel header files.</p>
+<p>Most linux distributions will have <code>gcc</code>pre-installed, but the version are always too old, the newer versions kernel will have greater requirement of <code>gcc</code>, so it will be better to upgrade the <code>gcc</code> to newer version, take <code>CentOS</code> for example:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">yum install devtoolset-8-gcc
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># 然后卸载掉老的 gcc 把新的 gcc 加入到 PATH 中</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># uninstall the old gcc and add new gcc to PATH</span>
 </span></span><span class="line"><span class="cl">/opt/rh/devtoolset-8/root/usr/bin/gcc
-</span></span></code></pre></div><p>内核头文件也是必要的，不然我们 include 的那些库编译肯定是过不去的，可以直接通过 yum 安装，但是注意内核头文件一定要和内核版本严格匹配，不像暴露对外的系统调用接口，内核的内部数据结构是经常变化的：</p>
+</span></span></code></pre></div><p>Kernel header files are also essential, otherwise the compilation will fail.</p>
+<p>We can install it using <code>yum</code> directly, but remember to check the header files version whether match the kernel version,</p>
+<p>unlike interfaces exposed to user mode, datastructure and functions can be totally different between versions:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">yum install kernel-headers
-</span></span></code></pre></div><p>都顺利的话我们下一步就可以开始编译了，直接当前目录 <code>make</code> 即可，编译完之后我们会发现生成了一个 <code>kdebugger.ko</code> （<code>.ko</code> 文件对标的就是用户态程序编译出来的 <code>.o</code> 文件）文件，这就是我们编译出来的内核模块了。</p>
-<p>编译完成之后通过 <code>insmod kdebugger.ko</code>即可将该模块安装到内核，我们可以查看内核模块列表验证一下，赫然出现在了第一列 ：</p>
+</span></span></code></pre></div><p>After solved the dependency problem, we can start compilation now, just run <code>make</code>in current directory, and then we will find a <code>kdebugger.ko</code> （<code>.ko</code>file format is the kernel version  <code>.o</code> ）file generated, this is the kernel module we wanted.</p>
+<p>Next we can execute <code>insmod kdebugger.ko</code> to install the module into kernel, and we can list the kernel modules to see whether it added, as expected, kdebugger showed in the first line:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@dev# cat /proc/modules
 </span></span><span class="line"><span class="cl">kdebugger <span class="m">16384</span> <span class="m">0</span> - Live 0xffffffffc0808000 <span class="o">(</span>O<span class="o">)</span>
 </span></span><span class="line"><span class="cl">xt_statistic <span class="m">16384</span> <span class="m">3</span> - Live 0xffffffffc07fe000
@@ -383,7 +408,7 @@
 </span></span><span class="line"><span class="cl">bluetooth <span class="m">606208</span> <span class="m">0</span> - Live 0xffffffffc0712000
 </span></span><span class="line"><span class="cl">ecdh_generic <span class="m">16384</span> <span class="m">1</span> bluetooth, Live 0xffffffffc06f3000
 </span></span><span class="line"><span class="cl">....
-</span></span></code></pre></div><p>内核模块安装时会调用其 <strong>init</strong> 函数，即我们上面代码中的 <code>test_tasks_init</code>函数，执行我们的 debug 代码，<code>printk</code>会将输出打到内核的 Ring Buffer 中，我们可以通过 <code>dmesg</code> 命令来查看，即可得到我们想要的结果：</p>
+</span></span></code></pre></div><p>Kernel will call the <strong>init</strong> function of the module while installing, which is the <code>test_tasks_init</code> function is our above debug code, <code>printk</code> will send the output to kernel Ring Buffer, we can check it by <code>dmesg</code> command, and the information we concerned will show up:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@dev# demesg -TL
 </span></span><span class="line"><span class="cl">....
 </span></span><span class="line"><span class="cl"><span class="o">[</span>Sun Mar <span class="m">14</span> 18:25:52 2022<span class="o">]</span> test_tasks_exit: In <span class="nb">exit</span>
@@ -394,24 +419,28 @@
 </span></span><span class="line"><span class="cl">Command: kthreadd PID: <span class="m">2</span> TGID: <span class="m">2</span> State: <span class="m">1</span> Flags: <span class="m">2129984</span> Policy: <span class="m">0</span> Prio: <span class="m">120</span> StaticPrio: <span class="m">120</span> Current CPU: <span class="m">1</span>
 </span></span><span class="line"><span class="cl">....
 </span></span><span class="line"><span class="cl"><span class="o">[</span>Mon Mar <span class="m">14</span> 17:30:40 2022<span class="o">]</span> Number of processes:197
-</span></span></code></pre></div><p>最后有个小提示，编写内核模块时一定要谨慎，尽量先在虚拟机中调试，任何微小的疏忽都有可能导致整个操作系统崩溃。</p>
+</span></span></code></pre></div><p>One last tip, be sure to be careful to write kernel module, debug it in virtual machine first,  any minor oversight may causing the entire operating system to crash.</p>
 <h1 id="ebpf">eBPF</h1>
 <h2 id="ebpf-1">eBPF</h2>
-<p>要让我们的代码跑以 Ring 0 权限跑在内核态中，除了上文提到的内核模块之外，Linux 内核还提供了一种很酷的扩展方案 —— <strong>eBPF</strong> ()。</p>
-<p><code>eBPF </code>可以理解为内核提供的一个简单的虚拟机，可以让我们提交一些指令到内核运行，虽然 eBPF 有很多限制，会限制指令条数，循环次数不能过多，运行时间、堆栈大小和字节码大小均有要求，另外内核也仅暴露了有限的 API 给 <code>eBPF</code> 指令，但是也基本都够用了，这么严苛的限制反倒可以让我们放开手脚不用担心一不小心让操作系统崩溃，同时相较于直接编写内核模块，<code>eBPF</code>更加的轻量和安全，已经有许多知名的应用是基于 eBPF 技术实现的，比如网络插件 <code>Cilium</code>、安全检测应用 <code>Falco</code> 、可观测性加强应用<code>Pixie</code>等等。</p>
+<p>To run our code with privilege Ring 0 in kernel mode, kernel provides another cool extention solution, except the kernel module mentioned above —— eBPF.</p>
+<p><code>eBPF </code>can be unterstood as a simple VM inside kernel, we can commit some basic instructions to kernel to run. Though there many limitations of <code>eBPF</code>, such as limited number of instructions, limited number of program cycles, run time, stack size and bytecode size are all restricted, and there are only some numbered kernel API exposed to <code>eBPF</code> instruction, though there are so many shackle <code>eBPF</code>is still an amzing and practical technology, and such hard limitation could actually free us, protect us from the momentary OS crash.</p>
+<p>What&rsquo; more, <code>eBPF</code> is more lightweight and safe comparing to wirte kernel module directlly.</p>
+<p>There are many famous application are implemented base on <code>eBPF</code>, such as network plugin <code>Cilium</code>, safety detection application <code>Faloc</code>, observation enhanced application <code>Pixie</code> , and so on.</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221129114451.png" alt="img"></p>
-<p>eBPF 程序执行的模型是事件驱动的，说白了就能在内核里面插很多回调函数。</p>
-<p>内核提供了很多的 hook 点，我们可以申明 eBPF 程序注册到指定的 hook 点上，当对应的事件发生时就会调用我们的 eBPF 代码执行，目前内核支持的 eBPF 程序类型枚举可以在这里查看 <a href="https://elixir.bootlin.com/linux/v5.13/source/include/uapi/linux/bpf.h#L908">https://elixir.bootlin.com/linux/v5.13/source/include/uapi/linux/bpf.h#L908</a>。</p>
+<p>eBPF programs are event driven model, which means we can insert many callback functions into kernel.</p>
+<p>Kernel provided many hook points, we can declare eBPF program to register to specifi hook point, when corresponding event happends our code will be called.</p>
+<p>The supported eBPF program types enum can be found here:  <a href="https://elixir.bootlin.com/linux/v5.13/source/include/uapi/linux/bpf.h#L908">https://elixir.bootlin.com/linux/v5.13/source/include/uapi/linux/bpf.h#L908</a>。</p>
 <h2 id="bpftrace">bpftrace</h2>
-<p>直接编写 eBPF C 代码，然后编译提交给内核执行复杂度和编译内核模块相比也是不相上下，但是我们有更便捷的工具：<a href="https://github.com/iovisor/bpftrace">bpftrace</a>，一个轻量级的 eBPF 程序执行框架，或者说是一门更容易学习和运行的 eBPF 方言。</p>
-<p>我们可以直接通过包管理器安装 bpftrace：</p>
+<p>Editing and compiling  eBPF C code, and then commit it to kernel to run is still a complex procedure, which is not too much simple than just compiling kernel module.</p>
+<p>But we have more convenient tool: <a href="https://github.com/iovisor/bpftrace">bpftrace</a>, a lightweight eBPF program execution framework, or a more simple to run and learn dialect of eBPF.</p>
+<p>We can install bpftrace by package manager directlly:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># RPM</span>
 </span></span><span class="line"><span class="cl">curl https://repos.baslab.org/rhel/7/bpftools/bpftools.repo --output /etc/yum.repos.d/bpftools.repo
 </span></span><span class="line"><span class="cl">yum install bpftrace bpftrace-tools bpftrace-doc bcc-static bcc-tools
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># APT</span>
 </span></span><span class="line"><span class="cl">apt install bpftrace
-</span></span></code></pre></div><p>我们上文中提到的各种各样的 hook 点在 bpftrace 中抽象成了 probe 的概念，当前系统支持的所有 probe 可以通过  <code>-l</code> 参数查看：</p>
+</span></span></code></pre></div><p>The various hook points we mentioned above are abstracted as a concept of &lsquo;probe&rsquo; in bpfprobe, all the probes supported can be inspected by <code>-l</code> argument:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@dev# bpftrace -l
 </span></span><span class="line"><span class="cl">hardware:backend-stalls:
 </span></span><span class="line"><span class="cl">hardware:instructions:
@@ -425,15 +454,15 @@
 </span></span><span class="line"><span class="cl">tracepoint:xhci-hcd:xhci_urb_dequeue
 </span></span><span class="line"><span class="cl">tracepoint:xhci-hcd:xhci_urb_enqueue
 </span></span><span class="line"><span class="cl">...
-</span></span></code></pre></div><p><strong>bpftrace</strong> 脚本由<code>probe /filter/ { action }</code> 这几部分组成，probe 申明了一个或多个 hook 点，当对应的事件发生时如果满足了 filter 的条件，就会执行 action 里面的逻辑。</p>
-<p>完整语法可以参考其<a href="https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md">官方文档</a>。</p>
+</span></span></code></pre></div><p>bpftrace script are consisted of three part: <code>probe /filter/ { action }</code>,  <strong>probe</strong> defines one or more hook points, when corresponding events happend and meet the condition declared in <strong>filter</strong>, the code inside <strong>action</strong> will be executed.</p>
+<p>The complete program syntax can be found in it&rsquo;s official site:  <a href="https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md">https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md</a>.</p>
 <h2 id="have-a-try">Have a try</h2>
-<p>针对我们这里分析 <strong>task_struct</strong> 结构的需求，使用 bpftrace 可以非常方便的实现：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 遍历所有的 task</span>
+<p>As for the demand of analyzing struct <code>task_struct</code>, it can be implemented by bpftrace with ease.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># traverse all task</span>
 </span></span><span class="line"><span class="cl">bpftrace -e <span class="s1">&#39;iter:task { printf(&#34;%s:%d\n&#34;, ctx-&gt;task-&gt;comm, ctx-&gt;task-&gt;pid); }&#39;</span>
-</span></span></code></pre></div><p>不过上面提到的 iter probe 是基于 eBPF<code>  TRACING</code> 类别的程序来实现的，至少需要内核版本 <strong>5.5</strong>，同时需要内核在编译时开启了 <strong>BTF</strong> 特性，要求相对来说比较高。</p>
-<p>内核提供了一种 <code>kprobe</code> 的 eBPF 能力，可以让我们在任意的内核函数之前或者之后插入我们的 eBPF 逻辑。</p>
-<p>我们可以在内核中找到我们感兴趣的函数，比如每个进程创建的时候都会调用 <a href="https://elixir.bootlin.com/linux/v5.12.13/source/include/linux/sched/task.h#L85">kernel_clone</a> 函数（在旧版本内核中为 <code>do_fork</code>，内核内部代码变动频繁，请对照实际使用版本源码分析），然后 <code>kernel_clone</code> 函数会返回一个 pid 来代表该进程（或者线程），那么我们就可以用 kprobe 来实时监测内核中的进程创建：</p>
+</span></span></code></pre></div><p>However the <code>iter</code> probe mentioned in above code is implemented base on eBPF program type <code>TRACING</code>, which requires kernel version <code>5.5</code>at least as well as the enable of BTF feature, it can be a little hard.</p>
+<p>There&rsquo;s an alternative probe called <code>kprobe</code>, which can let us insert callback some eBPF code near any kernel function.</p>
+<p>We can find the <code>task_struct</code> related functions in kernel source code,  for example, <a href="https://elixir.bootlin.com/linux/v5.12.13/source/include/linux/sched/task.h#L85">kernel_clone</a> will be called when a new thread is created (<code>do_fork</code> function in old version kernel, kernel code is fickle, please compare the actual version of the source code  to analyze ), and then <code>kernel_clone</code> will return a int pid to represent the new created thread, so we  can use <code>kprobe</code> to see which thread are created by kernel right now:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@dev# bpftrace -e <span class="s1">&#39;kretprobe:kernel_clone { printf(&#34;new process created, pid: %d\n&#34;, retval); }&#39;</span>
 </span></span><span class="line"><span class="cl">Attaching <span class="m">1</span> probe...
 </span></span><span class="line"><span class="cl">new process created, pid: <span class="m">21902</span>
@@ -441,27 +470,27 @@
 </span></span><span class="line"><span class="cl">new process created, pid: <span class="m">21904</span>
 </span></span><span class="line"><span class="cl">new process created, pid: <span class="m">21905</span>
 </span></span><span class="line"><span class="cl">...
-</span></span></code></pre></div><p>同时我们看 <code>kernel_clone</code> 的代码会发现它内部还会调用一个 <code>copy_process</code> 的函数，实际执行 <code>task_struct</code> 的复制，且其返回值就是一个 <code>task_struct</code>，那么我们又能观测到这个熟悉的面孔了。</p>
-<p>由于这里我们要引用到具体的内核数据结构，因此需要 <strong>include</strong> 相关的头文件，不能一行写完，所以需要创建一个脚本文件，再传递给 <strong>bpftrace</strong> 执行：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@dev# cat copy_process.bt
-</span></span><span class="line"><span class="cl"><span class="c1">#include &lt;linux/sched/task.h&gt;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">// kretprobe 表示在函数执行后回调， kprobe 是在函数执行之前回调
-</span></span><span class="line"><span class="cl">kretprobe:copy_process
-</span></span><span class="line"><span class="cl"><span class="o">{</span>
-</span></span><span class="line"><span class="cl">   <span class="nv">$task</span> <span class="o">=</span> <span class="o">((</span>struct task_struct *<span class="o">)</span> retval<span class="o">)</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">   printf<span class="o">(</span><span class="s2">&#34;\nCommand: %s PID: %d TGID: %d State: %ld Flags: %d Policy: %d Prio: %d StaticPrio: %d Current CPU: %d\n&#34;</span>,
-</span></span><span class="line"><span class="cl">        <span class="nv">$task</span>-&gt;comm,
-</span></span><span class="line"><span class="cl">        <span class="nv">$task</span>-&gt;pid,
-</span></span><span class="line"><span class="cl">        <span class="nv">$task</span>-&gt;tgid,
-</span></span><span class="line"><span class="cl">        <span class="nv">$task</span>-&gt;state,
-</span></span><span class="line"><span class="cl">        <span class="nv">$task</span>-&gt;flags,
-</span></span><span class="line"><span class="cl">        <span class="nv">$task</span>-&gt;policy,
-</span></span><span class="line"><span class="cl">        <span class="nv">$task</span>-&gt;prio,
-</span></span><span class="line"><span class="cl">        <span class="nv">$task</span>-&gt;static_prio,
-</span></span><span class="line"><span class="cl">        <span class="nv">$task</span>-&gt;cpu<span class="o">)</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span>
-</span></span></code></pre></div><p>执行脚本之后，我们就可以看到这些字段的输出了：</p>
+</span></span></code></pre></div><p>Meanwhile, it&rsquo;s not hard to find that a function called  <code>copy_process</code>is called inside <code>kernel_clone</code>, which will return a sturct <code>task_struct</code>, so we can observe the familiar object again.</p>
+<p>Since we need to import the datastructure inside kernel, so related header files are require to <strong>include</strong> first, which takes more than one line, so we have to create a script file and then pass it to bpftrace to execute:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">root</span><span class="err">@</span><span class="n">dev</span><span class="err">#</span> <span class="n">cat</span> <span class="n">copy_process</span><span class="p">.</span><span class="n">bt</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;linux/sched/task.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// kretprobe means callback after function call， kprobe is callback before function call
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nl">kretprobe</span><span class="p">:</span><span class="n">copy_process</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="err">$</span><span class="n">task</span> <span class="o">=</span> <span class="p">((</span><span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="p">)</span> <span class="n">retval</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">   <span class="n">printf</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">Command: %s PID: %d TGID: %d State: %ld Flags: %d Policy: %d Prio: %d StaticPrio: %d Current CPU: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">comm</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">pid</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">tgid</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">flags</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">policy</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">prio</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">static_prio</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">cpu</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>After script executed, we can see the output of these fields:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@dev# bpftrace process_create.bt
 </span></span><span class="line"><span class="cl">Attaching <span class="m">1</span> probe...
 </span></span><span class="line"><span class="cl">
@@ -471,8 +500,8 @@
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">Command: sh PID: <span class="m">22702</span> TGID: <span class="m">22702</span> State: <span class="m">2048</span> Flags: <span class="m">4194368</span> Policy: <span class="m">0</span> Prio: <span class="m">120</span> StaticPrio: <span class="m">120</span> Current CPU: <span class="m">1</span>
 </span></span><span class="line"><span class="cl">...
-</span></span></code></pre></div><h1 id="小结">小结</h1>
-<p>本文向大家展示了内核模块和 eBPF 这两种比较轻量级的调试小技巧，可以帮助我们更好的了解内核内部的运行时状况，除了本文中举例的进程信息，在分析网络丢包、内核卡死、IO缓存、可疑系统调用等场景下的相关问题也都是非常实用的。</p>
+</span></span></code></pre></div><h1 id="summary">Summary</h1>
+<p>This article shows two lightweight kernel debug tips: kernel module &amp; eBPF, they can help us to understand the kernel runtime situation, except the process related information mentioned above, it&rsquo;s also very practical in situations like  network diagnosis, kernel stuck, IO cache, suspicious system call and so on.</p>
 
           </div>
 
@@ -495,6 +524,9 @@
       <li><a href="https://huweicai.com/tags/ebpf" role="button">ebpf </a></li>
       
     
+      <li><a href="https://huweicai.com/tags/en" role="button">EN </a></li>
+      
+    
   </div>
 </div>
               </div>
@@ -508,10 +540,10 @@
           <div class="row pt-3">
             <div class="col-md-6">
               
-                <a href=https://huweicai.com/cilium-container-datapath/ class="post-meta">Previous
+                <a href=https://huweicai.com/kernel-debug-tips/ class="post-meta">Previous
                   <div class="pt-2 pb-5 d-flex">
                     <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
-                    <span>Cilium 容器数据路径</span>
+                    <span>Linux 内核轻量级调试小技巧</span>
                   </div>
                 </a>
               
@@ -519,10 +551,10 @@
             
             <div class="col-md-6 text-right" >
               
-                <a href=https://huweicai.com/kernel-debug-tips_en/ class="post-meta">Next
+                <a href=https://huweicai.com/weave-scope/ class="post-meta">Next
                   <div class="pt-2 pb-5 flex-reverse">
                     <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>Linux Kernel Debug Tips</span>
+                    <span>容器网络可视化：Weave Scope</span>
                   </div>
                 </a>
               
@@ -592,8 +624,8 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%86%85%e6%a0%b8%e6%a8%a1%e5%9d%97">
-												 内核模块
+						 					<a class="nav-link" href="#kernel-module">
+												 Kernel Module
 											</a>
 										</li>
 						 
@@ -714,8 +746,8 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%b0%8f%e7%bb%93">
-												 小结
+						 					<a class="nav-link" href="#summary">
+												 Summary
 											</a>
 										</li>
 						 

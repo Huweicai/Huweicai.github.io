@@ -310,6 +310,8 @@
 
   
 
+  
+
 
 
 
@@ -337,6 +339,15 @@
               </a>
             </li>           
           
+            
+              <li class="middot"></li>
+            
+            <li class="py-1">
+              <a href="https://huweicai.com/categories/english">
+                <span>English (1)</span>
+              </a>
+            </li>           
+          
         
       </div>
     </div>
@@ -347,6 +358,8 @@
 
         
         
+
+  
 
   
 
@@ -427,7 +440,7 @@
       <div class="li-x post-meta tags-md" style="margin-left: -8px;">
 
         
-            <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (7)</span></a></li>
+            <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (8)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/go" role="button"><span>go (6)</span></a></li>
         
@@ -449,15 +462,19 @@
         
             <li><a href="https://huweicai.com/tags/docker" role="button"><span>docker (2)</span></a></li>
         
+            <li><a href="https://huweicai.com/tags/ebpf" role="button"><span>ebpf (2)</span></a></li>
+        
             <li><a href="https://huweicai.com/tags/ip" role="button"><span>ip (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/java" role="button"><span>java (2)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/kernel" role="button"><span>kernel (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button"><span>命令行 (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/cpu" role="button"><span>cpu (1)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/ebpf" role="button"><span>ebpf (1)</span></a></li>
+            <li><a href="https://huweicai.com/tags/en" role="button"><span>en (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/ethernet" role="button"><span>ethernet (1)</span></a></li>
         
@@ -470,8 +487,6 @@
             <li><a href="https://huweicai.com/tags/innodb" role="button"><span>innodb (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/jvm" role="button"><span>jvm (1)</span></a></li>
-        
-            <li><a href="https://huweicai.com/tags/kernel" role="button"><span>kernel (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/mysql" role="button"><span>mysql (1)</span></a></li>
         
@@ -563,7 +578,7 @@
         <a href="https://huweicai.com/page/2/" aria-label="Next" class="page-link" role="button"><span aria-hidden="true">&raquo;</span></a>
       </li>
       <li class="page-item">
-        <a href="https://huweicai.com/page/5/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        <a href="https://huweicai.com/page/6/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
       </li>
     </ul>
           </div>
@@ -720,6 +735,76 @@
       
     
       <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/kernel-debug-tips_en/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">Linux Kernel Debug Tips</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2022-03-17</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>9 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
+So, knowing more about how the kernel works will contribute to the construction of our user mode system.
+The best method to learn software code is debugging while watching, software = code &#43; data, know more about the runtime data while learning code can help us understand it better.
+However the Kernel is not a normal software system, we can’t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb &#43; QEMU, it’ still too heavy, and not available for online systems.
+This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.
+Kernel Module Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can’t snoop the data inside Kernel.
+In that case, why not try to run our code inside the Kernel?
+It’s possible to edit the source code of kernel, adding log to print the information we concerned, but it’s a long tedious step.......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+        
+          <li><a href="https://huweicai.com/categories/english"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> english </a></li>
+        
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/linux" role="button">linux </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/kernel" role="button">kernel </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/ebpf" role="button">ebpf </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/en" role="button">EN </a></li>
       
     
   </div>
@@ -899,68 +984,6 @@
 </div>
 
           
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/harbor-pull-principle/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">镜像仓库Harbor Pull实现原理</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-12-04</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>11 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      Harbor简介 Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。 Harbor 的系统架构如下图所示，箭头所指方向为数据流向： 一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。 在开始之前 我......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F" role="button">镜像 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/docker" role="button">docker </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/harbor" role="button">harbor </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
 
           <div class="pagination pagination-outline justify-content-end active-color">
             
@@ -991,7 +1014,7 @@
         <a href="https://huweicai.com/page/2/" aria-label="Next" class="page-link" role="button"><span aria-hidden="true">&raquo;</span></a>
       </li>
       <li class="page-item">
-        <a href="https://huweicai.com/page/5/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        <a href="https://huweicai.com/page/6/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
       </li>
     </ul>
           </div>

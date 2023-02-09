@@ -557,13 +557,10 @@
         <a href="https://huweicai.com/" aria-label="First" class="page-link" role="button"><span aria-hidden="true">&laquo;&laquo;</span></a>
       </li>
       <li class="page-item">
-        <a href="https://huweicai.com/" aria-label="Previous" class="page-link" role="button"><span aria-hidden="true">&laquo;</span></a>
+        <a href="https://huweicai.com/page/5/" aria-label="Previous" class="page-link" role="button"><span aria-hidden="true">&laquo;</span></a>
       </li>
       <li class="page-item">
-        <a href="https://huweicai.com/" aria-label="Page 1" class="page-link" role="button">1</a>
-      </li>
-      <li class="page-item active">
-        <a aria-current="page" aria-label="Page 2" class="page-link" role="button">2</a>
+        <a href="https://huweicai.com/page/2/" aria-label="Page 2" class="page-link" role="button">2</a>
       </li>
       <li class="page-item">
         <a href="https://huweicai.com/page/3/" aria-label="Page 3" class="page-link" role="button">3</a>
@@ -574,11 +571,14 @@
       <li class="page-item">
         <a href="https://huweicai.com/page/5/" aria-label="Page 5" class="page-link" role="button">5</a>
       </li>
-      <li class="page-item">
-        <a href="https://huweicai.com/page/3/" aria-label="Next" class="page-link" role="button"><span aria-hidden="true">&raquo;</span></a>
+      <li class="page-item active">
+        <a aria-current="page" aria-label="Page 6" class="page-link" role="button">6</a>
       </li>
-      <li class="page-item">
-        <a href="https://huweicai.com/page/6/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
+      <li class="page-item disabled">
+        <a aria-disabled="true" aria-label="Next" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&raquo;</span></a>
+      </li>
+      <li class="page-item disabled">
+        <a aria-disabled="true" aria-label="Last" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&raquo;&raquo;</span></a>
       </li>
     </ul>
           </div>
@@ -586,24 +586,28 @@
           
           <div class="post-wrapper white-bg post-card">
   
-  <a href="https://huweicai.com/harbor-pull-principle/">
+  <a href="https://huweicai.com/about/">
     <div class="post-header text-center">
-      <div class="px-4 post-heading">镜像仓库Harbor Pull实现原理</div>
+      <div class="px-4 post-heading"></div>
       <ul class="post-meta li-x mt-1">
         
-          <li>2021-12-04</li>
+          <li>0001-01-01</li>
         
     
         
           <li class="middot"></li>
-          <li>11 minutes read</li>
+          <li>One minute read</li>
         
       </ul>
     </div>
     
 
     
-      Harbor简介 Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。 Harbor 的系统架构如下图所示，箭头所指方向为数据流向： 一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。 在开始之前 我......
+      Huweicai I am who I am.
+Deeply loves the life.
+Major in operating system and cloud native.
+Communications are welcome!
+If you have any questions or idea, contact me at any time: i@huweicai.com......
     
   </a>
 
@@ -616,374 +620,6 @@
     </div>
    
     <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F" role="button">镜像 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/docker" role="button">docker </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/harbor" role="button">harbor </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/upgrade-centos-kernel-version/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">CentOS Linux内核升级指南</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-06-24</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>3 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      内核 一个 Linux 操作系统，或者叫做 Linux 发行版，比如常见的：CentOS、Debian、Unbuntu 等等，都是由如下五部分构成的，如下图所示，Linux发行版在外层封装了了大量的库、包和工具供用户使用，而底层硬件设备控制相关的能力则仍是由内核提供： 为什么要升级版本 内核也是一个软件， 软件在不断的迭代的过程中会开发很多新的特性，当我们不论是主动还是被动的对内核的新特性有需求而当前版本不支持时，我们就需要升级版......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/fluent-bit/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Fluent Bit介绍</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-05-05</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>6 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。 基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。 Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97" role="button">日志 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/run-linux-container-manual/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">手动实现一个Linux容器</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-04-14</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>12 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/docker" role="button">Docker </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button">命令行 </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/kubernetes-permissions-overview/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Kubernetes权限管理概述</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-03-18</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>14 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。 以 Git 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。 通常在校验权限中分为两个流程，认证和鉴权。 即先判断你是谁：认证，然后再鉴权，判断你有没有这个资源的权限。 毫无疑问，复杂的Kubernetes也具......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/kubernetes" role="button">Kubernetes </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button">权限管理 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/kubectl-concepts-and-commands/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Kubectl基本概念&amp;常用命令</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-01-28</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>6 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      基本概念 容器化 &#43; Kubernetes 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 kubectl 则提供了一种非常直观和强大的观察操控 k8s集群的方式。 kubectl 是 kubernetes自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 cobra 来解析命令行参数，读取 .kube/config中存储的认证信息经由 k8s restful api 和集群交互。 kubectl 命令基本格式如下： kubectl [子命令] [资源类型] [资源名称] [选项] 和 docker 、git这种复杂的命令行程序一样，kub......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/kubernetes" role="button">kubernetes </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button">命令行 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/go-linux-get-cpu-usage/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">如何准确的获取CPU占用率[Linux][Go]</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-01-01</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>6 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，但是代码解析时就不那么方便了。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process File System) 进程文件系统的概念，用于将内......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/go" role="button">Go </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/cpu" role="button">CPU </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" role="button">编程语言 </a></li>
-      
-    
-  </div>
-</div>
       
     </div>
   </div>
@@ -1000,13 +636,10 @@
         <a href="https://huweicai.com/" aria-label="First" class="page-link" role="button"><span aria-hidden="true">&laquo;&laquo;</span></a>
       </li>
       <li class="page-item">
-        <a href="https://huweicai.com/" aria-label="Previous" class="page-link" role="button"><span aria-hidden="true">&laquo;</span></a>
+        <a href="https://huweicai.com/page/5/" aria-label="Previous" class="page-link" role="button"><span aria-hidden="true">&laquo;</span></a>
       </li>
       <li class="page-item">
-        <a href="https://huweicai.com/" aria-label="Page 1" class="page-link" role="button">1</a>
-      </li>
-      <li class="page-item active">
-        <a aria-current="page" aria-label="Page 2" class="page-link" role="button">2</a>
+        <a href="https://huweicai.com/page/2/" aria-label="Page 2" class="page-link" role="button">2</a>
       </li>
       <li class="page-item">
         <a href="https://huweicai.com/page/3/" aria-label="Page 3" class="page-link" role="button">3</a>
@@ -1017,11 +650,14 @@
       <li class="page-item">
         <a href="https://huweicai.com/page/5/" aria-label="Page 5" class="page-link" role="button">5</a>
       </li>
-      <li class="page-item">
-        <a href="https://huweicai.com/page/3/" aria-label="Next" class="page-link" role="button"><span aria-hidden="true">&raquo;</span></a>
+      <li class="page-item active">
+        <a aria-current="page" aria-label="Page 6" class="page-link" role="button">6</a>
       </li>
-      <li class="page-item">
-        <a href="https://huweicai.com/page/6/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
+      <li class="page-item disabled">
+        <a aria-disabled="true" aria-label="Next" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&raquo;</span></a>
+      </li>
+      <li class="page-item disabled">
+        <a aria-disabled="true" aria-label="Last" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&raquo;&raquo;</span></a>
       </li>
     </ul>
           </div>
