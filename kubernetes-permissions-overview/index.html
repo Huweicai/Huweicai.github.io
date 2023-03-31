@@ -295,7 +295,7 @@
             <li class="middot"></li>
             <li>14 minutes read</li>
         
-        <li>6757 words</li>
+        <li>6761 words</li>
 
     </ul>
     
@@ -529,7 +529,16 @@ Authorization: Bearer 07401b.f395accd246ae52d
 <h2 id="属性鉴权abac">属性鉴权：ABAC</h2>
 <p><code>Attribute-based access control</code>基于属性的权限控制，通过一个静态文件通过 <a href="https://jsonlines.org/">JSONL</a>的格式来声明权限授予，需要直接写死给哪个用户或者组分配什么权限，不太灵活，已经不推荐使用了，一个例子如下：</p>
 <p>用户 <code>test-admin</code> 具有 test namespace 下所有资源的权限：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;apiVersion&#34;</span><span class="p">:</span> <span class="s2">&#34;abac.authorization.kubernetes.io/v1beta1&#34;</span><span class="p">,</span> <span class="nt">&#34;kind&#34;</span><span class="p">:</span> <span class="s2">&#34;Policy&#34;</span><span class="p">,</span> <span class="nt">&#34;spec&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;user&#34;</span><span class="p">:</span> <span class="s2">&#34;test-admin&#34;</span><span class="p">,</span> <span class="nt">&#34;namespace&#34;</span><span class="p">:</span> <span class="s2">&#34;test&#34;</span><span class="p">,</span> <span class="nt">&#34;resource&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span><span class="p">,</span> <span class="nt">&#34;apiGroup&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span><span class="p">}}</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;apiVersion&#34;</span><span class="p">:</span> <span class="s2">&#34;abac.authorization.kubernetes.io/v1beta1&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;kind&#34;</span><span class="p">:</span> <span class="s2">&#34;Policy&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;spec&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;user&#34;</span><span class="p">:</span> <span class="s2">&#34;test-admin&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;namespace&#34;</span><span class="p">:</span> <span class="s2">&#34;test&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;resource&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;apiGroup&#34;</span><span class="p">:</span> <span class="s2">&#34;*&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><h2 id="角色鉴权rabc">角色鉴权：RABC</h2>
 <p><code>Role-based access control</code>基于角色的权限控制，<code>RABC</code> 是一种非常经典的权限管理模型，它在 <code>ABAC</code>的基础上将要被授权的<code>属性</code>（或者叫<code>资源</code>）抽象出了一层<code>角色</code>，用户不再直接与资源建立联系，而是先将一系列资源绑定到角色上，用户再与角色建立联系。</p>
 <p>举个例子，假设我有两台机器，给小明和小红开了一个机器管理员的权限，如果是 <code>ABAC</code> 模式的话，如果新加了一台机器，那么我需要分别给小明和小红都加一下权限，如果机器和人一多，那就会非常的乱。</p>
