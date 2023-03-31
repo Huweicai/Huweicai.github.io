@@ -295,7 +295,7 @@
             <li class="middot"></li>
             <li>14 minutes read</li>
         
-        <li>6761 words</li>
+        <li>6768 words</li>
 
     </ul>
     
@@ -329,12 +329,12 @@
 <p>同外部用户，Group 也是一种外部的概念，在X509客户端证书认证的方式中，Group 名字就是证书的组织名（Orgnization），也是想写什么就是什么。</p>
 <p>主要方便快速地为一组用户授予权限。</p>
 <h3 id="service-account">Service Account</h3>
-<p>相对于外部用户 User 而言，Service Account 则是集群内部的用户，我们可以使用 k8s api 来查看和管理这种用户。</p>
+<p>相对于外部用户 User 而言，Service Account 则是集群内部的用户，我们可以调用 k8s API 来查看和管理这种用户。</p>
 <pre tabindex="0"><code>增：kubectl create serviceaccount my-test-sa
 删：kubectl delete serviceaccounts my-test-sa
 改：kubectl edit serviceaccounts my-test-sa
 查：kubectl get serviceaccounts
-</code></pre><p><code>k8s 服务账号机制主要是为了方便 POD 访问集群资源而建立的，每一个 ServiceAccount 都会对应一个或多个 Secret，Secret 中就放着该账号对应的密钥，通常是一个 JWT Token。</code></p>
+</code></pre><p>k8s 服务账号机制主要是为了方便集群中的 POD 访问集群其他资源而建立的，每一个 ServiceAccount 都会对应一个或多个 Secret，Secret 中就放着该账号对应的密钥，通常是一个 JWT Token。</p>
 <p>在一个 POD 上绑定一个 ServiceAccount，那么运行时对应的密钥就会挂载到这个 POD 中，然后我们在 POD 中读取出来就可以通过使用其他 <code>JWT Token</code> 一样的方式，添加一个 HTTP头部：<code>Authorization: Bearer xxx</code>，来让 <code>API Server</code> 可以识别这个请求的身份，这样就免去了把密钥写在代码或者镜像里这种不安全的行为了。</p>
 <p>同时，当一个 POD 上没有申明任何的服务账号时，k8s 也会挂载一个默认的 <code>ServiceAccount</code> 供 POD 使用。</p>
 <ol>
@@ -351,7 +351,7 @@
 <h2 id="认证方式">认证方式</h2>
 <p>有了身份之后，我们接下来要做的事情就是向系统证明我们的身份。</p>
 <p>认证这种行为，其实说到底就是把自己的用户名传递给API Server，同时有一个别人不知道的独一无二的标识，能证明这个用户名确实是你的。</p>
-<p>这个标识可能是很多种东西，比如证书认证中的客户端私钥，BasicAuth 中的密码等等，Kubernetes 支持非常丰富的认证方式，甚至当内置的认证方式无法满足你的场景时还可以通过 <code>Webhook</code> 来自定义，甚至你还可以通过直接修改 <code>k8s API Server</code> 代码，添加一个：<code>authentication.authenticator.Request</code>接口的实现然后注册上去即可实现代码级别的自定义认证。</p>
+<p>这个标识可能是很多种东西，比如证书认证中的客户端私钥，<code>BasicAuth</code> 中的密码等等，Kubernetes 支持非常丰富的认证方式，甚至当内置的认证方式无法满足你的场景时还可以通过 <code>Webhook</code> 来自定义，甚至你还可以通过直接修改 <code>k8s API Server</code> 代码，添加一个：<code>authentication.authenticator.Request</code>接口的实现然后注册上去即可实现代码级别的自定义认证。</p>
 <p>在 HTTP 请求到达 <code>API Server</code> 时，<code>API Server</code> 会遍历所有启用的认证方式，只要有一个认证成功就跳出进入下一个逻辑，认证顺序如下：</p>
 <ol>
 <li>基本认证</li>
@@ -367,11 +367,11 @@
 <p>HTTP BasicAuth 是一种非常简单的认证方式，通过 HTTP 头部：<code>Authorization</code> 传输客户端用户名和密码的base64值来提供给服务端进行认证。</p>
 <p>这种方式虽然很方便，风险比较大，明文的密码机制很容易泄露，也不好管理。</p>
 <p>k8s 对于这种机制也支持的比较克制，在 <code>API Server</code> 启动时可以通过参数<code>–basic-auth-file</code>指定基本认证的用户名密码路径，<code>API Server</code> 起来之后就会把这些信息载入，之后如果要修改的话必须重启 <code>API Server</code>。</p>
-<p>轻易重启<code>API Server</code> 对于线上集群而言是一件比较危险的事情，无法随意添加修改用户，这也就限制了这种认证方式的使用场景，一定程度上也避免了某些人图方便而滥用这种机制的情况。</p>
+<p>轻易重启<code>API Server</code> 对于线上集群而言是一件有一定风险的事情，无法随意添加修改用户，这也就限制了这种认证方式的使用场景，一定程度上也避免了部分用户图方便而滥用这种机制的情况。</p>
 <h3 id="x509客户端证书">X509客户端证书</h3>
 <p>X509证书即我们平常所熟知的 HTTPS 证书，不过平常我们访问 HTTPS 网站的时候只是单向验证了服务端的身份没有被篡改。</p>
 <p>k8s 支持我们使用客户端证书的方式，来证明我们自己客户端的身份</p>
-<p>用集群的CA私钥签署一张证书，证书的 CommonName 填上用户名，Organization 填用户组，这样一张客户端证书就签好了。</p>
+<p>用集群的 CA 私钥签署一张证书，证书的 <code>CommonName</code> 填上用户名，<code>Organization</code> 填用户组，这样一张客户端证书就签好了。</p>
 <p>只要管理员手中的私钥没有泄露，那么持有CA签署过的证书同时持有对应私钥的用户，就是可信的，我们只需要在跟 API Server 进行 TLS 握手时提供我们的证书，即可证明我们的身份，比如使用 curl 的话我们可以这样来带上：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># client.crt 客户端证书</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># client.key 客户端私钥</span>
