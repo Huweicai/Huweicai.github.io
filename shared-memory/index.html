@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="WHY 共享内存 进程间通信有许多种方式，不同的场景有不同的选择。 当通信内容非常简单的时候，可以考虑信号、信号量甚至 flock() 这种最基础的通信方式。 当需要传递不仅仅是信号这种规模的数据时，可以考虑 FIFO、MQ 等内核 API，也非常的简单易用 。 当我们的传输内容再进一步复杂，需要用“协议”去抽象这种复杂度的时候，Unix Domain Socket 会是一个不错的选择，比如常见的 gRPC over UDS；或者牺牲一点网络栈开销，直接使用基于 TCP / UDP 的 Socket 也非常">
+
+  <meta property="og:title" content="很快的共享内存" />
+<meta property="og:description" content="WHY 共享内存 进程间通信有许多种方式，不同的场景有不同的选择。 当通信内容非常简单的时候，可以考虑信号、信号量甚至 flock() 这种最基础的通信方式。 当需要传递不仅仅是信号这种规模的数据时，可以考虑 FIFO、MQ 等内核 API，也非常的简单易用 。 当我们的传输内容再进一步复杂，需要用“协议”去抽象这种复杂度的时候，Unix Domain Socket 会是一个不错的选择，比如常见的 gRPC over UDS；或者牺牲一点网络栈开销，直接使用基于 TCP / UDP 的 Socket 也非常" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/shared-memory/" /><meta property="article:section" content="" />
+<meta property="article:published_time" content="2023-08-08T13:42:00+08:00" />
+<meta property="article:modified_time" content="2023-08-08T13:42:00+08:00" />
+
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       很快的共享内存 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/shared-memory/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://huweicai.com/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">很快的共享内存</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2023-08-08</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>8 minutes read</li>
+        
+        <li>3841 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="why-共享内存">WHY 共享内存</h1>
+<p>进程间通信有许多种方式，不同的场景有不同的选择。</p>
+<p>当通信内容非常简单的时候，可以考虑<code>信号</code>、<code>信号量</code>甚至 <code>flock()</code> 这种最基础的通信方式。</p>
+<p>当需要传递不仅仅是信号这种规模的数据时，可以考虑 <code>FIFO</code>、<code>MQ</code> 等内核 API，也非常的简单易用 。</p>
+<p>当我们的传输内容再进一步复杂，需要用“协议”去抽象这种复杂度的时候，<code>Unix Domain Socket</code> 会是一个不错的选择，比如常见的 gRPC over UDS；或者牺牲一点网络栈开销，直接使用基于 <code>TCP / UDP</code> 的 Socket 也非常方便。</p>
+<p>十八般兵器各有神通，但本文主角——共享内存，光凭零数据拷贝这一特性就能稳坐最快进程间通信方式这一宝座。</p>
+<p>其实线程间的通信方式本质上也是<code>共享内存</code>，只不过线程之间的内存天然就是“共享“的，而进程之间的通信相对而言则要复杂许多。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20230808162935.png" alt="xxx"></p>
+<h1 id="内存">内存</h1>
+<p>在深入了解共享内存之前我们先来简单回顾一下内存，每一个程序在运行时有大量的数据需要存放，磁盘太慢而寄存器太小，所以绝大部分运行时数据都会被存储在以电容电荷数量或者锁存器锁止电压高低为基本单元的易失性半导体存储器中，也就是我们所熟知的内存条。</p>
+<p>内存本质上就是一个大数组一字排开，比如 16 GB 的内存条，那么就可以视为一个长度为 2^30 的数组，每个单元中盛放着一个字节。</p>
+<p>现代操作系统出于降低程序复杂度、安全性、隔离性等角度的考虑，通常会在物理内存的基础上引入一层虚拟内存的抽象，然后由 MMU 查询操作系统提供的页表再翻译成物理内存地址。</p>
+<p>以 64 位 Linux 操作系统为例，理论上虚拟内存的地址空间大小是 2^64 字节为 16EB，带有一个非常巨大的单位，很显然当前的计算机是远远用不到这么大的空间的，Linux 将高 16 位暂时封存了，剩下的 128TB 低地址空间留给用户空间使用，128TB 高地址空间则对应的留给内核空间。</p>
+<p>用户空间内存段的详细划分可以参考下图，这里我们主要关注其中一个特殊的区域：内存映射区。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20230806165757.png" alt="shared memory"></p>
+<p>内存映射区顾名思义就是从进程外部映射进来的内存，类似于一个超链接，常见的内存映射有三种：</p>
+<ul>
+<li>动态链接库的代码段、常量、静态变量，由于是动态的，而当前进程的对应空间是在编译时就已经确定好了的，所以不可能放到一起，另外出于节约资源的角度考虑，共享内存的只读部分只会占用一份内存，然后其他要用到这些库的程序只需要链接过去即可复用，因此动态链接库对应数据的地址也会被放置在内存映射区</li>
+<li>磁盘文件映射，当对磁盘文件读写性能要求很高时，部分应用会使用 mmap 将文件内存直接映射到内存空间，省去数据从内核态拷贝到用户态的开销</li>
+<li>还有就是本文的主角——共享内存，实际的内存也只会打开一份，然后分别被映射到不同进程的地址空间中</li>
+</ul>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20230806185157.png" alt="shared memory(1)"></p>
+<h1 id="接入方式">接入方式</h1>
+<p>Linux 系统上，共享内存目前有两套 API 可以接入使用，<code>POSIX</code> 和 <code>System V</code>。</p>
+<h2 id="posix">POSIX</h2>
+<p>1993 年在 <em>IEEE 1003.1B</em> 标准中定义了一系列”实时计算“相关的 API，如 I/O、IPC、多线程等相关内容，其中就包括共享内存的相关 API 定义。</p>
+<p>由于是 <strong>POSIX</strong> 标准，所以支持 <strong>POSIX</strong> 的操作系统目前都能使用这一套 API，跨平台性相较于 System V 而言更好，另外代码实现相对更加简洁，排查分析问题也比较方便。</p>
+<blockquote>
+<p>下方实现基于 glibc v2.37 版本分析</p>
+</blockquote>
+<h3 id="api">API</h3>
+<p>POSIX 共享内存由如下几个相关函数组成：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 打开一个代表共享内存的临时文件，返回其对应的 fd
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">shm_open</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">oflag</span><span class="p">,</span> <span class="n">mode_t</span> <span class="n">mode</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 分配空间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">ftruncate</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="n">off_t</span> <span class="n">length</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 关闭共享内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">shm_unlink</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+</span></span></code></pre></div><h3 id="实现原理">实现原理</h3>
+<p><strong>POSIX</strong> 的大部分标准在 <code>glibc</code> 中都有实现，共享内存也是如此，其实现非常简洁。</p>
+<p><code>tmpfs</code> 是一种特殊的文件系统，与磁盘文件系统不同，<code>tmpfs</code>的数据存储在内存中，Linux 在启动之后会挂载多个 <code>tmpfs</code>实例，各自有其不同的用途，其中之一 <code>/dev/shm</code>就是为共享内存提供服务的。</p>
+<p>既然已经提到内存文件系统了，那么我们很自然的就能想到，只需要在内存文件系统上创建一个文件，然后几个进程同时对该文件进行操作，不就是在共享内存么？</p>
+<p>是的，在 <code>glibc</code> 的实现版本中，其实现就是这么简单，<a href="https://elixir.bootlin.com/glibc/latest/source/rt/shm_open.c">shm_open.c</a> 和 <a href="https://elixir.bootlin.com/glibc/glibc-2.37/source/rt/shm_unlink.c">shem_unlink.c</a> 总共不到一百行代码，就实现了这套共享内存的 API。</p>
+<p>值得注意的是，<code>shm_open</code> 和<code>open</code>其实没有本质上的区别，只是会限制该文件必须是位于 <code>/dev/shm</code>下面的临时文件，它与普通的文件 <code>open</code> 一样，返回一个文件描述符，随后的 <code>ftrucate()</code> <code>write()</code> <code>read()</code> <code>mmap()</code>等操作其实就都是通用的 I/O API 了。</p>
+<p>一般来说，我们通常会通过 <code>mmap</code>将这个”文件“映射到进程的虚拟地址中，方便我们后续以内存的形式来使用这个”文件“，当然，我们也是可以继续用 read() write() 进行数据读写的。</p>
+<h3 id="demo">DEMO</h3>
+<p>直接阅读代码能更清晰直观的了解共享内存的使用方式，以下是共享内存写入和读取部分的代码示例 :</p>
+<ul>
+<li>写入部分：<code>writer.c</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/mman.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/stat.h&gt; /* For mode constants */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt; /* For O_* constants */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define PATH &#34;/testing-shared-memory&#34;
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define SIZE  1024
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">shm_open</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="n">O_CREAT</span> <span class="o">|</span> <span class="n">O_RDWR</span><span class="p">,</span> <span class="mo">0600</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 申请空间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">ftruncate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 内存映射
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">mmap</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">,</span> <span class="n">PROT_WRITE</span><span class="p">,</span> <span class="n">MAP_SHARED</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">shm</span> <span class="o">==</span> <span class="n">MAP_FAILED</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 共享内存写入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">strcpy</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="s">&#34;HELLO WORLD&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 回收资源，这里其实 mmap 之后 fd 就用不到可以 close 了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">munmap</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li>读取部分：<code>reader.c</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/mman.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/stat.h&gt; /* For mode constants */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt; /* For O_* constants */</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define PATH &#34;/testing-shared-memory&#34;
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define SIZE  1024
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">shm_open</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">,</span> <span class="mo">0600</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 内存映射
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">mmap</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">,</span> <span class="n">PROT_READ</span><span class="p">,</span> <span class="n">MAP_SHARED</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">shm</span> <span class="o">==</span> <span class="n">MAP_FAILED</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 读取内存内容
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">shm</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 回收资源
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">munmap</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    <span class="c1">// 删除这段空间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">shm_unlink</span><span class="p">(</span><span class="n">PATH</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>保存好 <code>writer.c</code>和<code>reader.c</code>之后，我们编译并运行就可以看到 reader 能成功读出来 writer 写入的数据了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 编译, rt 是 shm_open 所在的库</span>
+</span></span><span class="line"><span class="cl">gcc -o writer -lrt writer.c
+</span></span><span class="line"><span class="cl">gcc -o reader -lrt reader.c
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 运行</span>
+</span></span><span class="line"><span class="cl">./writer
+</span></span><span class="line"><span class="cl">./reader
+</span></span><span class="line"><span class="cl">&gt; HELLO WORLD
+</span></span></code></pre></div><h2 id="system-v">System V</h2>
+<p>System V 是上个世纪流行的一种 Unix 操作系统，虽然目前我们已经不再经常遇见这个操作系统，但是它的一些遗产仍然被 Linux 所继承，比如 <code>/etc/init.d</code> 以及其进程通信机制。</p>
+<p>尽管 POSIX 系列标准吸取了前人的经验，设计出更统一、现代、灵活的 POSIX IPC 系列标准，但是在一些遗留系统或特定需求下，System V IPC 仍然可能有其用武之地。</p>
+<p>System V IPC 由三部分组成：消息队列、信号量和共享内存，消息队列允许进程通过在队列中传递消息来进行通信，信号量可用于控制对共享资源的访问，而共享内存则允许多个进程共享同一块内存区域，从而实现更快速的数据交换。</p>
+<h3 id="api-1">API</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 申请一块共享内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">shmget</span><span class="p">(</span><span class="n">key_t</span> <span class="n">key</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">int</span> <span class="n">shmflg</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 将创建好的共享内存地址附加到当前进程的内存地址空间（其实就是 mmap）
+</span></span></span><span class="line"><span class="cl"><span class="c1">// shmaddr 是目标地址可以不用指定，由内核分配
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="o">*</span><span class="nf">shmat</span><span class="p">(</span><span class="kt">int</span> <span class="n">shmid</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">_Nullable</span> <span class="n">shmaddr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">shmflg</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 取消内存映射
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">shmdt</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">shmaddr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 控制共享内存，可以传入不同的 cmd 查询或者删除 shmid 所对应的共享内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">shmctl</span><span class="p">(</span><span class="kt">int</span> <span class="n">shmid</span><span class="p">,</span> <span class="kt">int</span> <span class="n">cmd</span><span class="p">,</span> <span class="k">struct</span> <span class="n">shmid_ds</span> <span class="o">*</span><span class="n">buf</span><span class="p">);</span>
+</span></span></code></pre></div><h3 id="实现原理-1">实现原理</h3>
+<p>System V 共享内存的代码实现在<a href="https://elixir.bootlin.com/linux/v6.4/source/ipc/shm.c">Linux 内核内部</a>，其实现原理和 glibc 实现的共享内存类似，它同样是通过内存文件系统打开一个文件，然后将其映射到内存中，从而实现进程间的共享数据，这里就不详细展开了。</p>
+<p>一段 System V  共享内存在 Linux 里被叫做<code>Segment</code>，每段共享内存在内核里面对应一个 <code>shmid_kernel</code>的数据结构：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">shmid_kernel</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">kern_ipc_perm</span>	<span class="n">shm_perm</span><span class="p">;</span> <span class="c1">// 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">file</span>		<span class="o">*</span><span class="n">shm_file</span><span class="p">;</span>   <span class="c1">// 对应的内存临时文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">shm_nattch</span><span class="p">;</span> <span class="c1">// Attach 的内存数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">shm_segsz</span><span class="p">;</span> <span class="c1">// 共享内存大小（Bytes）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">time64_t</span>		<span class="n">shm_atim</span><span class="p">;</span> <span class="c1">// 最后一次访问时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">time64_t</span>		<span class="n">shm_dtim</span><span class="p">;</span> <span class="c1">// 最后一次连接断开时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">time64_t</span>		<span class="n">shm_ctim</span><span class="p">;</span> <span class="c1">// 创建时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">pid</span>		<span class="o">*</span><span class="n">shm_cprid</span><span class="p">;</span> <span class="c1">// 控制进程的 PID （通常就是创建者，但是创建者可能会退出）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">pid</span>		<span class="o">*</span><span class="n">shm_lprid</span><span class="p">;</span> <span class="c1">// 也是指向控制进程的 PID
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">user_struct</span>	<span class="o">*</span><span class="n">mlock_user</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">task_struct</span>	<span class="o">*</span><span class="n">shm_creator</span><span class="p">;</span> <span class="c1">// 指向创建进程的 task_struct
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">shm_clist</span><span class="p">;</span>	<span class="c1">// 被同一进程创建的共享内存会通过这个链表串联
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> 
+</span></span></code></pre></div><p>我们可以通过 <code>ipcs -m</code> 命令来查看这个结构体的关键信息。</p>
+<p>在 Linux 中，默认情况下，每个共享内存段（Segment）的最小长度为 1KB。而最大长度可以达到 2^64 - 2^24，这几乎相当于没有限制。</p>
+<p>此外，默认情况下，系统允许创建的最大共享内存段数量是 4096。如果需要创建更多的共享内存段，就需要使用 sysctl 命令进行调整。</p>
+<h3 id="demo-1">DEMO</h3>
+<p>System V 的 API demo 也是分为两部分，写入共享内存和读取共享内存，如下：</p>
+<ul>
+<li>写入部分 <code>writer.c</code>:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/ipc.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/shm.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define SHM_SIZE 1024 </span><span class="c1">// 共享内存大小，以字节为单位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">key_t</span> <span class="n">key</span> <span class="o">=</span> <span class="n">ftok</span><span class="p">(</span><span class="s">&#34;testing-shared-memory&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// 创建一个唯一的键
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 创建共享内存段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">id</span> <span class="o">=</span> <span class="n">shmget</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">SHM_SIZE</span><span class="p">,</span> <span class="n">IPC_CREAT</span> <span class="o">|</span> <span class="mo">0666</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 附加共享内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">shmat</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">shm</span> <span class="o">==</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 共享内存写入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">strcpy</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="s">&#34;HELLO WORLD&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分离共享内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">shmdt</span><span class="p">(</span><span class="n">shm</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li>读取部分 <code>reader.c</code></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/ipc.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/shm.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define SHM_SIZE 1024 </span><span class="c1">// 共享内存大小，以字节为单位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">key_t</span> <span class="n">key</span> <span class="o">=</span> <span class="n">ftok</span><span class="p">(</span><span class="s">&#34;testing-shared-memory&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// 使用同样的键
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取共享内存段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">id</span> <span class="o">=</span> <span class="n">shmget</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">SHM_SIZE</span><span class="p">,</span> <span class="mo">0666</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 附加共享内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">shmat</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">shm</span> <span class="o">==</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 读取共享内存中的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">shm</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分离共享内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">shmdt</span><span class="p">(</span><span class="n">shm</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 删除共享内存段（可选）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">shmctl</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">IPC_RMID</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="实际应用">实际应用</h1>
+<p>理论上进程间通过共享内存通信的性能是能做到和进程内部线程间通信性能一致，因此共享内存在高性能计算、大批量处理、实时分析系统等场景均有广泛的应用。</p>
+<p>但当我们实际要基于共享内存开发应用的时候，原来编程语言提供的进程内各种同步原语、锁等API 全部都无法使用了，处理进程间同步的问题会是一件比较棘手的事情，另外由于不同进程内分配到的虚拟内存的地址并不一样，因此部分语言的容器、散列表等数据结构可能也无法使用，此时考虑基于一些优秀的第三方开源库去实现基于共享内存的通信可能是一个不错的选择：</p>
+<ul>
+<li>
+<p><a href="https://github.com/MengRao/SPSC_Queue">SPSC_Queue</a>: 基于 C++ 实现的 RingBuffer 的无锁队列，可以说几乎是单生产者单消费者模型下的最快通信方式了，简单且暴力</p>
+</li>
+<li>
+<p><a href="https://github.com/zeromq/libzmq/blob/master/doc/zmq_ipc.txt">zmq_ipc</a>: ZeroMQ 是一个款多用途的消息队列，zmq_ipc 只是其提供的其中一种传输方式，但也有着非常广泛的使用</p>
+</li>
+<li>
+<p><a href="https://github.com/boostorg/interprocess">Boost.Interprocess</a> Boost （C++ 库）的一个模块，提供了一些进程间通信的辅助 API，其中就包括支持共享内存的 STL、进程间锁、内存分配器等非常实用的功能</p>
+</li>
+<li>
+<p><a href="https://github.com/eclipse-iceoryx/iceoryx">iceoryx</a>：功能很强大的 C++ 进程通信框架，支持请求响应、消息、回调、注册发现等通信模型，另外很难能可贵的是，目前主流的操作系统几乎全部都支持</p>
+</li>
+<li>
+<p><a href="https://github.com/cloudwego/shmipc-go">shmipc-go</a>: 基于 Golang 的进程间通信框架，使用 TCP over UDS 进行进程间同步空间，共享内存传递数据，支持&quot;批量收割&quot; IO 优化性能</p>
+</li>
+<li>
+<p><a href="https://github.com/happyfish100/libshmcache">libshmcache</a>: 多进程共享缓存，号称在单机环境下比 Redis 快一百倍，支持 Java、C 和 PHP 接口</p>
+</li>
+<li>
+<p><a href="https://github.com/MengRao/tcpshm">tcpshm</a>: 这个项目可以让我们在共享内存之上运行 TCP 协议，强一致性协议，每一个包都会有 ACK 回调</p>
+</li>
+</ul>
+<h1 id="参考文档">参考文档</h1>
+<p>[1] shm_open.c: <a href="https://elixir.bootlin.com/glibc/latest/source/rt/shm_open.c">https://elixir.bootlin.com/glibc/latest/source/rt/shm_open.c</a>
+[2] shem_unlink.c: <a href="https://elixir.bootlin.com/glibc/glibc-2.37/source/rt/shm_unlink.c">https://elixir.bootlin.com/glibc/glibc-2.37/source/rt/shm_unlink.c</a>
+[3] Linux 内核内部: <a href="https://elixir.bootlin.com/linux/v6.4/source/ipc/shm.c">https://elixir.bootlin.com/linux/v6.4/source/ipc/shm.c</a>
+[4] SPSC_Queue: <a href="https://github.com/MengRao/SPSC_Queue">https://github.com/MengRao/SPSC_Queue</a>
+[5] zmq_ipc: <a href="https://github.com/zeromq/libzmq/blob/master/doc/zmq_ipc.txt">https://github.com/zeromq/libzmq/blob/master/doc/zmq_ipc.txt</a>
+[6] Boost.Interprocess: <a href="https://github.com/boostorg/interprocess">https://github.com/boostorg/interprocess</a>
+[7] iceoryx: <a href="https://github.com/eclipse-iceoryx/iceoryx">https://github.com/eclipse-iceoryx/iceoryx</a>
+[8] shmipc-go: <a href="https://github.com/cloudwego/shmipc-go">https://github.com/cloudwego/shmipc-go</a>
+[9] libshmcache: <a href="https://github.com/happyfish100/libshmcache">https://github.com/happyfish100/libshmcache</a>
+[10] tcpshm: <a href="https://github.com/MengRao/tcpshm">https://github.com/MengRao/tcpshm</a>
+[11] IEEE 1003.1b Standard: <a href="https://standards.ieee.org/ieee/1003.1b/1392/">https://standards.ieee.org/ieee/1003.1b/1392/</a>
+[12] shmget() API: <a href="https://man7.org/linux/man-pages/man2/shmget.2.html">https://man7.org/linux/man-pages/man2/shmget.2.html</a>
+[13] shm_open() API: <a href="https://man7.org/linux/man-pages/man3/shm_open.3.html">https://man7.org/linux/man-pages/man3/shm_open.3.html</a>
+[14] System V IPC: <a href="https://man7.org/linux/man-pages/man7/sysvipc.7.html">https://man7.org/linux/man-pages/man7/sysvipc.7.html</a></p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/kernel-debug-tips_en/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Linux Kernel Debug Tips</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#why-%e5%85%b1%e4%ba%ab%e5%86%85%e5%ad%98">
+												 WHY 共享内存
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%86%85%e5%ad%98">
+												 内存
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8e%a5%e5%85%a5%e6%96%b9%e5%bc%8f">
+												 接入方式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#posix">
+												 POSIX
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#api">
+												 API
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#demo">
+												 DEMO
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#system-v">
+												 System V
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#api-1">
+												 API
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86-1">
+												 实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#demo-1">
+												 DEMO
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9e%e9%99%85%e5%ba%94%e7%94%a8">
+												 实际应用
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%82%e8%80%83%e6%96%87%e6%a1%a3">
+												 参考文档
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2023 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
