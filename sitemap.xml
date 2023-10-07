@@ -3,17 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://huweicai.com/</loc>
-    <lastmod>2023-08-08T13:42:00+08:00</lastmod>
+    <lastmod>2023-10-07T13:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/elf/</loc>
+    <lastmod>2023-10-07T13:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://huweicai.com/tags/linux/</loc>
-    <lastmod>2023-08-08T13:42:00+08:00</lastmod>
+    <lastmod>2023-10-07T13:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://huweicai.com/tags/</loc>
-    <lastmod>2023-08-08T13:42:00+08:00</lastmod>
+    <lastmod>2023-10-07T13:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>

@@ -6,7 +6,16 @@
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 08 Aug 2023 13:42:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 07 Oct 2023 13:58:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Executable and Linkable Format</title>
+      <link>https://huweicai.com/elf/</link>
+      <pubDate>Sat, 07 Oct 2023 13:58:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/elf/</guid>
+      <description>ELF Executable and Linkable Format，翻译过来叫可执行与可链接格式，是 Linux 操作系统的标准可执行文件格式，即我们写的代码想要在 Linux 上运行起来，就都得编译成这种格式才行。此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采纳 ELF 作为其可执行文件格式。 本文按照 FLE 的顺序分成三个部分介绍 ELF：F: 文件格式 L: 链接流程 E: 运行流程。 F: 文件格式 ELF 是一种通用的标准，格式定义的源代码我们可以在 glibc 代码仓库中找到: elf.h ELF 格式主要由以下部分</description>
+    </item>
+    
     <item>
       <title>很快的共享内存</title>
       <link>https://huweicai.com/shared-memory/</link>

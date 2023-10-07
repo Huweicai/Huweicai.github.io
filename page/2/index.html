@@ -423,6 +423,8 @@
 
   
 
+  
+
 
 
 
@@ -442,7 +444,7 @@
       <div class="li-x post-meta tags-md" style="margin-left: -8px;">
 
         
-            <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (9)</span></a></li>
+            <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (10)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/go" role="button"><span>go (6)</span></a></li>
         
@@ -584,6 +586,65 @@
       </li>
     </ul>
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/cilium-container-datapath/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">Cilium 容器数据路径</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2022-02-19</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>6 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      Cilium Cilium 提供了一套基于 eBPF 的容器网络方案，在网络可观测性和隔离策略方面提供了非常多强大的特性。 我们今天主要关注 Cilium 容器数据面路径这个话题，即一个使用 Cilium 做为 CNI 的 Pod 的数据是如何流动的。 这里我们以在 Pod 中向 1.1.1.1:80发起 TCP 连接（nc -v 1.1.1.1 80）的流量为例进行分析，演示的 Cilium 集群使用 veth pair 打通容器和宿主机网络命名空间，同时使用 vxlan 模式来进行跨主机间的 Pod 通信。 这里我们使用 Pod 10.1.128.86 进行演示，其所在 Node IP 为 10.11.224......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/kubernetes" role="button">kubernetes </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cilium" role="button">cilium </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -914,62 +975,6 @@
       
     
       <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button">权限管理 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/kubectl-concepts-and-commands/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Kubectl基本概念&amp;常用命令</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-01-28</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>6 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      基本概念 容器化 &#43; Kubernetes 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 kubectl 则提供了一种非常直观和强大的观察操控 k8s集群的方式。 kubectl 是 kubernetes自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 cobra 来解析命令行参数，读取 .kube/config中存储的认证信息经由 k8s restful api 和集群交互。 kubectl 命令基本格式如下： kubectl [子命令] [资源类型] [资源名称] [选项] 和 docker 、git这种复杂的命令行程序一样，kub......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/kubernetes" role="button">kubernetes </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button">命令行 </a></li>
       
     
       <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>

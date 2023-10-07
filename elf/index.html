@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="ELF Executable and Linkable Format，翻译过来叫可执行与可链接格式，是 Linux 操作系统的标准可执行文件格式，即我们写的代码想要在 Linux 上运行起来，就都得编译成这种格式才行。此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采纳 ELF 作为其可执行文件格式。 本文按照 FLE 的顺序分成三个部分介绍 ELF：F: 文件格式 L: 链接流程 E: 运行流程。 F: 文件格式 ELF 是一种通用的标准，格式定义的源代码我们可以在 glibc 代码仓库中找到: elf.h ELF 格式主要由以下部分">
+
+  <meta property="og:title" content="Executable and Linkable Format" />
+<meta property="og:description" content="ELF Executable and Linkable Format，翻译过来叫可执行与可链接格式，是 Linux 操作系统的标准可执行文件格式，即我们写的代码想要在 Linux 上运行起来，就都得编译成这种格式才行。此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采纳 ELF 作为其可执行文件格式。 本文按照 FLE 的顺序分成三个部分介绍 ELF：F: 文件格式 L: 链接流程 E: 运行流程。 F: 文件格式 ELF 是一种通用的标准，格式定义的源代码我们可以在 glibc 代码仓库中找到: elf.h ELF 格式主要由以下部分" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/elf/" /><meta property="article:section" content="" />
+<meta property="article:published_time" content="2023-10-07T13:58:00+08:00" />
+<meta property="article:modified_time" content="2023-10-07T13:58:00+08:00" />
+
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       Executable and Linkable Format | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/elf/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://huweicai.com/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">Executable and Linkable Format</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2023-10-07</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>12 minutes read</li>
+        
+        <li>5530 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="elf">ELF</h1>
+<p>Executable and Linkable Format，翻译过来叫<strong>可执行与可链接格式</strong>，是 Linux 操作系统的标准可执行文件格式，即我们写的代码想要在 Linux 上运行起来，就都得编译成这种格式才行。此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采纳 ELF 作为其可执行文件格式。</p>
+<p>本文按照 FLE 的顺序分成三个部分介绍 ELF：<code>F: 文件格式</code> <code>L: 链接流程</code> <code>E: 运行流程</code>。</p>
+<h1 id="f-文件格式">F: 文件格式</h1>
+<p>ELF 是一种通用的标准，格式定义的源代码我们可以在 glibc 代码仓库中找到: <a href="https://github.com/bminor/glibc/blob/master/elf/elf.h">elf.h</a></p>
+<p>ELF 格式主要由以下部分组成：</p>
+<h2 id="文件头">文件头</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Magic Number 和一些元信息，共 16 字节，前四字节为 Magic Number，固定为：7f454c46( \177ELF)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 第四个字节 01 代表 32 位, 02 代表 64 位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 第五个字节 01 代表小端，02 代表大端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 剩余的字节当前没有太多含义，一般固定为 01 00 00 00 00 00 00 00 00 00
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kt">char</span>	<span class="n">e_ident</span><span class="p">[</span><span class="n">EI_NIDENT</span><span class="p">];</span> <span class="c1">// EI_NIDENT = 16
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 文件类型：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 1 代表可重定向文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 2: 可执行文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 3: 共享对象文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 4: coredump 文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Half</span>	<span class="n">e_type</span><span class="p">;</span>			<span class="cm">/* Object file type */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 文件指令对应的 CPU 架构，我们所熟知的架构有：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 62: EM_X86_64
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 183: EM_AARCH64
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Half</span>	<span class="n">e_machine</span><span class="p">;</span>		<span class="cm">/* Architecture */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 目标文件版本
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Word</span>	<span class="n">e_version</span><span class="p">;</span>		<span class="cm">/* Object file version */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 程序入口内存地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Addr</span>	<span class="n">e_entry</span><span class="p">;</span>		<span class="cm">/* Entry point virtual address */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 段表起始位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Off</span>	<span class="n">e_phoff</span><span class="p">;</span>		<span class="cm">/* Program header table file offset */</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 节表起始位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Off</span>	<span class="n">e_shoff</span><span class="p">;</span>		<span class="cm">/* Section header table file offset */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 处理器特定的一些标志位，一般为 0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Word</span>	<span class="n">e_flags</span><span class="p">;</span>		<span class="cm">/* Processor-specific flags */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Half</span>	<span class="n">e_ehsize</span><span class="p">;</span>		<span class="cm">/* ELF header size in bytes */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="n">Elf64_Half</span>	<span class="n">e_phentsize</span><span class="p">;</span>		<span class="cm">/* Program header table entry size */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 段表数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Half</span>	<span class="n">e_phnum</span><span class="p">;</span>		<span class="cm">/* Program header table entry count */</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Elf64_Half</span>	<span class="n">e_shentsize</span><span class="p">;</span>		<span class="cm">/* Section header table entry size */</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Elf64_Half</span>	<span class="n">e_shnum</span><span class="p">;</span>		<span class="cm">/* Section header table entry count */</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Elf64_Half</span>	<span class="n">e_shstrndx</span><span class="p">;</span>		<span class="cm">/* Section header string table index */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">Elf64_Ehdr</span><span class="p">;</span>
+</span></span></code></pre></div><h2 id="段-segment">段: Segment</h2>
+<p>Segment 是文件在加载并映射到内存的基本单位，内存都是一段一段地映射的。</p>
+<h3 id="头部program-header">头部（Program Header）</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 段的类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 1 PT_LOAD: 可以加载到内存的段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 2 PT_DYNAMIC: 动态链接信息段，用于在运行时动态链接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 3 PT_INTERP: 解释器路径段，用于指定可执行文件依赖的解释器路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 4 PT_NOTE: 注释段，存储一些调试或者其他附加信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 5 PT_SHLIB: 表示保留给共享库使用的段类型，不常见
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 6 PT_PHDR: TODO
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Word</span>	<span class="n">p_type</span><span class="p">;</span>			<span class="cm">/* Segment type */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 可读、可写、可执行等权限 flags
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Word</span>	<span class="n">p_flags</span><span class="p">;</span>		<span class="cm">/* Segment flags */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 该 header 描述的段的起始 offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Off</span>	<span class="n">p_offset</span><span class="p">;</span>		<span class="cm">/* Segment file offset */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 段被加载后在虚拟内存的起始位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Addr</span>	<span class="n">p_vaddr</span><span class="p">;</span>		<span class="cm">/* Segment virtual address */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 段被加载后在物理内存中的起始地址（基本用不到）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Addr</span>	<span class="n">p_paddr</span><span class="p">;</span>		<span class="cm">/* Segment physical address */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 段在文件中的大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Xword</span>	<span class="n">p_filesz</span><span class="p">;</span>		<span class="cm">/* Segment size in file */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 段在内存中的大小，通常 p_memsz 会要大于 p_filesz，比如像 BSS 段在文件中不占用空	间，在运行时却需要分配内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Xword</span>	<span class="n">p_memsz</span><span class="p">;</span>		<span class="cm">/* Segment size in memory */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 内存地址对齐方式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Xword</span>	<span class="n">p_align</span><span class="p">;</span>		<span class="cm">/* Segment alignment */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">Elf64_Phdr</span><span class="p">;</span>
+</span></span></code></pre></div><h2 id="节-section">节: Section</h2>
+<h3 id="头部">头部</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Section 名称在字符串表中的索引
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Word</span>	<span class="n">sh_name</span><span class="p">;</span>		<span class="cm">/* Section name (string tbl index) */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// Section 类别，常见的有：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 1 SHT_PROGBITS: 代码或者数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 2 SHT_SYMTAB: 符号表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 3 SHT_STRTAB: 字符串表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 4 SHT_RELA: 可重定向
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 5 SHT_HASH: 符号哈希表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 6 SHT_DYNAMIC: 包含动态链接所需信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 8 SHT_NOBITS: BSS
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// TODO
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Word</span>	<span class="n">sh_type</span><span class="p">;</span>		<span class="cm">/* Section type */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 一些标志位：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// SHF_WRITE: 可写，允许在运行时修改段的内容
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// SHF_ALLOC: 运行期间需要占用内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// SHF_EXECINSTR: 可运行，包含可执行指令
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// SHF_MERGE: 可以被合并，允许相同段中的重复数据进行合并，节省空间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// SHF_STRINGS: 包含字符串，常用于存储字符串表等数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// SHF_INFO_LINK: 包含其他 Section 的索引或者链接信息，用于描述 Section 之间的关系
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// SHF_LINK_ORDER: 具有链接先后顺序
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// SHF_COMPRESSED: 段被压缩过，需要解压后才能使用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Xword</span>	<span class="n">sh_flags</span><span class="p">;</span>		<span class="cm">/* Section flags */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// Section 内存起始地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Addr</span>	<span class="n">sh_addr</span><span class="p">;</span>		<span class="cm">/* Section virtual addr at execution */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// Section 在文件中的 offset
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Off</span>	<span class="n">sh_offset</span><span class="p">;</span>		<span class="cm">/* Section file offset */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// Section 大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Xword</span>	<span class="n">sh_size</span><span class="p">;</span>		<span class="cm">/* Section size in bytes */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 链接到的其他 Section 的索引
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Word</span>	<span class="n">sh_link</span><span class="p">;</span>		<span class="cm">/* Link to another section */</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Elf64_Word</span>	<span class="n">sh_info</span><span class="p">;</span>		<span class="cm">/* Additional section information */</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Elf64_Xword</span>	<span class="n">sh_addralign</span><span class="p">;</span>		<span class="cm">/* Section alignment */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 表中每个条目的大小（如果该 Section 包含一个表的话）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Xword</span>	<span class="n">sh_entsize</span><span class="p">;</span>		<span class="cm">/* Entry size if section holds table */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">Elf64_Shdr</span><span class="p">;</span> <span class="c1">// Section Header
+</span></span></span></code></pre></div><h3 id="sections">Sections</h3>
+<p>在 ELF 规范中，很多特殊的节的功能已经被规范定义好了。</p>
+<h4 id="bss">.bss</h4>
+<p>BSS (Block Started by Symbol)，通常用于存储未初始化的静态变量和全局变量，需要事先分配好空间，待程序运行初始化之后才会被赋值；这段空间在文件中就是空的，只需要申明长度即可，节类型是上文中提到的 <code>SHT_NOBITS</code>。</p>
+<!--TODO 是否就是对应虚拟内存中的 BSS Segment ？-->
+<h4 id="comment-注释">.comment 注释</h4>
+<p>该节主要是提供给编译器和其他工具存放注释信息，与程序运行无关，方便 DEBUG 排查问题的，比如 gcc 编译出来的 ELF 文件 .comment 节中就会存放着 gcc 的版本号。</p>
+<h4 id="data-rodata-datarelro-数据节">.data .rodata .data.rel.ro 数据节</h4>
+<p>编译时就能确定值的全局变量、静态变量等会被存储在此，.data 和 .rodata 的区别在于，一个可写的一个是只读的；另外 .data 中的变量会进行内存对齐，在 64 位系统下该节 的 sh_addralign 将会被设置为 8 （字节），以获得最佳的访问效率。</p>
+<p>而 <code>.data.rel.ro</code> 和 <code>.rodata</code> 的区别在于，所有带有<code>.rel</code>后缀的节代表其中数据的实际位置在编译阶段无法确定，需要在运行时初始化之后才能赋值，比如 <code>extern</code>、函数指针、字符串指针等变量。</p>
+<p>举个例子，比如我们定义了一个字符串指针：</p>
+<pre tabindex="0"><code>const char *str = &#34;Hello, world!&#34;;
+</code></pre><p>那么字符串 <code>&quot;Hello, world!&quot;</code> 会被存储在 <code>.rodata</code> 中，而 <code>str</code> 则是指向这个字符串的指针，但是这个字符串的位置在编译期并不能确定，所以 <code>str</code> 常量会被放置在 <code>.data.rel.ro</code> 节中，等到程序初始化之后， <code>&quot;Hello, world!&quot;</code>的值确定了下来才会被重定向到实际的位置。</p>
+<h4 id="hash-哈希表">.hash 哈希表</h4>
+<p>.hash 节存储了符号表的哈希表，当符号过多时遍历符号表去找寻对应符号的开销会非常巨大，因此通过 .hash 节存储的符号哈希表能加速符号解析和链接过程。</p>
+<h4 id="text">.text</h4>
+<p><code>.text</code> 节是只读的，这一部分存储着程序的可执行的汇编指令，我们所写的代码最终会被编译到这里；处理器在执行程序时，会根据程序计数器（Program Counter）指示的地址从 .text 节中读取指令，然后根据操作码和操作数执行对应的操作。</p>
+<p>尽管不同的 CPU 架构指令集会不一样，但 <code>.text</code>节大体的结构是一致的，<code>.text</code>中的代码是以函数为单位进行组织的，每一个函数由函数入口地址所标识，后面则紧跟其对应的汇编指令实现，最后通过 <code>ret</code> 或者 <code>bx lr</code>等指令指示函数结束。</p>
+<p>每个程序的函数入口则是在我们上文中提到的文件头中 <code>Elf64_Addr	e_entry;</code> 字段指定，操作系统运行程序时就会找到该地址对应的函数，然后开始执行，这个函数又会调用其他函数从而把整个程序串联了起来。</p>
+<p>我们可以通过 <code>objdump -d -j .text &lt;elf_file_name&gt;</code>来反编译并查看某个 ELF 文件对应的 <code>.text</code>中的代码内容。</p>
+<h4 id="dynamic">.dynamic</h4>
+<p>包含了动态链接相关的一些信息。</p>
+<!--TODO-->
+<h4 id="line">.line</h4>
+<p>调试信息的一部分，<code>.line</code> 节中保存了代码文件行号和<code>.text</code>节中指令之间的映射。</p>
+<h4 id="note">.note</h4>
+<p><code>.note</code> 跟 <code>.comment</code> 有点类似，但它是有实际作用的，其中会包含 <code>build-id</code>、ABI 版本、操作系统类型等元信息。</p>
+<h4 id="strtab-字符串表">.strtab 字符串表</h4>
+<p>我们通常提到的字符串表其实就是存储在 <code>.strtab</code> 节中，该节中存储了程序函数变量名称、节名称、库名称等等符号字符串。</p>
+<p><strong>但是需要注意的是，这里的字符串表和我们代码中字符串常量 &amp; 字面量可没什么关系</strong>，代码的字符串只是程序中的一种数据类型，它们会和其他数据类型的常量一起存储在 `.rodata 节区。</p>
+<p>字符串表的格式其实非常简单，就是一个一个 null 结尾的 C 字符串紧密的一字排开，或者也可以理解为字符串表的表项是通过 <code>'\0'</code>分隔的，使用的时候，由于字符串不是定长的，因此需要使用字符串在字符串表的字节偏移量来标识该字符串，该偏移量通常使用十六进制而不是十进制的形式存储。</p>
+<p>一个示例，某字符串表的内容可能如下：</p>
+<pre tabindex="0"><code>0053637274312e6f005f5f6162695f7461670063727473747566662e6300646572656769737465725f746d5f636c6f6e657300
+</code></pre><p>按照 <code>'\0'</code>（十六进制为 00）分隔的话，就能解析出如下内容：</p>
+<table>
+<thead>
+<tr>
+<th>Offset（HEX）</th>
+<th>原始内容</th>
+<th>解析后</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td>53637274312e6f</td>
+<td>Scrt1.o</td>
+</tr>
+<tr>
+<td>09</td>
+<td>5f5f6162695f746167</td>
+<td>__abi_tag</td>
+</tr>
+<tr>
+<td>13</td>
+<td>63727473747566662e63</td>
+<td>crtstuff.c</td>
+</tr>
+<tr>
+<td>1e</td>
+<td>646572656769737465725f746d5f636c6f6e6573</td>
+<td>deregister_tm_clones</td>
+</tr>
+</tbody>
+</table>
+<p>在符号表等其他地方引用时，直接使用 Offset 01 09 13 1e 即可。</p>
+<h4 id="shstrtab-节头字符串表">.shstrtab 节头字符串表</h4>
+<p>shstrtab (Section Header STRing TABle) 可以理解为一种存储了所有节名称的特殊字符串表，比如一个 .shstrtab 的内容可能如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="p">.</span><span class="n">symtab</span><span class="err">\</span><span class="mf">0.</span><span class="n">strtab</span><span class="err">\</span><span class="mf">0.</span><span class="n">shstrtab</span><span class="err">\</span><span class="mf">0.</span><span class="n">interp</span><span class="err">\</span><span class="mf">0.</span><span class="n">note</span><span class="p">.</span><span class="n">gnu</span><span class="p">.</span><span class="n">property</span><span class="err">\</span><span class="mf">0.</span><span class="n">note</span><span class="p">.</span><span class="n">gnu</span><span class="p">.</span><span class="n">build</span><span class="o">-</span><span class="n">id</span><span class="err">\</span><span class="mf">0.</span><span class="n">note</span><span class="p">.</span><span class="n">ABI</span><span class="o">-</span><span class="n">tag</span><span class="err">\</span><span class="mf">0.</span><span class="n">gnu</span><span class="p">.</span><span class="n">hash</span><span class="err">\</span><span class="mf">0.</span><span class="n">dynsym</span><span class="err">\</span><span class="mf">0.</span><span class="n">dynstr</span><span class="err">\</span><span class="mf">0.</span><span class="n">gnu</span><span class="p">.</span><span class="n">version</span><span class="err">\</span><span class="mf">0.</span><span class="n">gnu</span><span class="p">.</span><span class="n">version_r</span><span class="err">\</span><span class="mf">0.</span><span class="n">rela</span><span class="p">.</span><span class="n">dyn</span><span class="err">\</span><span class="mf">0.</span><span class="n">rela</span><span class="p">.</span><span class="n">plt</span><span class="err">\</span><span class="mf">0.</span><span class="n">init</span><span class="err">\</span><span class="mf">0.</span><span class="n">plt</span><span class="p">.</span><span class="n">got</span><span class="err">\</span><span class="mf">0.</span><span class="n">plt</span><span class="p">.</span><span class="n">sec</span><span class="err">\</span><span class="mf">0.</span><span class="n">text</span><span class="err">\</span><span class="mf">0.f</span><span class="n">ini</span><span class="err">\</span><span class="mf">0.</span><span class="n">rodata</span><span class="err">\</span><span class="mf">0.</span><span class="n">eh_frame_hdr</span><span class="err">\</span><span class="mf">0.</span><span class="n">eh_frame</span><span class="err">\</span><span class="mf">0.</span><span class="n">init_array</span><span class="err">\</span><span class="mf">0.f</span><span class="n">ini_array</span><span class="err">\</span><span class="mf">0.</span><span class="n">dynamic</span><span class="err">\</span><span class="mf">0.</span><span class="n">data</span><span class="err">\</span><span class="mf">0.</span><span class="n">bss</span><span class="err">\</span><span class="mf">0.</span><span class="n">comment</span>
+</span></span></code></pre></div><h4 id="symtab-dynsym-符号表">.symtab .dynsym 符号表</h4>
+<p><code>.symtab</code>(Static Symbol Table) 和 <code>.dynsym</code>(Dynamic Symbol Table) 结构非常相似，前者是所有符号的全集，而后者只有动态链接相关的符号，包括导出供外部调用和调用外部的 UND 符号，后者是前者的子集，虽然也能通过遍历 .<code>symtab</code> 找到所有的 st_shndx 字段值为 <code>SHN_UNDEF</code>的符号就是动态链接符号，但是出于优化动态链接性能、减少动态链接库内存占用的考虑，ELF 中还是引入了一个额外的 <code>.dynsym</code> 节。</p>
+<p>该节中存储了符号表，在符号表中，每一项条目结构如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 符号名称在字符串表偏移量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Word</span>	<span class="n">st_name</span><span class="p">;</span>		<span class="cm">/* Symbol name (string tbl index) */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// st_info 是一个长度为 8 位复合字段，高 4 位表示符号类型，低 4 位表示绑定类型；
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 符号类型可能是函数符号、数据对象符号和未定义符号等；
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 绑定则可能是全局绑定或者是局部绑定，全局绑定则意味则该符号在程序全局可见，局部绑定
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 的符号则仅在其定义的模块内部可见，比如局部变量、私有函数等
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kt">char</span>	<span class="n">st_info</span><span class="p">;</span>		<span class="cm">/* Symbol type and binding */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 符号的其他属性，如符号的可见性等
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">st_other</span><span class="p">;</span>		<span class="cm">/* Symbol visibility */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 符号所在节区的索引
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// SHN_UNDEF 0 代表该符号为动态链接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Section</span>	<span class="n">st_shndx</span><span class="p">;</span>		<span class="cm">/* Section index */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 符号在其节中对应的偏移
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Addr</span>	<span class="n">st_value</span><span class="p">;</span>		<span class="cm">/* Symbol value */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Xword</span>	<span class="n">st_size</span><span class="p">;</span>		<span class="cm">/* Symbol size */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">Elf64_Sym</span><span class="p">;</span>
+</span></span></code></pre></div><p>符号表主要的作用是用于在链接阶段，供链接器查询某个符号对应的值地址，从而找到对应的实现代码。</p>
+<p>由于代码段中是通过地址来标识变量的，所以当我们需要在运行时知道某个变量对应的名称，符号表也是必不可少的，这对于调试很有帮助，但是当不需要线上调试的时候，我们通常会选择在最终可执行文件中移除该部分以减少体积。</p>
+<h4 id="got-plt">.got .plt</h4>
+<p>GOT (Global Offset Table) 全局偏移表，是用于确定动态链接函数实际位置的一张表，在编译阶段是留空的，程序启动的时候才会逐渐填充。</p>
+<p>PLT (Procedure Linkage Table) 程序链接表，这是实现 Lazy Binding 的关键，动态链接定义的函数被调用时，会先跳转到 PLT 表，然后 PLT 会调用 GOT 查询这个函数实际的定义位置，如果 GOT 中没有该函数的条目，PLT 就会调用链接器去解析该函数的地址，然后写入到 GOT 中，再跳转到函数定义位置执行代码。</p>
+<h1 id="l-链接流程">L: 链接流程</h1>
+<p>当我们在引用第三方库时，就需要将第三库文件链接到我们的程序上，这样在运行时才能找到对应的代码入口。</p>
+<p>链接分为<code>静态链接</code>和<code>动态链接</code>两种，静态链接会将库文件并入到最终的 ELF 二进制中，而动态链接则是在运行时再去动态查找库文件。</p>
+<h2 id="静态链接">静态链接</h2>
+<p>静态链接通常是编译流程的最后一环，大体流程如下：</p>
+<h3 id="文件载入">文件载入</h3>
+<p>第一步需要将 ELF 目标文件和所有要链接的 ELF 库文件载入，读取其中相关的节。</p>
+<h3 id="重定向">重定向</h3>
+<p>链接器会遍历所有文件的符号表，对于所有未定义的符号，在其他文件的符号表中查找对应的实现（如果在多个文件中都有定义通常会选择第一个），保存找到的符号定义，供之后使用，如果无法找到就会报：<code>symbol not found</code>, 终结当前编译流程。</p>
+<p>在所有符号全部遍历后，会需要将所有未定义的符号更新为实际符号定义的地址值，即更新将对应的 <code>Elf64_Sym</code> 结构体中的 <code>st_value</code> 字段，这一步通常被称为重定向。</p>
+<h3 id="段合并">段合并</h3>
+<p>最后，由于要最终输出一个 ELF 文件，因此需要将这些文件中的 <code>.text</code> <code>.data</code> <code>.bss</code>等节合并成一个，默认情况下链接器会丢弃静态链接库中未被使用的符号，不过我们也可以通过编译参数 <code>--whole-archive</code> 来要求链接器合并所有符号到最终文件中。</p>
+<h2 id="动态链接">动态链接</h2>
+<p>动态链接的流程相较于静态链接则更为简单：</p>
+<h3 id="文件载入-1">文件载入</h3>
+<p>第一步还是和静态链接一样，当一个程序尝试启动的时候，会调用链接器找出所有的动态链接库，并将其加载到内存中，动态链接库是在进程之间共享的，因此如果其他的进程已经加载过了这个库，那么新的进程只需要 <code>mmap</code>映射过去即可。</p>
+<h3 id="重定向-1">重定向</h3>
+<p>所有动态链接库加载完成之后，和静态链接一样，需要将符号重定向，但是动态链接并不会直接修改符号表，符号表在运行阶段就是只读的了，而是会修改 GOT (Global Offset Table) 表，将实际定义地址写入。</p>
+<p>所有未定义符号全部重定向完成之后，程序就可以正常运行了。不过如果在这期间有符号无法找到定义，则程序会立刻退出并报错：<code>symbol not found</code>。</p>
+<h1 id="e-运行流程">E: 运行流程</h1>
+<p>在上面的段落中，我们详细了解了 ELF 文件的格式，各个组成部分的含义，这是它们处于文件时静态状态，当 ELF 文件被执行的时候，各个部分之间又是如何串联并运行起来的呢？</p>
+<p>在 Linux 系统下，ELF 加载并运行的入口是 <a href="https://elixir.bootlin.com/linux/v6.5.5/source/fs/binfmt_elf.c#L823">load_elf_binary</a> 函数，大概分为如下流程。</p>
+<p>除了直接阅读内核源代码，我们还可以使用 <code>bpftrace</code> 辅助我们进行分析，详细使用教程可以参考<a href="https://huweicai.com/kernel-debug-tips/">《Linux 内核轻量级调试小技巧》</a>，比如这里 <code>load_elf_binary</code> 函数签名为：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">int</span> <span class="nf">load_elf_binary</span><span class="p">(</span><span class="k">struct</span> <span class="n">linux_binprm</span> <span class="o">*</span><span class="n">bprm</span><span class="p">);</span>
+</span></span></code></pre></div><p>入参是一个 <code>linux_binprm</code>结构体，当我们通过包管理命令安装好了 <code>bpftrace</code> 之后，执行如下命令（这里为了方便演示牺牲可读性压缩成了单行命令，实际运行时可以使用脚本文件的形式）就可直接打印出来内核中 <code>load_elf_binary</code> 函数每次被调用时，对应的 bprm 参数中的各个变量值究竟都是什么：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bpftrace -e <span class="s1">&#39;kprobe:load_elf_binary { $bprm = (struct linux_binprm*)arg0; printf(&#34;load_elf_binary called with bprm:\n&#34;); printf(&#34;  filename: %s\n&#34;, str($bprm-&gt;filename)); printf(&#34;  interp: %s\n&#34;, str($bprm-&gt;interp)); printf(&#34;  execfd: %d\n&#34;, $bprm-&gt;execfd); printf(&#34;  argc: %d\n&#34;, $bprm-&gt;argc); printf(&#34;  envc: %d\n&#34;, $bprm-&gt;envc); printf(&#34;  e_uid: %d\n&#34;, $bprm-&gt;cred-&gt;euid.val); printf(&#34;  e_gid: %d\n&#34;, $bprm-&gt;cred-&gt;egid.val); }&#39;</span>
+</span></span></code></pre></div><p>任意执行一个二进制程序触发 <code>load_elf_binary</code> 后会有如下输出：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">load_elf_binary called with bprm:
+</span></span><span class="line"><span class="cl">  filename: ./helloworld
+</span></span><span class="line"><span class="cl">  interp: ./helloworld
+</span></span><span class="line"><span class="cl">  execfd: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">  argc: <span class="m">1</span>
+</span></span><span class="line"><span class="cl">  envc: <span class="m">37</span>
+</span></span><span class="line"><span class="cl">  e_uid: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">  e_gid: <span class="m">0</span>
+</span></span></code></pre></div><p>该函数出参为一个 int，可以这么分析：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1">#bpftrace -e &#39;kretprobe:load_elf_binary { printf(&#34;load_elf_binary called with ret: %d\n&#34;, retval); }&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Attaching <span class="m">1</span> probe...
+</span></span><span class="line"><span class="cl">load_elf_binary called with ret: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">load_elf_binary called with ret: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">load_elf_binary called with ret: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">load_elf_binary called with ret: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">load_elf_binary called with ret: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">load_elf_binary called with ret: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">load_elf_binary called with ret: <span class="m">0</span>
+</span></span></code></pre></div><h2 id="基本校验">基本校验</h2>
+<p>这一步会对 ELF 的文件头信息进行一些基本的校验，比如：</p>
+<ul>
+<li>Magic number</li>
+<li><code>e_type</code>是否为可执行类型 (<code>ET_EXEC</code> or <code>ET_DYN</code>)</li>
+<li>架构是否和当前 CPU 架构匹配</li>
+</ul>
+<h2 id="加载段表">加载段表</h2>
+<p>内核会根据 ELF Header 中的 <code>e_phoff</code> 找到段表的起始位置，然后根据 <code>e_phnum</code>知道段的数量一次性从文件中将所有的 section header 全部 <code>read</code>出来。</p>
+<p>如果段表中存在类型 PT_INTERP 的解释器段，则内核还会在该段中指定的解释器位置进行加载，通常是：<code>/lib/ld-linux.so.2</code>，解释器会在之后负责加载并解析程序运行中会用到的动态链接库。</p>
+<h2 id="内存加载">内存加载</h2>
+<p>接下来内核会遍历所有的类型为 <code>PT_LOAD</code> 的可加载段，根据段头中的内存起始位置和内存大小分配对应的内存，同时设置读写权限。</p>
+<p>理论上这些变量和函数的位置都是固定的，因为这些都是在 ELF 文件中固定存在的，但是实际我们去运行程序的时候，就会发现似乎并实际上不是这样。这是 ASLR (Address Space Layout Randomization) 机制作用的结果，为了避免内存溢出等攻击，该机制会让虚拟内存地址随机化，从而避免攻击者能提前得到某个敏感变量的内存地址而展开攻击。</p>
+<p>在内存加载的时候，所有的可加载段中的变量都需要加上偏移量 <code>load_bias</code>，才是它们实际的内存地址。</p>
+<p>分配完内存后，内核就会将所有的段中的数据复制到对应的内存地址，比如我们所熟知的  <code>.text</code> <code>.data</code> 段就会位于这些可加载段中，这些段内的变量经过这一步之后就正式完成了初始化。</p>
+<h2 id="设置变量">设置变量</h2>
+<p>在 <code>create_elf_tables</code>函数中，内核会将传入的命令行参数和环境变量等通过 <code>PUT_USER</code>压入进程栈中，供进程执行时读取。</p>
+<h2 id="启动">启动</h2>
+<p>一切准备就绪后，内核会将控制权移交给 Header 中指定的程序入口点，在大部分编译器的实现中，这个函数通常不会直接是用户代码中的<code>main</code>函数，程序运行时本身在启动之前也会有一些初始化工作需要完成，例如在 <code>gcc</code> 和 <code>g++</code> 编译出的程序中这个入口是 <code>_start</code>函数，在 Golang 标准编译器中，这个入口是<code>_rt0_amd64_linux</code> 。</p>
+<p>到此 ELF 加载阶段就全部完成，用户进程正式开始启动。</p>
+<h1 id="references">References</h1>
+<ol>
+<li>ELF File Formats Manual <a href="https://man7.org/linux/man-pages/man5/elf.5.html">https://man7.org/linux/man-pages/man5/elf.5.html</a></li>
+<li>Executable and Linking Format (ELF) Specification <a href="https://refspecs.linuxbase.org/elf/elf.pdf">https://refspecs.linuxbase.org/elf/elf.pdf</a></li>
+<li>ld - The GNU linker <a href="https://linux.die.net/man/1/ld">https://linux.die.net/man/1/ld</a></li>
+</ol>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/linux" role="button">linux </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/shared-memory/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>很快的共享内存</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#elf">
+												 ELF
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#f-%e6%96%87%e4%bb%b6%e6%a0%bc%e5%bc%8f">
+												 F: 文件格式
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%96%87%e4%bb%b6%e5%a4%b4">
+												 文件头
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%ae%b5-segment">
+												 段: Segment
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%b4%e9%83%a8program-header">
+												 头部（Program Header）
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%8a%82-section">
+												 节: Section
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%b4%e9%83%a8">
+												 头部
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#sections">
+												 Sections
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#bss">
+												 .bss
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#comment-%e6%b3%a8%e9%87%8a">
+												 .comment 注释
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#data-rodata-datarelro-%e6%95%b0%e6%8d%ae%e8%8a%82">
+												 .data .rodata .data.rel.ro 数据节
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#hash-%e5%93%88%e5%b8%8c%e8%a1%a8">
+												 .hash 哈希表
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#text">
+												 .text
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#dynamic">
+												 .dynamic
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#line">
+												 .line
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#note">
+												 .note
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#strtab-%e5%ad%97%e7%ac%a6%e4%b8%b2%e8%a1%a8">
+												 .strtab 字符串表
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#shstrtab-%e8%8a%82%e5%a4%b4%e5%ad%97%e7%ac%a6%e4%b8%b2%e8%a1%a8">
+												 .shstrtab 节头字符串表
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#symtab-dynsym-%e7%ac%a6%e5%8f%b7%e8%a1%a8">
+												 .symtab .dynsym 符号表
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#got-plt">
+												 .got .plt
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#l-%e9%93%be%e6%8e%a5%e6%b5%81%e7%a8%8b">
+												 L: 链接流程
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%9d%99%e6%80%81%e9%93%be%e6%8e%a5">
+												 静态链接
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%96%87%e4%bb%b6%e8%bd%bd%e5%85%a5">
+												 文件载入
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%87%8d%e5%ae%9a%e5%90%91">
+												 重定向
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%ae%b5%e5%90%88%e5%b9%b6">
+												 段合并
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%80%81%e9%93%be%e6%8e%a5">
+												 动态链接
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%96%87%e4%bb%b6%e8%bd%bd%e5%85%a5-1">
+												 文件载入
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%87%8d%e5%ae%9a%e5%90%91-1">
+												 重定向
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#e-%e8%bf%90%e8%a1%8c%e6%b5%81%e7%a8%8b">
+												 E: 运行流程
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9f%ba%e6%9c%ac%e6%a0%a1%e9%aa%8c">
+												 基本校验
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a0%e8%bd%bd%e6%ae%b5%e8%a1%a8">
+												 加载段表
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%86%85%e5%ad%98%e5%8a%a0%e8%bd%bd">
+												 内存加载
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%ae%be%e7%bd%ae%e5%8f%98%e9%87%8f">
+												 设置变量
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%90%af%e5%8a%a8">
+												 启动
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#references">
+												 References
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2023 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
