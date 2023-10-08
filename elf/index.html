@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="ELF Executable and Linkable Format，翻译过来叫可执行与可链接格式，是 Linux 操作系统的标准可执行文件格式，即我们写的代码想要在 Linux 上运行起来，就都得编译成这种格式才行。此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采纳 ELF 作为其可执行文件格式。 本文按照 FLE 的顺序分成三个部分介绍 ELF：F: 文件格式 L: 链接流程 E: 运行流程。 F: 文件格式 ELF 是一种通用的标准，格式定义的源代码我们可以在 glibc 代码仓库中找到: elf.h ELF 格式主要由以下部分">
+  <meta name="description" content="ELF Executable and Linkable Format，可执行与可链接格式，是 Linux 操作系统的标准可执行文件格式，在 Linux 上运行我们编写的代码时，就需要将其编译成 ELF 格式。 它定义了可执行文件、共享库和核心转储文件的结构和布局。ELF 文件格式在操作系统中起着重要的作用，它使得我们编写的代码能够被正确地编译、链接和执行。 此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采用 ELF 作为其可执行文件格式。 ELF 文件格式被设计为可扩展和灵活的，以适应不">
 
   <meta property="og:title" content="Executable and Linkable Format" />
-<meta property="og:description" content="ELF Executable and Linkable Format，翻译过来叫可执行与可链接格式，是 Linux 操作系统的标准可执行文件格式，即我们写的代码想要在 Linux 上运行起来，就都得编译成这种格式才行。此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采纳 ELF 作为其可执行文件格式。 本文按照 FLE 的顺序分成三个部分介绍 ELF：F: 文件格式 L: 链接流程 E: 运行流程。 F: 文件格式 ELF 是一种通用的标准，格式定义的源代码我们可以在 glibc 代码仓库中找到: elf.h ELF 格式主要由以下部分" />
+<meta property="og:description" content="ELF Executable and Linkable Format，可执行与可链接格式，是 Linux 操作系统的标准可执行文件格式，在 Linux 上运行我们编写的代码时，就需要将其编译成 ELF 格式。 它定义了可执行文件、共享库和核心转储文件的结构和布局。ELF 文件格式在操作系统中起着重要的作用，它使得我们编写的代码能够被正确地编译、链接和执行。 此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采用 ELF 作为其可执行文件格式。 ELF 文件格式被设计为可扩展和灵活的，以适应不" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/elf/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2023-10-07T13:58:00+08:00" />
@@ -293,9 +293,9 @@
 
         
             <li class="middot"></li>
-            <li>12 minutes read</li>
+            <li>13 minutes read</li>
         
-        <li>5530 words</li>
+        <li>6307 words</li>
 
     </ul>
     
@@ -305,12 +305,21 @@
 
           <div class="post-content markdown">
             <h1 id="elf">ELF</h1>
-<p>Executable and Linkable Format，翻译过来叫<strong>可执行与可链接格式</strong>，是 Linux 操作系统的标准可执行文件格式，即我们写的代码想要在 Linux 上运行起来，就都得编译成这种格式才行。此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采纳 ELF 作为其可执行文件格式。</p>
-<p>本文按照 FLE 的顺序分成三个部分介绍 ELF：<code>F: 文件格式</code> <code>L: 链接流程</code> <code>E: 运行流程</code>。</p>
+<p>Executable and Linkable Format，<strong>可执行与可链接格式</strong>，是 Linux 操作系统的标准可执行文件格式，在 Linux 上运行我们编写的代码时，就需要将其编译成 ELF 格式。</p>
+<p>它定义了可执行文件、共享库和核心转储文件的结构和布局。ELF 文件格式在操作系统中起着重要的作用，它使得我们编写的代码能够被正确地编译、链接和执行。</p>
+<p>此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采用  ELF 作为其可执行文件格式。</p>
+<p>ELF 文件格式被设计为可扩展和灵活的，以适应不同类型的程序和库。它可以容纳各种类型的数据和指令，包括机器代码、全局和局部符号表、重定位表、调试信息等。这种灵活性使得 ELF 文件格式能够适应不同的编程语言和编译器，并支持各种操作系统特性和功能。</p>
+<p>本文将按照 F L E 的顺序分成三个部分介绍 ELF：<code>F: 文件格式</code> <code>L: 链接流程</code> <code>E: 运行流程</code>。</p>
 <h1 id="f-文件格式">F: 文件格式</h1>
-<p>ELF 是一种通用的标准，格式定义的源代码我们可以在 glibc 代码仓库中找到: <a href="https://github.com/bminor/glibc/blob/master/elf/elf.h">elf.h</a></p>
-<p>ELF 格式主要由以下部分组成：</p>
+<p>ELF 是一种通用的标准格式，格式定义的源代码我们可以在 glibc 代码仓库中找到: <a href="https://github.com/bminor/glibc/blob/master/elf/elf.h">elf.h</a>。</p>
+<p>ELF 文件本质由两部分组成：</p>
+<ul>
+<li>一些存储着元信息的头部 (下图中红色部分)</li>
+<li>存储着实际数据的节 （下图中灰色部分）</li>
+</ul>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20231008211723.png" alt="未命名文件(10)"></p>
 <h2 id="文件头">文件头</h2>
+<p>文件头中定义了一些全局的相关信息。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span>
 </span></span><span class="line"><span class="cl"><span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="c1">// Magic Number 和一些元信息，共 16 字节，前四字节为 Magic Number，固定为：7f454c46( \177ELF)
@@ -358,7 +367,9 @@
 </span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">Elf64_Ehdr</span><span class="p">;</span>
 </span></span></code></pre></div><h2 id="段-segment">段: Segment</h2>
 <p>Segment 是文件在加载并映射到内存的基本单位，内存都是一段一段地映射的。</p>
-<h3 id="头部program-header">头部（Program Header）</h3>
+<p>在 ELF 中，段并没有实体结构，只有段头标注这个段的起始位置和长度，以及一些额外的关于内存映射的元信息，段的内部是一个一个的节，比如：<code>.bss</code> 和 <code>.data</code> 就会被放置在同一个类型为 <code>PT_LOAD</code> 权限为 <code>READ ONLY</code> 的段中。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20231008212610.png" alt="未命名文件(11)"></p>
+<h3 id="段头-program-header">段头: Program Header</h3>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span>
 </span></span><span class="line"><span class="cl"><span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="c1">// 段的类型
@@ -367,7 +378,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 3 PT_INTERP: 解释器路径段，用于指定可执行文件依赖的解释器路径
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 4 PT_NOTE: 注释段，存储一些调试或者其他附加信息
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 5 PT_SHLIB: 表示保留给共享库使用的段类型，不常见
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 6 PT_PHDR: TODO
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 6 PT_PHDR: 入口段头表，存储了其他段头表的位置
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// ...
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Word</span>	<span class="n">p_type</span><span class="p">;</span>			<span class="cm">/* Segment type */</span>
 </span></span><span class="line"><span class="cl">  
@@ -393,7 +404,10 @@
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Xword</span>	<span class="n">p_align</span><span class="p">;</span>		<span class="cm">/* Segment alignment */</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">Elf64_Phdr</span><span class="p">;</span>
 </span></span></code></pre></div><h2 id="节-section">节: Section</h2>
-<h3 id="头部">头部</h3>
+<p>ELF 文件中的节（Section）是承载数据的基本单元，每个节都有不同的数据组织方式和承担不同的功能。</p>
+<p>在一个 ELF 文件中，各个节存储了不同类型的数据，如代码、数据、符号表、重定位信息、调试信息等。</p>
+<p>每个节都有一个唯一的名称和一组属性，用于描述其内容和用途。</p>
+<h3 id="节头-section-header">节头: Section Header</h3>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span>
 </span></span><span class="line"><span class="cl"><span class="p">{</span>
 </span></span><span class="line"><span class="cl">  <span class="c1">// Section 名称在字符串表中的索引
@@ -407,7 +421,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 5 SHT_HASH: 符号哈希表
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 6 SHT_DYNAMIC: 包含动态链接所需信息
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 8 SHT_NOBITS: BSS
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// TODO
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// ...
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Word</span>	<span class="n">sh_type</span><span class="p">;</span>		<span class="cm">/* Section type */</span>
 </span></span><span class="line"><span class="cl">  
 </span></span><span class="line"><span class="cl">  <span class="c1">// 一些标志位：
@@ -439,10 +453,9 @@
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Elf64_Xword</span>	<span class="n">sh_entsize</span><span class="p">;</span>		<span class="cm">/* Entry size if section holds table */</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">Elf64_Shdr</span><span class="p">;</span> <span class="c1">// Section Header
 </span></span></span></code></pre></div><h3 id="sections">Sections</h3>
-<p>在 ELF 规范中，很多特殊的节的功能已经被规范定义好了。</p>
+<p>不同的节在 ELF 文件中按照一定的规则进行组织和排列，一些常见的节包括：。</p>
 <h4 id="bss">.bss</h4>
 <p>BSS (Block Started by Symbol)，通常用于存储未初始化的静态变量和全局变量，需要事先分配好空间，待程序运行初始化之后才会被赋值；这段空间在文件中就是空的，只需要申明长度即可，节类型是上文中提到的 <code>SHT_NOBITS</code>。</p>
-<!--TODO 是否就是对应虚拟内存中的 BSS Segment ？-->
 <h4 id="comment-注释">.comment 注释</h4>
 <p>该节主要是提供给编译器和其他工具存放注释信息，与程序运行无关，方便 DEBUG 排查问题的，比如 gcc 编译出来的 ELF 文件 .comment 节中就会存放着 gcc 的版本号。</p>
 <h4 id="data-rodata-datarelro-数据节">.data .rodata .data.rel.ro 数据节</h4>
@@ -459,9 +472,23 @@
 <p>每个程序的函数入口则是在我们上文中提到的文件头中 <code>Elf64_Addr	e_entry;</code> 字段指定，操作系统运行程序时就会找到该地址对应的函数，然后开始执行，这个函数又会调用其他函数从而把整个程序串联了起来。</p>
 <p>我们可以通过 <code>objdump -d -j .text &lt;elf_file_name&gt;</code>来反编译并查看某个 ELF 文件对应的 <code>.text</code>中的代码内容。</p>
 <h4 id="dynamic">.dynamic</h4>
-<p>包含了动态链接相关的一些信息。</p>
-<!--TODO-->
-<h4 id="line">.line</h4>
+<p>包含了动态链接相关的一些元信息。</p>
+<p>该节的基本数据结构是 Elf64_Dyn，组成了一个数组，每个条目有一种类型表明该条目中存储的数据类型，对应的 d_val 或者 d_ptr 则存储了实际的值。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 条目类别：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 0 DT_NULL   标志数组结尾
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 1 DT_NEEDED 该条目 d_un.d_val 标注了所依赖的动态链接库名字符串表索引，会存在多个
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 3 DT_PLTGOT 该条目 d_un.d_ptr 中存储 GOT 表的地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 5 DT_STRTAB 该条目 d_un.d_ptr 中存储字符串表地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 15 DT_RPATH 动态链接库搜索路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  
+</span></span><span class="line"><span class="cl">  <span class="n">Elf64_Sxword</span> <span class="n">d_tag</span><span class="p">;</span>		<span class="cm">/* entry tag value */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">union</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Elf64_Xword</span> <span class="n">d_val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Elf64_Addr</span> <span class="n">d_ptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="n">d_un</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">Elf64_Dyn</span><span class="p">;</span>
+</span></span></code></pre></div><h4 id="line">.line</h4>
 <p>调试信息的一部分，<code>.line</code> 节中保存了代码文件行号和<code>.text</code>节中指令之间的映射。</p>
 <h4 id="note">.note</h4>
 <p><code>.note</code> 跟 <code>.comment</code> 有点类似，但它是有实际作用的，其中会包含 <code>build-id</code>、ABI 版本、操作系统类型等元信息。</p>
@@ -472,6 +499,7 @@
 <p>一个示例，某字符串表的内容可能如下：</p>
 <pre tabindex="0"><code>0053637274312e6f005f5f6162695f7461670063727473747566662e6300646572656769737465725f746d5f636c6f6e657300
 </code></pre><p>按照 <code>'\0'</code>（十六进制为 00）分隔的话，就能解析出如下内容：</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20231008213542.png" alt="未命名文件(12)"></p>
 <table>
 <thead>
 <tr>
@@ -540,8 +568,9 @@
 <p>GOT (Global Offset Table) 全局偏移表，是用于确定动态链接函数实际位置的一张表，在编译阶段是留空的，程序启动的时候才会逐渐填充。</p>
 <p>PLT (Procedure Linkage Table) 程序链接表，这是实现 Lazy Binding 的关键，动态链接定义的函数被调用时，会先跳转到 PLT 表，然后 PLT 会调用 GOT 查询这个函数实际的定义位置，如果 GOT 中没有该函数的条目，PLT 就会调用链接器去解析该函数的地址，然后写入到 GOT 中，再跳转到函数定义位置执行代码。</p>
 <h1 id="l-链接流程">L: 链接流程</h1>
-<p>当我们在引用第三方库时，就需要将第三库文件链接到我们的程序上，这样在运行时才能找到对应的代码入口。</p>
+<p>当我们在引用第三方库时，需要将库文件链接到我们的程序中，以便在运行时能够找到对应的代码入口和函数实现。</p>
 <p>链接分为<code>静态链接</code>和<code>动态链接</code>两种，静态链接会将库文件并入到最终的 ELF 二进制中，而动态链接则是在运行时再去动态查找库文件。</p>
+<p>选择静态链接还是动态链接取决于具体的应用需求和目标平台。静态链接适用于需要独立部署、可移植性要求高的场景，而动态链接适用于共享库的复用和更新的场景。在实际开发中，可以根据项目需求和性能、资源等方面的考虑，选择合适的链接方式来引用和管理第三方库。</p>
 <h2 id="静态链接">静态链接</h2>
 <p>静态链接通常是编译流程的最后一环，大体流程如下：</p>
 <h3 id="文件载入">文件载入</h3>
@@ -795,8 +824,8 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%a4%b4%e9%83%a8program-header">
-												 头部（Program Header）
+						 					<a class="nav-link" href="#%e6%ae%b5%e5%a4%b4-program-header">
+												 段头: Program Header
 											</a>
 										</li>
 						 
@@ -851,8 +880,8 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%a4%b4%e9%83%a8">
-												 头部
+						 					<a class="nav-link" href="#%e8%8a%82%e5%a4%b4-section-header">
+												 节头: Section Header
 											</a>
 										</li>
 						 
