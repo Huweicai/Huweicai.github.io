@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="ELF Executable and Linkable Format，可执行与可链接格式，是 Linux 操作系统的标准可执行文件格式，在 Linux 上运行我们编写的代码时，就需要将其编译成 ELF 格式。 它定义了可执行文件、共享库和核心转储文件的结构和布局。ELF 文件格式在操作系统中起着重要的作用，它使得我们编写的代码能够被正确地编译、链接和执行。 此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采用 ELF 作为其可执行文件格式。 ELF 文件格式被设计为可扩展和灵活的，以适应不">
+  <meta name="description" content="ELF Executable and Linkable Format，可执行与可链接格式，其一个很熟悉的身份就是 Linux 操作系统的标准可执行文件格式，在 Linux 上运行我们编写的代码时，就需要将其编译成 ELF 格式。 另外它还定义了共享库和核心转储文件的结构和布局。 ELF 文件格式在操作系统中起着重要的作用，它使得我们编写的代码能够被正确地编译、链接和执行。 此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采用 ELF 作为其可执行文件格式。 ELF 文件格式被设计为可扩展和灵活的">
 
   <meta property="og:title" content="Executable and Linkable Format" />
-<meta property="og:description" content="ELF Executable and Linkable Format，可执行与可链接格式，是 Linux 操作系统的标准可执行文件格式，在 Linux 上运行我们编写的代码时，就需要将其编译成 ELF 格式。 它定义了可执行文件、共享库和核心转储文件的结构和布局。ELF 文件格式在操作系统中起着重要的作用，它使得我们编写的代码能够被正确地编译、链接和执行。 此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采用 ELF 作为其可执行文件格式。 ELF 文件格式被设计为可扩展和灵活的，以适应不" />
+<meta property="og:description" content="ELF Executable and Linkable Format，可执行与可链接格式，其一个很熟悉的身份就是 Linux 操作系统的标准可执行文件格式，在 Linux 上运行我们编写的代码时，就需要将其编译成 ELF 格式。 另外它还定义了共享库和核心转储文件的结构和布局。 ELF 文件格式在操作系统中起着重要的作用，它使得我们编写的代码能够被正确地编译、链接和执行。 此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采用 ELF 作为其可执行文件格式。 ELF 文件格式被设计为可扩展和灵活的" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/elf/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2023-10-07T13:58:00+08:00" />
@@ -295,7 +295,7 @@
             <li class="middot"></li>
             <li>13 minutes read</li>
         
-        <li>6307 words</li>
+        <li>6312 words</li>
 
     </ul>
     
@@ -305,8 +305,9 @@
 
           <div class="post-content markdown">
             <h1 id="elf">ELF</h1>
-<p>Executable and Linkable Format，<strong>可执行与可链接格式</strong>，是 Linux 操作系统的标准可执行文件格式，在 Linux 上运行我们编写的代码时，就需要将其编译成 ELF 格式。</p>
-<p>它定义了可执行文件、共享库和核心转储文件的结构和布局。ELF 文件格式在操作系统中起着重要的作用，它使得我们编写的代码能够被正确地编译、链接和执行。</p>
+<p>Executable and Linkable Format，<strong>可执行与可链接格式</strong>，其一个很熟悉的身份就是 Linux 操作系统的标准可执行文件格式，在 Linux 上运行我们编写的代码时，就需要将其编译成 ELF 格式。</p>
+<p>另外它还定义了共享库和核心转储文件的结构和布局。</p>
+<p>ELF 文件格式在操作系统中起着重要的作用，它使得我们编写的代码能够被正确地编译、链接和执行。</p>
 <p>此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采用  ELF 作为其可执行文件格式。</p>
 <p>ELF 文件格式被设计为可扩展和灵活的，以适应不同类型的程序和库。它可以容纳各种类型的数据和指令，包括机器代码、全局和局部符号表、重定位表、调试信息等。这种灵活性使得 ELF 文件格式能够适应不同的编程语言和编译器，并支持各种操作系统特性和功能。</p>
 <p>本文将按照 F L E 的顺序分成三个部分介绍 ELF：<code>F: 文件格式</code> <code>L: 链接流程</code> <code>E: 运行流程</code>。</p>
