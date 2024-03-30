@@ -6,7 +6,16 @@
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sat, 07 Oct 2023 13:58:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 29 Jan 2024 09:50:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C/C&#43;&#43; &amp; Python 融合之道</title>
+      <link>https://huweicai.com/c-with-python-intercall/</link>
+      <pubDate>Mon, 29 Jan 2024 09:50:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/c-with-python-intercall/</guid>
+      <description>Python 解释器 正如软件系统通常分为定义与实现两部分，编程语言也是。 比如 C++ 标准是由国际标准化组织 ( ISO ) 下属的 ISO/IEC JTC1/SC22/WG21特别工作组制定的，最新标准为 C++ 20 (ISO/IEC 14882:2020)，这是定义；而其实现则有 GNU 的 gcc、微软的 visual c++、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。 Java 规范则是由 Oracle 主导的 JCP 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量</description>
+    </item>
+    
     <item>
       <title>Executable and Linkable Format</title>
       <link>https://huweicai.com/elf/</link>
@@ -345,6 +354,15 @@ It&amp;rsquo;s possible to edit the source code of kernel, adding log to print t
       
       <guid>https://huweicai.com/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/</guid>
       <description>slug: &amp;#34;stand-alone-network-model &amp;#34; tags: [&amp;#34;操作系统&amp;#34;,&amp;#34;网络&amp;#34;,&amp;#34;Linux&amp;#34;,&amp;#34;docker&amp;#34;,&amp;#34;容器&amp;#34;] date: 2021-06-20T01:20:00+08:00 toc: true title: 经典单机容器网络模型-Docker # 参考文档 1. https://docs.docker.com/network/bridge/ 2. https://docs.docker.com/network/iptables/</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://huweicai.com/untitled/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://huweicai.com/untitled/</guid>
+      <description></description>
     </item>
     
   </channel>

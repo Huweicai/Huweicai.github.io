@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="Python 解释器 正如软件系统通常分为定义与实现两部分，编程语言也是。 比如 C&#43;&#43; 标准是由国际标准化组织 ( ISO ) 下属的 ISO/IEC JTC1/SC22/WG21特别工作组制定的，最新标准为 C&#43;&#43; 20 (ISO/IEC 14882:2020)，这是定义；而其实现则有 GNU 的 gcc、微软的 visual c&#43;&#43;、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。 Java 规范则是由 Oracle 主导的 JCP 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量">
+
+  <meta property="og:title" content="C/C&#43;&#43; &amp; Python 融合之道" />
+<meta property="og:description" content="Python 解释器 正如软件系统通常分为定义与实现两部分，编程语言也是。 比如 C&#43;&#43; 标准是由国际标准化组织 ( ISO ) 下属的 ISO/IEC JTC1/SC22/WG21特别工作组制定的，最新标准为 C&#43;&#43; 20 (ISO/IEC 14882:2020)，这是定义；而其实现则有 GNU 的 gcc、微软的 visual c&#43;&#43;、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。 Java 规范则是由 Oracle 主导的 JCP 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/c-with-python-intercall/" /><meta property="article:section" content="" />
+<meta property="article:published_time" content="2024-01-29T09:50:00+08:00" />
+<meta property="article:modified_time" content="2024-01-29T09:50:00+08:00" />
+
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       C/C&#43;&#43; &amp; Python 融合之道 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/c-with-python-intercall/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://huweicai.com/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">C/C&#43;&#43; &amp; Python 融合之道</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2024-01-29</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>8 minutes read</li>
+        
+        <li>3933 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="python-解释器">Python 解释器</h1>
+<p>正如软件系统通常分为定义与实现两部分，编程语言也是。</p>
+<ul>
+<li>
+<p>比如 C++ 标准是由国际标准化组织 ( ISO ) 下属的 <code>ISO/IEC JTC1/SC22/WG21</code>特别工作组制定的，最新标准为 C++ 20 (<a href="https://www.iso.org/standard/79358.html">ISO/IEC 14882:2020</a>)，这是定义；而其实现则有 GNU 的 <a href="https://gcc.gnu.org/">gcc</a>、微软的 visual c++、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。</p>
+</li>
+<li>
+<p>Java 规范则是由 Oracle 主导的 <a href="https://www.jcp.org">JCP</a> 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量不同的实现。</p>
+</li>
+<li>
+<p>更别论应用更为广泛的 JavaScript 语言，<a href="https://tc39.es/ecma262/">ECMAScript</a> 的实现者至少有两位数。</p>
+</li>
+<li>
+<p>Python 作为一门广泛使用坐拥庞大社区支持的编程语言，更是如此。</p>
+</li>
+</ul>
+<p>Python 的语言规范是由 Python 软件基金会（PSF）负责制定的。</p>
+<p>不同于 ISO（国际标准化组织）或  ECMA（欧洲计算机制造商协会）这些更为正式的标准化机构，Python  的规范制定过程相对非正式，主要由社区驱动。</p>
+<p>与严格的书面标准相比，Python 标准给实现者留下了更多的灵活性和创造空间。</p>
+<p>Python 编程语言的“实现” 通常被称为解释器，由 PSF 官方维护的基于 C 语言实现解释器 <a href="https://github.com/python/cpython">CPython</a> 是使用最为广泛的解释器，也是大家默认 Python 实现。</p>
+<p>除此之外，还有：</p>
+<ul>
+<li>基于 JVM 实现的 <code>Jython</code> <code>graalpython</code>，方便与 Java 编程语言集成</li>
+<li>基于 .NET 框架实现的<code>Python.NET</code> <code>IronPython</code></li>
+<li>基于 Python ( RPython，Python 语法子集)自举实现的 JIT 解释器<code>PyPy</code></li>
+<li>适合于 IOT 场景的 <a href="https://github.com/micropython/micropython">MicroPython</a>，裁减了部分标准库优化了其资源占用</li>
+<li>哪里有 C 代码，哪里就有人在用 Rust 重写：<a href="https://github.com/RustPython/RustPython">RustPython</a></li>
+</ul>
+<p>回到正题，由于我们默认的 Python 解释器 CPython 就是基于 C 语言实现的，所以其与 C/C++ 系语言天然就具有较高的亲和性，这正是我们能顺畅地在 C++ 中调用 Python 的理论基础所在。</p>
+<p>在本文的后续部分，除非另有说明，提及的“解释器”均指的是由 Python 软件基金会官方维护的 CPython 解释器。</p>
+<h1 id="python-extension-module">Python Extension Module</h1>
+<p>具体到 Python 是如何与 C++ 集成的，这就不得不提到 <a href="https://docs.python.org/3/extending/extending.html">Extension Module</a> 机制了。</p>
+<p>众所周知，模块是 Python 代码组织中的一个重要单元，用于封装和重用代码，我们会通过 <code>import</code>关键字引入一个模块从而可以调用外部的代码。</p>
+<p>而 Python 的 Extension Module 机制则允许我们利用 C/C++ 去实现 Python module，C/C++ 中的函数会按照约定的签名映射成 Python 中的函数。</p>
+<p>代码开发完成之后，我们需要将之编译成一个动态链接库，Python 解释器在 <code>import</code>的时候会在<code>PYTHONPATH</code>以及一些约定的目录下，按照约定的名称进行搜索，解释器导入模块的查找顺序如下，以 <code>import foo</code> 为例：</p>
+<ol>
+<li><code>foo.py</code></li>
+<li>foo.pyc   (如果有编译过的字节码文件存在)</li>
+<li><code>foo.so</code>    (在 Unix-like 系统)</li>
+<li><code>foo.pyd</code>   (在 Windows 系统，相当于 DLL)</li>
+<li><code>_foo.so</code>   (可能的 C 扩展模块名字)</li>
+<li><code>foo.cpython-36m-x86_64-linux-gnu.so</code> (可能的带有版本号和架构的 C 扩展文件名)</li>
+</ol>
+<p><code>import</code>之后，在 Python 代码中，我们就可以像调用普通 Python 模块一样调用我们的 C/C++ 代码了。</p>
+<p>举个完整的例子，假设我们想要实现一个加法模块，以下是相关操作步骤。</p>
+<p>编辑 <code>add_module.c</code>文件：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 必须要 include python.h 头文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;Python.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// C 函数实现加法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="nf">add</span><span class="p">(</span><span class="n">PyObject</span><span class="o">*</span> <span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">double</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 解析传入的Python参数为C类型变量，dd 表示两个 double 类型变量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s">&#34;dd&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回计算结果，d 表示返回一个 double 类型的变量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">Py_BuildValue</span><span class="p">(</span><span class="s">&#34;d&#34;</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义模块要导出的方法列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="n">PyMethodDef</span> <span class="n">AddMethods</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;add&#34;</span><span class="p">,</span>  <span class="n">add</span><span class="p">,</span> <span class="n">METH_VARARGS</span><span class="p">,</span> <span class="s">&#34;Add two numbers&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">}</span>        <span class="c1">// Sentinel，标记数组的结束（C 数组无法直接获取长度，解释器会通过 Sentinel 来判断数组结尾）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义模块
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="k">struct</span> <span class="n">PyModuleDef</span> <span class="n">addmodule</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PyModuleDef_HEAD_INIT</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;add_module&#34;</span><span class="p">,</span>   <span class="c1">// 模块名
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nb">NULL</span><span class="p">,</span> <span class="c1">// 模块文档，可以设置为 NULL
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">-</span><span class="mi">1</span><span class="p">,</span>       <span class="c1">// 模块保留大小，-1 表示模块保持全局状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">AddMethods</span> <span class="c1">// 方法列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 初始化模块
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">PyMODINIT_FUNC</span> <span class="nf">PyInit_add_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">PyModule_Create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">addmodule</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>为了让这个 C 代码可以被 Python 解释器识别，我们需要将其编译成一个动态链接库：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">gcc -Wall -shared -fPIC -I/usr/include/python3.9 -L/usr/lib/python3.9/config-x86_64-linux-gnu -lpython3.9 add_module.c -o add_module.so
+</span></span></code></pre></div><p>此时我们就得到了一个 <code>add_module.so</code>文件，直接在 Python 代码中 <code>import</code>即可使用：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@ubuntu:/ <span class="c1"># python3.9</span>
+</span></span><span class="line"><span class="cl">Python 3.9.18 <span class="o">(</span>main, Feb <span class="m">26</span> 2024, 01:38:59<span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>GCC 11.4.0<span class="o">]</span> on linux
+</span></span><span class="line"><span class="cl">Type <span class="s2">&#34;help&#34;</span>, <span class="s2">&#34;copyright&#34;</span>, <span class="s2">&#34;credits&#34;</span> or <span class="s2">&#34;license&#34;</span> <span class="k">for</span> more information.
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; import add_module
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; print<span class="o">(</span>add_module.add<span class="o">(</span>6.6, 6.6<span class="o">))</span>
+</span></span><span class="line"><span class="cl">13.2
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt;
+</span></span></code></pre></div><p>在科学计算和人工智能领域，大量的 Python 库都在通过这种方式兼顾效率与性能，如：<code>NumPy</code>、<code>Pandas</code>、<code>Tensorflow</code>、<code>PyTorch</code> 等等。</p>
+<h1 id="c---python">C++ -&gt; Python</h1>
+<p>将 C++ 代码按照约定的方式编译即能让 Python 解释器识别，实现 Python 对于 C++ 代码的调用，那么反过来 C++ 该如何调用 Python 代码呢？</p>
+<p>在 C/C++ 中调用 Python 解释器运行，这种机制被称为 <a href="https://docs.python.org/3/extending/embedding.html">Embedding Python</a>，其实运作原理也是和 Extension Module 非常类似的。</p>
+<p>Python 解释器提供了一套 API ( <a href="https://docs.python.org/3/c-api/index.html">Python/C API</a> )，供 C/C++ 代码调用，C/C++ 可以借由这套 API 实现对于解释器的高效集成与复杂交互操作，包括导入模块、创建和操作 Python 对象、函数调用、传输与转换数据等等，几乎所有 Python 代码能实现的操作，也能通过这套代码在 C/C++ 中实现。</p>
+<p>举个例子，科学计算正是 Python 语言的强项之一，而 NumPy 是一个非常著名的 Python 科学计算库，我们可以尝试通过 Python/C API 将这种能力导入到 C/C++ 程序中，<code>numpy.linalg.norm</code> 函数可以计算一个一维数组对应的<strong>欧几里得范数</strong>，下文将介绍如何将该函数封装到 C/C++ 程序中；</p>
+<p>由于在复杂场景下 C 代码可读性要弱于 C++ 代码，下文案例采用 C++ 实现：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;Python.h&gt; // Python 头文件</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdexcept&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// C++ 包装函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">double</span> <span class="nf">numpy_linalg_norm</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">in_array</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Py_Initialize</span><span class="p">();</span> <span class="c1">// 初始化 Python 解释器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pName</span> <span class="o">=</span> <span class="n">PyUnicode_FromString</span><span class="p">(</span><span class="s">&#34;numpy.linalg&#34;</span><span class="p">);</span> <span class="c1">// 加载 NumPy 模块
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pModule</span> <span class="o">=</span> <span class="n">PyImport_Import</span><span class="p">(</span><span class="n">pName</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">pName</span><span class="p">);</span> <span class="c1">// 释放 pName（Python 引用计数 -1）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">pModule</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">PyErr_Print</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Py_Finalize</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&#34;Failed to load numpy.linalg module&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pFunc</span> <span class="o">=</span> <span class="n">PyObject_GetAttrString</span><span class="p">(</span><span class="n">pModule</span><span class="p">,</span> <span class="s">&#34;norm&#34;</span><span class="p">);</span> <span class="c1">// 获取 norm 函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pFunc</span> <span class="o">||</span> <span class="o">!</span><span class="n">PyCallable_Check</span><span class="p">(</span><span class="n">pFunc</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">PyErr_Print</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Py_Finalize</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&#34;Failed to retrieve norm function&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pList</span> <span class="o">=</span> <span class="n">PyList_New</span><span class="p">(</span><span class="n">in_array</span><span class="p">.</span><span class="n">size</span><span class="p">());</span> <span class="c1">// 创建一个 Python 列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">in_array</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 将 C++ 数组转换为 Python 列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">PyList_SetItem</span><span class="p">(</span><span class="n">pList</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">PyFloat_FromDouble</span><span class="p">(</span><span class="n">in_array</span><span class="p">[</span><span class="n">i</span><span class="p">]));</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pArgs</span> <span class="o">=</span> <span class="n">PyTuple_New</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">// 创建参数元组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">PyTuple_SetItem</span><span class="p">(</span><span class="n">pArgs</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pList</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pValue</span> <span class="o">=</span> <span class="n">PyObject_CallObject</span><span class="p">(</span><span class="n">pFunc</span><span class="p">,</span> <span class="n">pArgs</span><span class="p">);</span> <span class="c1">// 调用函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">pArgs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">pValue</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 判断是否成功调用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">PyErr_Print</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Py_Finalize</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&#34;Failed to call norm function&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">double</span> <span class="n">result</span> <span class="o">=</span> <span class="n">PyFloat_AsDouble</span><span class="p">(</span><span class="n">pValue</span><span class="p">);</span> <span class="c1">// 处理返回值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">pValue</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">pFunc</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">pModule</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">Py_Finalize</span><span class="p">();</span>     <span class="c1">// 关闭 Python 解释器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">in_array</span> <span class="o">=</span> <span class="p">{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">numpy_linalg_norm</span><span class="p">(</span><span class="n">in_array</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;L2 Norm of the array is: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">norm</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span> <span class="o">&amp;</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;An error occurred: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里由于依赖到了 <code>numpy</code>库，所以我们需要事先通过 Python 的包管理程序安装它：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">python3.9 -m pip install numpy
+</span></span></code></pre></div><p>然后保存这段代码，编译运行就能在标准输出中看到这个数组对应的欧几里得范数了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">g++ -o cpp_call_python_demo main.cpp -I/usr/include/python3.9 -lpython3.9
+</span></span></code></pre></div><h2 id="cython">Cython</h2>
+<p>尽管 <code>Python/C API</code>为 C/C++ 调用 Python 提供了理论上的可行性，但是我们通过上方的案例也不难看出，其复杂程度是相当高的，即使 Python 中诸如赋值、初始化这样简单的操作都需要映射成 C/C++ 中的一个函数，另外还需要进行相当频繁地错误判断与处理，手动引用释放等逻辑，复杂程序不亚于在二十一世纪手写汇编程序。</p>
+<p>为了实现 <code>numpy.linalg.norm([1, 2, 3, 4, 5, 6])</code>这一行代码，我们总共写了整整五十行代码，如果再多几行 Python 代码想必 C/C++ 程序的复杂度更是指数级爆炸增长。</p>
+<p><strong>Obviously，我们还需要一层”抽象“，而 Cython 可能正是我们寻找的答案。</strong></p>
+<blockquote>
+<p>The most widely used Python to C compiler.</p>
+</blockquote>
+<p>在 Cython 的 <a href="https://github.com/cython/cython">Github 主页</a>，它是这么介绍自己的。</p>
+<p>让我们来分析一下这句话，<code>compiler</code> 是宾语，意味着 Cython 本质上是一个编译器，而这个编译器的定语<code>Python to C</code> 则表明它这个编译器的输入是 Python 语言，而输出是 C 语言，这句话向我们精炼地概括了 Cython 的核心特性。</p>
+<p>Cython 官网首页的这一段话，则是其更加详细地介绍：</p>
+<blockquote>
+<p>The Cython language is a superset of the <strong>Python</strong> language that additionally supports calling <strong>C functions</strong> and declaring <strong>C types</strong> on variables and class attributes.</p>
+</blockquote>
+<p>这句话中的宾语则是”编程语言“，可能会让人有点困惑，不过正如第一节中所描述的：
+”编程语言也是由定义与实现两部分组成的“，Cython 也是。</p>
+<p>Cython 本质上是一门编程语言，在 Python 语法的基础上，加入了对于 C 语法的支持，使得它能非常恰当的胜任两门语言中的那一层胶水，不管是通过 Cython 开发 Extension Module，或者是 Embedding 到 C/C++ 程序中，都能省事很多。</p>
+<p>Cython 代码通常是以 <code>.pyx</code>结尾，<code>.pxd</code>文件则类比于 C 语言中的 <code>.h</code>头文件，用于存放结构定义，前面提到 Cython 是一个编译器，所以这门编程语言是一门编译型语言，Cython 编译器会每一个源代码文件编译成一个 C 或者 C++ 文件，这取决于我们的配置；</p>
+<p>然后我们需要再借助 C/C++ 编译器的帮助，将它们进一步编译成包含机器码指令的动态链接库，这就是我们最终的产物了，这个动态链接库是一个非常神奇的东西，胶水两边的语言都能无缝调用。</p>
+<p>首先它是符合 Python Extension Module 规范的，所以能被纯 Python 代码 <code>import</code>，其次它还能暴露 <code>public</code> 的 C/C++ 函数，所以也能在 C/C++ 程序中被调用，在两边代码的调用者视角中，就是简简单单引了个库，调个函数它就能把事给办了，不论在哪一边都是妥妥的一等公民。</p>
+<p>作为一门编程语言其语法细节当然也不是简单几笔就能概括完的，这里就不展开了，我们还是通过一个程序案例的方式来直观地感受一下。</p>
+<p>这里我们直接将上文基于 Python/C API 实现的 demo，转换成用 Cython 实现：</p>
+<p>首先我们需要安装 Cython 编译器：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">python3.9 -m pip install cython
+</span></span></code></pre></div><p>编辑文件 <code>numpy_wrapper.pyx</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cython" data-lang="cython"><span class="line"><span class="cl"><span class="c"># distutils: language = c++</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">numpy</span>
+</span></span><span class="line"><span class="cl"><span class="k">from</span> <span class="nn">libcpp.vector</span> <span class="k">cimport</span> <span class="n">vector</span>  <span class="c"># Cython 内置了对于部分 C++ STL 结构的封装</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 申明为 public 表明该函数需要被导出</span>
+</span></span><span class="line"><span class="cl"><span class="k">cdef</span> <span class="kr">public</span> <span class="kt">double</span> <span class="nf">numpy_linalg_norm</span><span class="p">(</span><span class="n">const</span> <span class="n">vector</span><span class="p">[</span><span class="n">double</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">in_array</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">cdef</span> <span class="kt">tuple</span> <span class="nf">py_tuple</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>  <span class="c"># 将 C++ vector 转换为 Python tuple</span>
+</span></span><span class="line"><span class="cl">    <span class="k">cdef</span> <span class="kt">int</span> <span class="nf">i</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">in_array</span><span class="o">.</span><span class="n">size</span><span class="p">()):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">py_tuple</span> <span class="o">+=</span> <span class="p">(</span><span class="n">in_array</span><span class="p">[</span><span class="n">i</span><span class="p">],)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">py_tuple</span><span class="p">)</span>  <span class="c"># Python 调用</span>
+</span></span></code></pre></div><p>这就是我们 <code>cython</code> 版本的代码了，可以看到其语法风格和 Python 基本差不多。</p>
+<p>然后我们需要配置一下构建逻辑 <code>setup.py</code>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">Cython.Build</span> <span class="kn">import</span> <span class="n">cythonize</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">setuptools</span> <span class="kn">import</span> <span class="n">setup</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">setuptools.extension</span> <span class="kn">import</span> <span class="n">Extension</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Extension</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;numpy_wrapper&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="s2">&#34;numpy_wrapper.pyx&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">        <span class="n">language</span><span class="o">=</span><span class="s2">&#34;c++&#34;</span><span class="p">,</span>  <span class="c1"># 使用 C++ 语言特性编译成 C++ 源文件</span>
+</span></span><span class="line"><span class="cl">        <span class="n">extra_compile_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;-std=c++20&#34;</span><span class="p">],</span>  <span class="c1"># 指示编译器使用 C++20 标准</span>
+</span></span><span class="line"><span class="cl">        <span class="n">extra_link_args</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;-std=c++20&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">setup</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;numpy_wrapper&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ext_modules</span><span class="o">=</span><span class="n">cythonize</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="n">extensions</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">language_level</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># 指定 Cython 编译器使用 Python 3 语法</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span></code></pre></div><p>编译之后：<code>python3.9 setup.py build_ext --inplace</code>，我们就能看到在当前文件夹下方多出来了几个文件：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@ubuntu# ls -1
+</span></span><span class="line"><span class="cl">build
+</span></span><span class="line"><span class="cl">numpy_wrapper.cpp
+</span></span><span class="line"><span class="cl">numpy_wrapper.cpython-39-x86_64-linux-gnu.so
+</span></span><span class="line"><span class="cl">numpy_wrapper.h
+</span></span><span class="line"><span class="cl">numpy_wrapper.pyx
+</span></span><span class="line"><span class="cl">setup.py
+</span></span></code></pre></div><p><code>.cpp</code> 和 .h 是 Cython 编译的产物，这两个文件进一步调用 gcc 编译就生成了我们上文提到的动态链接库：<code>numpy_wrapper.cpython-39-x86_64-linux-gnu.so</code>。</p>
+<p>然后我们就能像 C++ 程序调用常规第三方库的方式去开发了：</p>
+<ul>
+<li>include 这个头文件</li>
+<li>链接这个动态链接库，不过在这之前需要按照标准的动态链接库文件名格式重命名一下</li>
+<li>libpython 库也还是照样需要引用的</li>
+</ul>
+<p>组合一下编译命令就长这样了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"> g++ -o cpp_call_python_demo main.cpp -I/usr/include/python3.9 -lpython3.9 -L. -lnumpy_wrapper
+</span></span></code></pre></div><p>然后再简单修改一下我们的 C++ 代码就能得到同样的输出：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;Python.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdexcept&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;numpy_wrapper.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 初始化 Python 解释器，导入模块
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">initialize_py_interpreter</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PyImport_AppendInittab</span><span class="p">(</span><span class="s">&#34;numpy_wrapper&#34;</span><span class="p">,</span> <span class="n">PyInit_numpy_wrapper</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Py_Initialize</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">PyImport_ImportModule</span><span class="p">(</span><span class="s">&#34;numpy_wrapper&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">initialize_py_interpreter</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">in_array</span> <span class="o">=</span> <span class="p">{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">numpy_linalg_norm</span><span class="p">(</span><span class="n">in_array</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;L2 Norm of the array is: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">norm</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span> <span class="o">&amp;</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;An error occurred: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>而当我们反过来需要在 Python 中调用 C++ 的时候，Cython 也可以帮我们免去按照约定的 Python Extension Module 开发的中间层，C++ 代码还是按照正常流程开发就行，Cython 中可以直接 include 对应的 C++ 头文件，链接对应的动态链接库，然后再暴露给纯 Python 模块调用。</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/cpp" role="button">cpp </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/programing" role="button">programing </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/python" role="button">python </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/elf/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Executable and Linkable Format</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#python-%e8%a7%a3%e9%87%8a%e5%99%a8">
+												 Python 解释器
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#python-extension-module">
+												 Python Extension Module
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#c---python">
+												 C&#43;&#43; -&gt; Python
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#cython">
+												 Cython
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2024 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
