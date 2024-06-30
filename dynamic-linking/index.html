@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="函数链接 根据函数在编译期间的链接方式， 我们可以将函数分为三种： 直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。 静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。 动态链接（Dynamic Linking">
+
+  <meta property="og:title" content="动态链接是如何实现的" />
+<meta property="og:description" content="函数链接 根据函数在编译期间的链接方式， 我们可以将函数分为三种： 直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。 静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。 动态链接（Dynamic Linking" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/dynamic-linking/" /><meta property="article:section" content="" />
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       动态链接是如何实现的 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/dynamic-linking/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://huweicai.com/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">动态链接是如何实现的</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>0001-01-01</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>9 minutes read</li>
+        
+        <li>4416 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="函数链接">函数链接</h1>
+<p>根据函数在编译期间的链接方式， 我们可以将函数分为三种：</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20240701010900.png" alt="CALL"></p>
+<ul>
+<li><strong>直接调用</strong>（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。</li>
+<li><strong>静态链接</strong>（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。</li>
+<li><strong>动态链接</strong>（Dynamic Linking）：函数的地址在编译期间不可知，程序启动后才能通过加载动态库获取到实际的函数代码地址。</li>
+</ul>
+<p>前两种实现方式相对简单直接，本文主要分析第三种——动态链接是如何实现的。</p>
+<p>另外在开始之前，可以再简单复习一下编译链接流程：</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20240701013253.png" alt="image-20240701013253569"></p>
+<h1 id="动态链接的-hello-world">动态链接的 Hello World</h1>
+<p>首先让我们从一个最简单的动态链接模型开始，先创建一个提供 <code>say_hello()</code>的动态链接库：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// file: hello.h
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">say_hello</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// file: hello.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&#34;hello.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">say_hello</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Hello, World!&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>然后将之编译成一个动态链接库<code>libhello.so</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># -fPIC 代表生成位置无关代码，即使用相对地址而不是绝对地址</span>
+</span></span><span class="line"><span class="cl">gcc -o libhello.so -shared -fPIC hello.c
+</span></span></code></pre></div><p>然后我们再提供一个程序执行入口来调用这个动态链接库：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// file: main.c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&#34;hello/hello.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">say_hello</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>编译这个文件并链接上上面生成的动态链接库：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">gcc  main.c -I. -L./hello -lhello -o main
+</span></span></code></pre></div><p>运行这个程序，不过在这之前我们还需要配置一下让链接器可以找到我们生成的动态链接库：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/hello:<span class="nv">$LD_LIBRARY_PATH</span>
+</span></span></code></pre></div><p>运行它：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root# ./main
+</span></span><span class="line"><span class="cl">Hello, World!
+</span></span></code></pre></div><p>   一个再简单不过的程序，朴实无华的流程，但 <code>main</code>程序在调用<code>say_hello()</code>这个函数时，底层又是怎么实现的呢，这背后又隐藏着哪些秘密呢？</p>
+<h1 id="常规函数调用">常规函数调用</h1>
+<p>首先让我们回顾一下常规的函数调用是如何实现的，在调用非动态链接的函数时，ELF 文件中调用该函数行对应的汇编代码大致如下：</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">    116e:	e8 d6 ff ff ff       	call   1149 &lt;say_hello&gt;
+</code></pre><p><code>0x1149</code> （当然代码段被加载到内存之后需要加上 ASLR 随机生成的基址地址）该内存位置将存放着 <code>say_hello()</code>这个函数所有编译出的指令，调用 call 指令之后程序计数器寄将（PC）指向 <code>0x1149</code>，从该位置开始执行 <code>say_hello()</code> 函数的指令， 从代码的视角来看就是这个函数开始执行了。</p>
+<p>这是非动态链接的流程，要调用的函数在编译链接期间就已经确认好了最终的内存位置，只需要在调用的位置插入该函数的内存地址即可。</p>
+<p>但动态链接的函数，在链接期间肯定是确认不了内存位置的， 这又该如何处置呢？</p>
+<h1 id="动态链接函数调用">动态链接函数调用</h1>
+<p>接下来的调用链路会比较复杂，我们使用 <code>gdb</code>来进行汇编指令查看及内存分析。</p>
+<p>首先我们需要将二进制添加一些额外的参数进行编译避免编译器优化带来的困惑以及生成 <code>debug</code> 符号（比如汇编指令到源代码文件及行号的映射）：<code>gcc main.c -g -O0 -I. -L./hello -lhello -o main</code>。</p>
+<p>然后我们在 <code>gdb</code>中打开该二进制文件：<code>gdb --args ./main</code>。</p>
+<p>下面就可以在 <code>gdb</code>界面中对程序进行分析了，在我们输入 <code>run</code>命令之前，程序是尚未启动的，我们先观察一下此时的状态。</p>
+<p>首先我们先查看一下 <code>main()</code>函数的汇编代码，看一下 <code>say_hello()</code>这个函数是如何被调用的，和静态链接的指令又有何不同，使用 <code>disassemble</code>子命令可以方便的查看某一个函数的汇编指令：</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">(gdb) disassemble main
+Dump of assembler code for function main:
+   0x00000000004005fd &lt;+0&gt;:	push   %rbp
+   0x00000000004005fe &lt;+1&gt;:	mov    %rsp,%rbp
+   0x0000000000400601 &lt;+4&gt;:	mov    $0x0,%eax
+   0x0000000000400606 &lt;+9&gt;:	call   0x400500 &lt;say_hello@plt&gt;
+   0x000000000040060b &lt;+14&gt;:	pop    %rbp
+   0x000000000040060c &lt;+15&gt;:	ret
+End of assembler dump.
+(gdb)
+</code></pre><p>可以看到调用 <code>say_hello()</code>函数的中一行仍然是调用了 <a href="https://c9x.me/x86/html/file_module_x86_id_26.html">CALL 指令</a>，但是 CALL 指令的操作数变成了一个特殊的函数：<code>say_hello@plt</code>。</p>
+<p>我们继续查看这个特殊函数的汇编指令：</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">(gdb) disassemble &#39;say_hello@plt&#39;
+Dump of assembler code for function say_hello@plt:
+   0x0000000000400500 &lt;+0&gt;:	jmp    *0x200b22(%rip)        # 0x601028 &lt;say_hello@got.plt&gt;
+   0x0000000000400506 &lt;+6&gt;:	push   $0x2
+   0x000000000040050b &lt;+11&gt;:	jmp    0x4004d0
+End of assembler dump.
+(gdb)
+</code></pre><p><code>%rip</code>是指令指针寄存器（Instruction Pointer Register），存储当前指令的地址，这里 <code>0x200b22(%rip)</code>代表当前地址往后数 <code>0x200b22</code>个字节 的位置，<code>0x400500 +  0x200b22 = 0x601022</code> 对齐到 8 字节则为 <code>0x601028</code>；同时使用 * 取指针引用，然后 <code>jmp</code>指令跳转到 <code>0x601028</code>指向的地址。</p>
+<p>既然<code>0x601028</code>是个指针，那么我们就再看看这个指针里面存的是什么东西，使用 <code>x</code>（<strong>eXamine</strong>）来查看指针内容：</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">(gdb) x/gx 0x601028
+0x601028 &lt;say_hello@got.plt&gt;:	0x0000000000400506
+</code></pre><p>可以看到这里又指向回了 <code>say_hello@plt</code>函数的第二行：</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">   0x0000000000400506 &lt;+6&gt;:	push   $0x2
+</code></pre><p>为何绕了一圈又回来了呢，这里我们先按下不表，继续往下走，下一行又是一个 <code>jmp</code>指令，跳转到了地址 <code>0x4004d0</code>：</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">   0x000000000040050b &lt;+11&gt;:	jmp    0x4004d0
+</code></pre><p>jump 到了这个地址说明这里仍然是指令，我们使用 <code>disassemble</code>继续查看：</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">(gdb) disassemble 0x4004d0,+16
+Dump of assembler code from 0x4004d0 to 0x4004e0:
+   0x00000000004004d0:	push   0x200b32(%rip)        # 0x601008
+   0x00000000004004d6:	jmp    *0x200b34(%rip)        # 0x601010
+   0x00000000004004dc:	nopl   0x0(%rax)
+End of assembler dump.
+(gdb)
+</code></pre><p>可以看到这里将 <code>0x601008</code> 地址入栈之后，又跳转到了<code>0x601010</code>指针所指向的地址。</p>
+<p>但当我们想要查看这两个地址的内容时，会很遗憾的发现此时都是空的：</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">(gdb) x/gx 0x601008
+0x601008:	0x0000000000000000
+(gdb) x/gx 0x601010
+0x601010:	0x0000000000000000
+(gdb)
+</code></pre><p>难道线索到这里就中断了吗？程序运行起来是没有问题的，说明在运行的时候流程是不会在这里中断的，那我们也将程序运行起来之后再观察一下，使用 <code>start</code>命令让程序启动并暂停之后我们再查看一下：</p>
+<pre tabindex="0"><code>(gdb) start
+Temporary breakpoint 1 at 0x400601: file main.c, line 4.
+Starting program: ./main
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library &#34;/lib/x86_64-linux-gnu/libthread_db.so.1&#34;.
+
+Temporary breakpoint 1, main () at main.c:4
+4	    say_hello();
+(gdb) x/gx 0x601008
+0x601008:	0x00007ffff7ffe2e0
+(gdb) x/gx 0x601010
+0x601010:	0x00007ffff7fd8d30
+(gdb)
+</code></pre><p>这两个指针在加载完成之后就被填充了实际的内存地址。</p>
+<p>第一个指针是 <code>push</code>的参数，所以它是一个具体的变量值，而第二个是<code>jmp</code>的参数所以这里是指令，应该是某个函数的入口：</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">(gdb) x/gx 0x00007f34947f3150
+0x7f34947f3150:	0x0000000000000000
+(gdb) info symbol 0x00007f34945e6a30
+_dl_runtime_resolve_xsavec in section .text of /lib64/ld-linux-x86-64.so.2
+(gdb)
+</code></pre><p>进一步分析，第一个指针是干啥的 这里我们不得而知，而 第二个指针对应的是<code>_dl_runtime_resolve_xsavec</code>函数入口。进一步分析<code>_dl_runtime_resolve_xsavec</code>函数的实现细节我们会发现其相当复杂，这里我们先暂且打住，回归理论分析。</p>
+<h1 id="实现思路">实现思路</h1>
+<p>首先抛开上面的细节不谈，从 CPU 的角度来说，调用函数本质上不就是<strong>跳转到一个新的内存地址继续执行指令</strong>么？</p>
+<p>所以最关键的就是这个内存地址如何获取。</p>
+<p>静态链接的时候函数地址是能在链接期就确定的，但是我们动态链接函数的地址在动态链接库加载之后就也能知道了，那这样，我们编译的时候先留一个占位符，然后启动后加载了函数之后再更新一下汇编指令，将函数地址写回到调用的地方：</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">call [--PlaceHolder--] -&gt; call 0003ld
+</code></pre><p>这样后续运行不就和静态链接一样了？</p>
+<p>很遗憾，这个方案的问题在于，需要修改程序指令所在的代码段（<code>.text</code>）内存。</p>
+<p>而操作系统出于节省内存资源，提高重复加载效率的考虑，会将代码段、只读数据段（<code>.rodata</code>）在进程间复用，即我们运行同一个二进制启动了多个进程，它里面的代码指令也只会占用一份内存空间；</p>
+<p>那么代码段就只能是只读的，不然每个进程加载的动态链接库顺序或者数量可能不一致，所以加载出来的函数内存地址也不一样，这样就乱套了；另外操作系统不允许自修改代码也有安全方面的考虑，避免代码注入等攻击方式。</p>
+<p>既然代码段是只读的，那么我们折中一下，去可以修改的数据段（<code>.data</code>）找一个位置，存放加载后的函数地址，每次我们执行函数的时候就先去这个数据段里面把实际地址读取出来，然后再跳转过去执行，这样不就完美了么？</p>
+<p>是的，这就是动态链接函数调用大概的实现思路。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20240701005735.png" alt="CALL"></p>
+<h1 id="实现原理">实现原理</h1>
+<blockquote>
+<p><strong>BLACK SHEEP WALL.</strong></p>
+</blockquote>
+<p>接下来让我们切换到上帝视角，再来过一遍动态链接的实现原理。</p>
+<h2 id="plt-与-got">PLT 与 GOT</h2>
+<p><strong>GOT</strong>（Global Offset Table）全局偏移表，可以理解为一个指针数组，这里面的每一个条目都跟一个对应的动态链接函数对应，在程序加载完成之后， 这个指针就会指向实际的函数地址； 也就是我们上一节指的，位于可写的数据段中用来存放实际地址的地方。</p>
+<p><strong>PLT</strong>（Procedure Linkage Table）过程链接表，这个表中的每一项都是一个特殊的函数， 所有调用动态链接函数的指令， 都会先调用到这一个特殊的函数， 这个函数位于不可修改的代码段， 会配合 GOT 完成实际的动态链接调用流程。</p>
+<p>其实，这两张表也并不是什么特殊的黑科技， 顺着我们上面的思路， 实现动态链接，确实得有这么两个地方去放一些东西，实现之后也总得起个名吧，就有了 <strong>GOT</strong> 与 <strong>PLT</strong>。</p>
+<h2 id="实际调用流程">实际调用流程</h2>
+<p>我们再从理论上分析一下我们文章开头的那个对于 <code>say_hello()</code> 函数动态链接调用的那个 demo：</p>
+<ol>
+<li>首先编译器会在所有调用动态链接函数的地方，跳转到 <code>PLT</code>表，即 demo 中我们反汇编指令看到的特殊函数 <code>say_hello@plt</code></li>
+<li><code>PLT</code>函数第一行就会直接跳转到<code>GOT</code>表中指针（<code>0x601028</code>= <code>GOT</code> 表第五项）指向的位置</li>
+<li>但是第一次调用的时候， 动态链接库还没有加载，所以<code>GOT</code>表中的指针一开始会指向了<code>PLT</code>函数的第二行，加载这个动态链接库</li>
+<li><code>PLT</code>函数第二行会将立即数 2 入栈（<code>push   $0x2</code>），主要是表明这是<code>PLT</code>的第二个元素，后续让链接器可以根据栈里的数字知道要解析哪个函数，然后跳转到 <code>PLT</code>表的第一项（<code>4004d0</code>）</li>
+<li><code>PLT</code>表第一项也是一个特殊的函数
+<ol>
+<li>会将 <code>GOT</code>表第二项入栈（<code>push   0x200b32(%rip)        # 0x601008</code>），这里保存了当前模块的 ID，解析逻辑内部会用到</li>
+<li>然后跳转到第三项执行指令（<code>jmp    *0x200b34(%rip)        # 0x601010</code>）</li>
+<li><code>PLT</code> 表第三项在程序启动后会指向<code>_dl_runtime_resolve_xsavec</code>函数，会将实际函数的地址解析之后再写入到 <code>GOT</code>中对应的条目（<code>GOT[4]</code> = 0xXXXXXc）</li>
+</ol>
+</li>
+<li>加载完成之后，会直接再继续跳转的实际函数地址执行指令，完成此次调用</li>
+<li>后续调用的时候，<code>say_hello@plt</code>直接跳转到<code>GOT[4]</code>就能直接执行了</li>
+</ol>
+<p> 函数加载解析完成之后，从整个内存的宏观角度来看整体调用链路图如下：</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20240630205505.png" alt="shared memory(3)"></p>
+<p>[注解]：</p>
+<ul>
+<li>首先 Linux 内存被分为了用户态空间和内核态空间以及巨大的保留地，这里我们所有的故事都是发生在的低地址用户态内存空间内的</li>
+<li>用户态内存空间由低到高依次是：代码段、数据段（已初始化 <code>.data</code>）、数据段（未初始化 <code>.bss</code>）、堆、内存映射区、栈</li>
+<li>当前程序的代码顾名思义会在只读的代码段（<code>.text</code>）</li>
+<li><code>GOT</code> 表位于数据段（已初始化）部分（<code>.data</code>）</li>
+<li>动态链接库都会被加载到内存映射区（从磁盘文件直接映射到内存），它前面会给堆预留足够充足的扩容空间，所以这个地址的起始位置会非常高，也就是我们看到的实际动态链接库函数代码所在地址数字会非常大</li>
+<li>动态链接库也有自身的 <code>.text</code> <code>.data</code> <code> .bss</code></li>
+</ul>
+<p>这就是整体的调用实现流程（HOW），不过在这期间关于为什么（WHY）这么实现细心的你肯定会有一个很大的疑问：</p>
+<h2 id="为何有了-got-还需要-plt">为何有了 GOT 还需要 PLT？</h2>
+<p>理论上，<code>GOT</code>里面保存着实际的函数地址，这个信息是必须的，而<code>PLT</code>似乎则可有可无。</p>
+<p>是的，其实上面这个猜想并没有问题，gcc 6.1 版本引入了 <code>-fno-plt</code>选项（ <a href="https://gcc.gnu.org/legacy-ml/gcc-patches/2015-05/msg00001.html">合入 pr 细节</a>），允许编译时添加该选项以禁用<code>PLT</code>转为直接通过<code>GOT</code>调用，从而获取一定的性能提升。</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">(plt enabled)
+call   400500 &lt;say_hello@plt&gt;
+=&gt;
+(plt disabled) call the address in got directly
+call   *0x2eac(%rip)        # 3fe8 &lt;say_hello@Base&gt;
+</code></pre><p>但是这也是有代价的，禁用 <code>PLT</code>之后，动态链接库就无法<code>lazy binding</code>了，没有<code>PLT</code>辅助函数第二行和第三行的存在，动态链接函数就无法在运行时再进行解析，就算<code>GOT</code>初始化为链接器的地址，没有第二行立即数的入栈也无从得知是要解析哪一个函数。</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">Dump of assembler code for function say_hello@plt:
+   0x0000000000400500 &lt;+0&gt;:	jmp    *0x200b22(%rip)        # 0x601028 &lt;say_hello@got.plt&gt;
+   0x0000000000400506 &lt;+6&gt;:	push   $0x2
+   0x000000000040050b &lt;+11&gt;:	jmp    0x4004d0
+</code></pre><p><code>Lazy Binding</code>懒加载是一个非常有用的特性， 懒加载启用之后，所有的符号，只会在用到的时候才被解析， 能大幅提升程序启动速度， 降低不必要的内存消耗， 同时也也有助于一些诸如热加载之类的黑科技实现。</p>
+<p>所以除了一些特殊的场景，大部分时候，动态链接的实现还是需要仰仗<code>PLT</code>和<code>GOT</code>的通力合作。</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/c&#43;&#43;" role="button">c&#43;&#43; </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/compiler" role="button">compiler </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=https://huweicai.com/untitled/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span></span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%87%bd%e6%95%b0%e9%93%be%e6%8e%a5">
+												 函数链接
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%80%81%e9%93%be%e6%8e%a5%e7%9a%84-hello-world">
+												 动态链接的 Hello World
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b8%b8%e8%a7%84%e5%87%bd%e6%95%b0%e8%b0%83%e7%94%a8">
+												 常规函数调用
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8a%a8%e6%80%81%e9%93%be%e6%8e%a5%e5%87%bd%e6%95%b0%e8%b0%83%e7%94%a8">
+												 动态链接函数调用
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9e%e7%8e%b0%e6%80%9d%e8%b7%af">
+												 实现思路
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86">
+												 实现原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#plt-%e4%b8%8e-got">
+												 PLT 与 GOT
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%ae%9e%e9%99%85%e8%b0%83%e7%94%a8%e6%b5%81%e7%a8%8b">
+												 实际调用流程
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%ba%e4%bd%95%e6%9c%89%e4%ba%86-got-%e8%bf%98%e9%9c%80%e8%a6%81-plt">
+												 为何有了 GOT 还需要 PLT？
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2024 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
