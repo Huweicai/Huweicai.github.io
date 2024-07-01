@@ -9,12 +9,12 @@
   <meta name="author" content="Huweicai">
   <meta name="description" content="函数链接 根据函数在编译期间的链接方式， 我们可以将函数分为三种： 直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。 静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。 动态链接（Dynamic Linking">
 
-  <meta property="og:title" content="动态链接是如何实现的" />
+  <meta property="og:title" content="动态链接函数调用是如何实现的" />
 <meta property="og:description" content="函数链接 根据函数在编译期间的链接方式， 我们可以将函数分为三种： 直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。 静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。 动态链接（Dynamic Linking" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/dynamic-linking/" /><meta property="article:section" content="" />
-
-
+<meta property="article:published_time" content="2024-06-30T01:26:00+08:00" />
+<meta property="article:modified_time" content="2024-06-30T01:26:00+08:00" />
 
 
    
@@ -41,7 +41,7 @@
 
   <title>
   
-       动态链接是如何实现的 | Anonymous&#39; Blog 
+       动态链接函数调用是如何实现的 | Anonymous&#39; Blog 
   
   </title>
 
@@ -284,18 +284,18 @@
         
     </ul>
 
-    <div class="px-4 post-heading">动态链接是如何实现的</div>
+    <div class="px-4 post-heading">动态链接函数调用是如何实现的</div>
 
     <ul class="post-meta li-x mt-1">
         
-            <li>0001-01-01</li>
+            <li>2024-06-30</li>
         
 
         
             <li class="middot"></li>
             <li>9 minutes read</li>
         
-        <li>4416 words</li>
+        <li>4417 words</li>
 
     </ul>
     
@@ -472,7 +472,7 @@ _dl_runtime_resolve_xsavec in section .text of /lib64/ld-linux-x86-64.so.2
 <li>动态链接库也有自身的 <code>.text</code> <code>.data</code> <code> .bss</code></li>
 </ul>
 <p>这就是整体的调用实现流程（HOW），不过在这期间关于为什么（WHY）这么实现细心的你肯定会有一个很大的疑问：</p>
-<h2 id="为何有了-got-还需要-plt">为何有了 GOT 还需要 PLT？</h2>
+<h2 id="为什么有了-got-还需要-plt">为什么有了 GOT 还需要 PLT？</h2>
 <p>理论上，<code>GOT</code>里面保存着实际的函数地址，这个信息是必须的，而<code>PLT</code>似乎则可有可无。</p>
 <p>是的，其实上面这个猜想并没有问题，gcc 6.1 版本引入了 <code>-fno-plt</code>选项（ <a href="https://gcc.gnu.org/legacy-ml/gcc-patches/2015-05/msg00001.html">合入 pr 细节</a>），允许编译时添加该选项以禁用<code>PLT</code>转为直接通过<code>GOT</code>调用，从而获取一定的性能提升。</p>
 <pre tabindex="0"><code class="language-assembly" data-lang="assembly">(plt enabled)
@@ -519,16 +519,16 @@ call   *0x2eac(%rip)        # 3fe8 &lt;say_hello@Base&gt;
           <div class="row pt-3">
             <div class="col-md-6">
               
+                <a href=https://huweicai.com/c-with-python-intercall/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>C/C&#43;&#43; &amp; Python 融合之道</span>
+                  </div>
+                </a>
+              
             </div>
             
             <div class="col-md-6 text-right" >
-              
-                <a href=https://huweicai.com/untitled/ class="post-meta">Next
-                  <div class="pt-2 pb-5 flex-reverse">
-                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span></span>
-                  </div>
-                </a>
               
             </div>
           </div>
@@ -760,8 +760,8 @@ call   *0x2eac(%rip)        # 3fe8 &lt;say_hello@Base&gt;
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e4%b8%ba%e4%bd%95%e6%9c%89%e4%ba%86-got-%e8%bf%98%e9%9c%80%e8%a6%81-plt">
-												 为何有了 GOT 还需要 PLT？
+						 					<a class="nav-link" href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e6%9c%89%e4%ba%86-got-%e8%bf%98%e9%9c%80%e8%a6%81-plt">
+												 为什么有了 GOT 还需要 PLT？
 											</a>
 										</li>
 						 

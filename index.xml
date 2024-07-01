@@ -6,7 +6,16 @@
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Mon, 29 Jan 2024 09:50:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 30 Jun 2024 01:26:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>动态链接函数调用是如何实现的</title>
+      <link>https://huweicai.com/dynamic-linking/</link>
+      <pubDate>Sun, 30 Jun 2024 01:26:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/dynamic-linking/</guid>
+      <description>函数链接 根据函数在编译期间的链接方式， 我们可以将函数分为三种： 直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。 静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。 动态链接（Dynamic Linking</description>
+    </item>
+    
     <item>
       <title>C/C&#43;&#43; &amp; Python 融合之道</title>
       <link>https://huweicai.com/c-with-python-intercall/</link>
@@ -363,15 +372,6 @@ It&amp;rsquo;s possible to edit the source code of kernel, adding log to print t
       
       <guid>https://huweicai.com/untitled/</guid>
       <description></description>
-    </item>
-    
-    <item>
-      <title>动态链接是如何实现的</title>
-      <link>https://huweicai.com/dynamic-linking/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://huweicai.com/dynamic-linking/</guid>
-      <description>函数链接 根据函数在编译期间的链接方式， 我们可以将函数分为三种： 直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。 静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。 动态链接（Dynamic Linking</description>
     </item>
     
   </channel>

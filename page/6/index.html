@@ -604,24 +604,24 @@
           
           <div class="post-wrapper white-bg post-card">
   
-  <a href="https://huweicai.com/dynamic-linking/">
+  <a href="https://huweicai.com/confusion-betwwen-forwhiletrue/">
     <div class="post-header text-center">
-      <div class="px-4 post-heading">动态链接是如何实现的</div>
+      <div class="px-4 post-heading">for{;;}与while(true)的困惑</div>
       <ul class="post-meta li-x mt-1">
         
-          <li>0001-01-01</li>
+          <li>2018-03-04</li>
         
     
         
           <li class="middot"></li>
-          <li>9 minutes read</li>
+          <li>One minute read</li>
         
       </ul>
     </div>
     
 
     
-      函数链接 根据函数在编译期间的链接方式， 我们可以将函数分为三种： 直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。 静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。 动态链接（Dynamic Linking......
+      最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序： public class Test2 { public void whileTest() { int i = 0; while (true) { i&#43;&#43;; } } public......
     
   </a>
 
@@ -640,10 +640,10 @@
   <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
   <div class="tags-sm">
     
-      <li><a href="https://huweicai.com/tags/c&#43;&#43;" role="button">c&#43;&#43; </a></li>
+      <li><a href="https://huweicai.com/tags/java" role="button">java </a></li>
       
     
-      <li><a href="https://huweicai.com/tags/compiler" role="button">compiler </a></li>
+      <li><a href="https://huweicai.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" role="button">编程语言 </a></li>
       
     
   </div>
