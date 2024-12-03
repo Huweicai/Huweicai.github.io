@@ -461,7 +461,7 @@ _dl_runtime_resolve_xsavec in section .text of /lib64/ld-linux-x86-64.so.2
 <li>后续调用的时候，<code>say_hello@plt</code>直接跳转到<code>GOT[4]</code>就能直接执行了</li>
 </ol>
 <p> 函数加载解析完成之后，从整个内存的宏观角度来看整体调用链路图如下：</p>
-<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20240630205505.png" alt="shared memory(3)"></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20240701235700.png" alt="shared memory"></p>
 <p>[注解]：</p>
 <ul>
 <li>首先 Linux 内存被分为了用户态空间和内核态空间以及巨大的保留地，这里我们所有的故事都是发生在的低地址用户态内存空间内的</li>

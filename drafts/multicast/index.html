@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="组播与单播 组播( Multicast，又称群播、多播) 与单播 ( Unicast ) 都是数据传输的一种方式，如果要映射现实世界中的信息传递方式，单播可以类比为打电话，有人呼出电话然后有人接听，然后他们互相畅谈最后互道再见；而组播则更加类似于广播，电台的主播会在收音机的那一头说话，所有打开收音机的人都可以收到，你也可以随时关闭收音机，你只能单方面的听到来自对方的声音。 虽然今天到处都是打电话的人，而我们已经很少能在身边看">
+
+  <meta property="og:title" content="数据的蒲公英——组播" />
+<meta property="og:description" content="组播与单播 组播( Multicast，又称群播、多播) 与单播 ( Unicast ) 都是数据传输的一种方式，如果要映射现实世界中的信息传递方式，单播可以类比为打电话，有人呼出电话然后有人接听，然后他们互相畅谈最后互道再见；而组播则更加类似于广播，电台的主播会在收音机的那一头说话，所有打开收音机的人都可以收到，你也可以随时关闭收音机，你只能单方面的听到来自对方的声音。 虽然今天到处都是打电话的人，而我们已经很少能在身边看" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/drafts/multicast/" /><meta property="article:section" content="drafts" />
+<meta property="article:published_time" content="2024-10-22T20:47:00+08:00" />
+<meta property="article:modified_time" content="2024-10-22T20:47:00+08:00" />
+
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       数据的蒲公英——组播 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/drafts/multicast/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://huweicai.com/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">数据的蒲公英——组播</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2024-10-22</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>12 minutes read</li>
+        
+        <li>5586 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="组播与单播">组播与单播</h1>
+<p>组播( Multicast，又称群播、多播) 与单播 ( Unicast )
+都是数据传输的一种方式，如果要映射现实世界中的信息传递方式，单播可以类比为打电话，有人呼出电话然后有人接听，然后他们互相畅谈最后互道再见；而组播则更加类似于广播，电台的主播会在收音机的那一头说话，所有打开收音机的人都可以收到，你也可以随时关闭收音机，你只能单方面的听到来自对方的声音。</p>
+<p>虽然今天到处都是打电话的人，而我们已经很少能在身边看到广播电台的身影，但是 “广播” 仍在某些领域大放异彩。</p>
+<p>试想一下，这么一个场景，你有一份数据，要发送给十个 IP，利用常规的 <code>TCP/IP</code> 协议栈知识我可以简单的写出一段代码，依次连接每一个
+IP，然后发送数据，这样就可以实现数据的传递，这种方式就叫单播。
+但是如果我们把接收方的数量乘上 10 、100 甚至是 100000 呢？
+那这个循环可真是太吓人了，我要是能发送一份数据能让所有的接收方都能收到，那该多好啊！</p>
+<p>组播的诞生就源自这种朴素的想法，要是数据只用发一份就好了，组播是一种一对多的通信方式，它可以让一个发送方同时向多个接收方发送数据，而不需要发送方和接收方之间建立多个连接。</p>
+<p>组播的传输模型具体实现的时候，也还是要回归到基于 OSI 七层计算机网络模型来的，理论上我们可以在任何一层实现组播，
+只需要在这一层的协议头部中加上特殊的标记，让网络链路的中间设备能识别并复制该数据包，然后转发即可：</p>
+<ul>
+<li>在数据链路层，我们可以通过在以太网帧中加入特殊字段或者特殊的 MAC 地址来实现组播，这种方式叫做以太网组播；</li>
+<li>在网络层，我们可以通过特殊的 IP 地址标记来实现组播，这种方式叫做 IP 组播；</li>
+<li>在传输层，我们可以通过端口号来实现组播，这种方式叫做端口组播；</li>
+<li>在应用层，自由度就更大了，我们可以为所欲为的按照自己的喜好来实现一个应用层协议模拟组播，这种方式叫做应用层组播；</li>
+</ul>
+<p>不过在实际应用中，IP 组播几乎就是组播的代名词，应用范围最为广泛，本文要也主要讨论 IP 组播相关内容。</p>
+<hr>
+<p>鉴于大家肯定对于单播（TCP/UDP）更加熟悉，我们这里先列出一些概念上的对比，这样能帮助我们直观的理解组播网络中涉及到的概念：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>单播</th>
+<th>组播</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通信方式</td>
+<td>一对一</td>
+<td>一对多</td>
+</tr>
+<tr>
+<td>网络层协议</td>
+<td>IP</td>
+<td>IP</td>
+</tr>
+<tr>
+<td>传输层协议</td>
+<td>TCP/UDP</td>
+<td>UDP</td>
+</tr>
+<tr>
+<td>地址</td>
+<td>单播地址</td>
+<td>组播地址</td>
+</tr>
+<tr>
+<td>传输方式</td>
+<td>可靠传输</td>
+<td>不可靠传输</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="单播的传输">单播的传输</h1>
+<p>首先让我们回顾一下单播的传输链路，现在我们有一个发送方 <code>A</code> 和一个接收方 <code>B</code>，<code>A</code> 有一份数据要发送给 <code>B</code>，那么这个过程是怎么样的呢？</p>
+<p>首先 <code>A</code> 需要确认 <code>B</code> 的 IP 地址，可能是口耳相传的也有可能是 DNS 查询的，总而言之，数据有了方向，才能启航。</p>
+<ol>
+<li>A 自上而下（应用层、传输层、网络层）封装好网络包</li>
+<li>A 进行路由决策，看是否在同一子网，否则查询路由表送往下一跳（大概率是默认网关）</li>
+<li>ARP 查询下一跳 MAC 地址，然后发送</li>
+<li>假设下一跳是路由器，路由器收到数据包后，进行路由表查询，然后转发</li>
+<li>路由器们重复这个操作</li>
+<li>网络包顺着光纤进入 B 的网卡，进行各种校验之后，就成功抵达</li>
+</ol>
+<p>这是已有的单播的传输链路，那么组播的传输链路又是怎样的呢？</p>
+<h1 id="多播的传输">多播的传输</h1>
+<p>多播会复用单播的传输链路，但是具体又肯定有一些地方会不一样。</p>
+<h2 id="多播如何与单播区分">多播如何与单播区分</h2>
+<p>第一个问题是，多播的数据包如何与单播的数据包区分开来呢？</p>
+<h3 id="特殊的-ip-地址">特殊的 IP 地址</h3>
+<p>上文已经提及了，本文讨论的是基于 IP 层的多播，因此区分的关键就在于 IP 地址本身。</p>
+<p>IPv4 协议确立之初，IANA 将 2^32 四十亿个 IPv4 地址被分为了 A B C 三类地址，这三类地址我们应该都相当熟悉：</p>
+<pre><code>A 0xxxxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx 大型网络
+B 10xxxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx 中型网络
+C 110xxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx 小型网络
+</code></pre>
+<p>大中小全覆盖都有了，够了，那就先这样。</p>
+<p>而组播是后面才诞生的，不过好在一开始地址划分的时候还留了一点，还有一个 D 类和 E 类地址是保留的，不然 IP
+地址就像泼出去的水，一旦分发出去了就再也收不回来了。</p>
+<p>要是没有预留，那可能后面诞生的组播就只能另辟蹊径了，比如在传输层做文章，或者不得不在应用层实现，这样的话效率和复杂度都会大大增加。</p>
+<p>幸运的是，D 类地址正好尚未被占领，可以用来做组播：</p>
+<pre><code>D 1110xxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx 组播地址
+(224.0.0.0/4 =&gt; 224.0.0.0 到 239.255.255.255)
+</code></pre>
+<p>另外一直到今天，E 类地址也仍未正式启用，不过说实话，它可能永远也不会被启用了。</p>
+<p>随着 IPv6 的普及，（2^128）海量的地址空间足以满足未来几十年甚至上百年的需求，根本不需要在 IPv4 上动什么心思了。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20241127233525.png" alt="image-20241127233459148"></p>
+<p>D类地址（组播地址）虽然看起来很大，但也不是随意使用的。</p>
+<p>为了更好地管理和使用这些地址，IANA对其进行了仔细的划分（在 RFC 1112 &ldquo;Host Extensions for IP Multicasting&rdquo; 中定义）：</p>
+<pre><code>224.0.0.0-224.0.0.255：局域网组播地址，专门用于网络协议（如OSPF、RIP），不会跨路由器转发
+224.0.1.0-238.255.255.255：全球范围组播地址，用于互联网范围的应用（如流媒体、视频会议），但是这一部分应用并不不广泛
+239.0.0.0-239.255.255.255：管理权限范围组播地址，类似私有IP，供组织内部使用，这是最常见的地址了
+</code></pre>
+<h3 id="数据链路层的配合">数据链路层的配合</h3>
+<p>仅有 IP 层的标识还不够，为了让组播在整个网络中顺利传输，数据链路层也需要进行相应的调整。</p>
+<p>在以太网中，组播 IP 地址会被映射到特殊的 MAC 地址，这个 MAC 地址的前 24 位固定为 <code>01-00-5E</code>，后 23 位则由组播 IP 地址的后
+23 位映射得到。</p>
+<p>这种映射关系让网络设备能在最底层就识别出组播流量，从而进行特殊处理，就像一个特殊的开门暗号。</p>
+<h2 id="传输层协议的选择">传输层协议的选择</h2>
+<p>为了复用当前的网络架构，链路层和网络层我们没有其他选择，但是到了传输层这里，候选人就不再是一位了。</p>
+<p>但是只需权衡一下两位候选人的特性，答案就呼之欲出了。</p>
+<p>组播这种通信模式，注定只能选择 UDP 这样轻量级的协议，TCP 面向连接的特性与组播的一对多模式存在根本性冲突。</p>
+<h2 id="传输层协议的副产品">传输层协议的副产品</h2>
+<p>对于当前网络架构的复用，让组播系统不必从零开始构建完整的协议栈。然而，这种复用也带来了一些本可以避免的设计。
+端口号就是这样一个&quot;副产品&quot; —— IP 地址本身就足以标识一个组播组，D 类地址库已经足够庞大，端口号并非组播通信所必需，却因为选择了
+UDP 协议而自然成为了组播系统的一部分。</p>
+<p>好吧，既然在这里了那就物尽其用吧。</p>
+<p>组播应用程序像 TCP 单播应用程序一样，也可以通过同样的地址，不同的端口号来提供不同服务，虽然我还是实在觉得这个端口号有些多余。</p>
+<h2 id="组播路由不止是转发">组播路由：不止是转发</h2>
+<p>很好，我们现在生成要发送的数据之后，拼上 UDP 头置入目标地址和端口（随便想一个），再拼上 IP 头，定制好 MAC 头部，找张网卡扔出就好了。
+现在问题来到路由器这边了，这包你给我，我该给谁呢？
+2
+处理传统的单播路由问题时，只需要通过 BGP、OSPF 发现出整个网络的路由表，有单播包到来时根据目标地址查询路由表发往对应的端口即可。</p>
+<p>但是在组播场景下，目标可能是非常多个对这个数据包感兴趣的人。</p>
+<p>另外整个网络中肯定不是所有人都会对我们的数据感兴趣，如果将数据包传遍网络的每一个节点那就不叫组播叫广播了，粗暴的挨家挨户敲门问无疑会在网络中掀起一场非常可怕的风暴。</p>
+<p>这就需要一种全新的协议机制。</p>
+<h3 id="igmp">IGMP</h3>
+<h4 id="工作流程">工作流程</h4>
+<p>首先介绍的是 IGMP (Internet Group Management Protocol) 协议，它是组播通信中用于管理组成员关系的关键协议。
+当我们说&quot;管理组成员关系&quot;时，指的是让路由器知道自己连接的网段上有哪些主机对哪些组播组感兴趣。</p>
+<p>它的工作流程非常简单：</p>
+<ul>
+<li>主机可以告诉路由器我要加入某个组</li>
+<li>主机也可以告诉路由器我要离开某个组</li>
+<li>路由器还会定时询问网段上的主机，你们还对某个组感兴趣吗？</li>
+</ul>
+<p>这样路由器在收到组播数据包时，就可知道数据包都要转发一份给谁了。</p>
+<h4 id="协议报文">协议报文</h4>
+<p>IGMP 是一个网络层协议，协议具体在实现上有三代版本：</p>
+<pre><code>V1 版本：最早的版本，只支持主机加入组播组，只能通过路由器定时轮询来检测主机离开
+V2 版本：增加了主动离开机制（Leave），成为当前最常用的版本
+V3 版本：增加了源地址过滤功能，可以指定接收或拒绝特定源的组播，但报文更复杂
+</code></pre>
+<p>这里我们主要目前应用最为广泛的 IGMPv2：</p>
+<pre tabindex="0"><code class="language-cgo" data-lang="cgo">                       IGMP 报文格式 (IGMPv2)
++-----------+-----------+----------------------+---------------------------------+
+|    类型    | 最长响应时间|         校验和        |           组播地址               |
+|    (8)    |     (8)   |         (16)         |            (32)                 |
++-----------+-----------+----------------------+----------------------------------+
+</code></pre><ul>
+<li>类型：报文类型，有 5 种类型，包括查询、报告、离开等
+<ul>
+<li><code>0x11</code>：成员关系查询（Membership Query）</li>
+<li><code>0x12</code>：IGMPv1 成员关系报告</li>
+<li><code>0x16</code>：IGMPv2 成员关系报告</li>
+<li><code>0x17</code>：离开组（Leave Group）</li>
+</ul>
+</li>
+<li>最长响应时间：查询报文中的最长响应时间字段，单位为 1/10 秒</li>
+<li>校验和：校验和字段，用于校验报文的完整性</li>
+<li>组播地址：组播地址字段，用于指定组播组的地址，也可以是 0.0.0.0 表示通用组播地址</li>
+</ul>
+<h4 id="拥塞控制">拥塞控制</h4>
+<p>IGMP 协议需要处理大量主机同时加入或响应查询的场景。</p>
+<p>为了避免产生报文风暴，协议设计了两种主要的拥塞控制机制：</p>
+<ol>
+<li>
+<p><code>随机延迟响应</code>，主机收到查询后不会立即回复，在 0 到&quot;最长响应时间&quot;间随机选择延迟，
+错开一下，避免所有主机同时发送报告， 这也是报文第二个字段的作用 Maximum Response Time 的作用所在。</p>
+</li>
+<li>
+<p><code>报告抑制</code> ，如果等待期间听到其他主机的相同组播组报告，则取消自己的报告发送 减少重复报文</p>
+</li>
+</ol>
+<h4 id="igmp-snooping">IGMP Snooping</h4>
+<p>IGMP 可以让路由器感知到哪些主机对哪些组播组感兴趣，路由器是知道了，但是交换机呢？</p>
+<p>当主机是通过交换机连接到路由器的时候，路由器转发过来的包到达交换机时，
+交换机虽然可以根据 MAC 地址规则识别这是一个特殊的组播包，但是它并不知道哪些机器订阅了这个组播组，只能盲目的广播。
+这样就会导致交换机上的广播风暴，所有的机器都会收到这个组播包，这显然是不合理的。</p>
+<p>IGMP Snooping 就是为了解决这个问题而生的，它是一种交换机的功能，
+可以监听 IGMP 报文，从而知道哪些端口上的主机对哪些组播组感兴趣，</p>
+<p>IGMP Snooping 技术通过&quot;窥探&quot;网络中的 IGMP 报文来解决这个问题。</p>
+<p>当启用了 IGMP Snooping 的交换机看到主机发送的 IGMP Report（加入组播组）或
+Leave（离开组播组）消息时，会记录下组播组与端口的对应关系。这样，当组播数据到达时，交换机就能只将数据转发给那些真正需要的端口，而不是盲目地向所有端口转发。</p>
+<p>这种优化极大地提升了网络效率，减少了不必要的带宽占用。而且它只需要在交换机上启用，不需要终端设备做任何改动，是一个对网络十分友好的优化手段。</p>
+<h3 id="pim">PIM</h3>
+<p>很好我们现在已经可以构建一个完整的小型组播网络了，
+但是我们仅仅只解决了第一公里和最后一公里的问题，如果我们的数据包需要跨越多个路由器，中间的路由器怎么办呢，数据该怎么走呢？</p>
+<p>我们需要一种额外的路由协议来帮助我们的数据包合理规划路径，有许多协议尝试解决这个问题，例如 DVMRP、MOSPF、CBT 等，
+而其中最为著名的就是 PIM 协议。</p>
+<h4 id="报文">报文</h4>
+<p>PIM (Protocol Independent Multicast) 是基于 IP 协议之上的一种网络层路由协议，用于在不同的组播路由器之间传递组播数据包。</p>
+<p>协议报文格式如下：</p>
+<pre tabindex="0"><code class="language-cgo" data-lang="cgo">                            PIM 报文格式
++--------+--------+----------+----------------------------------------+
+| 版本(4) | 类型(4)| 保留字段(8)|                校验和(16)              |
++--------+--------+----------+----------------------------------------+
+|                                                                     |
+|                        类型特定的负载部分                              |
+|                                                                     |
++---------------------------------------------------------------------
+</code></pre><p>类型如下：</p>
+<ul>
+<li>0x0 = Hello - 邻居发现与维护</li>
+<li>0x3 = Join/Prune - 加入/剪枝请求</li>
+<li>0x4 = Bootstrap - RP 选举信息</li>
+<li>0x5 = Assert - 断言消息</li>
+<li>0x6 = Register - 源注册消息</li>
+<li>0x7 = Register-Stop - 停止注册</li>
+</ul>
+<p>每种不同的类型会有各自不同的负载，这个格式并不固定。</p>
+<p>这些不同类型的报文共同配合，帮助我们解决组播路由中的各种问题。</p>
+<p>比如 Hello 报文用于发现和维护邻居关系，Join/Prune 报文用于构建和维护组播分发树，而 Register 相关报文则用于源注册过程。</p>
+<p>PIM 面临的本质上是一个<code>“双盲”问题</code>，发送者不知道接收者在哪里，接收者也不知道发送者在哪里。</p>
+<p>为了解决这个问题 PIM 协议具体有两种思路，遍历查找与中间人协商：</p>
+<h4 id="dm-遍历查找">DM: 遍历查找</h4>
+<p>第一种思路是遍历整个网络，把所有人都问一遍， 这样我们肯定能知道谁订阅了，然后再慢慢修剪没有订阅的节点避免不必要的传输，这种方式称为
+<code>Dense Mode</code>（DM）。</p>
+<p>具体实现逻辑是这样的：</p>
+<ol>
+<li>首先这种模式会假设网络中每个节点都对数据包感兴趣，然后通过洪泛的方式将数据包传递到整个网络中</li>
+<li>路由器如果下游没有任何组成员，就向上游发送剪枝 (0x3 Prune) 报文，让上游不再往自己的端口转发，分为两种组成员：
+<ol>
+<li>直接成员：查询维护的 IGMP 记录即可得知</li>
+<li>间接成员：依赖下游路由器是否发送了剪枝报文来判断</li>
+</ol>
+</li>
+<li>这样就可以逐渐剪枝，最终只有订阅的主机才会收到数据包</li>
+<li>如果中途有主机加入组，可以再发送嫁接报文加入</li>
+<li>如果中途有主机加入组，可以再发送嫁接 (0x3 Join) 报文加入</li>
+<li>剪枝状态是有生存期的，超时后会重新泛洪，以便及时发现新加入的成</li>
+</ol>
+<p>这种方式适合小型网络或者组播组成员比较密集的场景，如果组成员比较少的话，会浪费很多带宽在泛洪和剪枝上。</p>
+<h4 id="sm-中间人协商">SM: 中间人协商</h4>
+<p>第二种思路是指定一个中间人，大家都告诉它自己的需求，它来负责协调，这种方式称为 Sparse Mode（SM）。</p>
+<p>这个中间人在 PIM 中被称为汇聚点（Rendezvous Point，简称 RP），它的主要职责是：</p>
+<ul>
+<li>接收源的注册 (0x6 Register)</li>
+<li>接收接收者的加入请求 (0x3 Join)</li>
+<li>建立并维护从源到接收者的转发树</li>
+</ul>
+<p>这种方式下：</p>
+<ol>
+<li>源端先向 RP 注册，告知自己要发送数据</li>
+<li>接收者通过显式加入的方式向 RP 表明自己的订阅意愿</li>
+<li>RP 负责在源和接收者之间建立转发路径</li>
+</ol>
+<p>这种方式避免了泛洪带来的开销，更适合组播组成员分布稀疏的大型网络。
+实际应用场景中，PIM-SM 是主流的模式选择。
+虽然需要维护 RP 这个特殊节点增加了一些复杂性，但它能更好地控制网络资源的使用，</p>
+<p>SM 还有两种同样思路的变种模式：</p>
+<ul>
+<li>SSM: Source Specific Multicast，源特定组播，源端直接扮演中间人的角色，需要接收端事先知道源端的地址</li>
+<li>BIDIR-PIM: Bidirectional PIM，双向 PIM，适用于多对多的组播场景，源端和接收端都可以同时发送和接收数据</li>
+</ul>
+<h4 id="bsr-自动中间人">BSR: 自动中间人</h4>
+<p>另外 在 PIM-SM 中，由于采用了中间人协商的方式，所有路由器都需要知道 RP 的位置信息。
+为了避免手工配置 RP 信息带来的维护困难，PIM 引入了 BSR (Bootstrap Router) 机制来自动分发 RP 信息。</p>
+<p>工作过程如下：</p>
+<pre><code>网络中可以配置多个候选 BSR (C-BSR)，它们之间通过选举(0x4 Bootstrap)确定一个 BSR
+候选 RP (C-RP) 向 BSR 发送广告，宣告自己可以作为 RP
+BSR 收集所有 C-RP 的信息，周期性地向整个网络发送 Bootstrap 报文
+所有路由器接收 Bootstrap 报文后，就能知道有哪些 RP 可用
+</code></pre>
+<p>BSR 机制使得 PIM-SM 的部署和维护更加方便，支持自动发现和切换 RP，提高了网络的可靠性和可扩展性。</p>
+<h4 id="pim-snooping">PIM Snooping</h4>
+<p>与 IGMP Snooping 类似，PIM Snooping 也是二层交换机的一种优化机制，区别在于它是通过监听 PIM 协议报文（而不是 IGMP
+报文）来确定哪些端口需要组播数据，从而实现更精确的组播转发。</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bb%84%e6%92%ad%e4%b8%8e%e5%8d%95%e6%92%ad">
+												 组播与单播
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8d%95%e6%92%ad%e7%9a%84%e4%bc%a0%e8%be%93">
+												 单播的传输
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%9a%e6%92%ad%e7%9a%84%e4%bc%a0%e8%be%93">
+												 多播的传输
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%9a%e6%92%ad%e5%a6%82%e4%bd%95%e4%b8%8e%e5%8d%95%e6%92%ad%e5%8c%ba%e5%88%86">
+												 多播如何与单播区分
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%89%b9%e6%ae%8a%e7%9a%84-ip-%e5%9c%b0%e5%9d%80">
+												 特殊的 IP 地址
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%95%b0%e6%8d%ae%e9%93%be%e8%b7%af%e5%b1%82%e7%9a%84%e9%85%8d%e5%90%88">
+												 数据链路层的配合
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%a0%e8%be%93%e5%b1%82%e5%8d%8f%e8%ae%ae%e7%9a%84%e9%80%89%e6%8b%a9">
+												 传输层协议的选择
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%a0%e8%be%93%e5%b1%82%e5%8d%8f%e8%ae%ae%e7%9a%84%e5%89%af%e4%ba%a7%e5%93%81">
+												 传输层协议的副产品
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bb%84%e6%92%ad%e8%b7%af%e7%94%b1%e4%b8%8d%e6%ad%a2%e6%98%af%e8%bd%ac%e5%8f%91">
+												 组播路由：不止是转发
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#igmp">
+												 IGMP
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b">
+												 工作流程
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8d%8f%e8%ae%ae%e6%8a%a5%e6%96%87">
+												 协议报文
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8b%a5%e5%a1%9e%e6%8e%a7%e5%88%b6">
+												 拥塞控制
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#igmp-snooping">
+												 IGMP Snooping
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#pim">
+												 PIM
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8a%a5%e6%96%87">
+												 报文
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#dm-%e9%81%8d%e5%8e%86%e6%9f%a5%e6%89%be">
+												 DM: 遍历查找
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#sm-%e4%b8%ad%e9%97%b4%e4%ba%ba%e5%8d%8f%e5%95%86">
+												 SM: 中间人协商
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#bsr-%e8%87%aa%e5%8a%a8%e4%b8%ad%e9%97%b4%e4%ba%ba">
+												 BSR: 自动中间人
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#pim-snooping">
+												 PIM Snooping
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2024 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

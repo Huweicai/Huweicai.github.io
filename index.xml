@@ -6,7 +6,16 @@
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sun, 30 Jun 2024 01:26:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Oct 2024 20:47:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>数据的蒲公英——组播</title>
+      <link>https://huweicai.com/drafts/multicast/</link>
+      <pubDate>Tue, 22 Oct 2024 20:47:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/drafts/multicast/</guid>
+      <description>组播与单播 组播( Multicast，又称群播、多播) 与单播 ( Unicast ) 都是数据传输的一种方式，如果要映射现实世界中的信息传递方式，单播可以类比为打电话，有人呼出电话然后有人接听，然后他们互相畅谈最后互道再见；而组播则更加类似于广播，电台的主播会在收音机的那一头说话，所有打开收音机的人都可以收到，你也可以随时关闭收音机，你只能单方面的听到来自对方的声音。 虽然今天到处都是打电话的人，而我们已经很少能在身边看</description>
+    </item>
+    
     <item>
       <title>动态链接函数调用是如何实现的</title>
       <link>https://huweicai.com/dynamic-linking/</link>

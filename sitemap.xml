@@ -3,7 +3,27 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://huweicai.com/</loc>
-    <lastmod>2024-06-30T01:26:00+08:00</lastmod>
+    <lastmod>2024-10-22T20:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/drafts/</loc>
+    <lastmod>2024-10-22T20:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/tags/</loc>
+    <lastmod>2024-10-22T20:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/drafts/multicast/</loc>
+    <lastmod>2024-10-22T20:47:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <lastmod>2024-10-22T20:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>
@@ -13,11 +33,6 @@
     <priority>0.5</priority>
   </url><url>
     <loc>https://huweicai.com/tags/compiler/</loc>
-    <lastmod>2024-06-30T01:26:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://huweicai.com/tags/</loc>
     <lastmod>2024-06-30T01:26:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -128,11 +143,6 @@
     <priority>0.5</priority>
   </url><url>
     <loc>https://huweicai.com/weave-scope/</loc>
-    <lastmod>2022-04-27T23:42:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
     <lastmod>2022-04-27T23:42:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
