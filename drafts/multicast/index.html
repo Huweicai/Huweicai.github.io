@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="组播与单播 组播( Multicast，又称群播、多播) 与单播 ( Unicast ) 都是数据传输的一种方式，如果要映射现实世界中的信息传递方式，单播可以类比为打电话，有人呼出电话然后有人接听，然后他们互相畅谈最后互道再见；而组播则更加类似于广播，电台的主播会在收音机的那一头说话，所有打开收音机的人都可以收到，你也可以随时关闭收音机，你只能单方面的听到来自对方的声音。 虽然今天到处都是打电话的人，而我们已经很少能在身边看">
+  <meta name="description" content="组播与单播 组播( Multicast，又称群播、多播) 与单播 ( Unicast ) 都是数据传输的一种方式，如果要映射现实世界中的信息传递方式，单播可以类比为打电话，有人呼出电话然后有人接听，然后他们互相畅谈最后互道再见；而组播则更加类似于广播，电台的主播会在收音机的那一头说话，所有打开收音机的人都可以收到，你也可以随时关闭收音机，只能单方面的听到来自对方的声音。 虽然今天到处都是打电话的人，而我们已经很少能在身边看到">
 
   <meta property="og:title" content="数据的蒲公英——组播" />
-<meta property="og:description" content="组播与单播 组播( Multicast，又称群播、多播) 与单播 ( Unicast ) 都是数据传输的一种方式，如果要映射现实世界中的信息传递方式，单播可以类比为打电话，有人呼出电话然后有人接听，然后他们互相畅谈最后互道再见；而组播则更加类似于广播，电台的主播会在收音机的那一头说话，所有打开收音机的人都可以收到，你也可以随时关闭收音机，你只能单方面的听到来自对方的声音。 虽然今天到处都是打电话的人，而我们已经很少能在身边看" />
+<meta property="og:description" content="组播与单播 组播( Multicast，又称群播、多播) 与单播 ( Unicast ) 都是数据传输的一种方式，如果要映射现实世界中的信息传递方式，单播可以类比为打电话，有人呼出电话然后有人接听，然后他们互相畅谈最后互道再见；而组播则更加类似于广播，电台的主播会在收音机的那一头说话，所有打开收音机的人都可以收到，你也可以随时关闭收音机，只能单方面的听到来自对方的声音。 虽然今天到处都是打电话的人，而我们已经很少能在身边看到" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/drafts/multicast/" /><meta property="article:section" content="drafts" />
 <meta property="article:published_time" content="2024-10-22T20:47:00+08:00" />
@@ -293,9 +293,9 @@
 
         
             <li class="middot"></li>
-            <li>12 minutes read</li>
+            <li>14 minutes read</li>
         
-        <li>5586 words</li>
+        <li>6733 words</li>
 
     </ul>
     
@@ -306,11 +306,11 @@
           <div class="post-content markdown">
             <h1 id="组播与单播">组播与单播</h1>
 <p>组播( Multicast，又称群播、多播) 与单播 ( Unicast )
-都是数据传输的一种方式，如果要映射现实世界中的信息传递方式，单播可以类比为打电话，有人呼出电话然后有人接听，然后他们互相畅谈最后互道再见；而组播则更加类似于广播，电台的主播会在收音机的那一头说话，所有打开收音机的人都可以收到，你也可以随时关闭收音机，你只能单方面的听到来自对方的声音。</p>
-<p>虽然今天到处都是打电话的人，而我们已经很少能在身边看到广播电台的身影，但是 “广播” 仍在某些领域大放异彩。</p>
+都是数据传输的一种方式，如果要映射现实世界中的信息传递方式，单播可以类比为打电话，有人呼出电话然后有人接听，然后他们互相畅谈最后互道再见；而组播则更加类似于广播，电台的主播会在收音机的那一头说话，所有打开收音机的人都可以收到，你也可以随时关闭收音机，只能单方面的听到来自对方的声音。</p>
+<p>虽然今天到处都是打电话的人，而我们已经很少能在身边看到广播电台的身影，但是 “广播” 这种形式仍在某些领域大放异彩。</p>
 <p>试想一下，这么一个场景，你有一份数据，要发送给十个 IP，利用常规的 <code>TCP/IP</code> 协议栈知识我可以简单的写出一段代码，依次连接每一个
-IP，然后发送数据，这样就可以实现数据的传递，这种方式就叫单播。
-但是如果我们把接收方的数量乘上 10 、100 甚至是 100000 呢？
+IP，然后发送数据，这样就可以实现数据的传递，这种方式就叫单播。</p>
+<p>但是如果我们把接收方的数量乘上 10 、100 甚至是 100000 呢？
 那这个循环可真是太吓人了，我要是能发送一份数据能让所有的接收方都能收到，那该多好啊！</p>
 <p>组播的诞生就源自这种朴素的想法，要是数据只用发一份就好了，组播是一种一对多的通信方式，它可以让一个发送方同时向多个接收方发送数据，而不需要发送方和接收方之间建立多个连接。</p>
 <p>组播的传输模型具体实现的时候，也还是要回归到基于 OSI 七层计算机网络模型来的，理论上我们可以在任何一层实现组播，
@@ -322,45 +322,6 @@ IP，然后发送数据，这样就可以实现数据的传递，这种方式就
 <li>在应用层，自由度就更大了，我们可以为所欲为的按照自己的喜好来实现一个应用层协议模拟组播，这种方式叫做应用层组播；</li>
 </ul>
 <p>不过在实际应用中，IP 组播几乎就是组播的代名词，应用范围最为广泛，本文要也主要讨论 IP 组播相关内容。</p>
-<hr>
-<p>鉴于大家肯定对于单播（TCP/UDP）更加熟悉，我们这里先列出一些概念上的对比，这样能帮助我们直观的理解组播网络中涉及到的概念：</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>单播</th>
-<th>组播</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>通信方式</td>
-<td>一对一</td>
-<td>一对多</td>
-</tr>
-<tr>
-<td>网络层协议</td>
-<td>IP</td>
-<td>IP</td>
-</tr>
-<tr>
-<td>传输层协议</td>
-<td>TCP/UDP</td>
-<td>UDP</td>
-</tr>
-<tr>
-<td>地址</td>
-<td>单播地址</td>
-<td>组播地址</td>
-</tr>
-<tr>
-<td>传输方式</td>
-<td>可靠传输</td>
-<td>不可靠传输</td>
-</tr>
-</tbody>
-</table>
-<hr>
 <h1 id="单播的传输">单播的传输</h1>
 <p>首先让我们回顾一下单播的传输链路，现在我们有一个发送方 <code>A</code> 和一个接收方 <code>B</code>，<code>A</code> 有一份数据要发送给 <code>B</code>，那么这个过程是怎么样的呢？</p>
 <p>首先 <code>A</code> 需要确认 <code>B</code> 的 IP 地址，可能是口耳相传的也有可能是 DNS 查询的，总而言之，数据有了方向，才能启航。</p>
@@ -373,12 +334,12 @@ IP，然后发送数据，这样就可以实现数据的传递，这种方式就
 <li>网络包顺着光纤进入 B 的网卡，进行各种校验之后，就成功抵达</li>
 </ol>
 <p>这是已有的单播的传输链路，那么组播的传输链路又是怎样的呢？</p>
-<h1 id="多播的传输">多播的传输</h1>
-<p>多播会复用单播的传输链路，但是具体又肯定有一些地方会不一样。</p>
-<h2 id="多播如何与单播区分">多播如何与单播区分</h2>
-<p>第一个问题是，多播的数据包如何与单播的数据包区分开来呢？</p>
+<h1 id="组播的传输">组播的传输</h1>
+<p>组播会复用单播的传输链路，但是具体又肯定有一些地方会不一样。</p>
+<h2 id="组播如何与单播区分">组播如何与单播区分</h2>
+<p>第一个问题是，组播的数据包如何与单播的数据包区分开来呢？</p>
 <h3 id="特殊的-ip-地址">特殊的 IP 地址</h3>
-<p>上文已经提及了，本文讨论的是基于 IP 层的多播，因此区分的关键就在于 IP 地址本身。</p>
+<p>上文已经提及了，本文讨论的是基于 IP 层的组播，因此区分的关键就在于 IP 地址本身。</p>
 <p>IPv4 协议确立之初，IANA 将 2^32 四十亿个 IPv4 地址被分为了 A B C 三类地址，这三类地址我们应该都相当熟悉：</p>
 <pre><code>A 0xxxxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx 大型网络
 B 10xxxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx 中型网络
@@ -386,7 +347,7 @@ C 110xxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx 小型网络
 </code></pre>
 <p>大中小全覆盖都有了，够了，那就先这样。</p>
 <p>而组播是后面才诞生的，不过好在一开始地址划分的时候还留了一点，还有一个 D 类和 E 类地址是保留的，不然 IP
-地址就像泼出去的水，一旦分发出去了就再也收不回来了。</p>
+地址就像泼出去的水，一旦分发出去就再也收不回来了。</p>
 <p>要是没有预留，那可能后面诞生的组播就只能另辟蹊径了，比如在传输层做文章，或者不得不在应用层实现，这样的话效率和复杂度都会大大增加。</p>
 <p>幸运的是，D 类地址正好尚未被占领，可以用来做组播：</p>
 <pre><code>D 1110xxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx 组播地址
@@ -396,7 +357,8 @@ C 110xxxxx.xxxxxxxx.xxxxxxxx.xxxxxxxx 小型网络
 <p>随着 IPv6 的普及，（2^128）海量的地址空间足以满足未来几十年甚至上百年的需求，根本不需要在 IPv4 上动什么心思了。</p>
 <p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20241127233525.png" alt="image-20241127233459148"></p>
 <p>D类地址（组播地址）虽然看起来很大，但也不是随意使用的。</p>
-<p>为了更好地管理和使用这些地址，IANA对其进行了仔细的划分（在 RFC 1112 &ldquo;Host Extensions for IP Multicasting&rdquo; 中定义）：</p>
+<p>为了更好地管理和使用这些地址，IANA对其进行了仔细的划分（在 <a href="https://datatracker.ietf.org/doc/html/rfc1112">RFC 1112 &ldquo;Host Extensions for IP Multicasting&rdquo;</a>
+中定义）：</p>
 <pre><code>224.0.0.0-224.0.0.255：局域网组播地址，专门用于网络协议（如OSPF、RIP），不会跨路由器转发
 224.0.1.0-238.255.255.255：全球范围组播地址，用于互联网范围的应用（如流媒体、视频会议），但是这一部分应用并不不广泛
 239.0.0.0-239.255.255.255：管理权限范围组播地址，类似私有IP，供组织内部使用，这是最常见的地址了
@@ -489,7 +451,8 @@ Leave（离开组播组）消息时，会记录下组播组与端口的对应关
 <p>我们需要一种额外的路由协议来帮助我们的数据包合理规划路径，有许多协议尝试解决这个问题，例如 DVMRP、MOSPF、CBT 等，
 而其中最为著名的就是 PIM 协议。</p>
 <h4 id="报文">报文</h4>
-<p>PIM (Protocol Independent Multicast) 是基于 IP 协议之上的一种网络层路由协议，用于在不同的组播路由器之间传递组播数据包。</p>
+<p>PIM (Protocol Independent Multicast) 是基于 IP 协议之上的一种网络层路由协议，用于在不同的组播路由器之间传递组播数据包，*
+<em>注意，这是一个路由器之间的协议</em>*，协议的发送者和接收者都是路由器。</p>
 <p>协议报文格式如下：</p>
 <pre tabindex="0"><code class="language-cgo" data-lang="cgo">                            PIM 报文格式
 +--------+--------+----------+----------------------------------------+
@@ -566,6 +529,156 @@ BSR 收集所有 C-RP 的信息，周期性地向整个网络发送 Bootstrap �
 <h4 id="pim-snooping">PIM Snooping</h4>
 <p>与 IGMP Snooping 类似，PIM Snooping 也是二层交换机的一种优化机制，区别在于它是通过监听 PIM 协议报文（而不是 IGMP
 报文）来确定哪些端口需要组播数据，从而实现更精确的组播转发。</p>
+<h2 id="组播安全">组播安全</h2>
+<p>组播系统本身并不是一个安全的系统，因为它的设计初衷是为了提供一种高效的数据传输方式，而并没有考虑安全性。</p>
+<p>但是在实际应用中，这是一个不容忽视的问题，理论上一个网络中任何一台主机都可以接收甚至是发送组播数据包，它只需要在 UDP
+包中填入对应的地址即可，这就给网络安全带来了很大的隐患。</p>
+<p>我们通常可以通过以下几种方式来提高组播的安全性：</p>
+<ul>
+<li>IPSec: 在 IP 层之上再套一层 IPSec 传输协议来进对数据进行加密防护</li>
+<li>VLAN or VPN：将组播流量隔离到一个独立、可控网络中</li>
+<li>ACL：在路由器上配置访问控制列表（ACL）限制哪些主机可以发送组播数据包</li>
+<li>应用层校验、加密、或者判断组播数据包源地址</li>
+</ul>
+<h1 id="组播的发送与接收">组播的发送与接收</h1>
+<p>使用组播网络其实是一件非常简单的事情，<code>IGMP</code>、<code>PIM</code> 等这些都是组播网络的提供者需要去考虑的问题，而作为一名使用者，在使用方式上而言，
+<strong>接发组播和接发 UDP 单播几乎没什么区别</strong>。</p>
+<p>这里我们用通过代码来演示组播的发送与接收过程，我们将会使用 C 语言来实现，C 的接口和系统调用相对较为底层，更有利于我们理解网络协议的细节。</p>
+<h2 id="发送">发送</h2>
+<p>发送者会定时发送 UDP 组播包, sender.c:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;arpa/inet.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define MCAST_GRP &#34;224.1.1.1&#34;</span><span class="c1">// 组播地址（ D类 IP 224.0.0.0 - 239.255.255.255 是组播地址范围）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define MCAST_PORT 5000      </span><span class="c1">// 组播使用的 UDP 端口号
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">sock</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">multicast_addr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">message</span> <span class="o">=</span> <span class="s">&#34;Hello, Multicast!&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 创建 UDP 套接字，组播是基于 UDP 协议传输的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">((</span><span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_DGRAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;Socket creation failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 设置 TTL 值，确保组播包不会超出本地网络
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">ttl</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">IPPROTO_IP</span><span class="p">,</span> <span class="n">IP_MULTICAST_TTL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ttl</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">ttl</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;Setting TTL option failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">close</span><span class="p">(</span><span class="n">sock</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 配置组播地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">multicast_addr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">multicast_addr</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="n">multicast_addr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">multicast_addr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span><span class="n">MCAST_GRP</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">multicast_addr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="n">MCAST_PORT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Sending multicast messages to %s:%d...</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">MCAST_GRP</span><span class="p">,</span> <span class="n">MCAST_PORT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 每隔 2 秒发送一次，发送消息到组播地址，就是调用的很普通的 socket 函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 和发送普通 UDP 包就只有地址的区别
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">if</span> <span class="p">(</span><span class="n">sendto</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">message</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">multicast_addr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">multicast_addr</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">perror</span><span class="p">(</span><span class="s">&#34;Failed to send message&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Sent: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">message</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">close</span><span class="p">(</span><span class="n">sock</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="接收">接收</h2>
+<p>接收者会监听组播地址，接收到数据包后打印出来, receiver.c:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-C" data-lang="C"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;arpa/inet.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define MCAST_GRP &#34;224.1.1.1&#34;</span><span class="c1">// 组播地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define MCAST_PORT 5000      </span><span class="c1">// 组播端口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define BUFFER_SIZE 1024     </span><span class="c1">// 缓冲区大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">sock</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">sockaddr_in</span> <span class="n">local_addr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">ip_mreq</span> <span class="n">mreq</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="n">BUFFER_SIZE</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 创建 UDP 套接字
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">((</span><span class="n">sock</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">SOCK_DGRAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;Socket creation failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 绑定本地地址和端口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">local_addr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">local_addr</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="n">local_addr</span><span class="p">.</span><span class="n">sin_family</span> <span class="o">=</span> <span class="n">AF_INET</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">local_addr</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">htonl</span><span class="p">(</span><span class="n">INADDR_ANY</span><span class="p">);</span><span class="c1">// 接收所有本地接口的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">local_addr</span><span class="p">.</span><span class="n">sin_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="n">MCAST_PORT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">local_addr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">local_addr</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;Binding failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">close</span><span class="p">(</span><span class="n">sock</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 加入组播组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">mreq</span><span class="p">.</span><span class="n">imr_multiaddr</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">inet_addr</span><span class="p">(</span><span class="n">MCAST_GRP</span><span class="p">);</span><span class="c1">// 组播地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">mreq</span><span class="p">.</span><span class="n">imr_interface</span><span class="p">.</span><span class="n">s_addr</span> <span class="o">=</span> <span class="n">htonl</span><span class="p">(</span><span class="n">INADDR_ANY</span><span class="p">);</span>   <span class="c1">// 本地接口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">IPPROTO_IP</span><span class="p">,</span> <span class="n">IP_ADD_MEMBERSHIP</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mreq</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">mreq</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;Joining multicast group failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">close</span><span class="p">(</span><span class="n">sock</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Listening for multicast messages on %s:%d...</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">MCAST_GRP</span><span class="p">,</span> <span class="n">MCAST_PORT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 接收组播消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">int</span> <span class="n">nbytes</span> <span class="o">=</span> <span class="n">recvfrom</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">BUFFER_SIZE</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">nbytes</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">perror</span><span class="p">(</span><span class="s">&#34;Receive failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">buffer</span><span class="p">[</span><span class="n">nbytes</span><span class="p">]</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span><span class="c1">// 确保字符串以 &#39;\0&#39; 结尾
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Received: %s</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">buffer</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 离开组播组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="n">IPPROTO_IP</span><span class="p">,</span> <span class="n">IP_DROP_MEMBERSHIP</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mreq</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">mreq</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;Dropping multicast group failed&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">close</span><span class="p">(</span><span class="n">sock</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="run">Run</h2>
+<p>首先将上面两个程序编译：</p>
+<pre tabindex="0"><code>gcc sender.c -o sender
+gcc receiver.c -o receiver
+</code></pre><p>然后我们创建三个容器，模拟三个网络节点，分别运行 sender 和两个 receiver：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">docker network create --driver bridge multicast-net
+</span></span><span class="line"><span class="cl">docker run -it --rm --network host --name<span class="o">=</span>sender -v .:/root  ubuntu bash
+</span></span><span class="line"><span class="cl">docker run -it --rm --network host --name<span class="o">=</span>receiver1 -v .:/root  ubuntu bash
+</span></span><span class="line"><span class="cl">docker run -it --rm --network host --name<span class="o">=</span>receiver2 -v .:/root  ubuntu bash
+</span></span></code></pre></div><p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20241215001947.png" alt="image-20241215001942029"></p>
+<p>这样一个简单的组播网络就搭建好了，sender 会定时发送组播消息，receiver1 和 receiver2 会接收到这个消息。</p>
+<h1 id="总结">总结</h1>
+<p>组播允许数据包同时发送给特定的一组接收者。</p>
+<p>它使用特殊的D类IP地址（224.0.0.0到239.255.255.255）来标识组播组，通过 UDP 协议传输数据。</p>
+<p>为了实现组播通信，网络中采用了IGMP协议来管理主机与路由器间的组成员关系，同时使用PIM协议来处理组播数据的路由转发。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20241215014305.png" alt="未命名文件(10)"></p>
 
           </div>
 
@@ -687,8 +800,8 @@ BSR 收集所有 C-RP 的信息，周期性地向整个网络发送 Bootstrap �
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%a4%9a%e6%92%ad%e7%9a%84%e4%bc%a0%e8%be%93">
-												 多播的传输
+						 					<a class="nav-link" href="#%e7%bb%84%e6%92%ad%e7%9a%84%e4%bc%a0%e8%be%93">
+												 组播的传输
 											</a>
 										</li>
 						 
@@ -711,8 +824,8 @@ BSR 收集所有 C-RP 的信息，周期性地向整个网络发送 Bootstrap �
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#%e5%a4%9a%e6%92%ad%e5%a6%82%e4%bd%95%e4%b8%8e%e5%8d%95%e6%92%ad%e5%8c%ba%e5%88%86">
-												 多播如何与单播区分
+						 					<a class="nav-link" href="#%e7%bb%84%e6%92%ad%e5%a6%82%e4%bd%95%e4%b8%8e%e5%8d%95%e6%92%ad%e5%8c%ba%e5%88%86">
+												 组播如何与单播区分
 											</a>
 										</li>
 						 
@@ -1223,6 +1336,154 @@ BSR 收集所有 C-RP 的信息，周期性地向整个网络发送 Bootstrap �
 									</ul>
 								
 									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bb%84%e6%92%ad%e5%ae%89%e5%85%a8">
+												 组播安全
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bb%84%e6%92%ad%e7%9a%84%e5%8f%91%e9%80%81%e4%b8%8e%e6%8e%a5%e6%94%b6">
+												 组播的发送与接收
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%91%e9%80%81">
+												 发送
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8e%a5%e6%94%b6">
+												 接收
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#run">
+												 Run
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%80%bb%e7%bb%93">
+												 总结
+											</a>
+										</li>
+						 
+								
 								
 									</ul>
 								
