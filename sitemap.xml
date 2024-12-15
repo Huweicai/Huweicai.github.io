@@ -7,17 +7,12 @@
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://huweicai.com/drafts/</loc>
-    <lastmod>2024-10-22T20:47:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://huweicai.com/tags/</loc>
     <lastmod>2024-10-22T20:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://huweicai.com/drafts/multicast/</loc>
+    <loc>https://huweicai.com/multicast/</loc>
     <lastmod>2024-10-22T20:47:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
