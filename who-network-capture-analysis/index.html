@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="我们都知道网络是分层的，国际标准化组织将网络划分了七层，定义于 ISO/IEC 7498-1，也就是我们所熟知的 ISO 七层模型。 自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。 而我们所熟知的超文本传输协议（HTTP: HyperText Transfer Protocol）便位于这个模型中的第七层，HTTP 请求包发出的时候会一层一层往下叠加头部知道最终变成最底层的物理信号在网线上传输，那么最终的网络包到底是长什么样呢？我们今">
+  <meta name="description" content="众所周知，网络是分层的，国际标准化组织将网络划分了七层，定义于 ISO/IEC 7498-1，也就是我们所熟知的 ISO 七层模型。 自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。 以我们所熟知的应用层协议，超文本传输协议（HTTP: HyperText Transfer Protocol）为例，它位于这个模型中的最高的一层，应用进程发送 HTTP 请求包发出之后，会一层一层往下叠加头部直到最终变成最底层的物理信号 0 1 0 1 比特流在网线上传输">
 
-  <meta property="og:title" content="完整网络请求包自底向上分析" />
-<meta property="og:description" content="我们都知道网络是分层的，国际标准化组织将网络划分了七层，定义于 ISO/IEC 7498-1，也就是我们所熟知的 ISO 七层模型。 自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。 而我们所熟知的超文本传输协议（HTTP: HyperText Transfer Protocol）便位于这个模型中的第七层，HTTP 请求包发出的时候会一层一层往下叠加头部知道最终变成最底层的物理信号在网线上传输，那么最终的网络包到底是长什么样呢？我们今" />
+  <meta property="og:title" content="一个网络数据包的深度解剖" />
+<meta property="og:description" content="众所周知，网络是分层的，国际标准化组织将网络划分了七层，定义于 ISO/IEC 7498-1，也就是我们所熟知的 ISO 七层模型。 自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。 以我们所熟知的应用层协议，超文本传输协议（HTTP: HyperText Transfer Protocol）为例，它位于这个模型中的最高的一层，应用进程发送 HTTP 请求包发出之后，会一层一层往下叠加头部直到最终变成最底层的物理信号 0 1 0 1 比特流在网线上传输" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/who-network-capture-analysis/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2020-07-01T01:47:00+08:00" />
@@ -41,7 +41,7 @@
 
   <title>
   
-       完整网络请求包自底向上分析 | Anonymous&#39; Blog 
+       一个网络数据包的深度解剖 | Anonymous&#39; Blog 
   
   </title>
 
@@ -284,7 +284,7 @@
         
     </ul>
 
-    <div class="px-4 post-heading">完整网络请求包自底向上分析</div>
+    <div class="px-4 post-heading">一个网络数据包的深度解剖</div>
 
     <ul class="post-meta li-x mt-1">
         
@@ -295,7 +295,7 @@
             <li class="middot"></li>
             <li>17 minutes read</li>
         
-        <li>8111 words</li>
+        <li>8374 words</li>
 
     </ul>
     
@@ -304,15 +304,16 @@
 
 
           <div class="post-content markdown">
-            <p>我们都知道网络是分层的，国际标准化组织将网络划分了七层，定义于 <a href="https://www.iso.org/standard/20269.html">ISO/IEC 7498-1</a>，也就是我们所熟知的 ISO 七层模型。</p>
+            <p>众所周知，网络是分层的，国际标准化组织将网络划分了七层，定义于 <a href="https://www.iso.org/standard/20269.html">ISO/IEC 7498-1</a>，也就是我们所熟知的 ISO 七层模型。</p>
 <p>自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200910165651.png" alt="网络分层 (1)"></p>
-<p>而我们所熟知的超文本传输协议（HTTP: HyperText Transfer Protocol）便位于这个模型中的第七层，HTTP 请求包发出的时候会一层一层往下叠加头部知道最终变成最底层的物理信号在网线上传输，那么最终的网络包到底是长什么样呢？我们今天就来实践探索一下。</p>
+<p>以我们所熟知的应用层协议，超文本传输协议（HTTP: HyperText Transfer Protocol）为例，它位于这个模型中的最高的一层，应用进程发送 HTTP 请求包发出之后，会一层一层往下叠加头部直到最终变成最底层的物理信号 0 1 0 1 比特流在网线上传输，那么最终一层一层裹出来的这一串东西，到底是长什么样呢？这串东西里面每个 0 和 1 分别表示什么意思呢？</p>
+<p>接下来，让我们通过一个实际的例子，逐字节解剖一个完整的网络数据包，看看它到底长什么样。</p>
 <p>先在服务器上起一个简单的 HTTP 服务：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">python -m SimpleHTTPServer <span class="m">8001</span>
-</span></span></code></pre></div><p>然后在客户端发起一个无参数的 GET 请求访问其根目录：</p>
+</span></span></code></pre></div><p>然后在客户端发起一个无参数的 <code>GET</code> 请求访问其根目录：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -v http://110.89.228.110:8001
-</span></span></code></pre></div><p>同时我们用 WireShark 抓包，完整的从网卡出去的一个包是长这样的一串二进制流：</p>
+</span></span></code></pre></div><p>同时我们用 WireShark 或者 Tcpdump 等软件进行抓包，完整的从网卡出去的一个包是长这样的一串二进制流：</p>
 <pre tabindex="0"><code>011110001100001100010011100101011111011110000010100010001110100111111110011001111011
 110001111100000010000000000001000101000000000000000010000111000000000000000001000000
 000000000100000000000110000111011111011011000000101010000000000100000100011101100101
@@ -328,19 +329,22 @@
 001101110010111000110110001101000010111000110001000011010000101001000001011000110110
 001101100101011100000111010000111010001000000010101000101111001010100000110100001010
 0000110100001010
-</code></pre><p>这串二进制流就是要在网线上传输的原始信号，如果是在电线上传输，那么那么 1 就是高电压，0 就是低电压，这就是最原始的电信号。二进制这种计数方式对于硬件设备而言相当友好，只需要找出一种物质的两种状态那么就能用来传输和存储数据，而对于人类而言就显得尤其眼花缭乱，我们现在将它转化成可读性相对较好的十六进制：</p>
+</code></pre><p>这串二进制流就是要在网线上传输的原始信号，如果是在电线上传输，那么那么 1 就是高电压，0 就是低电压，这就是最原始的电信号。</p>
+<p>二进制这种计数方式对于硬件设备而言相当友好，只需要找出一种物质的两种稳定状态那么就能用来传输和存储数据，然后对于人类而言这就显得尤其眼花缭乱，我们现在将它转化成可读性相对较好的十六进制：</p>
 <pre tabindex="0"><code>78 c3 13 95 f7 82 88 e9 fe 67 bc 7c 08 00 45 00 00 87 00 00 40 00 40 06 1d f6 c0 a8 01 04 76 59
 e4 75 c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c fd 61 c7 95 6b
 55 91 47 45 54 20 2f 20 48 54 54 50 2f 31 2e 31 0d 0a 48 6f 73 74 3a 20 31 31 38 2e 38 39 2e 32
 32 38 2e 31 31 37 3a 38 30 30 31 0d 0a 55 73 65 72 2d 41 67 65 6e 74 3a 20 63 75 72 6c 2f 37 2e
 36 34 2e 31 0d 0a 41 63 63 65 70 74 3a 20 2a 2f 2a 0d 0a 0d 0a 
-</code></pre><p>接下来我们一步一步分析这些值的含义。</p>
+</code></pre><p>预先剧透一下，完整的解剖图长这样，接下来我们一步一步分析这些十六进制数字的含义。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20241226005629.png" alt="image-20241226005629665"></p>
 <h2 id="ethernet">Ethernet</h2>
 <p>首先整个协议栈的最底层是以太网协议，标准定义于 <a href="https://ieeexplore.ieee.org/document/8457469">IEEE 802.3</a>，具体以太网帧的格式是这样的：</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001714.png" alt="image.png"></p>
 <p>在我们抓到的包中，前八个字节的前导码和帧开始符已经被网卡过滤掉了所以我们抓不到。</p>
 <p>接着就是 6 个字节 48 位的 MAC 目标地址：<code>78 c3 13 95 f7 82</code> ，这是我家路由器的网卡 MAC 地址。</p>
-<p>然后是 MAC 源地址：<code> 88 e9 fe 67 bc 7c</code>，这是我 Mac 的 MAC。网卡的 MAC 地址是全球唯一的，在出厂时就已经确定了，MAC 地址总共 6 个字节，48位，前 24 位代表厂商 ID ，由 IEEE （电子电气工程师协会）分配，后 24 位则由厂家自行分配，内部确认唯一即可。</p>
+<p>然后是 MAC 源地址：<code> 88 e9 fe 67 bc 7c</code>，这是我电脑的 MAC。网卡的 MAC 地址是全球唯一的，在出厂时就已经确定了，就像是网络世界里每个设备的身份证号码。</p>
+<p>MAC 地址总共 6 个字节，48位，前 24 位代表厂商 ID ，由 IEEE （电子电气工程师协会）分配，后 24 位则由厂家自行分配，内部确认唯一即可。</p>
 <p>可以在 <a href="https://regauth.standards.ieee.org/">IEEE 官网网站</a>上 查到注册的厂商信息，我家路由器的 MAC 地址前六位是：<code> 78 c3 13</code>，在官网上搜可以搜到，这个地址是分给了中国移动，注册地址在北京宣武门，我家的路由器也确实是移动的。
 <img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200812001701.png" alt="image.png"></p>
 <p>现在移除了两个 MAC 地址之后，我们还剩这些字节：</p>
@@ -355,8 +359,8 @@ e4 75 c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c
 </thead>
 <tbody>
 <tr>
-<td>0800</td>
-<td>IPv4</td>
+<td><strong>0800</strong></td>
+<td><strong>IPv4</strong></td>
 </tr>
 <tr>
 <td>0806</td>
@@ -374,10 +378,6 @@ e4 75 c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c
 <td>8035</td>
 <td>RARP</td>
 </tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
 </tbody>
 </table>
 <p>我们的帧类型：<code> 0800</code> 是一个 IPv4 的封装帧，后面的冗余校验也和前导码一样，已经被网卡删掉了，所以捕获不到，以太网的头部就已经全部抽离了，我们继续分析下一层协议：IPv4。</p>
@@ -389,7 +389,7 @@ e4 75 c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c
 01000101 00000000 00000000 10000111
 </code></pre><p>头四位：<code>0100</code>  代表 IP 协议的版本号，这里是代表 IPv4。</p>
 <p>然后首部长度的参数是 4 字节，所以首部共有 <code>0101 = 5 * 4  = 20</code> 个字节，第 8 - 13 位当初设计上是用来区分服务类型的，但是并没有使用，所以一般情况下用不到，不过有些特殊的协议会去自己利用这一块空间。</p>
-<p>第 14 到 15 位 是显式拥塞通告，通常下 TCP/IP 网络是通过丢包来作为发生拥塞的信号的，显然这个信号并不一定准确，所以 2001年 <a href="https://tools.ietf.org/html/rfc3168">RFC 3168</a> 加入了对于显式拥塞通知（<strong>Explicit Congestion Notification</strong>，简称<strong>ECN</strong>）的支持，通过把这两个位置为  <code> 11</code> 来表示发生了拥塞，ECN 字段详细说明如下：</p>
+<p>第 14 到 15 位 是显式拥塞通知，通常下 TCP/IP 网络是通过丢包来作为发生拥塞的信号的，显然这个信号并不一定准确，所以 2001年 <a href="https://tools.ietf.org/html/rfc3168">RFC 3168</a> 加入了对于显式拥塞通知（<strong>Explicit Congestion Notification</strong>，简称<strong>ECN</strong>）的支持，通过把这两个位置为  <code> 11</code> 来表示发生了拥塞，ECN 字段详细说明如下：</p>
 <table>
 <thead>
 <tr>
@@ -414,8 +414,28 @@ e4 75 c8 07 1f 41 02 75 e2 d3 91 b0 fa ff 80 18 08 03 4d 23 00 00 01 01 08 0a 2c
 </table>
 <p>我们这里 <code> 00</code>代表不支持 ECN。</p>
 <p>这 32 位中剩下 16 位代表整个报文总长度，单位是字节，包括首部 + 内容：<code> 00000000 10000111</code>，转换成十进制也就是 135 字节，这个字段主要用来分隔开 IP 包。总长度是 16 位，由此我们也不难算出一个 IP 包的最大大小为：<code>2^16-1 = 65535</code> 字节。</p>
-<p>我们都知道一个以太网的工作方式是：载波多路复用/冲突检测（CSMA/CD），在想发送一个帧之前会先侦听其他节点是否在发送包，如果已经被占用的会就会等待，所以如果如果一次性传输的包很大的话，和 Java 几乎没人用的 Serial GC 一样，虽然吞吐量很大，但是导致网络的延迟很不稳定，这对于延迟敏感型应用而言是非常致命，理论上包越小，延迟越低，考虑到 Ethernet + IP + TCP 的首部也是一笔很大的开销，总不能一个包里面 Header 就占了一半吧，<strong>综合延迟和传输效率最后敲定默认 MTU 是 1500 字节</strong>。</p>
-<p>在 mac 系统可以通过 <code>networksetup -getMTU + 网卡接口</code>查看对应网卡上的 MTU，比如我的电脑就是 1500 字节：</p>
+<p>网络中的最大传输单元(MTU)设定为1500字节，这个数值的确定体现了对延迟和效率的权衡考量：</p>
+<p>从延迟角度看：</p>
+<ul>
+<li>以太网采用CSMA/CD（载波侦听多路访问/冲突检测）机制</li>
+<li>节点发送数据前需要先侦听信道是否空闲</li>
+<li>大数据包会占用信道较长时间，导致其他节点等待</li>
+<li>这种情况类似于Java中的Serial GC - 虽然总吞吐量高，但会造成明显的停顿</li>
+<li>对延迟敏感的应用来说，不稳定的传输延迟是难以接受的</li>
+</ul>
+<p>从效率角度看：</p>
+<ul>
+<li>每个数据包都需要携带Ethernet、IP和TCP的协议头</li>
+<li>如果包太小，协议头占比过大会降低有效载荷比例</li>
+<li>极端情况下可能出现一半空间都被协议头占用的情况</li>
+</ul>
+<p>因此，1500字节的MTU值代表了一个经过实践验证的平衡点：</p>
+<ul>
+<li>足够小以确保合理的网络延迟</li>
+<li>又足够大以保证协议头开销比例在可接受范围内</li>
+<li>这个默认值在今天仍然被广泛使用</li>
+</ul>
+<p>在 MacOS 系统可以通过 <code>networksetup -getMTU + 网卡接口</code>查看对应网卡上的 MTU，比如我的电脑就是 1500 字节：</p>
 <pre tabindex="0"><code>#networksetup -getMTU en0
 
 Active MTU: 1500 (Current Setting: 1500)
@@ -613,7 +633,7 @@ Active MTU: 1500 (Current Setting: 1500)
 2a 0d 0a 0d 0a
 </code></pre><h2 id="http">HTTP</h2>
 <p>下面就进入我们最上层的应用层协议：超文本传输协议（<strong>Hyper Text Transport Protocol: HTTP</strong>）的报文解析了。我们之前提到的协议都是基于字节和比特位的，这样能充分利用空间，提高传输效率，但作为一个应用层协议，HTTP 更多的是考虑的易用性，所以 HTTP 设计成了一个基于文本表示的协议，可读性和易用性。</p>
-<p>凡是涉及到二进制流转化成人类可读的文字时都会涉及到一个问题，二进制流该按什么规则映射到可读字符，这个过程就叫编码。HTTP 协议头部采样的是美国信息交换标准代码（<strong>American Starndard Code for Information Interchange : ASCII</strong>），这也是为什么 HTTP 头部不支持中文的原因。</p>
+<p>凡是涉及到二进制流转化成人类可读的文字时都会涉及到一个问题，二进制流该按什么规则映射到可读字符，这个过程就叫编码；HTTP 协议头部采用的是美国信息交换标准代码（<strong>American Starndard Code for Information Interchange : ASCII</strong>），这也是为什么 HTTP 头部不支持中文的原因。</p>
 <p>HTTP 是一种请求响应式协议，所以 HTTP 的报文也分成两种，请求报文和响应报文。这里我们发出的是一个请求报文，请求报文的格式是这样的：</p>
 <pre tabindex="0"><code>Method Request-URI HTTP-Version
 Header-Name: Header-Value
@@ -650,11 +670,11 @@ t : \b c u r l / 7 . 6 4 .
 1 CR LF A c c e p t : \b * /
 * CR LF CR LF
 </code></pre><p>可视化整理之后就是这样的：</p>
-<pre tabindex="0"><code>GET / HTTP/1.1
-Host: 110.89.228.110:8001
-User-Agent: curl/7.64.1
-Accept: */*
-</code></pre><p>通过 HTTP/1.1 协议使用 GET 的请求方法像其根目录资源发起请求，Host 头部代表了请求资源所属的主机，而User-Agent头部则代表我这边使用的 HTTP 协议的客户端类型，使用的 curl 工具。Accept: * / * 代表客户端这边支持任何类型的资源。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl">GET / HTTP/1.1
+</span></span><span class="line"><span class="cl">Host: 110.89.228.110:8001
+</span></span><span class="line"><span class="cl">User-Agent: curl/7.64.1
+</span></span><span class="line"><span class="cl">Accept: */*
+</span></span></code></pre></div><p>通过 HTTP/1.1 协议使用 GET 的请求方法像其根目录资源发起请求，Host 头部代表了请求资源所属的主机，而User-Agent头部则代表我这边使用的 HTTP 协议的客户端类型，使用的 curl 工具。Accept: * / * 代表客户端这边支持任何类型的资源。</p>
 <p>到这里这个包的解析就彻底结束了，我们可以看到我们完整的包是 1192 位，也就是 149 个字节（1192/8），而我们真正传输的内容其实只有 83 个字节，传输效率只有：<code>83/149 = 55.7%</code>，所以在系统方案的设计中，最好尽可能的在一个报文中发送尽可能多的信息，正好达到 MTU 的传输效率是最高的：<code>(1500 - (149-83)) / 1500 = 95%</code>。</p>
 <p>之后我们的这个大包会顺着网线来到路由器，路由器拆开看了一眼 IP 头部又会根据它的路由表发给下一台路由器，直到最后送到对端服务器的手里。对端服务器会一层一层地拆包，最后我们的 python server 代码会收到一个 纯粹的 HTTP 报文，它执行完对应的逻辑之后，就再封好 HTTP 响应报文，再调用操作系统的 API 把这个 HTTP 响应报文一层层的封装好又从网线送回来，整个庞大的互联网就是在这样不断地拆包封包中运行着，为人类的生活默默地做着贡献。</p>
 

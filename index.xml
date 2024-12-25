@@ -83,7 +83,7 @@ It&amp;rsquo;s possible to edit the source code of kernel, adding log to print t
       <pubDate>Mon, 13 Jun 2022 18:20:55 +0800</pubDate>
       
       <guid>https://huweicai.com/something-about-disk/</guid>
-      <description>磁盘 磁盘是一种非常常见的持久化存储设备，相较于计算机上另外一种主要的存储设备：内存，磁盘则主要具有断电数据不丢失、容量通常更大、价格低廉等特点；当然我们今天这里主要聊的是广义上的磁盘，而不是特指利用磁性来存储的狭义上的概念。 存储介质 理论上任何能够表达两种状态，且能持久性的保持的东西都可以用来造磁盘；不过我们通常还要考虑成本等其他实际的问题。 我们通常指的磁盘，按照存储介质来分，主要能分为固态硬盘和机</description>
+      <description>磁盘 在计算机发展的历程中，存储设备的演进一直是一个引人入胜的故事。 从最早的打孔纸带，到磁性存储，再到今天的固态硬盘，人们一直在追求更快、更大、更可靠的数据存储方案。 在这个演进过程中，磁盘凭借着断电数据不丢失、容量大、价格实惠等优势，成为了最重要的存储设备之一。 虽然最初 &amp;lsquo;磁盘&amp;rsquo; 狭义上的概念专指使用磁性材料的存储设备，但在今天，这个词已经泛指所有的持久化存储设备。让我们一起来探</description>
     </item>
     
     <item>
@@ -222,12 +222,12 @@ It&amp;rsquo;s possible to edit the source code of kernel, adding log to print t
     </item>
     
     <item>
-      <title>完整网络请求包自底向上分析</title>
+      <title>一个网络数据包的深度解剖</title>
       <link>https://huweicai.com/who-network-capture-analysis/</link>
       <pubDate>Wed, 01 Jul 2020 01:47:00 +0800</pubDate>
       
       <guid>https://huweicai.com/who-network-capture-analysis/</guid>
-      <description>我们都知道网络是分层的，国际标准化组织将网络划分了七层，定义于 ISO/IEC 7498-1，也就是我们所熟知的 ISO 七层模型。 自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。 而我们所熟知的超文本传输协议（HTTP: HyperText Transfer Protocol）便位于这个模型中的第七层，HTTP 请求包发出的时候会一层一层往下叠加头部知道最终变成最底层的物理信号在网线上传输，那么最终的网络包到底是长什么样呢？我们今</description>
+      <description>众所周知，网络是分层的，国际标准化组织将网络划分了七层，定义于 ISO/IEC 7498-1，也就是我们所熟知的 ISO 七层模型。 自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。 以我们所熟知的应用层协议，超文本传输协议（HTTP: HyperText Transfer Protocol）为例，它位于这个模型中的最高的一层，应用进程发送 HTTP 请求包发出之后，会一层一层往下叠加头部直到最终变成最底层的物理信号 0 1 0 1 比特流在网线上传输</description>
     </item>
     
     <item>
