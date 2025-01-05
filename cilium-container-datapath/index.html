@@ -372,7 +372,7 @@
 </span></span><span class="line"><span class="cl"><span class="nt">134</span><span class="o">:</span> <span class="nt">eth0</span><span class="p">@</span><span class="k">if135</span><span class="o">:</span> <span class="o">&lt;</span><span class="nt">BROADCAST</span><span class="o">,</span><span class="nt">MULTICAST</span><span class="o">,</span><span class="nt">UP</span><span class="o">,</span><span class="nt">LOWER_UP</span><span class="o">&gt;</span> <span class="nt">mtu</span> <span class="nt">1500</span> <span class="nt">qdisc</span> <span class="nt">noqueue</span> <span class="nt">state</span> <span class="nt">UP</span> <span class="nt">mode</span> <span class="nt">DEFAULT</span> <span class="nt">group</span> <span class="nt">default</span> <span class="nt">qlen</span> <span class="nt">1000</span>
 </span></span><span class="line"><span class="cl">    <span class="nt">link</span><span class="o">/</span><span class="nt">ether</span> <span class="nt">0a</span><span class="p">:</span><span class="nd">58</span><span class="p">:</span><span class="nd">d3</span><span class="p">:</span><span class="nd">2e</span><span class="p">:</span><span class="nd">06</span><span class="p">:</span><span class="nd">2a</span> <span class="nt">brd</span> <span class="nt">ff</span><span class="p">:</span><span class="nd">ff</span><span class="p">:</span><span class="nd">ff</span><span class="p">:</span><span class="nd">ff</span><span class="p">:</span><span class="nd">ff</span><span class="p">:</span><span class="nd">ff</span> <span class="nt">link-netnsid</span> <span class="nt">0</span>
 </span></span></code></pre></div><p><code>ip link</code> 命令会输出该网络空间下所有的网络设备，每个设备的开头是设备的 ID，专业名词叫：<code>ifindex</code>，然后是设备名紧接着一个@后面跟着的是 veth pair 的对端 <code>ifindex</code>，如果不是 veth 类型就不会有。</p>
-<p>veth 类型的设备是两个一组，像一条隧道一样，一个设备收到的所有网络包都会立即被转发给另一个设备。</p>
+<p><code>veth</code> 类型的设备是两个一组，像一条隧道一样，一个设备收到的所有网络包都会立即被转发给另一个设备。</p>
 <p>可以看到这里有一个特殊的设备 <code>eth0</code>，它对端设备的 <code>ifindex</code> 是 135，很明显这就是宿主机和容器网络联通的桥梁，我们可以切换到宿主机空间下看一下这个对端设备：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>root@host-machine ~<span class="o">]</span><span class="c1"># ip -c link |grep -A 1 135</span>
 </span></span><span class="line"><span class="cl">135: lxce37d234f154c@if134: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu <span class="m">1500</span> qdisc noqueue state UP mode DEFAULT group default qlen <span class="m">1000</span>
@@ -824,7 +824,7 @@
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2024 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+    <span>  2016 - 2025 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
   </div>
   
 
