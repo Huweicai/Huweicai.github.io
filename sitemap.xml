@@ -452,6 +452,14 @@
     <loc>https://huweicai.com/chubaofs-csi/</loc>
     <priority>0</priority>
   </url><url>
+    <loc>https://huweicai.com/drafts/insomnia/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/drafts/%E7%BD%91%E5%8D%A1%E6%98%AF%E5%A6%82%E4%BD%95%E8%BF%90%E4%BD%9C%E7%9A%84/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
     <loc>https://huweicai.com/personal/go%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -462,6 +470,13 @@
   </url><url>
     <loc>https://huweicai.com/untitled/</loc>
     <priority>0</priority>
+  </url><url>
+    <loc>https://huweicai.com/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%97%B6%E9%97%B4%E6%9C%89%E6%97%B6%E5%BF%AB%E6%9C%89%E6%97%B6%E6%85%A2/</loc>
+    <priority>0</priority>
+  </url><url>
+    <loc>https://huweicai.com/drafts/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url><url>
     <loc>https://huweicai.com/personal/</loc>
     <changefreq>daily</changefreq>
