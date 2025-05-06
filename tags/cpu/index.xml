@@ -6,7 +6,16 @@
     <description>Recent content in CPU on Anonymous&#39; Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Fri, 01 Jan 2021 01:20:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/cpu/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 05 May 2025 19:58:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/cpu/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何极致地压榨一颗 CPU 核心</title>
+      <link>https://huweicai.com/cpu-996/</link>
+      <pubDate>Mon, 05 May 2025 19:58:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/cpu-996/</guid>
+      <description>通常当服务端工程师谈论 CPU 核心的时候，更多地时候在乎的是数量而不是质量，比如我们开发了一个 Java 服务的容器需要申请一个 4 核 32 GB 内存的套餐（4C32G），还开发了一个 Golang 服务需要 4C8G 的 quota（我真的不是在黑 Java），但我们绝大多数时候并不会关心底层的 4 个核心来自于 AMD 还是 Intel 品牌的 CPU， 更别说具体什么 Xeon 还是 EPYC 型号了。 因为大部分服务端的问题都可以水平扩容来得到解决，四颗核心不够了，那我们申请六颗核心就好了，</description>
+    </item>
+    
     <item>
       <title>如何准确的获取CPU占用率[Linux][Go]</title>
       <link>https://huweicai.com/go-linux-get-cpu-usage/</link>

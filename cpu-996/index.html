@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="通常当服务端工程师谈论 CPU 核心的时候，更多地时候在乎的是数量而不是质量，比如我们开发了一个 Java 服务的容器需要申请一个 4 核 32 GB 内存的套餐（4C32G），还开发了一个 Golang 服务需要 4C8G 的 quota（我真的不是在黑 Java），但我们绝大多数时候并不会关心底层的 4 个核心来自于 AMD 还是 Intel 品牌的 CPU， 更别说具体什么 Xeon 还是 EPYC 型号了。 因为大部分服务端的问题都可以水平扩容来得到解决，四颗核心不够了，那我们申请六颗核心就好了，">
+
+  <meta property="og:title" content="如何极致地压榨一颗 CPU 核心" />
+<meta property="og:description" content="通常当服务端工程师谈论 CPU 核心的时候，更多地时候在乎的是数量而不是质量，比如我们开发了一个 Java 服务的容器需要申请一个 4 核 32 GB 内存的套餐（4C32G），还开发了一个 Golang 服务需要 4C8G 的 quota（我真的不是在黑 Java），但我们绝大多数时候并不会关心底层的 4 个核心来自于 AMD 还是 Intel 品牌的 CPU， 更别说具体什么 Xeon 还是 EPYC 型号了。 因为大部分服务端的问题都可以水平扩容来得到解决，四颗核心不够了，那我们申请六颗核心就好了，" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/cpu-996/" /><meta property="article:section" content="" />
+<meta property="article:published_time" content="2025-05-05T19:58:00+08:00" />
+<meta property="article:modified_time" content="2025-05-05T19:58:00+08:00" />
+
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       如何极致地压榨一颗 CPU 核心 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/cpu-996/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://huweicai.com/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">如何极致地压榨一颗 CPU 核心</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2025-05-05</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>9 minutes read</li>
+        
+        <li>4470 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>通常当服务端工程师谈论 CPU 核心的时候，更多地时候在乎的是数量而不是质量，比如我们开发了一个 <code>Java</code> 服务的容器需要申请一个 4 核 32 GB 内存的套餐（4C32G），还开发了一个 <code>Golang</code> 服务需要 4C8G 的 <code>quota</code>（我真的不是在黑 Java），但我们绝大多数时候并不会关心底层的 4 个核心来自于 AMD 还是 Intel 品牌的 CPU， 更别说具体什么 Xeon 还是 EPYC  型号了。</p>
+<p>因为大部分服务端的问题都可以水平扩容来得到解决，四颗核心不够了，那我们申请六颗核心就好了，如果不能通过水平扩容解决问题，那就让服务架构变成可以通过水平扩容解决问题。</p>
+<p>但总有一些问题是<strong>必须直面硬件本质的</strong>，比如高频交易场景（High-Frequency Trading，HFT），行情到来的瞬间，竞争对手只需要比你快一纳秒将订单提交给交易所前置，就能轻松夺走你苦苦挖掘的机会，Profit or Loss？单颗核心的性能才是真正的决胜关键。</p>
+<p>每次行情到来的瞬间都是一轮残酷的竞赛游戏的开始，为了赢下这场比赛，如何能极致地压榨一颗 CPU 核心，将至关重要。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20250506174311.jpeg" alt="image"></p>
+<h1 id="基准测试">基准测试</h1>
+<blockquote>
+<p>不量化的优化是盲目的冒进</p>
+</blockquote>
+<p>在工程领域，当我们要进行性能优化时，首先要从基准测试开始，没有测量，就没有办法知道优化的效果。</p>
+<p>对于 CPU 的性能测试是一个很普遍的需求——<strong>单核跑分</strong>，有非常多现成的工具可以选择，比如 <code>stress-ng</code> 、 <code>sysbench</code> 等：</p>
+<pre tabindex="0"><code>taskset -c 3 sysbench cpu --threads=1 --cpu-max-prime=20000 run
+</code></pre><p>本质上，我们就是需要知道单位时间内，CPU 可以执行多少条指令。</p>
+<p>或者我们也可以选择自己编写一个简单的基准测试程序，来测量 CPU 的性能，比如就是单纯的测量每秒钟能进行的浮点数运算：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cc" data-lang="cc"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;time.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检查命令行参数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Usage: %s &lt;iterations&gt;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将参数转换为无符号长长整数（循环总数）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">iterations</span> <span class="o">=</span> <span class="n">strtoull</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用 volatile 防止编译器优化掉 dummy 运算
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">volatile</span> <span class="kt">double</span> <span class="n">dummy</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取开始时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">struct</span> <span class="nc">timespec</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">clock_gettime</span><span class="p">(</span><span class="n">CLOCK_MONOTONIC</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">start</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;clock_gettime start&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 执行指定次数的循环，dummy 用于简单的运算
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">iterations</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">dummy</span> <span class="o">+=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取结束时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">clock_gettime</span><span class="p">(</span><span class="n">CLOCK_MONOTONIC</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">end</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;clock_gettime end&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算总耗时（秒）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">double</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="p">(</span><span class="n">end</span><span class="p">.</span><span class="n">tv_sec</span> <span class="o">-</span> <span class="n">start</span><span class="p">.</span><span class="n">tv_sec</span><span class="p">)</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">                     <span class="p">(</span><span class="n">end</span><span class="p">.</span><span class="n">tv_nsec</span> <span class="o">-</span> <span class="n">start</span><span class="p">.</span><span class="n">tv_nsec</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算每秒平均循环次数 (防止除 0)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">double</span> <span class="n">iterations_per_second</span> <span class="o">=</span> <span class="p">(</span><span class="n">elapsed</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">iterations</span> <span class="o">/</span> <span class="nl">elapsed</span> <span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 输出测试结果
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;循环次数: %llu</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">iterations</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;耗时: %.6f 秒</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;平均每秒循环次数: %.0f</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">iterations_per_second</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Dummy值: %f</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">dummy</span><span class="p">);</span> <span class="c1">// 防止优化掉 dummy 运算
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="硬件层面">硬件层面</h1>
+<h2 id="换-cpu">换 CPU</h2>
+<p>就像在一个公司里，资金允许的情况下，与其费劲心思压榨引导监督员工干活解决某一个问题，不如直接雇佣一名这方面的专家能够更好地解决问题。</p>
+<p>以世面上目前比较主流的服务器 CPU 型号 <a href="https://www.intel.com/content/www/us/en/products/sku/237261/intel-xeon-platinum-8592-processor-320m-cache-1-90-ghz/specifications.html">Intel® Xeon® Platinum 8592+</a> 为例，基础频率 1.9 GHz，最大睿频也就 3.9 GHz，但服务器 CPU 更多地考虑吞吐量和稳定性，所以不会极致地追求单核性能。</p>
+<p>我们可以一步到位直接选择当下地表最强单核商业 CPU —— <a href="https://www.intel.com/content/www/us/en/products/sku/237504/intel-core-i9-processor-14900ks-36m-cache-up-to-6-20-ghz/specifications.html">Intel® Core™ i9 14900KS</a>，最大睿频 6.2 GHz，6.2 GHz 意味着每秒 <strong>62 亿次</strong>（6,000,000,000 次）！！！时钟周期，比 8592+ 快 60% 。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20250315013131.webp" alt="Core i9-14900KS vs i9-14900K"></p>
+<p>时钟周期和我们的代码又有什么关系呢？</p>
+<p>回顾一下，我们的高级编程语言中的一行代码会可能编译出多条汇编指令，一条指令可以被简单拆解为五个阶段，每个时钟周期可以执行一个阶段。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20250315005626.png" alt="未命名文件(10)"></p>
+<p>实际上，现代 CPU 的架构远不止这么简单，超标量、乱序执行、专用单元等优化技术可以使得每个周期完成不止一条指令。</p>
+<p>以  Intel i9-14900KS 为例，基于 Raptor Lake 架构性能核心的 IPC（Instructions Per Cycle） 约为 3.5，意味着平均每个周期可以执行 3.5 条指令，单个核心每秒钟可以执行两百亿条指令！</p>
+<p>以这个简单的计算函数为例，先进行加法然后进行乘法：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">calculate</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>其对应的汇编代码大致如下，一共十二条指令：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nl">calculate</span><span class="p">:</span>                    <span class="err">#</span> <span class="kt">int</span> <span class="n">calculate</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="cp"># 函数序言
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">pushq</span>	<span class="o">%</span><span class="n">rbp</span>            <span class="err">#</span> <span class="err">保存前一个函数的基址指针</span>
+</span></span><span class="line"><span class="cl">	<span class="n">movq</span>	<span class="o">%</span><span class="n">rsp</span><span class="p">,</span> <span class="o">%</span><span class="n">rbp</span>      <span class="err">#</span> <span class="err">设置新的基址指针</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="cp"># 保存参数
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">movl</span>	<span class="o">%</span><span class="n">edi</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">)</span> <span class="err">#</span> <span class="err">保存参数</span><span class="n">a</span> <span class="p">(</span><span class="err">来自</span><span class="n">edi寄存器</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">movl</span>	<span class="o">%</span><span class="n">esi</span><span class="p">,</span> <span class="o">-</span><span class="mi">24</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">)</span> <span class="err">#</span> <span class="err">保存参数</span><span class="n">b</span> <span class="p">(</span><span class="err">来自</span><span class="n">esi寄存器</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="cp"># int c = a + b;
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">movl</span>	<span class="o">-</span><span class="mi">20</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">),</span> <span class="o">%</span><span class="n">edx</span> <span class="err">#</span> <span class="err">加载</span><span class="n">a到edx</span>
+</span></span><span class="line"><span class="cl">	<span class="n">movl</span>	<span class="o">-</span><span class="mi">24</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">),</span> <span class="o">%</span><span class="n">eax</span> <span class="err">#</span> <span class="err">加载</span><span class="n">b到eax</span>
+</span></span><span class="line"><span class="cl">	<span class="n">addl</span>	<span class="o">%</span><span class="n">edx</span><span class="p">,</span> <span class="o">%</span><span class="n">eax</span>      <span class="err">#</span> <span class="err">执行</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="err">，结果在</span><span class="n">eax</span>
+</span></span><span class="line"><span class="cl">	<span class="n">movl</span>	<span class="o">%</span><span class="n">eax</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">)</span>  <span class="err">#</span> <span class="err">保存结果到</span><span class="n">c</span> <span class="p">(</span><span class="err">栈上位置为</span><span class="n">rbp</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="cp"># c = c * 2;
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">sall</span>	<span class="o">-</span><span class="mi">4</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">)</span>        <span class="err">#</span> <span class="err">对</span><span class="n">c做左移1位操作</span> <span class="p">(</span><span class="err">等价于</span><span class="n">c</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="cp"># return c;
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">movl</span>	<span class="o">-</span><span class="mi">4</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">),</span> <span class="o">%</span><span class="n">eax</span>  <span class="err">#</span> <span class="err">加载</span><span class="n">c到eax寄存器作为返回值</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="cp"># 函数尾声
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">popq</span>	<span class="o">%</span><span class="n">rbp</span>            <span class="err">#</span> <span class="err">恢复之前保存的基址指针</span>
+</span></span><span class="line"><span class="cl">	<span class="n">ret</span>                      <span class="err">#</span> <span class="err">返回到调用函数</span>
+</span></span></code></pre></div><p>按 <code>8592+ </code>和 <code>14900KS</code>  IPC 均为 3.5 考虑，最大睿频的情况下：</p>
+<ul>
+<li><code>8592+</code> 每秒可以执行 3.5 * 3.9 * 10^9 = 13.65 * 10 ^ 9 条指令， 每秒指令需要 1*10^9 / 13.65 * 10^9 = 0.07326007ns</li>
+<li><code>14900KS</code>每秒可以执行 3.5 * 6.2 * 10^9 = 21.7 * 10 ^ 9 条指令， 每秒指令需要 1*10^9 / 21.7 * 10^9 = 0.04608295ns</li>
+</ul>
+<p>执行十二条指令的话，两者分别需要 <code>0.87ns</code> <code>0.55ns</code>，我们真实软件开发程序中的函数会远比这复杂，看似简单的调用几个库函数，被和可能就是成千上万条指令，这个差距会等比例放大到 <code>87us vs 55us</code> -&gt; <code>87ms vs 55ms</code>直到能被上层业务逻辑非常明显的感知到。</p>
+<p>（当然这是一个非常理想的计算模型，实际上编译器和处理器会有各种各样子的黑魔法优化，指令并不一定能并行，不同指令的执行长短也不一样，甚至哪一天这个函数也被打包成了一条专用的指令也说不定，毕竟 CISC 多一条指令也不多 :) ）</p>
+<h2 id="超频">超频</h2>
+<p>首先不管具体使用哪一个型号的 <code>CPU</code>，超频都是非常必要的。</p>
+<p>CPU 运行频率是由<code>CPU时钟</code>决定的，由主板晶振 + 倍增器实现的，不过我们可以把时钟简单理解为一个不断震荡输出高低电平的电子元件，震荡一次，庞大的 CPU 门电路系统就会运行一次，完成一次宏观意义上的计算。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20250330013225.png" alt="image-20250330013225066"></p>
+<p>主板晶振频率通常是 100MHz，我们只需要修改倍增系数就能实现超频，比如想要超到 9.0GHz，就将倍增系数调整到 90 即可。</p>
+<p>超频最大的问题来自于电压和散热：</p>
+<ul>
+<li>电压过低 -&gt; 晶体管无法跟上切换节奏 -&gt; 计算错误 -&gt; 蓝屏</li>
+<li>散热不足 -&gt; 温度过高 -&gt; 触发温度保护 -&gt; 死机</li>
+</ul>
+<p>目前最极限 <code>CPU</code> 运行频率的世界记录是 <a href="https://hwbot.org/benchmarks/cpu_frequency/submissions/5751159">9.12GHz</a>，是不是想象空间非常大？当然这是在非常极端的情况下，Wytiwx 使用了一颗 <code>i9-14900KF</code>，搭配 2 * 1600W 大功率电源，使用液氦将<code>CPU</code>冷却到零下 200 度来实现的。这种时钟频率下系统可能只能稳定运行几秒钟， 就只够跑个分截个图的时间。</p>
+<p>如果想要解决一些实际的问题，我们会需要一套更加稳定的超频方案，每颗 CPU 的体质不一样，这可能是一个需要不断尝试的组合结果。</p>
+<p>另外主板上面还有一些其他的 CPU 相关的配置可以调节，有助于避免 <code>CPU</code>降频：</p>
+<ul>
+<li>关闭 <code>Efficient</code> 核心，关闭一些用不到的小核心</li>
+<li>关闭<code>C-State</code>，避免CPU进入省电模式</li>
+<li>禁用 <code>AVX</code> 指令集，如果用不到的话，可以禁用以减少功耗</li>
+</ul>
+<h2 id="禁用超线程">禁用超线程</h2>
+<p>超线程（Hyper-Threading）技术是 Intel 开发的一项技术，可以让一个物理核心模拟出两个逻辑核心，让操作系统认为有两个核心可以调度，从而提高 CPU 的并行处理能力。</p>
+<p>但在我们的场景下，超线程反而会带来负面影响：</p>
+<ul>
+<li>两个逻辑核心会共享物理核心的资源（如缓存、执行单元等）</li>
+<li>当两个线程同时运行时，会互相争抢资源，导致性能下降</li>
+<li>缓存失效和上下文切换的开销会更大</li>
+</ul>
+<p>我们可以通过以下方式禁用超线程：</p>
+<ul>
+<li>在 BIOS 中直接禁用</li>
+<li>or 通过内核启动参数 <code>noht</code> 禁用</li>
+<li>或者通过 <code>echo 0 &gt; /sys/devices/system/cpu/smt/control</code> 动态禁用</li>
+</ul>
+<h1 id="操作系统层面">操作系统层面</h1>
+<p>当我们在硬件层面将 CPU 压榨到了极致之后，例如 6.0GHz 每秒六十亿次计算，接下来我们的问题就是如何让这一个核心在一秒钟六十亿个时钟周期都在执行我们期望的指令。</p>
+<p>这并不是一件理所当然的事情，我们无法直接使用裸的 CPU 硬件资源，需要委托操作系统这一层硬件的抽象来执行。</p>
+<p>现代操作系统的设计理念通常是多任务兼顾效率与公平，然而我们要的就是特权、要是就是独占；另外操作系统本身也会有一些“元任务”会占用我们的 CPU 核心。</p>
+<p>理论上较差的情况下，我们辛辛苦苦压榨出来的 <code>CPU</code>核心甚至我们自己只能从操作系统手中分得<code>70%</code>的时间片，这是非常难以接受的。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20250417135849.png" alt="image-20250417135849687"></p>
+<h2 id="核心隔离--绑核">核心隔离 &amp; 绑核</h2>
+<p>默认情况下，所有的 CPU 核心都会参与操作系统的调度，当我们的程序运行的时候，很有可能会有不长眼的其他线程抢占我们的 CPU 核心，然后我们的程序被迫暂停，等待下一次调度，即使这个线程执行时间很短迅速的归还了核心的使用权，然后上下文的切换以及对应核心 CPU 缓存的失效等都会带来巨大的开销。</p>
+<p>最好这颗核心能自始至终只为我们的程序那一个线程服务。</p>
+<p>我们可以根据需要，将一定数量的 CPU 核心隔离出来，将它们排除在操作系统调度之外，我们的线程再通过特殊的手段将它们绑定到这些核心上，这样我们的程序就可以独占这些核心。</p>
+<p>在内核启动参数中添加 <code>isolcpus=N</code> 参数就可以实现核心隔离，然后通过 <code>taskset</code> 或者 <code>sched_setaffinity</code> 系统调用就可以将线程绑定到这些核心上。</p>
+<h2 id="减少中断">减少中断</h2>
+<p>中断（Interrupt）是为了避免轮询而设计出来的一种机制，它可以让 CPU 在正常情况下专注当前任务，只在需要的时候才暂停当前任务，然后去处理中断。
+举个例子，以服务器上最常见的中断类型——网卡中断为例：</p>
+<ol>
+<li>网卡设备收到数据后，会通过 DMA 控制器将数据写入内存</li>
+<li>然后网卡会向 CPU 发送一个中断，告诉 CPU 可以去处理数据了</li>
+<li>这个时候 CPU 会暂停当前任务，保存当前上下文</li>
+<li>然后 CPU 会切换到内核态开始执行内核代码处理这些数据</li>
+<li>从 DMA buffer 读取网络包转换成 <code>sk_buff</code> 然后唤醒等待在 <code>sk_buff</code> 队列上的线程</li>
+<li>在用户态看来就是 <code>recvfrom</code> 系统调用返回数据了</li>
+<li>干完这一堆事情，CPU 才能再继续重新加载上下文，继续执行之前的任务。</li>
+</ol>
+<p>这种机制在大多数场景下是非常合理的，但对于我们这种追求极致性能的场景来说，中断带来的上下文切换开销是不可接受的：</p>
+<ol>
+<li>中断处理程序会打断当前任务的执行，导致 CPU 流水线被清空</li>
+<li>中断处理程序会使用 CPU 缓存，导致当前任务的缓存被污染</li>
+<li>中断处理完成后，还需要恢复之前的上下文，这个过程也会带来开销</li>
+</ol>
+<p>我们需要尽可能的让我们的核心，远离这些中断。</p>
+<h3 id="io-中断">IO 中断</h3>
+<p>首先针对 IO 类中断而言，我们可以配置亲和性让它们只在特定的核心上运行：</p>
+<ul>
+<li>配置内核参数： <code>irqaffinity=0,8-11</code></li>
+<li>或者手动为所有的中断设置亲和性：<code>echo $MASK &gt; /proc/irq/$i/smp_affinity</code></li>
+</ul>
+<p>另外 irqbalance 工具可能会覆盖亲和性配置，可以直接禁用这个服务 <code>systemctl disable irqbalance</code>。</p>
+<h3 id="时钟中断">时钟中断</h3>
+<p>时钟中断是一种比较特殊的中断，它会周期性在每一颗 CPU 核心上触发，操作系统会定期检查是否需要进行线程切换，默认情况下会根据配置的时钟频率 <code>HZ</code>来触发。</p>
+<p>Linux 提供一项 Dynamic Ticks 特性，可以在 CPU 上只存在一个线程运行的情况下大幅减少时钟中断的触发次数，因为也没有必要太多的检查。</p>
+<p>我们可以通过修改内核参数来为我们的核心启用这项特性：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">- <span class="nv">nohz</span><span class="o">=</span>on <span class="c1"># 启用 Dynamic Ticks 功能</span>
+</span></span><span class="line"><span class="cl">- <span class="nv">nohz_full</span><span class="o">=</span>1-7 <span class="c1"># 在特定 CPU 核心上启用 Dynamic Ticks</span>
+</span></span><span class="line"><span class="cl">- <span class="nv">skew_tick</span><span class="o">=</span><span class="m">1</span> <span class="c1"># 避免多个核心同时触发时钟中断带来的性能抖动</span>
+</span></span><span class="line"><span class="cl">- <span class="nv">rcu_nocbs</span><span class="o">=</span>1-7 <span class="c1"># 不处理 RCU 回调</span>
+</span></span></code></pre></div><h2 id="禁用死锁检测">禁用死锁检测</h2>
+<p>死锁检测（Deadlock Detection）是 Linux 为了避免系统陷入死锁而设计的一种机制，它会定期检查系统中的进程是否存在死锁的可能；这种检测会由时钟中断触发，在每个 CPU 核心上都消耗一定的资源
+我们可能通过添加内核参数 <code>nowatchdog</code> <code>nosoftlockup</code> 进行禁用。</p>
+<h1 id="写在最后">写在最后</h1>
+<p>最后写点题外话，本来在纠结写出来会不会显得有点刻意升华，毕竟这是一篇技术文章，但仔细思考后，觉得这个类比确实很有启发，所以还是决定写下来。</p>
+<p>其实我们的人类的 CPU —— 大脑，和计算机的 CPU 也很像，当我们想要极致的“压榨”我们的大脑时，其实也是这两个方向：</p>
+<ul>
+<li>持续学习，锻炼思维能力、积累思维框架与方法论，提升单位时间内大脑的 token 输入输出处理能力</li>
+<li>专注于主线任务，减少上下文切换，将大脑的时间片留给关键任务；当我们需要深度思考时，也应该为大脑创造一个「隔离」的环境，远离各种「中断」</li>
+</ul>
+<p>极致的优化，不只是技术的追求，更是对自我认知和成长的探索。</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/cpu" role="button">cpu </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6" role="button">硬件 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/multicast/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>数据的蒲公英——组播</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9f%ba%e5%87%86%e6%b5%8b%e8%af%95">
+												 基准测试
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%a1%ac%e4%bb%b6%e5%b1%82%e9%9d%a2">
+												 硬件层面
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%8d%a2-cpu">
+												 换 CPU
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%b6%85%e9%a2%91">
+												 超频
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%a6%81%e7%94%a8%e8%b6%85%e7%ba%bf%e7%a8%8b">
+												 禁用超线程
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%93%8d%e4%bd%9c%e7%b3%bb%e7%bb%9f%e5%b1%82%e9%9d%a2">
+												 操作系统层面
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%a0%b8%e5%bf%83%e9%9a%94%e7%a6%bb--%e7%bb%91%e6%a0%b8">
+												 核心隔离 &amp; 绑核
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%87%8f%e5%b0%91%e4%b8%ad%e6%96%ad">
+												 减少中断
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#io-%e4%b8%ad%e6%96%ad">
+												 IO 中断
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%97%b6%e9%92%9f%e4%b8%ad%e6%96%ad">
+												 时钟中断
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%a6%81%e7%94%a8%e6%ad%bb%e9%94%81%e6%a3%80%e6%b5%8b">
+												 禁用死锁检测
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%86%99%e5%9c%a8%e6%9c%80%e5%90%8e">
+												 写在最后
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2025 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>
