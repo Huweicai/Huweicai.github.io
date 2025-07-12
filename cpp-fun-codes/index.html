@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="三行情诗 谁说我们写 C&#43;&#43; 的就不懂浪漫了： // 我的心必须通过&#34;爱你&#34;的约束才能实例化 template&lt;typename Heart&gt; requires loves&lt;Heart, You&gt; // 激情、忠诚、永恒置入爱的元组，这份爱在编译时就已确定，不会因运行时的变化而改变 // 是写在源码里的承诺，是嵌入二进制的誓言 constexpr auto my_feelings = std::tuple{passion, devotion, eternity}; // 在 C&#43;&#43; 的类型系统中，我们的未来被特化为永远为真，这是编译器都认可的事实 template&lt;&gt; struct future&lt;us&gt; : std::true_type { static constexpr auto value = forever; }; 不愧是我们写 C&#43;&#43; 的，写出来的情诗都能是零运行时开销的。 AND 下面这段代码能">
+
+  <meta property="og:title" content="一些有意思的C&#43;&#43;代码" />
+<meta property="og:description" content="三行情诗 谁说我们写 C&#43;&#43; 的就不懂浪漫了： // 我的心必须通过&#34;爱你&#34;的约束才能实例化 template&lt;typename Heart&gt; requires loves&lt;Heart, You&gt; // 激情、忠诚、永恒置入爱的元组，这份爱在编译时就已确定，不会因运行时的变化而改变 // 是写在源码里的承诺，是嵌入二进制的誓言 constexpr auto my_feelings = std::tuple{passion, devotion, eternity}; // 在 C&#43;&#43; 的类型系统中，我们的未来被特化为永远为真，这是编译器都认可的事实 template&lt;&gt; struct future&lt;us&gt; : std::true_type { static constexpr auto value = forever; }; 不愧是我们写 C&#43;&#43; 的，写出来的情诗都能是零运行时开销的。 AND 下面这段代码能" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://huweicai.com/cpp-fun-codes/" /><meta property="article:section" content="" />
+<meta property="article:published_time" content="2025-07-12T19:58:00+08:00" />
+<meta property="article:modified_time" content="2025-07-12T19:58:00+08:00" />
+
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       一些有意思的C&#43;&#43;代码 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/cpp-fun-codes/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://huweicai.com/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com">
+          
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">一些有意思的C&#43;&#43;代码</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2025-07-12</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>9 minutes read</li>
+        
+        <li>4070 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h3 id="三行情诗">三行情诗</h3>
+<p>谁说我们写 C++ 的就不懂浪漫了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="c1">// 我的心必须通过&#34;爱你&#34;的约束才能实例化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Heart</span><span class="o">&gt;</span> <span class="k">requires</span> <span class="n">loves</span><span class="o">&lt;</span><span class="n">Heart</span><span class="p">,</span> <span class="n">You</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 激情、忠诚、永恒置入爱的元组，这份爱在编译时就已确定，不会因运行时的变化而改变
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 是写在源码里的承诺，是嵌入二进制的誓言
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">constexpr</span> <span class="k">auto</span> <span class="n">my_feelings</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="p">{</span><span class="n">passion</span><span class="p">,</span> <span class="n">devotion</span><span class="p">,</span> <span class="n">eternity</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 在 C++ 的类型系统中，我们的未来被特化为永远为真，这是编译器都认可的事实
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">template</span><span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="nc">future</span><span class="o">&lt;</span><span class="n">us</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{</span> <span class="k">static</span> <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">value</span> <span class="o">=</span> <span class="n">forever</span><span class="p">;</span> <span class="p">};</span>
+</span></span></code></pre></div><p>不愧是我们写 C++ 的，写出来的情诗都能是零运行时开销的。</p>
+<h3 id="and">AND</h3>
+<p>下面这段代码能正常编译运行：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">and</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 是的你没有看错，这里有个 and...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="c1">// 是的你还是没有看错，这个 and a 还能被赋值
+</span></span></span></code></pre></div><p>这一段代码有两个非常有意思的地方，首先第一行的<code>and</code> 本身是一个非常冷门但是古老的关键字，ISO 646 标准引入的——与符号（<code>&amp;&amp;</code>）的别名，早期很多键盘无法输入特殊符号所以引入了这个关键字。</p>
+<p>在很多编译环境中，<code>and</code> 被实现成了宏 <code>#define and &amp;&amp;</code>，所以这段代码就变成了：<code>int &amp;&amp; a=1</code>，<code>&amp;&amp;</code>这个符号还表示右值引用的意思，这里创建了一个对于右值常量 1 的右值引用。</p>
+<p>第二行有意思的点可以用一句话描述：”<code>右值引用其实是个左值</code>”，这里就不详细展开了。</p>
+<h3 id="crtp">CRTP</h3>
+<p>CRTP(<em>Curiously Recurring Template Pattern</em>)，谈奇怪的代码肯定离不开著名的“奇异递归模板模式”，这个技巧在网上被宣传的很高大上：“静态多态”，“vtable killer”，“零开销抽象神迹的体现”，但是实际上我们 99% 场景下的多态是需要将各个实例放在一个容器中的，为了优化虚函数表查找开销，我们也可以使用传统递归代码直接使用子类。</p>
+<p>CRTP 更大的意义在于<strong>父类（基类模板）可以直接“感知”并利用子类（派生类）的类型信息和具体实现</strong>。这使得它能够优雅地实现**<code>Mixin</code><strong>功能，为派生类提供通用行为或工具，而不仅仅是传统的“is-a”意义上的</strong><code>继承</code>**。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="nc">Base</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 这里 T 会传入子类的类型, 父类拿到了子类的类型，这就是递归
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 直接强转成子类指针调用，就没有虚函数表查找开销
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// Derived1 Derived2 Derived3 在被父类调用时都能无损调用到 do_something_impl
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">void</span> <span class="nf">do_something</span><span class="p">()</span> <span class="p">{</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">T</span> <span class="o">*&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">do_something_impl</span><span class="p">();</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Derived</span> <span class="o">:</span> <span class="n">Base</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">do_something_impl</span><span class="p">()</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Derived impl</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><h3 id="自毁对象">自毁对象</h3>
+<p>这个类会在构造的一瞬间就离开我们：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Kamikaze</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Kamikaze</span><span class="p">()</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;我出生了！</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span> <span class="k">delete</span> <span class="k">this</span><span class="p">;</span> <span class="p">}</span> 
+</span></span><span class="line"><span class="cl">    <span class="o">~</span><span class="n">Kamikaze</span><span class="p">()</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;我死了！</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">Kamikaze</span><span class="o">*</span> <span class="n">k</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Kamikaze</span><span class="p">();</span> <span class="c1">// 输出 “我出生了！” 和 “我死了！”
+</span></span></span></code></pre></div><blockquote>
+<p>使用了 <code>delete this</code>语法在对象的内部触发删除自身，在某些情况下可以让对象自己掌控自己的生命周期（我的命运不受他人摆布！），比如事件驱动系统中的自清理监听器、插件系统自我卸载等等。</p>
+</blockquote>
+<h3 id="无敌的对象">无敌的对象</h3>
+<p>C++ 的对象拥有彻底掌控自己命运的能力，既可以选择什么时候死亡，也可以选择拒绝死亡。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;new&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Phoenix</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="k">operator</span> <span class="nf">delete</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span> <span class="p">{}</span> <span class="c1">// 重写 delete，避免内存被释放，这样就只会执行析构函数但是不会释放内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="o">~</span><span class="n">Phoenix</span><span class="p">()</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;休想杀死我，我是无敌的!!&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Phoenix</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Phoenix</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;p-&gt;i = &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">delete</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">delete</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">delete</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">delete</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">delete</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;p-&gt;i = &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="c1">// 对象仍然可以正常使用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><h3 id="the-coolest-c-code">The Coolest C++ Code</h3>
+<p>一千个人心中有一千种最酷的 <code>C++</code> 代码，但是最 <strong>Cool</strong> 的代码莫过于此：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt; </span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span> 
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> 
+</span></span><span class="line"><span class="cl"><span class="p">{</span> 
+</span></span><span class="line"><span class="cl">  <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;K&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 输出：0K
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> 
+</span></span></code></pre></div><blockquote>
+<p>0K = <strong>-273.15℃</strong>，绝对零度（Absolute Zero），very cool</p>
+</blockquote>
+<h3 id="一段非常简单的标准库代码">一段非常简单的标准库代码</h3>
+<p>C++ 的标准库是我目前见到的所有编程语言中最复杂的没有之一，且远胜其他编程语言，下面列举一小段 <code>std::vector</code>（动态数组）插入函数的部分相关代码，动态数组相对其他数据结构来说已经是非常简单的了，但是其复杂度仍然相当之高，标准库中充斥着各种多层模板嵌套、历史分支兼容与宏定义，我很难想象一名刚刚学完谭浩强 C++ 的新人不小心点到标准库源代码文件会是什么反应：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Allocator</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Up</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">_LIBCPP_CONSTEXPR_SINCE_CXX20</span> <span class="k">typename</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span> <span class="n">_Allocator</span><span class="o">&gt;::</span><span class="n">pointer</span>
+</span></span><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span> <span class="n">_Allocator</span><span class="o">&gt;::</span><span class="n">__push_back_slow_path</span><span class="p">(</span><span class="n">_Up</span><span class="o">&amp;&amp;</span> <span class="n">__x</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">allocator_type</span><span class="o">&amp;</span> <span class="n">__a</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">__alloc</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__split_buffer</span><span class="o">&lt;</span><span class="n">value_type</span><span class="p">,</span> <span class="n">allocator_type</span><span class="o">&amp;&gt;</span> <span class="n">__v</span><span class="p">(</span><span class="n">__recommend</span><span class="p">(</span><span class="n">size</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">size</span><span class="p">(),</span> <span class="n">__a</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// __v.push_back(std::forward&lt;_Up&gt;(__x));
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">__alloc_traits</span><span class="o">::</span><span class="n">construct</span><span class="p">(</span><span class="n">__a</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">__to_address</span><span class="p">(</span><span class="n">__v</span><span class="p">.</span><span class="n">__end_</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">_Up</span><span class="o">&gt;</span><span class="p">(</span><span class="n">__x</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__v</span><span class="p">.</span><span class="n">__end_</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">__swap_out_circular_buffer</span><span class="p">(</span><span class="n">__v</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">__end_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_Allocator</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">_LIBCPP_CONSTEXPR_SINCE_CXX20</span> <span class="kr">inline</span> <span class="n">_LIBCPP_HIDE_FROM_ABI</span> <span class="kt">void</span>
+</span></span><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="n">_Tp</span><span class="p">,</span> <span class="n">_Allocator</span><span class="o">&gt;::</span><span class="n">push_back</span><span class="p">(</span><span class="n">const_reference</span> <span class="n">__x</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">pointer</span> <span class="n">__end</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">__end_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">__end</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">__end_cap</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">__construct_one_at_end</span><span class="p">(</span><span class="n">__x</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">++</span><span class="n">__end</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">__end</span> <span class="o">=</span> <span class="n">__push_back_slow_path</span><span class="p">(</span><span class="n">__x</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">this</span><span class="o">-&gt;</span><span class="n">__end_</span> <span class="o">=</span> <span class="n">__end</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span> <span class="k">class</span><span class="err">... </span><span class="nc">_Args</span><span class="p">,</span> <span class="k">class</span> <span class="err">= </span><span class="nc">__enable_if_t</span><span class="o">&lt;</span><span class="n">__has_construct</span><span class="o">&lt;</span><span class="n">allocator_type</span><span class="p">,</span> <span class="n">_Tp</span><span class="o">*</span><span class="p">,</span> <span class="n">_Args</span><span class="p">...</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span> <span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_LIBCPP_HIDE_FROM_ABI</span> <span class="n">_LIBCPP_CONSTEXPR_SINCE_CXX20</span> <span class="k">static</span> <span class="kt">void</span>
+</span></span><span class="line"><span class="cl">  <span class="n">construct</span><span class="p">(</span><span class="n">allocator_type</span><span class="o">&amp;</span> <span class="n">__a</span><span class="p">,</span> <span class="n">_Tp</span><span class="o">*</span> <span class="n">__p</span><span class="p">,</span> <span class="n">_Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">__args</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_LIBCPP_SUPPRESS_DEPRECATED_PUSH</span>
+</span></span><span class="line"><span class="cl">    <span class="n">__a</span><span class="p">.</span><span class="n">construct</span><span class="p">(</span><span class="n">__p</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">_Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">__args</span><span class="p">)...);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_LIBCPP_SUPPRESS_DEPRECATED_POP</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">_Tp</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="k">class</span><span class="err">... </span><span class="nc">_Args</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="k">class</span> <span class="err">= </span><span class="nc">void</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="k">class</span> <span class="err">= </span><span class="nc">__enable_if_t</span><span class="o">&lt;!</span><span class="n">__has_construct</span><span class="o">&lt;</span><span class="n">allocator_type</span><span class="p">,</span> <span class="n">_Tp</span><span class="o">*</span><span class="p">,</span> <span class="n">_Args</span><span class="p">...</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&gt;</span> <span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">_LIBCPP_HIDE_FROM_ABI</span> <span class="n">_LIBCPP_CONSTEXPR_SINCE_CXX20</span> <span class="k">static</span> <span class="kt">void</span>
+</span></span><span class="line"><span class="cl">  <span class="n">construct</span><span class="p">(</span><span class="n">allocator_type</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">_Tp</span><span class="o">*</span> <span class="n">__p</span><span class="p">,</span> <span class="n">_Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">__args</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">__construct_at</span><span class="p">(</span><span class="n">__p</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">_Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">__args</span><span class="p">)...);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span></code></pre></div><h3 id="太空船运算符">太空船运算符</h3>
+<p>太空船运算符并不是什么用户自创的梗，是实打实的内置语法（since C++ 20），官方名字是（Three-way Comparison Operator）但是真的很神奇！</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20250617113031.png" alt="image-20250617113025934"></p>
+<p>在没有太空船之间，我们要实现对象完整的比较运算符需要写这么大一堆代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">DateTime</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span> <span class="n">DateTime</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">year</span> <span class="o">!=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">year</span><span class="p">)</span> <span class="k">return</span> <span class="n">year</span> <span class="o">&lt;</span> <span class="n">rhs</span><span class="p">.</span><span class="n">year</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">month</span> <span class="o">!=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">month</span><span class="p">)</span> <span class="k">return</span> <span class="n">month</span> <span class="o">&lt;</span> <span class="n">rhs</span><span class="p">.</span><span class="n">month</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">day</span> <span class="o">!=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">day</span><span class="p">)</span> <span class="k">return</span> <span class="n">day</span> <span class="o">&lt;</span> <span class="n">rhs</span><span class="p">.</span><span class="n">day</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">hour</span> <span class="o">!=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">hour</span><span class="p">)</span> <span class="k">return</span> <span class="n">hour</span> <span class="o">&lt;</span> <span class="n">rhs</span><span class="p">.</span><span class="n">hour</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">minute</span> <span class="o">!=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">minute</span><span class="p">)</span> <span class="k">return</span> <span class="n">minute</span> <span class="o">&lt;</span> <span class="n">rhs</span><span class="p">.</span><span class="n">minute</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">second</span> <span class="o">&lt;</span> <span class="n">rhs</span><span class="p">.</span><span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="n">DateTime</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">year</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">.</span><span class="n">year</span> <span class="o">&amp;&amp;</span> 
+</span></span><span class="line"><span class="cl">               <span class="n">month</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">.</span><span class="n">month</span> <span class="o">&amp;&amp;</span> 
+</span></span><span class="line"><span class="cl">               <span class="n">day</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">.</span><span class="n">day</span> <span class="o">&amp;&amp;</span>
+</span></span><span class="line"><span class="cl">               <span class="n">hour</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">.</span><span class="n">hour</span> <span class="o">&amp;&amp;</span> 
+</span></span><span class="line"><span class="cl">               <span class="n">minute</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">.</span><span class="n">minute</span> <span class="o">&amp;&amp;</span> 
+</span></span><span class="line"><span class="cl">               <span class="n">second</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">.</span><span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="k">const</span> <span class="n">DateTime</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="o">!</span><span class="p">(</span><span class="o">*</span><span class="k">this</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span><span class="k">const</span> <span class="n">DateTime</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">rhs</span> <span class="o">&lt;</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;=</span><span class="p">(</span><span class="k">const</span> <span class="n">DateTime</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="o">!</span><span class="p">(</span><span class="n">rhs</span> <span class="o">&lt;</span> <span class="o">*</span><span class="k">this</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;=</span><span class="p">(</span><span class="k">const</span> <span class="n">DateTime</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="o">!</span><span class="p">(</span><span class="o">*</span><span class="k">this</span> <span class="o">&lt;</span> <span class="n">rhs</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>尽管后面可以用 <code>std::tie</code>或者 <code>std::rel_ops</code> 等各种手段简化，这仍然是一件非常 boring 的事情。</p>
+<p>有了太空船以后，这些代码就都能自动生成了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">DateTime</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">second</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="k">operator</span><span class="o">&lt;=&gt;</span><span class="p">(</span><span class="k">const</span> <span class="n">DateTime</span> <span class="o">&amp;</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>默认是一个一个按字段自然排序，太空船也是支持自定义比较顺序的：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Score</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">chinese</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">english</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">math</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="k">operator</span><span class="o">&lt;=&gt;</span><span class="p">(</span><span class="k">const</span> <span class="n">Score</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">lhs_total</span> <span class="o">=</span> <span class="n">chinese</span> <span class="o">+</span> <span class="n">english</span> <span class="o">+</span> <span class="n">math</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">rhs_total</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">chinese</span> <span class="o">+</span> <span class="n">rhs</span><span class="p">.</span><span class="n">english</span> <span class="o">+</span> <span class="n">rhs</span><span class="p">.</span><span class="n">math</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">lhs_total</span> <span class="o">&lt;=&gt;</span> <span class="n">rhs_total</span><span class="p">;</span> <span class="c1">// 将两个结构体的太空船，转换为基本类型的太空船
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><h3 id="伪随机数">伪随机数</h3>
+<p>在 C++ 中，如果想要或者一个随机数（伪），除了 <code>std::rand</code>之外，这也是一种方式 :)</p>
+<p>会输出什么全取决于内存中残留着什么——也就是不可预知的随机行为。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int64_t</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>定义了变量 i 之后只会申请 8 个字节的内存，需要手动赋值才会进行初始化，所以不存在一个默认 0 初始化值。</p>
+<p>尽管这很可能非常反直觉，很多其他语言的用户会觉得踩坑了。</p>
+<p>但这正是 C++ 核心设计哲学：<code>You don't pay for what you don't use</code> 的体现，在操作系统和硬件层面，申请内存和初始化本来就是两个分开的操作，你只申请了内存，那 C++ 也不会画蛇添足。</p>
+<h3 id="万物皆可重载">万物皆可重载</h3>
+<p>C++ 里面所有你能想到的运算符都是可以重载的，包括 new delete 甚至是后缀和逗号，至于为什么要重载这么多符号，因为不希望我的类别人拿起来就能用 :)</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;new&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Everything</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="k">explicit</span> <span class="n">Everything</span><span class="p">(</span><span class="kt">int</span> <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:</span> <span class="n">value</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;Constructor&#34;</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 一元运算符重载
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Everything</span> <span class="k">operator</span><span class="o">+</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;+ (unary)&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">-</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;- (unary)&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="o">-</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">~</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;~&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="o">~</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="k">operator</span><span class="o">!</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;!&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="o">!</span><span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">++</span><span class="p">()</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;++ (prefix)&#34;</span><span class="p">);</span> <span class="o">++</span><span class="n">value</span><span class="p">;</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">++</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;++ (postfix)&#34;</span><span class="p">);</span> <span class="n">Everything</span> <span class="n">temp</span> <span class="o">=</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="o">++</span><span class="n">value</span><span class="p">;</span> <span class="k">return</span> <span class="n">temp</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">--</span><span class="p">()</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;-- (prefix)&#34;</span><span class="p">);</span> <span class="o">--</span><span class="n">value</span><span class="p">;</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">--</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;-- (postfix)&#34;</span><span class="p">);</span> <span class="n">Everything</span> <span class="n">temp</span> <span class="o">=</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="o">--</span><span class="n">value</span><span class="p">;</span> <span class="k">return</span> <span class="n">temp</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 二元运算符重载
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Everything</span> <span class="k">operator</span><span class="o">+</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;+ (binary)&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="n">value</span> <span class="o">+</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;- (binary)&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">*</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;*&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">/</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">%</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;%&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="n">value</span> <span class="o">%</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">&amp;</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;&amp; (binary)&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="n">value</span> <span class="o">&amp;</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">|</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;|&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="n">value</span> <span class="o">|</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">^</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;^&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="n">value</span> <span class="o">^</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">shift</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;&lt;&lt;&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="n">value</span> <span class="o">&lt;&lt;</span> <span class="n">shift</span><span class="p">.</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">shift</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;&gt;&gt;&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="n">value</span> <span class="o">&gt;&gt;</span> <span class="n">shift</span><span class="p">.</span><span class="n">value</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;==&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="n">value</span> <span class="o">==</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;!=&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;&lt;&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;&gt;&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;=</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;&lt;=&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;=</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;&gt;=&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="k">operator</span><span class="o">&amp;&amp;</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;&amp;&amp;&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="n">value</span> <span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="k">operator</span><span class="o">||</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;||&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="n">value</span> <span class="o">||</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 赋值运算符重载
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Everything</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;=&#34;</span><span class="p">);</span> <span class="n">value</span> <span class="o">=</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">+=</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;+=&#34;</span><span class="p">);</span> <span class="n">value</span> <span class="o">+=</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">-=</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;-=&#34;</span><span class="p">);</span> <span class="n">value</span> <span class="o">-=</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">*=</span><span class="p">(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;*=&#34;</span><span class="p">);</span> <span class="n">value</span> <span class="o">*=</span> <span class="n">other</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 特殊运算符重载
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Everything</span> <span class="k">operator</span><span class="p">,(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;,&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="n">other</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span><span class="o">&amp;</span> <span class="k">operator</span><span class="p">[](</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">index</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;[]&#34;</span><span class="p">);</span> <span class="n">value</span> <span class="o">=</span> <span class="n">index</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span><span class="o">*</span> <span class="k">operator</span><span class="o">-&gt;</span><span class="p">()</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;-&gt;&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="k">this</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="k">operator</span><span class="o">-&gt;*</span><span class="p">(</span><span class="n">Everything</span><span class="o">*</span> <span class="n">ptr</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;-&gt;*&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="nf">operator</span><span class="p">()(</span><span class="k">const</span> <span class="n">Everything</span><span class="o">&amp;</span> <span class="n">arg</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;()&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="n">value</span> <span class="o">+</span> <span class="n">arg</span><span class="p">.</span><span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// new/delete 重载
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">static</span> <span class="kt">void</span><span class="o">*</span> <span class="k">operator</span> <span class="nf">new</span><span class="p">(</span><span class="n">size_t</span> <span class="n">size</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;new&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="o">::</span><span class="k">new</span> <span class="kt">char</span><span class="p">[</span><span class="n">size</span><span class="p">];</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">static</span> <span class="kt">void</span> <span class="k">operator</span> <span class="nf">delete</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">ptr</span><span class="p">)</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;delete&#34;</span><span class="p">);</span> <span class="o">::</span><span class="k">delete</span><span class="p">[]</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 隐式转换到int
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">operator</span> <span class="nf">int</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="n">log</span><span class="p">(</span><span class="s">&#34;implicit conversion to int&#34;</span><span class="p">);</span> <span class="k">return</span> <span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="nf">getValue</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">static</span> <span class="kt">void</span> <span class="nf">log</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">op</span><span class="p">)</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Overloaded &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">op</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// UDL重载（扩展多个后缀：_ms, _s, _us）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Everything</span> <span class="k">operator</span><span class="s">&#34;&#34;</span> <span class="n">_ms</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&#34;literal _ms&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">val</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">Everything</span> <span class="k">operator</span><span class="s">&#34;&#34;</span> <span class="n">_s</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&#34;literal _s&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">val</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">Everything</span> <span class="k">operator</span><span class="s">&#34;&#34;</span> <span class="n">_us</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&#34;literal _us&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nf">Everything</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">val</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Everything</span> <span class="n">e</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="k">new</span> <span class="n">Everything</span><span class="p">((((((</span><span class="n">e</span> <span class="o">+</span> <span class="mi">42</span><span class="n">_ms</span><span class="p">)</span> <span class="o">*</span> <span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="n">e</span> <span class="o">%</span> <span class="n">e</span> <span class="o">&amp;</span> <span class="n">e</span> <span class="o">|</span> <span class="n">e</span> <span class="o">^</span> <span class="n">e</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="n">_s</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="n">_ms</span><span class="p">,</span> <span class="p">((</span><span class="n">e</span> <span class="o">==</span> <span class="n">e</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">e</span> <span class="o">&lt;</span> <span class="n">e</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">e</span> <span class="o">&lt;=</span> <span class="n">e</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">e</span> <span class="o">&amp;&amp;</span> <span class="n">e</span><span class="p">)</span> <span class="o">||</span> <span class="n">e</span><span class="p">),</span> <span class="p">(</span><span class="n">e</span> <span class="o">+=</span> <span class="n">e</span> <span class="o">-=</span> <span class="n">e</span> <span class="o">*=</span> <span class="n">e</span><span class="p">))[</span><span class="mi">0</span><span class="n">_us</span><span class="p">]</span><span class="o">-&gt;</span><span class="k">operator</span><span class="p">()(</span><span class="mi">1</span><span class="n">_ms</span><span class="p">)</span>  <span class="o">+</span> <span class="n">e</span><span class="o">++</span> <span class="o">--</span> <span class="o">+</span> <span class="o">-</span> <span class="o">~</span> <span class="o">!</span> <span class="n">e</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Final result: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="数组下标运算符加法交换律">数组下标运算符加法交换律</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">arr</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 等等...这个 1[arr] 是什么写法？
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;The value is: &#34;</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">[</span><span class="n">arr</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl">    <span class="c1">// 输出：The value is 20
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>这个是因为数组下标运算符 <code>[]</code> 方括号在底层的实现方式是：<code>a[b] =&gt;  *(a + b)</code>，由于加法运算具有交换性，<code>*(b + a)</code> b 在前面还是后面都是等价的，所以  <code>1[arr] =&gt; *(1 + arr) = *(arr + 1) = arr[1]</code> 。</p>
+<p>扩展一下，对于二阶数组来说，这两种写法也是等价的：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">arr</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">[</span><span class="mi">2</span><span class="p">[</span><span class="n">arr</span><span class="p">]]</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="mh">0x123&#39;full</span><span class="p">;</span> <span class="c1">// num == 0x123 * 16 + 15
+</span></span></span></code></pre></div><blockquote>
+<p>解析：&rsquo; 是个无意义的分隔符，完整的数字是：123f 十六进制，后面的 ull 表示数字格式为 <strong>u</strong>nsigned <strong>l</strong>ong <strong>l</strong>ong，所以加上这个关键字就是在数字末尾加了个 f，进一位再加 15。</p>
+</blockquote>
+<h3 id="duffs-device">Duff&rsquo;s Device</h3>
+<p><a href="https://en.wikipedia.org/wiki/Duff%27s_device"><code>Duff's Device</code></a>是一段非常经典的 C 优化代码，这段代码的作者是 <code>Tom Duff</code>，当他在卢卡斯影业（制作星球大战的公司）工作时，为了榨干一台性能有限的图形终端的全部机能而发明了此方法。</p>
+<p>假设我们有一段数据 <code>from</code>要 复制到<code>to</code> 里面，我们是不是很自然的会写出来如下代码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">send</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">to</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">from</span><span class="p">,</span> <span class="kt">int</span> <span class="n">count</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">to</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">from</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>在几十年前的硬件和编译器环境下，上面这两种写法的<strong>循环开销 (loop overhead)</strong> 是一个不容忽视的问题。对于每一次拷贝，CPU 都需要执行：</p>
+<ol>
+<li><strong>一次条件判断</strong> (<code>i &lt; count</code> 或 <code>count &gt; 0</code>)</li>
+<li><strong>一次或多次变量递增/递减</strong> (<code>++i</code> 或 <code>count--</code>)</li>
+<li><strong>一次跳转指令</strong> (跳回循环的开始)</li>
+</ol>
+<p><code>Tom Duff</code>巧妙的利用了 switch 穿透的特性，实现了一个非常高性能的复制版本，在这个版本中，条件判断与跳转指令开销减少到了 1/8 （之所以是 8 是因为整数计算更快），整体时间复杂度从 <strong>O(n)</strong> 变为了 <strong>O(n/8)</strong>，堪称最早的手动<strong>循环展开（Loop Unrolling）</strong>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">duffs_device_send</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">to</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">from</span><span class="p">,</span> <span class="kt">int</span> <span class="n">count</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span> <span class="o">/</span> <span class="mi">8</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="p">(</span><span class="n">count</span> <span class="o">%</span> <span class="mi">8</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">0</span><span class="o">:</span> <span class="k">do</span> <span class="p">{</span> <span class="o">*</span><span class="n">to</span><span class="o">++</span> <span class="o">=</span> <span class="o">*</span><span class="n">from</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">7</span><span class="o">:</span>      <span class="o">*</span><span class="n">to</span><span class="o">++</span> <span class="o">=</span> <span class="o">*</span><span class="n">from</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">6</span><span class="o">:</span>      <span class="o">*</span><span class="n">to</span><span class="o">++</span> <span class="o">=</span> <span class="o">*</span><span class="n">from</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">5</span><span class="o">:</span>      <span class="o">*</span><span class="n">to</span><span class="o">++</span> <span class="o">=</span> <span class="o">*</span><span class="n">from</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">4</span><span class="o">:</span>      <span class="o">*</span><span class="n">to</span><span class="o">++</span> <span class="o">=</span> <span class="o">*</span><span class="n">from</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">3</span><span class="o">:</span>      <span class="o">*</span><span class="n">to</span><span class="o">++</span> <span class="o">=</span> <span class="o">*</span><span class="n">from</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">2</span><span class="o">:</span>      <span class="o">*</span><span class="n">to</span><span class="o">++</span> <span class="o">=</span> <span class="o">*</span><span class="n">from</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>      <span class="o">*</span><span class="n">to</span><span class="o">++</span> <span class="o">=</span> <span class="o">*</span><span class="n">from</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">               <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="o">--</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>当然在 21 世纪的今天，我们已经不需要再去写这种代码了，编译器会帮我们自动完成这一部分工作。</p>
+<h3 id="基于-switch-的协程">基于 switch 的协程</h3>
+<p>C++ 和 Python 这些语言的协程并不像 Go 的协程那样高级，本质上都只是一个<code>“可暂停和恢复的函数”</code>，搭配上一些关键字用以插入状态转移点，保存一下栈帧。</p>
+<p>所以理论上，我们可以基于 <code>switch + __LINE__</code>实现一个简单的协程，每次调用 <code>COROUTINE_YIELD</code> 生成一个状态转移点，C++ 20 的协程本质上也是这种思路。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define COROUTINE_START switch(state){case 0:
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define COROUTINE_YIELD(x) do{state=__LINE__;return x;case __LINE__:;}while(0)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define COROUTINE_END }
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">ProgressCoroutine</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ProgressCoroutine</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">name_</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">state</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="nf">Run</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">COROUTINE_START</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;[&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">name_</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;] PROGRESS：25%&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">COROUTINE_YIELD</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;[&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">name_</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;] PROGRESS：50%&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">COROUTINE_YIELD</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;[&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">name_</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;] PROGRESS：100%&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">COROUTINE_END</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name_</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">state</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ProgressCoroutine</span> <span class="n">foo</span><span class="p">(</span><span class="s">&#34;FOO&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ProgressCoroutine</span> <span class="n">bar</span><span class="p">(</span><span class="s">&#34;BAR&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="n">foo_running</span> <span class="o">=</span> <span class="nb">true</span><span class="p">,</span> <span class="n">bar_running</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">while</span> <span class="p">(</span><span class="n">foo_running</span> <span class="o">||</span> <span class="n">bar_running</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">foo_running</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">foo_running</span> <span class="o">=</span> <span class="n">foo</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">bar_running</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">bar_running</span> <span class="o">=</span> <span class="n">bar</span><span class="p">.</span><span class="n">Run</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;ALL FINISHED！&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>在这个 <code>demo</code>里面 <code>Run()</code>函数的执行被中断了多次才断断续续完成。</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/cpp" role="button">cpp </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/programming" role="button">programming </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/cpu-996/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>如何极致地压榨一颗 CPU 核心</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%89%e8%a1%8c%e6%83%85%e8%af%97">
+												 三行情诗
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#and">
+												 AND
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#crtp">
+												 CRTP
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%87%aa%e6%af%81%e5%af%b9%e8%b1%a1">
+												 自毁对象
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%97%a0%e6%95%8c%e7%9a%84%e5%af%b9%e8%b1%a1">
+												 无敌的对象
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#the-coolest-c-code">
+												 The Coolest C&#43;&#43; Code
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%80%e6%ae%b5%e9%9d%9e%e5%b8%b8%e7%ae%80%e5%8d%95%e7%9a%84%e6%a0%87%e5%87%86%e5%ba%93%e4%bb%a3%e7%a0%81">
+												 一段非常简单的标准库代码
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%a4%aa%e7%a9%ba%e8%88%b9%e8%bf%90%e7%ae%97%e7%ac%a6">
+												 太空船运算符
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%bc%aa%e9%9a%8f%e6%9c%ba%e6%95%b0">
+												 伪随机数
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%87%e7%89%a9%e7%9a%86%e5%8f%af%e9%87%8d%e8%bd%bd">
+												 万物皆可重载
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e6%95%b0%e7%bb%84%e4%b8%8b%e6%a0%87%e8%bf%90%e7%ae%97%e7%ac%a6%e5%8a%a0%e6%b3%95%e4%ba%a4%e6%8d%a2%e5%be%8b">
+												 数组下标运算符加法交换律
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#duffs-device">
+												 Duff’s Device
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%9f%ba%e4%ba%8e-switch-%e7%9a%84%e5%8d%8f%e7%a8%8b">
+												 基于 switch 的协程
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2025 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mdbootstrap/4.9.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+
+
+  </body>
+</html>

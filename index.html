@@ -433,6 +433,8 @@
 
   
 
+  
+
 
 
 
@@ -472,6 +474,8 @@
         
             <li><a href="https://huweicai.com/tags/cilium" role="button"><span>cilium (2)</span></a></li>
         
+            <li><a href="https://huweicai.com/tags/cpp" role="button"><span>cpp (2)</span></a></li>
+        
             <li><a href="https://huweicai.com/tags/cpu" role="button"><span>cpu (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/docker" role="button"><span>docker (2)</span></a></li>
@@ -492,8 +496,6 @@
         
             <li><a href="https://huweicai.com/tags/compiler" role="button"><span>compiler (1)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/cpp" role="button"><span>cpp (1)</span></a></li>
-        
             <li><a href="https://huweicai.com/tags/en" role="button"><span>en (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/ethernet" role="button"><span>ethernet (1)</span></a></li>
@@ -513,6 +515,8 @@
             <li><a href="https://huweicai.com/tags/pprof" role="button"><span>pprof (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/programing" role="button"><span>programing (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/programming" role="button"><span>programming (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/python" role="button"><span>python (1)</span></a></li>
         
@@ -604,6 +608,59 @@
       </li>
     </ul>
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/cpp-fun-codes/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">一些有意思的C&#43;&#43;代码</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2025-07-12</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>9 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      三行情诗 谁说我们写 C&#43;&#43; 的就不懂浪漫了： // 我的心必须通过&#34;爱你&#34;的约束才能实例化 template&lt;typename Heart&gt; requires loves&lt;Heart, You&gt; // 激情、忠诚、永恒置入爱的元组，这份爱在编译时就已确定，不会因运行时的变化而改变 // 是写在源码里的承诺，是嵌入二进制的誓言 constexpr auto my_feelings = std::tuple{passion, devotion, eternity}; // 在 C&#43;&#43; 的类型系统中，我们的未来被特化为永远为真，这是编译器都认可的事实 template&lt;&gt; struct future&lt;us&gt; : std::true_type { static constexpr auto value = forever; }; 不愧是我们写 C&#43;&#43; 的，写出来的情诗都能是零运行时开销的。 AND 下面这段代码能......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/cpp" role="button">cpp </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/programming" role="button">programming </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -913,76 +970,6 @@
       
     
       <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/kernel-debug-tips_en/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Linux Kernel Debug Tips</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2023-01-17</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>9 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
-So, knowing more about how the kernel works will contribute to the construction of our user mode system.
-The best method to learn software code is debugging while watching, software = code &#43; data, know more about the runtime data while learning code can help us understand it better.
-However the Kernel is not a normal software system, we can’t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb &#43; QEMU, it’ still too heavy, and not available for online systems.
-This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.
-Kernel Module Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can’t snoop the data inside Kernel.
-In that case, why not try to run our code inside the Kernel?
-It’s possible to edit the source code of kernel, adding log to print the information we concerned, but it’s a long tedious step.......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-        
-          <li><a href="https://huweicai.com/categories/english"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> english </a></li>
-        
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/linux" role="button">linux </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/kernel" role="button">kernel </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/ebpf" role="button">ebpf </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/en" role="button">EN </a></li>
       
     
   </div>

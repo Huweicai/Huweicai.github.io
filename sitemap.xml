@@ -3,16 +3,31 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://huweicai.com/</loc>
-    <lastmod>2025-05-05T19:58:00+08:00</lastmod>
+    <lastmod>2025-07-12T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://huweicai.com/tags/cpu/</loc>
-    <lastmod>2025-05-05T19:58:00+08:00</lastmod>
+    <loc>https://huweicai.com/tags/cpp/</loc>
+    <lastmod>2025-07-12T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/tags/programming/</loc>
+    <lastmod>2025-07-12T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>
     <loc>https://huweicai.com/tags/</loc>
+    <lastmod>2025-07-12T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/cpp-fun-codes/</loc>
+    <lastmod>2025-07-12T19:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/tags/cpu/</loc>
     <lastmod>2025-05-05T19:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -58,11 +73,6 @@
     <priority>0.5</priority>
   </url><url>
     <loc>https://huweicai.com/c-with-python-intercall/</loc>
-    <lastmod>2024-01-29T09:50:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://huweicai.com/tags/cpp/</loc>
     <lastmod>2024-01-29T09:50:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
