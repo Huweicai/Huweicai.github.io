@@ -16,5 +16,14 @@
       <description>三行情诗 谁说我们写 C++ 的就不懂浪漫了： // 我的心必须通过&amp;#34;爱你&amp;#34;的约束才能实例化 template&amp;lt;typename Heart&amp;gt; requires loves&amp;lt;Heart, You&amp;gt; // 激情、忠诚、永恒置入爱的元组，这份爱在编译时就已确定，不会因运行时的变化而改变 // 是写在源码里的承诺，是嵌入二进制的誓言 constexpr auto my_feelings = std::tuple{passion, devotion, eternity}; // 在 C++ 的类型系统中，我们的未来被特化为永远为真，这是编译器都认可的事实 template&amp;lt;&amp;gt; struct future&amp;lt;us&amp;gt; : std::true_type { static constexpr auto value = forever; }; 不愧是我们写 C++ 的，写出来的情诗都能是零运行时开销的。 AND 下面这段代码能</description>
     </item>
     
+    <item>
+      <title>不解剖，也能看懂大脑 —— 用外部视角解读你的思维世界</title>
+      <link>https://huweicai.com/cpp-fun-codes/</link>
+      <pubDate>Sat, 12 Jul 2025 19:58:00 +0800</pubDate>
+      
+      <guid>https://huweicai.com/cpp-fun-codes/</guid>
+      <description>当我们谈起大脑时，很多人第一反应就是复杂的解剖图：沟回纵横、名字拗口，好像非得读过医学教科书才能懂。可事实上，大脑也可以用一种“外行能看懂”的方式去理解。就像看一座城市，不必钻进地下管道或电线分布图，只要站在高处，分清大街小巷，也能明白这座城市的大体功能。 这篇文章，我想带你从外部视角来看看我们的脑袋：不解剖，不掉进术语的陷阱，而是把大脑当作一个生活中真实存在的“司令部”，逐块认识它。你会发现，额头</description>
+    </item>
+    
   </channel>
 </rss>
