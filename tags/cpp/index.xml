@@ -28,7 +28,7 @@
     <item>
       <title>C/C&#43;&#43; &amp; Python 融合之道</title>
       <link>https://huweicai.com/c-with-python-intercall/</link>
-      <pubDate>Mon, 29 Jan 2024 09:50:00 +0800</pubDate>
+      <pubDate>Mon, 29 Jan 2024 09:51:00 +0800</pubDate>
       
       <guid>https://huweicai.com/c-with-python-intercall/</guid>
       <description>Python 解释器 正如软件系统通常分为定义与实现两部分，编程语言也是。 比如 C++ 标准是由国际标准化组织 ( ISO ) 下属的 ISO/IEC JTC1/SC22/WG21特别工作组制定的，最新标准为 C++ 20 (ISO/IEC 14882:2020)，这是定义；而其实现则有 GNU 的 gcc、微软的 visual c++、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。 Java 规范则是由 Oracle 主导的 JCP 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量</description>
