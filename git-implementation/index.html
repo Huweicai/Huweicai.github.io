@@ -7,10 +7,10 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一">
+  <meta name="description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统。它会为每个文件计算一个 hash 值，并压缩存储到 .git/objects 目录。普通文件是 blob 对象，文件夹会生成 tree 对象。一个版本的文件由根目录 tree 串起来，它的上层是 commit 对象。commit 会有一个或多个 parent 指针，指向上一个提交。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一个最常用的模型，后面很多命令都在这三层之间移动内容： 工作区 --git add--&gt; 暂存区(index">
 
   <meta property="og:title" content="Git实现原理" />
-<meta property="og:description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一" />
+<meta property="og:description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统。它会为每个文件计算一个 hash 值，并压缩存储到 .git/objects 目录。普通文件是 blob 对象，文件夹会生成 tree 对象。一个版本的文件由根目录 tree 串起来，它的上层是 commit 对象。commit 会有一个或多个 parent 指针，指向上一个提交。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一个最常用的模型，后面很多命令都在这三层之间移动内容： 工作区 --git add--&gt; 暂存区(index" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://huweicai.com/git-implementation/" /><meta property="article:section" content="" />
 <meta property="article:published_time" content="2020-11-11T01:43:00+08:00" />
@@ -293,9 +293,9 @@
 
         
             <li class="middot"></li>
-            <li>6 minutes read</li>
+            <li>7 minutes read</li>
         
-        <li>2919 words</li>
+        <li>3148 words</li>
 
     </ul>
     
@@ -306,14 +306,16 @@
           <div class="post-content markdown">
             <h1 id="基本概念">基本概念</h1>
 <h2 id="概述">概述</h2>
-<p>Git 是一个<strong>基于快照的文件版本管理系统</strong>，其实现原理是为每个文件计算一个 hash 值然后压缩存储到 .git/objects 目录内，普通文件为 blob 对象，而文件夹也会生成一个对象：tree，这样一个版本的文件就能被根目录串联起来，这个版本的再上层会有一个 commit 对象，commit 对象会有一到多个 parent 指针，指向上一个提交，这样就把一个个版本串联了起来。</p>
+<p>Git 是一个<strong>基于快照的文件版本管理系统</strong>。它会为每个文件计算一个 hash 值，并压缩存储到 <code>.git/objects</code> 目录。普通文件是 blob 对象，文件夹会生成 tree 对象。一个版本的文件由根目录 tree 串起来，它的上层是 commit 对象。commit 会有一个或多个 parent 指针，指向上一个提交。</p>
 <p>commit 的上层还有一个概念叫<strong>分支</strong>，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。</p>
-<p>这是一个<a href="https://github.com/Huweicai/gitdemo">简单仓库</a>的示意图，我们会在文章末尾详细分析其构成。</p>
+<p>这是一个最常用的模型，后面很多命令都在这三层之间移动内容：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">工作区 --git add--&gt; 暂存区(index) --git commit--&gt; commit/tree/blob
+</span></span></code></pre></div><p>这是一个<a href="https://github.com/Huweicai/gitdemo">简单仓库</a>的示意图，我们会在文章末尾详细分析其构成。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201111120427.png" alt="image-20201110005626068"></p>
 <p>下面我基于 go 语言版本的 git 实现源码（相较于C语言版更面向对象，可读性更好）来分析一下这些概念的底层实现。</p>
 <h2 id="object">Object</h2>
-<p>Object 是这个文件管理系统中最基本的单元，就代表了一个普通的文件，每一个被 git 管理的文件都会计算出一个 hash 值然后压缩放置于 <code>.git/objects</code> 目录中。</p>
-<p>同时一个提交和目录还有标签页被抽象成了对象的一种。</p>
+<p>Object 是这个文件管理系统中最基本的单元，代表一个普通文件。每一个被 git 管理的文件都会计算出 hash 值，再压缩放到 <code>.git/objects</code> 目录中。</p>
+<p>同时，提交、目录、标签也都被抽象成对象。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="nx">CommitObject</span>  <span class="p">=</span> <span class="mi">1</span> <span class="c1">// 提交
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">TreeObject</span>    <span class="p">=</span> <span class="mi">2</span> <span class="c1">// 目录
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">BlobObject</span>    <span class="p">=</span> <span class="mi">3</span> <span class="c1">// 文件
@@ -332,19 +334,20 @@
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">Committer</span> <span class="nx">Signature</span> <span class="c1">// 提交者
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">Message</span> <span class="kt">string</span>      <span class="c1">// 注释
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">TreeHash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 对应目录对象的哈希值
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">ParentHashes</span> <span class="p">[]</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 上一个commit哈希值的数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">ParentHashes</span> <span class="p">[]</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 上一个 commit 哈希值的数组
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
-</span></span></code></pre></div><p>同时 commit 也包含了指向上一个 commit 的指针，这样所有的 commit 就能串成一条线，但是我们可以看到上面的结构中 commit 的 parrent 是一个数组，也就意味着可能会有多个，比如说两个 commit merge 成一个等场景，这也就意味着 commit 其实是一个网状结构，而不只是单纯的一条线。</p>
+</span></span></code></pre></div><p>同时 commit 也包含了指向上一个 commit 的指针，这样所有的 commit 就能串成一条线。上面结构中的 parent 是一个数组，也就意味着它可能有多个，比如两个 commit merge 成一个。换句话说，commit 其实是一个网状结构，而不只是单纯的一条线。</p>
+<p>这里可以多记一句：普通提交通常只有一个 parent，merge 提交一般会有两个 parent。</p>
 <h2 id="blob">Blob</h2>
-<p>Blob 即一个普通的文件，不过是压缩过的，。</p>
+<p>Blob 即一个普通文件，不过是压缩过的。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Blob</span> <span class="kd">struct</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">   <span class="nx">Hash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
 </span></span><span class="line"><span class="cl">   <span class="nx">Size</span> <span class="kt">int64</span>
 </span></span><span class="line"><span class="cl">   <span class="nx">obj</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><h2 id="tree">Tree</h2>
-<p>Tree代表了一个目录，包含一个 entries 数组指向了当前目录下的文件或者其他目录，构成了一棵文件树，所以被称为 Tree。</p>
-<p>另外文件的文件名是存储在 Tree 中的，所以如果一个目录下有十个文件只有名字不一样，那么也只会产生一个 blob 对象，因为内容的 hash 值都是一样的。</p>
+<p>Tree 代表一个目录，包含一个 entries 数组，指向当前目录下的文件或者其他目录，构成一棵文件树，所以被称为 Tree。</p>
+<p>另外文件名是存储在 Tree 中的。所以如果一个目录下有十个文件，只有名字不一样，也只会产生一个 blob 对象，因为内容的 hash 值都一样。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Tree</span> <span class="kd">struct</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">   <span class="nx">Entries</span> <span class="p">[]</span><span class="nx">TreeEntry</span>
 </span></span><span class="line"><span class="cl">   <span class="nx">Hash</span>    <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
@@ -356,26 +359,30 @@
 </span></span><span class="line"><span class="cl">	<span class="nx">Hash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><h2 id="branch">Branch</h2>
-<p>branch 的底层结构非常简单，在 <code>.git/refs/heads</code>中的每一个文件都代表一个分支，文件里则是对应 commit 的hash值。</p>
-<p>远端的分支则存放在<code>.git/refs/remotes</code>中，轻量级 tag 的实现也是和分支一样的。</p>
+<p>branch 的底层结构非常简单，在 <code>.git/refs/heads</code> 中的每一个文件都代表一个分支，文件里则是对应 commit 的 hash 值。</p>
+<p>远端分支则存放在 <code>.git/refs/remotes</code> 中，轻量级 tag 的实现也和分支一样。</p>
 <h2 id="working-directory">Working Directory</h2>
-<p>工作区，其实就是一个目录路径，代表了你在当前实际可见的文件集合，区别于备份于.git目录中的文件。</p>
+<p>工作区其实就是一个目录路径，代表你当前实际可见的文件集合，区别于备份在 <code>.git</code> 目录中的文件。</p>
 <h2 id="index">Index</h2>
-<p>暂存区，指向的文件是工作区的文件，跟工作区唯一的区别就是，只有被 <code>git add</code> 过的文件才会出现在 index 中被 git 托管，所以 index 的实现也非常简单，保存一个 add 了的文件的列表即可。</p>
+<p>暂存区指向的是工作区文件。它和工作区最大的区别是：只有被 <code>git add</code> 过的文件才会出现在 index 中，被 git 托管。所以 index 的实现也非常简单，保存一个 add 了的文件列表即可。</p>
+<p>补充一点，<code>git commit</code> 读取的是 index，不是直接读取工作区。
+所以你可以用 <code>git diff</code> 看工作区和暂存区的差异，用 <code>git diff --cached</code> 看暂存区和最新提交的差异。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Index</span> <span class="kd">struct</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="nx">Entries</span> <span class="p">[]</span><span class="o">*</span><span class="nx">Entry</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><h1 id="常见命令">常见命令</h1>
 <h2 id="git-commit-原理">Git Commit 原理</h2>
-<p>在调用 git commit 命令时，git 会将 index 引用的所有文件全部计算 hash 值，然后将当前指向的 commit 作为父节点，创建一个新的 commit 对象，然后让当前分支指向新创建的 commit 对象。</p>
+<p>在调用 git commit 命令时，git 会将 index 引用的所有文件计算 hash 值，再将当前指向的 commit 作为父节点，创建一个新的 commit 对象，并让当前分支指向这个新对象。</p>
+<p>顺手补一句，<code>git commit -am</code> 只会处理已跟踪文件；新文件还是要先 <code>git add</code>。</p>
 <h2 id="git-merge-原理">Git Merge 原理</h2>
-<p>假设当前分支为 master ，当前 git 树是这样的，有一个 master 分支和一个 topic 分支：<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230231004.png" alt="image-20201230231004625"></p>
+<p>假设当前分支为 master，当前 git 树是这样的，有一个 master 分支和一个 topic 分支：<img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230231004.png" alt="image-20201230231004625"></p>
 <p>如果我在 master 分支执行了：<code>git merge topic</code></p>
-<p>然后 git 会把 topic 相对于它和 master 的公共 commit 之后的修改打包成一个新的 commit 提交到 master 分支上面，不过对于 topic 没有任何影响，只是说这个新的 commit 会有两个父节点，一个指向 master，一个指向 topic，新的 git 树会长这样：
+<p>这里还有一个常见情况：如果 master 没有自己的新提交，merge 会直接快进（fast-forward），只移动 master 指针，不会创建新的 merge commit。</p>
+<p>git 会把 topic 相对于它和 master 公共 commit 之后的修改打包成一个新的 commit，提交到 master 分支上。这个过程对 topic 没有影响。这个新的 commit 会有两个父节点，一个指向 master，一个指向 topic，新的 git 树会长这样：
 <img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230230942.png" alt="image-20201230230942517"></p>
-<p>这也是为什么很多人吐槽 merge 的一点，会导致本来直直的一条提交线出现分叉，如果只有一两条分支还好，但是如果上图中 E F G 这几个 commit 也都是其他分支合入的，甚至 topic 分支上的 A B commit 也是其他分支合并进去的，那么分支树可能会变成这样，真是一场噩梦啊：
+<p>这也是很多人吐槽 merge 的一点。它会让本来直直的一条提交线出现分叉。如果只有一两条分支还好，但如果上图中 E、F、G 这几个 commit 也是其他分支合入的，甚至 topic 分支上的 A、B commit 也是其他分支合并进去的，那么分支树可能会变成这样，真是一场噩梦啊：
 <img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201230231922.png" alt="image-20201230231922138"></p>
-<p>可以通过 <code>git cat-file commit hash</code> 来查看 commit 内容，比如这是一个 merge 的 commit，同时有两个 parent，对应到我们上面的 commit 结构中，commit 的 parent 也确实是一个数组：<code>ParentHashes []plumbing.Hash</code>。</p>
+<p>可以通过 <code>git cat-file -p &lt;commit-hash&gt;</code> 来查看 commit 内容。比如这是一个 merge commit，同时有两个 parent。对应到上面的 commit 结构中，commit 的 parent 确实是一个数组：<code>ParentHashes []plumbing.Hash</code>。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201111010952.png" alt="image-20201111010952453"></p>
 <h2 id="git-rebase-原理">Git Rebase 原理</h2>
 <p>实现原理，假设当前分支为：topic，当前的 git 树是这样的：</p>
@@ -388,28 +395,30 @@
 </ul>
 <p>这样，一次 rebase 就完成了，当前的 git 树就变成了这个样子。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201111011138.png" alt=""></p>
-<p>如果是使用 gitlab 的话，这个时候我们就可以在 gtilab 上合并了，因为我们分支相对于 master 而言只有新增，所以可以会进入 Fast-forward merge 模式，即直接把 master 指针指向 topic 指针所指向的 tree 对象即可。</p>
-<p>但是呢，Gtilab 默认是把这个 Fast-foward 给禁用的，所以即使你的分支只有新增，也还是会有一个分支树，保留这里，需要手动打开这个配置才行。</p>
-<p>另外对于 topic 分支而言，如果之前的提交已经提交到了远端仓库的话，会产生不兼容，需要使用 git  push -f 才能推送上去，或者废弃这条分支。</p>
+<p>补充一个容易忽略的点：rebase 之后这些提交的 hash 会变化，因为它们是“重新生成”的 commit。</p>
+<p>如果是使用 GitLab，这个时候我们就可以在 GitLab 上合并了。因为分支相对于 master 而言只有新增，所以可以进入 Fast-forward merge 模式，也就是直接把 master 指针指向 topic 指针所指向的 tree 对象。</p>
+<p>不过 GitLab 默认会把 Fast-forward 禁用。即使你的分支只有新增，也还是会保留一棵分支树，需要手动打开这个配置。</p>
+<p>另外对于 topic 分支来说，如果之前的提交已经推送到远端仓库，会产生不兼容，需要使用 <code>git push -f</code> 才能推送上去，或者废弃这条分支。</p>
+<p>实际使用里可以优先用 <code>git push --force-with-lease</code>，比 <code>-f</code> 更安全一些。</p>
 <h2 id="git-push-原理">Git Push 原理</h2>
-<p>Git 本地和远端仓库可以通过：git、ssh、http 三种协议进行传输。</p>
-<p>以 master 分支为例，Git push 是尝试将本地 master 指针内容覆盖掉远端 master 指针，然后本本地指针指向但是远端没有的对象，全部推送到远端。</p>
-<p>默认仅在 fast-forward 状态下才可以合并，即git push 在远端指针不是本地指</p>
-<p>针的祖先时会拒绝覆盖。</p>
+<p>Git 本地和远端仓库可以通过 <code>git</code>、<code>ssh</code>、<code>http</code> 三种协议进行传输。</p>
+<p>以 master 分支为例，Git push 是尝试将本地 master 指针内容覆盖掉远端 master 指针，再把本地指针指向但远端没有的对象全部推送到远端。
+默认仅在 fast-forward 状态下才可以合并，即 git push 在远端指针不是本地指针祖先时会拒绝覆盖。</p>
 <p>而 &ndash;force，可以让 Git 不进行这个检查，直接覆盖远端对应 master 指针的内容。</p>
 <h2 id="git-reset-原理">Git Reset 原理</h2>
 <p>格式：<code>git reset [--soft | --hard | --mixed | --keep] [&lt;commit&gt;]</code></p>
-<p>reset 可以让当前分支 <code>head</code> 指向指定的commit，并且根据选项改动暂存区和工作区。</p>
+<p>reset 可以让当前分支 <code>head</code> 指向指定的 commit，并且根据选项改动暂存区和工作区。</p>
 <ul>
 <li>soft: 暂存区和工作区都不重置，仅仅改一下 head 指向的 commit。</li>
 <li>mixed(默认): 暂存区会被重置，但是工作区不会。</li>
 <li>keep：暂存区和工作区都会重置，但是变更会被重新应用。</li>
 <li>hard: 暂存区和工作区都会重置到指定提交的状态。</li>
 </ul>
-<h2 id="git-cherry-pick-原理">GIt Cherry Pick 原理</h2>
+<h2 id="git-cherry-pick-原理">Git Cherry Pick 原理</h2>
 <p>cherry pick 会复制一个 commit 的变更应用到当前分支创建一个新的 commit。</p>
-<h2 id="git-check-out-原理">Git Check Out 原理</h2>
-<p>check out 可以将当前工作区切换至指定的 commit 位置。</p>
+<h2 id="git-checkout-原理">Git Checkout 原理</h2>
+<p>checkout 可以将当前工作区切换至指定的 commit 位置。</p>
+<p>如果直接 checkout 到某个 commit hash（不是分支名），会进入 detached HEAD 状态，这时提交不会挂在分支名下。</p>
 <h2 id="git-rm-原理">Git RM 原理</h2>
 <p>基本用法：<code>git rm [--cached | -r ] &lt;file&gt;...</code></p>
 <p>rm 用于删除一个文件，git rm 默认会将文件从暂存区和工作区都移除，可以加 &ndash;cached 选项只从暂存区移除。</p>
@@ -422,28 +431,31 @@
 <ul>
 <li>git init</li>
 <li>echo &ldquo;123&rdquo; &gt; 1.txt</li>
-<li>echot &ldquo;123&rdquo; &gt; 2.txt</li>
+<li>echo &ldquo;123&rdquo; &gt; 2.txt</li>
 <li>git add .</li>
-<li>git commit -am &ldquo;first commit&rdquo;</li>
+<li>git commit -m &ldquo;first commit&rdquo;</li>
 <li>echo &ldquo;123&rdquo; &raquo; 1.txt</li>
 <li>git commit -am &ldquo;second commit&rdquo;</li>
 <li>git branch dev</li>
 <li>echo &ldquo;345&rdquo; &raquo; 1.txt</li>
 <li>git commit -am &ldquo;third commit&rdquo;</li>
 </ul>
+<p>这里 <code>git branch dev</code> 只是创建分支，当前还在 master 上。</p>
 <p>我们通过以上命令，就可以创建一个具有三个 commit 两个分支的仓库，下面我们来逐步分析一下这个仓库的构成。</p>
 <h2 id="分析">分析</h2>
-<p>首先我们来到 <code>.git/refs/heads</code>目录下面，会发现下面有 dev 和 master 两个文件，heads 目录下面的文件代表了一个分支，每个分支里面都是对象 commit 对象的哈希值。</p>
+<p>我们来到 <code>.git/refs/heads</code> 目录下面，会发现有 dev 和 master 两个文件。heads 目录下的文件代表一个分支，每个分支里都是对应 commit 对象的哈希值。</p>
 <p>我们可以在 objects 目录下找到对应的 commit 对象文件。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201110003814.png" alt="image-20201110003814492"></p>
-<p>git对象都是经过压缩的，所以直接查看会发现乱码，可以通过 cat-file 工具查看里面的内容</p>
+<p>git 对象都是经过压缩的，所以直接查看会是乱码，可以通过 cat-file 工具查看里面的内容。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201110004046.png" alt="image-20201110004046677"></p>
-<p>可以看到这个 commit 对象里面包含了一些诸如提交者、提交时间、提交注释之类的元信息，同时还包括一个指向前一个 commit 对象的指针，这样这些 commit 就能通过这个字段串起来成一条线。</p>
+<p>可以看到这个 commit 对象里包含了提交者、提交时间、提交注释之类的元信息，还包括一个指向前一个 commit 对象的指针。这样这些 commit 就能通过这个字段串起来成一条线。</p>
 <p>tree 字段则指向了当前 commit 对应文件目录的目录对象，这样就能通过这个指针找到这个版本对应的所有文件。</p>
-<p>继续跟踪这个目录对象，它就像一个普通的目录一样，指向了两个 blob 文件对象，当然目录也可能有目录，在查看一个文件对象，就能得到具体的文件内容了。</p>
+<p>继续跟踪这个目录对象，它就像一个普通目录，指向两个 blob 文件对象。目录里也可能还有目录。查看一个文件对象，就能得到具体的文件内容。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201110004601.png" alt="image-20201110004601075"></p>
-<p>继续查看上一个commit的信息，我们就能彻底了解整个仓库的历史，最终整理出来的指向图如下。</p>
-<h2 id="示意图">示意图</h2>
+<p>继续查看上一个 commit 的信息，我们就能彻底了解整个仓库的历史，最终整理出来的指向图如下。</p>
+<p>如果你想自己在本地快速验证，可以直接跑：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git log --oneline --graph --decorate --all
+</span></span></code></pre></div><h2 id="示意图">示意图</h2>
 <p>这个仓库我推送到了远端，可以拉下来自己对比：<a href="https://github.com/Huweicai/gitdemo">https://github.com/Huweicai/gitdemo</a>。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20201110005626.png" alt="image-20201110005626068"></p>
 
@@ -925,7 +937,7 @@
 
 										<li class="nav-item">
 						 					<a class="nav-link" href="#git-cherry-pick-%e5%8e%9f%e7%90%86">
-												 GIt Cherry Pick 原理
+												 Git Cherry Pick 原理
 											</a>
 										</li>
 						 
@@ -950,8 +962,8 @@
 								
 
 										<li class="nav-item">
-						 					<a class="nav-link" href="#git-check-out-%e5%8e%9f%e7%90%86">
-												 Git Check Out 原理
+						 					<a class="nav-link" href="#git-checkout-%e5%8e%9f%e7%90%86">
+												 Git Checkout 原理
 											</a>
 										</li>
 						 
