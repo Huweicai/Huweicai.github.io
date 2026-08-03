@@ -7,15 +7,26 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="磁盘 在计算机发展的历程中，存储设备的演进一直是一个引人入胜的故事。 从最早的打孔纸带，到磁性存储，再到今天的固态硬盘，人们一直在追求更快、更大、更可靠的数据存储方案。 在这个演进过程中，磁盘凭借着断电数据不丢失、容量大、价格实惠等优势，成为了最重要的存储设备之一。 虽然最初 &lsquo;磁盘&rsquo; 狭义上的概念专指使用磁性材料的存储设备，但在今天，这个词已经泛指所有的持久化存储设备。让我们一起来探">
+  <meta name="description" content="磁盘
+在计算机发展的历程中，存储设备的演进一直是一个引人入胜的故事。
+从最早的打孔纸带，到磁性存储，再到今天的固态硬盘，人们一直在追求更快、更大、更可靠的数据存储方案。
+在这个演进过程中，磁盘凭借着断电数据不丢失、容量大、价格实惠等优势，成为了最重要的存储设备之一。
+虽然最初 &lsquo;磁盘&rsquo; 狭义上的概念专指使用磁性材料的存储设备，但在今天，这个词已经泛指所有的持久化存储设备。让我们一起来探索这个既熟悉又神秘的计算机组件。">
 
-  <meta property="og:title" content="聊一聊磁盘" />
-<meta property="og:description" content="磁盘 在计算机发展的历程中，存储设备的演进一直是一个引人入胜的故事。 从最早的打孔纸带，到磁性存储，再到今天的固态硬盘，人们一直在追求更快、更大、更可靠的数据存储方案。 在这个演进过程中，磁盘凭借着断电数据不丢失、容量大、价格实惠等优势，成为了最重要的存储设备之一。 虽然最初 &lsquo;磁盘&rsquo; 狭义上的概念专指使用磁性材料的存储设备，但在今天，这个词已经泛指所有的持久化存储设备。让我们一起来探" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/something-about-disk/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2022-06-13T18:20:55+08:00" />
-<meta property="article:modified_time" content="2022-06-13T18:20:55+08:00" />
-
+  <meta property="og:url" content="https://huweicai.com/something-about-disk/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="聊一聊磁盘">
+  <meta property="og:description" content="磁盘 在计算机发展的历程中，存储设备的演进一直是一个引人入胜的故事。
+从最早的打孔纸带，到磁性存储，再到今天的固态硬盘，人们一直在追求更快、更大、更可靠的数据存储方案。
+在这个演进过程中，磁盘凭借着断电数据不丢失、容量大、价格实惠等优势，成为了最重要的存储设备之一。
+虽然最初 ‘磁盘’ 狭义上的概念专指使用磁性材料的存储设备，但在今天，这个词已经泛指所有的持久化存储设备。让我们一起来探索这个既熟悉又神秘的计算机组件。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2022-06-13T18:20:55+08:00">
+    <meta property="article:modified_time" content="2022-06-13T18:20:55+08:00">
+    <meta property="article:tag" content="磁盘">
+    <meta property="article:tag" content="存储">
+    <meta property="article:tag" content="Linux">
 
    
 
@@ -108,7 +119,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +138,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +207,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +215,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -345,46 +356,46 @@
 <p>了解了数据是如何存储之后，我们下一步要关心的问题就是，磁盘中的数据又是怎么到达内存、CPU 等其他设备中供其使用的呢？</p>
 <p>简单地来说就是，磁盘通过物理接口插入到计算机中，然后经由总线，按照某种协议和其他设备交换数据。</p>
 <table>
-<thead>
-<tr>
-<th>NAME</th>
-<th>全称</th>
-<th>诞生时间</th>
-<th>理论性能上限</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>PATA</td>
-<td><strong>Parallel ATA</strong></td>
-<td>1986</td>
-<td>133 MB/s</td>
-</tr>
-<tr>
-<td>SATA</td>
-<td><strong>Serial ATA</strong></td>
-<td>2000</td>
-<td>750 MB/s</td>
-</tr>
-<tr>
-<td>M.2</td>
-<td></td>
-<td>2013</td>
-<td>8 GB/s</td>
-</tr>
-<tr>
-<td>USB</td>
-<td><strong>Universal Serial Bus</strong></td>
-<td>1996</td>
-<td>1.21 GB/s</td>
-</tr>
-<tr>
-<td>SAS</td>
-<td><strong>Serial Attached SCSI</strong></td>
-<td>2004</td>
-<td>1.2 GB/s</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>NAME</th>
+          <th>全称</th>
+          <th>诞生时间</th>
+          <th>理论性能上限</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>PATA</td>
+          <td><strong>Parallel ATA</strong></td>
+          <td>1986</td>
+          <td>133 MB/s</td>
+      </tr>
+      <tr>
+          <td>SATA</td>
+          <td><strong>Serial ATA</strong></td>
+          <td>2000</td>
+          <td>750 MB/s</td>
+      </tr>
+      <tr>
+          <td>M.2</td>
+          <td></td>
+          <td>2013</td>
+          <td>8 GB/s</td>
+      </tr>
+      <tr>
+          <td>USB</td>
+          <td><strong>Universal Serial Bus</strong></td>
+          <td>1996</td>
+          <td>1.21 GB/s</td>
+      </tr>
+      <tr>
+          <td>SAS</td>
+          <td><strong>Serial Attached SCSI</strong></td>
+          <td>2004</td>
+          <td>1.2 GB/s</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="接口-interface">接口: INTERFACE</h2>
 <p>接口即我们平常看到的磁盘上暴露出来的那一部分金属块，磁盘插到主板上对应母口之后，形成电流和数据通路，从而使用硬盘可以被计算机识别并传输数据。</p>
@@ -417,88 +428,88 @@
 <p>在 USB 诞生之前，当时各种各样的外部电子设备，如鼠标、键盘、打印机、照相机等各自都有各自的接口标准，给用户带来了极大的困扰，所以 USB 就应运而生了，目前 USB 已经几乎完全统一了所有的外部设备接口市场，甚至相当多的非数据传输纯供电场景，比如小台灯、风扇之类的也在使用。</p>
 <p>虽然我们可能感觉还是有好几种接口，但是其实它们都是 USB，只是不同的子类别而已：</p>
 <table>
-<thead>
-<tr>
-<th>类别</th>
-<th>Type-A</th>
-<th>Type-B</th>
-<th>Type-C</th>
-<th>Mini-A</th>
-<th>Mini-B</th>
-<th>Mini-AB</th>
-<th>Micro-A</th>
-<th>Micro-B</th>
-<th>Micro-AB</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>插头（公头）</td>
-<td>2.0</td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-A.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/USB_Type-A.svg/75px-USB_Type-A.svg.png" alt="USB Type-A.svg"></a></td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/USB_Type-B.svg/58px-USB_Type-B.svg.png" alt="USB Type-B.svg"></a></td>
-<td>不存在</td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-A.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/USB_Mini-A.svg/90px-USB_Mini-A.svg.png" alt="USB Mini-A.svg"></a></td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/USB_Mini-B.svg/90px-USB_Mini-B.svg.png" alt="USB Mini-B.svg"></a></td>
-<td>不存在</td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-A.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/USB_Micro-A.svg/90px-USB_Micro-A.svg.png" alt="USB Micro-A.svg"></a></td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/USB_Micro-B.svg/90px-USB_Micro-B.svg.png" alt="USB Micro-B.svg"></a></td>
-<td>不存在</td>
-</tr>
-<tr>
-<td>3.2</td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-A_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/USB_3.0_Type-A_blue.svg/85px-USB_3.0_Type-A_blue.svg.png" alt="USB 3.0 Type-A blue.svg"></a></td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-B_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/USB_3.0_Type-B_blue.svg/65px-USB_3.0_Type-B_blue.svg.png" alt="USB 3.0 Type-B blue.svg"></a></td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-C_icon.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/USB_Type-C_icon.svg/75px-USB_Type-C_icon.svg.png" alt="USB Type-C icon.svg"></a></td>
-<td>已弃用</td>
-<td>已弃用</td>
-<td>已弃用</td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Micro-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/USB_3.0_Micro-B.svg/120px-USB_3.0_Micro-B.svg.png" alt="USB 3.0 Micro-B.svg"></a></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>插座（母头）</td>
-<td>2.0</td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-A_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/USB_Type-A_receptacle.svg/83px-USB_Type-A_receptacle.svg.png" alt="USB Type-A receptacle.svg"></a></td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/USB_Type-B_receptacle.svg/58px-USB_Type-B_receptacle.svg.png" alt="USB Type-B receptacle.svg"></a></td>
-<td>不存在</td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-A_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/USB_Mini-A_receptacle.svg/75px-USB_Mini-A_receptacle.svg.png" alt="USB Mini-A receptacle.svg"></a></td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/USB_Mini-B_receptacle.svg/80px-USB_Mini-B_receptacle.svg.png" alt="USB Mini-B receptacle.svg"></a></td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-AB_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/USB_Mini-AB_receptacle.svg/83px-USB_Mini-AB_receptacle.svg.png" alt="USB Mini-AB receptacle.svg"></a></td>
-<td>不存在</td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/USB_Micro-B_receptacle.svg/80px-USB_Micro-B_receptacle.svg.png" alt="USB Micro-B receptacle.svg"></a></td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-AB_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/USB_Micro-AB_receptacle.svg/75px-USB_Micro-AB_receptacle.svg.png" alt="USB Micro-AB receptacle.svg"></a></td>
-</tr>
-<tr>
-<td>3.2</td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-A_receptacle_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/USB_3.0_Type-A_receptacle_blue.svg/75px-USB_3.0_Type-A_receptacle_blue.svg.png" alt="USB 3.0 Type-A receptacle blue.svg"></a></td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-B_receptacle_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/USB_3.0_Type-B_receptacle_blue.svg/60px-USB_3.0_Type-B_receptacle_blue.svg.png" alt="USB 3.0 Type-B receptacle blue.svg"></a></td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-C_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/USB_Type-C_receptacle.svg/75px-USB_Type-C_receptacle.svg.png" alt="USB Type-C receptacle.svg"></a></td>
-<td>已弃用</td>
-<td>已弃用</td>
-<td>已弃用</td>
-<td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Micro-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/USB_3.0_Micro-B_receptacle.svg/100px-USB_3.0_Micro-B_receptacle.svg.png" alt="USB 3.0 Micro-B receptacle.svg"></a></td>
-<td>已弃用</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>应用范围</td>
-<td>计算机</td>
-<td>扫描仪、打印机等</td>
-<td>新式计算机、移动电话、平板电脑等</td>
-<td></td>
-<td>旧式便携设备</td>
-<td>仅作为万能接头</td>
-<td></td>
-<td>移动电话、平板电脑等</td>
-<td>仅作为万能接头</td>
-<td></td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>类别</th>
+          <th>Type-A</th>
+          <th>Type-B</th>
+          <th>Type-C</th>
+          <th>Mini-A</th>
+          <th>Mini-B</th>
+          <th>Mini-AB</th>
+          <th>Micro-A</th>
+          <th>Micro-B</th>
+          <th>Micro-AB</th>
+          <th></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>插头（公头）</td>
+          <td>2.0</td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-A.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/USB_Type-A.svg/75px-USB_Type-A.svg.png" alt="USB Type-A.svg"></a></td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/USB_Type-B.svg/58px-USB_Type-B.svg.png" alt="USB Type-B.svg"></a></td>
+          <td>不存在</td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-A.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/USB_Mini-A.svg/90px-USB_Mini-A.svg.png" alt="USB Mini-A.svg"></a></td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/USB_Mini-B.svg/90px-USB_Mini-B.svg.png" alt="USB Mini-B.svg"></a></td>
+          <td>不存在</td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-A.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/USB_Micro-A.svg/90px-USB_Micro-A.svg.png" alt="USB Micro-A.svg"></a></td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/USB_Micro-B.svg/90px-USB_Micro-B.svg.png" alt="USB Micro-B.svg"></a></td>
+          <td>不存在</td>
+      </tr>
+      <tr>
+          <td>3.2</td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-A_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/USB_3.0_Type-A_blue.svg/85px-USB_3.0_Type-A_blue.svg.png" alt="USB 3.0 Type-A blue.svg"></a></td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-B_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/USB_3.0_Type-B_blue.svg/65px-USB_3.0_Type-B_blue.svg.png" alt="USB 3.0 Type-B blue.svg"></a></td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-C_icon.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/USB_Type-C_icon.svg/75px-USB_Type-C_icon.svg.png" alt="USB Type-C icon.svg"></a></td>
+          <td>已弃用</td>
+          <td>已弃用</td>
+          <td>已弃用</td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Micro-B.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/USB_3.0_Micro-B.svg/120px-USB_3.0_Micro-B.svg.png" alt="USB 3.0 Micro-B.svg"></a></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>插座（母头）</td>
+          <td>2.0</td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-A_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/USB_Type-A_receptacle.svg/83px-USB_Type-A_receptacle.svg.png" alt="USB Type-A receptacle.svg"></a></td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/USB_Type-B_receptacle.svg/58px-USB_Type-B_receptacle.svg.png" alt="USB Type-B receptacle.svg"></a></td>
+          <td>不存在</td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-A_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/USB_Mini-A_receptacle.svg/75px-USB_Mini-A_receptacle.svg.png" alt="USB Mini-A receptacle.svg"></a></td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/USB_Mini-B_receptacle.svg/80px-USB_Mini-B_receptacle.svg.png" alt="USB Mini-B receptacle.svg"></a></td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Mini-AB_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/USB_Mini-AB_receptacle.svg/83px-USB_Mini-AB_receptacle.svg.png" alt="USB Mini-AB receptacle.svg"></a></td>
+          <td>不存在</td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/USB_Micro-B_receptacle.svg/80px-USB_Micro-B_receptacle.svg.png" alt="USB Micro-B receptacle.svg"></a></td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Micro-AB_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/USB_Micro-AB_receptacle.svg/75px-USB_Micro-AB_receptacle.svg.png" alt="USB Micro-AB receptacle.svg"></a></td>
+      </tr>
+      <tr>
+          <td>3.2</td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-A_receptacle_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/USB_3.0_Type-A_receptacle_blue.svg/75px-USB_3.0_Type-A_receptacle_blue.svg.png" alt="USB 3.0 Type-A receptacle blue.svg"></a></td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Type-B_receptacle_blue.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/USB_3.0_Type-B_receptacle_blue.svg/60px-USB_3.0_Type-B_receptacle_blue.svg.png" alt="USB 3.0 Type-B receptacle blue.svg"></a></td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_Type-C_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/USB_Type-C_receptacle.svg/75px-USB_Type-C_receptacle.svg.png" alt="USB Type-C receptacle.svg"></a></td>
+          <td>已弃用</td>
+          <td>已弃用</td>
+          <td>已弃用</td>
+          <td><a href="https://zh.wikipedia.org/wiki/File:USB_3.0_Micro-B_receptacle.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/USB_3.0_Micro-B_receptacle.svg/100px-USB_3.0_Micro-B_receptacle.svg.png" alt="USB 3.0 Micro-B receptacle.svg"></a></td>
+          <td>已弃用</td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>应用范围</td>
+          <td>计算机</td>
+          <td>扫描仪、打印机等</td>
+          <td>新式计算机、移动电话、平板电脑等</td>
+          <td></td>
+          <td>旧式便携设备</td>
+          <td>仅作为万能接头</td>
+          <td></td>
+          <td>移动电话、平板电脑等</td>
+          <td>仅作为万能接头</td>
+          <td></td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="总线-bus">总线: BUS</h2>
 <p>总线是计算机内部设备和设备之间通信的线路，比如磁盘到内存、内存到 CPU之间的信号和数据的传输。</p>
@@ -539,31 +550,31 @@
 <p>MBR 早期电脑用得比较多，但是存在分区数和卷大小的限制，数据相对来说也比较容易损坏，所以后面有了 GPT，目前新的电脑上 MBR 就比较少见了，除非引导程序还是老的 BIOS 出于兼容性考虑。</p>
 <p>GPT 出于兼容性考虑，避免不支持 GPT 的系统直接识别成坏盘导致数据丢失，磁盘的第一个扇区（前 512 字节）还是留给了 MBR，不过只做保护用，分区数据还是写入在之后的空间中。</p>
 <table>
-<thead>
-<tr>
-<th></th>
-<th>诞生时间</th>
-<th>最大分区大小</th>
-<th>最大主分区数</th>
-<th>总大小</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>MBR (Master Boot Record)</td>
-<td>1983</td>
-<td>2TB</td>
-<td>4</td>
-<td>512字节</td>
-</tr>
-<tr>
-<td>GPT (GUID Partition Table )</td>
-<td>1998</td>
-<td>18 EB</td>
-<td>128</td>
-<td>-</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th></th>
+          <th>诞生时间</th>
+          <th>最大分区大小</th>
+          <th>最大主分区数</th>
+          <th>总大小</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>MBR (Master Boot Record)</td>
+          <td>1983</td>
+          <td>2TB</td>
+          <td>4</td>
+          <td>512字节</td>
+      </tr>
+      <tr>
+          <td>GPT (GUID Partition Table )</td>
+          <td>1998</td>
+          <td>18 EB</td>
+          <td>128</td>
+          <td>-</td>
+      </tr>
+  </tbody>
 </table>
 <p>大致的磁盘逻辑结构如下图所示，至于每个分区里面的逻辑结构，这就是文件系统负责去组织的事情了。</p>
 <p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20221110182259.svg" alt="未命名文件(5)"></p>
@@ -585,109 +596,109 @@
 <p>最基础的 RAID 级别就只有 0-6 这 7种了，但是 RAID 之间也是能组合的，比如常见的 RAID 10，就是先做 RAID 1 把盘两两一组互备，然后再做RAID 0 拼成一块，类似的还有 RAID 50、RAID 60 等等。</p>
 <h3 id="整体对比">整体对比</h3>
 <table>
-<thead>
-<tr>
-<th>RAID等级</th>
-<th>最少硬盘</th>
-<th>最大容错</th>
-<th>可用容量</th>
-<th>读取性能</th>
-<th>写入性能</th>
-<th>安全性</th>
-<th>目的</th>
-<th>应用产业</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>单一硬盘</td>
-<td>(参考)</td>
-<td>0</td>
-<td>1</td>
-<td>1</td>
-<td>1</td>
-<td>无</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>0</td>
-<td>2</td>
-<td>0</td>
-<td>n</td>
-<td>n</td>
-<td>n</td>
-<td>一个硬盘异常，全部硬盘都会异常</td>
-<td>追求最大容量、速度</td>
-<td>视频剪接缓存用途</td>
-</tr>
-<tr>
-<td>1</td>
-<td>2</td>
-<td>n-1</td>
-<td>1</td>
-<td>n</td>
-<td>1</td>
-<td>高，一个正常即可</td>
-<td>追求最大安全性</td>
-<td>个人、企业备份</td>
-</tr>
-<tr>
-<td>5</td>
-<td>3</td>
-<td>1</td>
-<td>n-1</td>
-<td>n-1</td>
-<td>n-1</td>
-<td>中下至中</td>
-<td>追求最大容量、最小预算</td>
-<td>个人、小型企业备份</td>
-</tr>
-<tr>
-<td>6</td>
-<td>4</td>
-<td>2</td>
-<td>n-2</td>
-<td>n-2</td>
-<td>n-2</td>
-<td>中至中高,仅安全性较RAID 5高</td>
-<td>同RAID 5，但较安全</td>
-<td>个人、企业备份</td>
-</tr>
-<tr>
-<td>10</td>
-<td>4</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>高</td>
-<td>综合RAID 0/1优点，理论速度较快</td>
-<td>大型数据库、服务器</td>
-</tr>
-<tr>
-<td>50</td>
-<td>6</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>高</td>
-<td>提升资料安全</td>
-<td></td>
-</tr>
-<tr>
-<td>60</td>
-<td>8</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td>高</td>
-<td>提升资料安全</td>
-<td></td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>RAID等级</th>
+          <th>最少硬盘</th>
+          <th>最大容错</th>
+          <th>可用容量</th>
+          <th>读取性能</th>
+          <th>写入性能</th>
+          <th>安全性</th>
+          <th>目的</th>
+          <th>应用产业</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>单一硬盘</td>
+          <td>(参考)</td>
+          <td>0</td>
+          <td>1</td>
+          <td>1</td>
+          <td>1</td>
+          <td>无</td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>0</td>
+          <td>2</td>
+          <td>0</td>
+          <td>n</td>
+          <td>n</td>
+          <td>n</td>
+          <td>一个硬盘异常，全部硬盘都会异常</td>
+          <td>追求最大容量、速度</td>
+          <td>视频剪接缓存用途</td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>n-1</td>
+          <td>1</td>
+          <td>n</td>
+          <td>1</td>
+          <td>高，一个正常即可</td>
+          <td>追求最大安全性</td>
+          <td>个人、企业备份</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>3</td>
+          <td>1</td>
+          <td>n-1</td>
+          <td>n-1</td>
+          <td>n-1</td>
+          <td>中下至中</td>
+          <td>追求最大容量、最小预算</td>
+          <td>个人、小型企业备份</td>
+      </tr>
+      <tr>
+          <td>6</td>
+          <td>4</td>
+          <td>2</td>
+          <td>n-2</td>
+          <td>n-2</td>
+          <td>n-2</td>
+          <td>中至中高,仅安全性较RAID 5高</td>
+          <td>同RAID 5，但较安全</td>
+          <td>个人、企业备份</td>
+      </tr>
+      <tr>
+          <td>10</td>
+          <td>4</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>高</td>
+          <td>综合RAID 0/1优点，理论速度较快</td>
+          <td>大型数据库、服务器</td>
+      </tr>
+      <tr>
+          <td>50</td>
+          <td>6</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>高</td>
+          <td>提升资料安全</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>60</td>
+          <td>8</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>高</td>
+          <td>提升资料安全</td>
+          <td></td>
+      </tr>
+  </tbody>
 </table>
 <h1 id="文件系统">文件系统</h1>
 <p>磁盘只是提供了最基本的基于块的读写接口，它只关心怎么保存好写入进来的 01 比特流，而我们日常使用时肯定不可能直接肉眼去使用比特流，所以中间还需要引入一层抽象——文件系统。</p>
@@ -695,120 +706,120 @@
 <p>我们可以通过<code>cat /proc/filesystems</code>来查看当前内核支持的文件系统。</p>
 <p>常见的文件系统如下：</p>
 <table>
-<thead>
-<tr>
-<th></th>
-<th>开发者</th>
-<th>诞生时间</th>
-<th>最大文件大小</th>
-<th>最大卷大小</th>
-<th>稀疏文件</th>
-<th>硬链接</th>
-<th>Copy On Write</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ZFS</td>
-<td>Sun</td>
-<td>2004</td>
-<td>16 EB</td>
-<td>256 ZB</td>
-<td>✅</td>
-<td>✅</td>
-<td>✅</td>
-<td></td>
-</tr>
-<tr>
-<td>EXT4</td>
-<td>-</td>
-<td>2006</td>
-<td>16 TB</td>
-<td>1 EB</td>
-<td>✅</td>
-<td>✅</td>
-<td>❌</td>
-<td></td>
-</tr>
-<tr>
-<td>NTFS</td>
-<td>Microsoft</td>
-<td>1993</td>
-<td>16 EB</td>
-<td>16 EB</td>
-<td>✅</td>
-<td>✅</td>
-<td>✅</td>
-<td></td>
-</tr>
-<tr>
-<td>BtrFS</td>
-<td>Oracle</td>
-<td>2007</td>
-<td>16 EB</td>
-<td>16 EB</td>
-<td>✅</td>
-<td>✅</td>
-<td>✅</td>
-<td></td>
-</tr>
-<tr>
-<td>exFAT</td>
-<td>Microsoft</td>
-<td>2006</td>
-<td>127 PB</td>
-<td>64 ZB</td>
-<td>❌</td>
-<td>❌</td>
-<td>❌</td>
-<td></td>
-</tr>
-<tr>
-<td>FAT32</td>
-<td>Microsoft</td>
-<td>1996</td>
-<td>2 GB</td>
-<td>2 TB</td>
-<td>❌</td>
-<td>❌</td>
-<td>❌</td>
-<td></td>
-</tr>
-<tr>
-<td>XFS</td>
-<td>Silicon Graphics</td>
-<td>1994</td>
-<td>8 EB</td>
-<td>8 EB</td>
-<td>✅</td>
-<td>✅</td>
-<td>❌</td>
-<td></td>
-</tr>
-<tr>
-<td>APFS</td>
-<td>Apple</td>
-<td>2017</td>
-<td>8 EB</td>
-<td></td>
-<td>✅</td>
-<td>✅</td>
-<td>✅</td>
-<td></td>
-</tr>
-<tr>
-<td>HFS</td>
-<td>Apple</td>
-<td>1985</td>
-<td>2 GB</td>
-<td>2 TB</td>
-<td></td>
-<td>❌</td>
-<td>❌</td>
-<td></td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th></th>
+          <th>开发者</th>
+          <th>诞生时间</th>
+          <th>最大文件大小</th>
+          <th>最大卷大小</th>
+          <th>稀疏文件</th>
+          <th>硬链接</th>
+          <th>Copy On Write</th>
+          <th></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>ZFS</td>
+          <td>Sun</td>
+          <td>2004</td>
+          <td>16 EB</td>
+          <td>256 ZB</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>EXT4</td>
+          <td>-</td>
+          <td>2006</td>
+          <td>16 TB</td>
+          <td>1 EB</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>❌</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>NTFS</td>
+          <td>Microsoft</td>
+          <td>1993</td>
+          <td>16 EB</td>
+          <td>16 EB</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>BtrFS</td>
+          <td>Oracle</td>
+          <td>2007</td>
+          <td>16 EB</td>
+          <td>16 EB</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>exFAT</td>
+          <td>Microsoft</td>
+          <td>2006</td>
+          <td>127 PB</td>
+          <td>64 ZB</td>
+          <td>❌</td>
+          <td>❌</td>
+          <td>❌</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>FAT32</td>
+          <td>Microsoft</td>
+          <td>1996</td>
+          <td>2 GB</td>
+          <td>2 TB</td>
+          <td>❌</td>
+          <td>❌</td>
+          <td>❌</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>XFS</td>
+          <td>Silicon Graphics</td>
+          <td>1994</td>
+          <td>8 EB</td>
+          <td>8 EB</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>❌</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>APFS</td>
+          <td>Apple</td>
+          <td>2017</td>
+          <td>8 EB</td>
+          <td></td>
+          <td>✅</td>
+          <td>✅</td>
+          <td>✅</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>HFS</td>
+          <td>Apple</td>
+          <td>1985</td>
+          <td>2 GB</td>
+          <td>2 TB</td>
+          <td></td>
+          <td>❌</td>
+          <td>❌</td>
+          <td></td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="xfs">XFS</h2>
 <p>XFS 是一款为了最大化并行 IO 能力和支持海量存储场景而设计的高性能文件系统，于内核 2.4 版本合入主线，我们很熟悉的发行版 CentOS 7 的默认文件系统就是 XFS。</p>

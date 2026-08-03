@@ -7,15 +7,36 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序： public class Test2 { public void whileTest() { int i = 0; while (true) { i&#43;&#43;; } } public">
+  <meta name="description" content="最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。
+我编写了如下的程序：
+public class Test2 {
+    public void whileTest() {
+        int i = 0;
+        while (true) {
+            i&#43;&#43;;
+        }
+    }
 
-  <meta property="og:title" content="for{;;}与while(true)的困惑" />
-<meta property="og:description" content="最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序： public class Test2 { public void whileTest() { int i = 0; while (true) { i&#43;&#43;; } } public" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/confusion-betwwen-forwhiletrue/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2018-03-04T21:47:00+08:00" />
-<meta property="article:modified_time" content="2018-03-04T21:47:00+08:00" />
+    public void forTest() {
+        int i = 0;
+        for (; ; ) {
+            i&#43;&#43;;
+        }
+    }
+}
+通过IDEA的jclasslib插件查看到的字节码如下：">
 
+  <meta property="og:url" content="https://huweicai.com/confusion-betwwen-forwhiletrue/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="for{;;}与while(true)的困惑">
+  <meta property="og:description" content="最近在阅读JUC源码的时候，由于多线程并发时情况比较复杂，所以源码中经常出现一些无限循环用于等待确保或是某些目的的完成，通常我一般无限循环都是用while(true)，但是我发现在concurrent包中经常用for(;;)来实现。这让我产生了困惑，难道for(;;)会比while(true)性能更好一些吗？于是我决定自己分别编译比较一下。 我编写了如下的程序：
+public class Test2 { public void whileTest() { int i = 0; while (true) { i&#43;&#43;; } } public void forTest() { int i = 0; for (; ; ) { i&#43;&#43;; } } } 通过IDEA的jclasslib插件查看到的字节码如下：">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2018-03-04T21:47:00+08:00">
+    <meta property="article:modified_time" content="2018-03-04T21:47:00+08:00">
+    <meta property="article:tag" content="Java">
+    <meta property="article:tag" content="编程语言">
 
    
 
@@ -108,7 +129,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +148,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +217,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +225,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>

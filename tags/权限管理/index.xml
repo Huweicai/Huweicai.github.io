@@ -4,17 +4,16 @@
     <title>权限管理 on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/</link>
     <description>Recent content in 权限管理 on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Thu, 18 Mar 2021 21:29:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 18 Mar 2021 21:29:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Kubernetes权限管理概述</title>
       <link>https://huweicai.com/kubernetes-permissions-overview/</link>
       <pubDate>Thu, 18 Mar 2021 21:29:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/kubernetes-permissions-overview/</guid>
-      <description>对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。 以 Git 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。 通常在校验权限中分为两个流程，认证和鉴权。 即先判断你是谁：认证，然后再鉴权，判断你有没有这个资源的权限。 毫无疑问，复杂的Kubernetes也具</description>
+      <description>&lt;p&gt;对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。&lt;/p&gt;&#xA;&lt;p&gt;以 &lt;code&gt;Git&lt;/code&gt; 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。&lt;/p&gt;&#xA;&lt;p&gt;通常在校验权限中分为两个流程，&lt;code&gt;认证&lt;/code&gt;和&lt;code&gt;鉴权&lt;/code&gt;。&lt;/p&gt;&#xA;&lt;p&gt;即先判断你是谁：&lt;code&gt;认证&lt;/code&gt;，然后再&lt;code&gt;鉴权&lt;/code&gt;，判断你有没有这个资源的权限。&lt;/p&gt;&#xA;&lt;p&gt;毫无疑问，复杂的&lt;code&gt;Kubernetes&lt;/code&gt;也具有一套复杂的权限管理系统，如果要用一句话简单介绍一下的话：&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

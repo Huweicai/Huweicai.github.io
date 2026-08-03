@@ -7,15 +7,28 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统。它会为每个文件计算一个 hash 值，并压缩存储到 .git/objects 目录。普通文件是 blob 对象，文件夹会生成 tree 对象。一个版本的文件由根目录 tree 串起来，它的上层是 commit 对象。commit 会有一个或多个 parent 指针，指向上一个提交。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一个最常用的模型，后面很多命令都在这三层之间移动内容： 工作区 --git add--&gt; 暂存区(index">
+  <meta name="description" content="基本概念
+概述
+Git 是一个基于快照的文件版本管理系统。它会为每个文件计算一个 hash 值，并压缩存储到 .git/objects 目录。普通文件是 blob 对象，文件夹会生成 tree 对象。一个版本的文件由根目录 tree 串起来，它的上层是 commit 对象。commit 会有一个或多个 parent 指针，指向上一个提交。
+commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。
+这是一个最常用的模型，后面很多命令都在这三层之间移动内容：
+工作区 --git add--&gt; 暂存区(index) --git commit--&gt; commit/tree/blob
+这是一个简单仓库的示意图，我们会在文章末尾详细分析其构成。
+">
 
-  <meta property="og:title" content="Git实现原理" />
-<meta property="og:description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统。它会为每个文件计算一个 hash 值，并压缩存储到 .git/objects 目录。普通文件是 blob 对象，文件夹会生成 tree 对象。一个版本的文件由根目录 tree 串起来，它的上层是 commit 对象。commit 会有一个或多个 parent 指针，指向上一个提交。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一个最常用的模型，后面很多命令都在这三层之间移动内容： 工作区 --git add--&gt; 暂存区(index" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/git-implementation/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2020-11-11T01:43:00+08:00" />
-<meta property="article:modified_time" content="2020-11-11T01:43:00+08:00" />
-
+  <meta property="og:url" content="https://huweicai.com/git-implementation/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="Git实现原理">
+  <meta property="og:description" content="基本概念 概述 Git 是一个基于快照的文件版本管理系统。它会为每个文件计算一个 hash 值，并压缩存储到 .git/objects 目录。普通文件是 blob 对象，文件夹会生成 tree 对象。一个版本的文件由根目录 tree 串起来，它的上层是 commit 对象。commit 会有一个或多个 parent 指针，指向上一个提交。
+commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。
+这是一个最常用的模型，后面很多命令都在这三层之间移动内容：
+工作区 --git add--&gt; 暂存区(index) --git commit--&gt; commit/tree/blob 这是一个简单仓库的示意图，我们会在文章末尾详细分析其构成。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2020-11-11T01:43:00+08:00">
+    <meta property="article:modified_time" content="2020-11-11T01:43:00+08:00">
+    <meta property="article:tag" content="Git">
+    <meta property="article:tag" content="存储">
 
    
 
@@ -108,7 +121,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +140,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +209,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +217,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -316,49 +329,49 @@
 <h2 id="object">Object</h2>
 <p>Object 是这个文件管理系统中最基本的单元，代表一个普通文件。每一个被 git 管理的文件都会计算出 hash 值，再压缩放到 <code>.git/objects</code> 目录中。</p>
 <p>同时，提交、目录、标签也都被抽象成对象。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="nx">CommitObject</span>  <span class="p">=</span> <span class="mi">1</span> <span class="c1">// 提交
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">TreeObject</span>    <span class="p">=</span> <span class="mi">2</span> <span class="c1">// 目录
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">BlobObject</span>    <span class="p">=</span> <span class="mi">3</span> <span class="c1">// 文件
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">TagObject</span>     <span class="p">=</span> <span class="mi">4</span> <span class="c1">// 标签
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="w">	</span><span class="nx">CommitObject</span><span class="w">  </span><span class="p">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="c1">// 提交</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">TreeObject</span><span class="w">    </span><span class="p">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="c1">// 目录</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">BlobObject</span><span class="w">    </span><span class="p">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="c1">// 文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">TagObject</span><span class="w">     </span><span class="p">=</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="c1">// 标签</span><span class="w">
 </span></span></span></code></pre></div><p>Object 的数据结构如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Object</span> <span class="kd">interface</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nf">ID</span><span class="p">()</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 哈希值
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Type</span><span class="p">()</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">ObjectType</span> <span class="c1">// 类型
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Decode</span><span class="p">(</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span><span class="p">)</span> <span class="kt">error</span> <span class="c1">// 写入
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Encode</span><span class="p">(</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span><span class="p">)</span> <span class="kt">error</span> <span class="c1">// 读取
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
-</span></span></code></pre></div><h2 id="commit">Commit</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">Object</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nf">ID</span><span class="p">()</span><span class="w"> </span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span><span class="w"> </span><span class="c1">// 哈希值</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nf">Type</span><span class="p">()</span><span class="w"> </span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">ObjectType</span><span class="w"> </span><span class="c1">// 类型</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nf">Decode</span><span class="p">(</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="c1">// 写入</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nf">Encode</span><span class="p">(</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="c1">// 读取</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="commit">Commit</h2>
 <p>Commit 是一个特殊的对象，代表了一个版本，指向了属于该版本对应的目录以及所有的文件。同时还记录着提交人、时间、注释等其他信息。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Commit</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Hash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 哈希值
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">Committer</span> <span class="nx">Signature</span> <span class="c1">// 提交者
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">Message</span> <span class="kt">string</span>      <span class="c1">// 注释
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">TreeHash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 对应目录对象的哈希值
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">ParentHashes</span> <span class="p">[]</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span> <span class="c1">// 上一个 commit 哈希值的数组
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
-</span></span></code></pre></div><p>同时 commit 也包含了指向上一个 commit 的指针，这样所有的 commit 就能串成一条线。上面结构中的 parent 是一个数组，也就意味着它可能有多个，比如两个 commit merge 成一个。换句话说，commit 其实是一个网状结构，而不只是单纯的一条线。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">Commit</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">Hash</span><span class="w"> </span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span><span class="w"> </span><span class="c1">// 哈希值</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">Committer</span><span class="w"> </span><span class="nx">Signature</span><span class="w"> </span><span class="c1">// 提交者</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">Message</span><span class="w"> </span><span class="kt">string</span><span class="w">      </span><span class="c1">// 注释</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">TreeHash</span><span class="w"> </span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span><span class="w"> </span><span class="c1">// 对应目录对象的哈希值</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">ParentHashes</span><span class="w"> </span><span class="p">[]</span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span><span class="w"> </span><span class="c1">// 上一个 commit 哈希值的数组</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>同时 commit 也包含了指向上一个 commit 的指针，这样所有的 commit 就能串成一条线。上面结构中的 parent 是一个数组，也就意味着它可能有多个，比如两个 commit merge 成一个。换句话说，commit 其实是一个网状结构，而不只是单纯的一条线。</p>
 <p>这里可以多记一句：普通提交通常只有一个 parent，merge 提交一般会有两个 parent。</p>
 <h2 id="blob">Blob</h2>
 <p>Blob 即一个普通文件，不过是压缩过的。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Blob</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">   <span class="nx">Hash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
-</span></span><span class="line"><span class="cl">   <span class="nx">Size</span> <span class="kt">int64</span>
-</span></span><span class="line"><span class="cl">   <span class="nx">obj</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h2 id="tree">Tree</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">Blob</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nx">Hash</span><span class="w"> </span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nx">Size</span><span class="w"> </span><span class="kt">int64</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nx">obj</span><span class="w"> </span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">EncodedObject</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="tree">Tree</h2>
 <p>Tree 代表一个目录，包含一个 entries 数组，指向当前目录下的文件或者其他目录，构成一棵文件树，所以被称为 Tree。</p>
 <p>另外文件名是存储在 Tree 中的。所以如果一个目录下有十个文件，只有名字不一样，也只会产生一个 blob 对象，因为内容的 hash 值都一样。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Tree</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">   <span class="nx">Entries</span> <span class="p">[]</span><span class="nx">TreeEntry</span>
-</span></span><span class="line"><span class="cl">   <span class="nx">Hash</span>    <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">TreeEntry</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Name</span> <span class="kt">string</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Mode</span> <span class="nx">filemode</span><span class="p">.</span><span class="nx">FileMode</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Hash</span> <span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h2 id="branch">Branch</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">Tree</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nx">Entries</span><span class="w"> </span><span class="p">[]</span><span class="nx">TreeEntry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">   </span><span class="nx">Hash</span><span class="w">    </span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">TreeEntry</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">Name</span><span class="w"> </span><span class="kt">string</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">Mode</span><span class="w"> </span><span class="nx">filemode</span><span class="p">.</span><span class="nx">FileMode</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">Hash</span><span class="w"> </span><span class="nx">plumbing</span><span class="p">.</span><span class="nx">Hash</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h2 id="branch">Branch</h2>
 <p>branch 的底层结构非常简单，在 <code>.git/refs/heads</code> 中的每一个文件都代表一个分支，文件里则是对应 commit 的 hash 值。</p>
 <p>远端分支则存放在 <code>.git/refs/remotes</code> 中，轻量级 tag 的实现也和分支一样。</p>
 <h2 id="working-directory">Working Directory</h2>
@@ -367,10 +380,10 @@
 <p>暂存区指向的是工作区文件。它和工作区最大的区别是：只有被 <code>git add</code> 过的文件才会出现在 index 中，被 git 托管。所以 index 的实现也非常简单，保存一个 add 了的文件列表即可。</p>
 <p>补充一点，<code>git commit</code> 读取的是 index，不是直接读取工作区。
 所以你可以用 <code>git diff</code> 看工作区和暂存区的差异，用 <code>git diff --cached</code> 看暂存区和最新提交的差异。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Index</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">Entries</span> <span class="p">[]</span><span class="o">*</span><span class="nx">Entry</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h1 id="常见命令">常见命令</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">Index</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">Entries</span><span class="w"> </span><span class="p">[]</span><span class="o">*</span><span class="nx">Entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h1 id="常见命令">常见命令</h1>
 <h2 id="git-commit-原理">Git Commit 原理</h2>
 <p>在调用 git commit 命令时，git 会将 index 引用的所有文件计算 hash 值，再将当前指向的 commit 作为父节点，创建一个新的 commit 对象，并让当前分支指向这个新对象。</p>
 <p>顺手补一句，<code>git commit -am</code> 只会处理已跟踪文件；新文件还是要先 <code>git add</code>。</p>

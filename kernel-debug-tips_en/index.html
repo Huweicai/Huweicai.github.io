@@ -7,29 +7,37 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
+  <meta name="description" content="Kernel
+Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
 So, knowing more about how the kernel works will contribute to the construction of our user mode system.
+
 The best method to learn software code is debugging while watching, software = code &#43; data, know more about the runtime data while learning code can help us understand it better.
 However the Kernel is not a normal software system, we can&rsquo;t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb &#43; QEMU, it&rsquo; still too heavy, and not available for online systems.
 This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.
-Kernel Module Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can&rsquo;t snoop the data inside Kernel.
+Kernel Module
+Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can&rsquo;t snoop the data inside Kernel.
 In that case, why not try to run our code inside the Kernel?
 It&rsquo;s possible to edit the source code of kernel, adding log to print the information we concerned, but it&rsquo;s a long tedious step.">
 
-  <meta property="og:title" content="Linux Kernel Debug Tips" />
-<meta property="og:description" content="Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
+  <meta property="og:url" content="https://huweicai.com/kernel-debug-tips_en/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="Linux Kernel Debug Tips">
+  <meta property="og:description" content="Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
 So, knowing more about how the kernel works will contribute to the construction of our user mode system.
 The best method to learn software code is debugging while watching, software = code &#43; data, know more about the runtime data while learning code can help us understand it better.
-However the Kernel is not a normal software system, we can&rsquo;t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb &#43; QEMU, it&rsquo; still too heavy, and not available for online systems.
+However the Kernel is not a normal software system, we can’t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb &#43; QEMU, it’ still too heavy, and not available for online systems.
 This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.
-Kernel Module Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can&rsquo;t snoop the data inside Kernel.
+Kernel Module Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can’t snoop the data inside Kernel.
 In that case, why not try to run our code inside the Kernel?
-It&rsquo;s possible to edit the source code of kernel, adding log to print the information we concerned, but it&rsquo;s a long tedious step." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/kernel-debug-tips_en/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2023-01-17T00:00:00+08:00" />
-<meta property="article:modified_time" content="2023-01-17T00:00:00+08:00" />
-
+It’s possible to edit the source code of kernel, adding log to print the information we concerned, but it’s a long tedious step.">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2023-01-17T00:00:00+08:00">
+    <meta property="article:modified_time" content="2023-01-17T00:00:00+08:00">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="Kernel">
+    <meta property="article:tag" content="Ebpf">
+    <meta property="article:tag" content="EN">
 
    
 
@@ -122,7 +130,7 @@ It&rsquo;s possible to edit the source code of kernel, adding log to print the i
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -141,7 +149,7 @@ It&rsquo;s possible to edit the source code of kernel, adding log to print the i
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -210,7 +218,7 @@ It&rsquo;s possible to edit the source code of kernel, adding log to print the i
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -218,7 +226,7 @@ It&rsquo;s possible to edit the source code of kernel, adding log to print the i
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -315,7 +323,7 @@ It&rsquo;s possible to edit the source code of kernel, adding log to print the i
             <li class="middot"></li>
             <li>9 minutes read</li>
         
-        <li>1723 words</li>
+        <li>1725 words</li>
 
     </ul>
     
@@ -341,19 +349,19 @@ It&rsquo;s possible to edit the source code of kernel, adding log to print the i
 <p>It&rsquo;s very easy to develop a kernel module, we only need to implement two functions, one for initialization and another for clean up, the complete module developing tutorial we can refer to this document: <a href="https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf">https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf</a>.</p>
 <p>First of all, we should write the module code as below, and save it to file <code>kdebugger.c</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// we have to reference the kernel header file, since the standard lib is not avaiable here
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;linux/module.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;linux/sched/signal.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">int</span> <span class="nf">test_tasks_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">process_count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">current_task</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    
 </span></span><span class="line"><span class="cl">    <span class="c1">// printk is the alternative for printf inside kernel
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">pr_info</span><span class="p">(</span><span class="s">&#34;%s: In init</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">__func__</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">pr_info</span><span class="p">(</span><span class="s">&#34;%s: In init</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">__func__</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">current_task</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">init_task</span><span class="p">;</span> <span class="p">(</span><span class="n">current_task</span> <span class="o">=</span> <span class="n">next_task</span><span class="p">(</span><span class="n">current_task</span><span class="p">))</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="n">init_task</span><span class="p">;</span> <span class="p">){</span>
-</span></span><span class="line"><span class="cl">        <span class="n">pr_info</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">Command: %s PID: %d TGID: %d State: %ld Flags: %d Policy: %d Prio: %d StaticPrio: %d Current CPU: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">current_task</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">init_task</span><span class="p">;</span> <span class="p">(</span><span class="n">current_task</span> <span class="o">=</span> <span class="nf">next_task</span><span class="p">(</span><span class="n">current_task</span><span class="p">))</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="n">init_task</span><span class="p">;</span> <span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">pr_info</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">Command: %s PID: %d TGID: %d State: %ld Flags: %d Policy: %d Prio: %d StaticPrio: %d Current CPU: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">comm</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">pid</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">                <span class="n">current_task</span><span class="o">-&gt;</span><span class="n">tgid</span><span class="p">,</span>
@@ -366,19 +374,19 @@ It&rsquo;s possible to edit the source code of kernel, adding log to print the i
 </span></span><span class="line"><span class="cl">        <span class="n">process_count</span><span class="o">++</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">    <span class="n">pr_info</span><span class="p">(</span><span class="s">&#34;Number of processes:%u</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">process_count</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">pr_info</span><span class="p">(</span><span class="s">&#34;Number of processes:%u</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">process_count</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">void</span> <span class="nf">test_tasks_exit</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">pr_info</span><span class="p">(</span><span class="s">&#34;%s: In exit</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">__func__</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">pr_info</span><span class="p">(</span><span class="s">&#34;%s: In exit</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">__func__</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// declare the LICENSE
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;GPL&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl"><span class="nf">MODULE_LICENSE</span><span class="p">(</span><span class="s">&#34;GPL&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="c1">// indicate which function will do the init and exit job
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">module_init</span><span class="p">(</span><span class="n">test_tasks_init</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="n">module_exit</span><span class="p">(</span><span class="n">test_tasks_exit</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl"><span class="nf">module_init</span><span class="p">(</span><span class="n">test_tasks_init</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nf">module_exit</span><span class="p">(</span><span class="n">test_tasks_exit</span><span class="p">);</span>
 </span></span></code></pre></div><p>And then write the <code>Makefile</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nv">obj-m</span> <span class="o">+=</span> kdebugger.o
 </span></span><span class="line"><span class="cl"><span class="nf">all</span><span class="o">:</span>
@@ -474,12 +482,12 @@ It&rsquo;s possible to edit the source code of kernel, adding log to print the i
 <p>Since we need to import the datastructure inside kernel, so related header files are require to <strong>include</strong> first, which takes more than one line, so we have to create a script file and then pass it to bpftrace to execute:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">root</span><span class="err">@</span><span class="n">dev</span><span class="err">#</span> <span class="n">cat</span> <span class="n">copy_process</span><span class="p">.</span><span class="n">bt</span>
 </span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;linux/sched/task.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// kretprobe means callback after function call， kprobe is callback before function call
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nl">kretprobe</span><span class="p">:</span><span class="n">copy_process</span>
+</span></span></span><span class="line"><span class="cl"><span class="nl">kretprobe</span><span class="p">:</span><span class="n">copy_process</span>
 </span></span><span class="line"><span class="cl"><span class="p">{</span>
 </span></span><span class="line"><span class="cl">   <span class="err">$</span><span class="n">task</span> <span class="o">=</span> <span class="p">((</span><span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="p">)</span> <span class="n">retval</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">   <span class="n">printf</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">Command: %s PID: %d TGID: %d State: %ld Flags: %d Policy: %d Prio: %d StaticPrio: %d Current CPU: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;</span><span class="se">\n</span><span class="s">Command: %s PID: %d TGID: %d State: %ld Flags: %d Policy: %d Prio: %d StaticPrio: %d Current CPU: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">comm</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">pid</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">        <span class="err">$</span><span class="n">task</span><span class="o">-&gt;</span><span class="n">tgid</span><span class="p">,</span>

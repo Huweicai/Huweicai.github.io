@@ -7,15 +7,33 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="Python 解释器 正如软件系统通常分为定义与实现两部分，编程语言也是。 比如 C&#43;&#43; 标准是由国际标准化组织 ( ISO ) 下属的 ISO/IEC JTC1/SC22/WG21特别工作组制定的，最新标准为 C&#43;&#43; 20 (ISO/IEC 14882:2020)，这是定义；而其实现则有 GNU 的 gcc、微软的 visual c&#43;&#43;、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。 Java 规范则是由 Oracle 主导的 JCP 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量">
+  <meta name="description" content="Python 解释器
 
-  <meta property="og:title" content="C/C&#43;&#43; &amp; Python 融合之道" />
-<meta property="og:description" content="Python 解释器 正如软件系统通常分为定义与实现两部分，编程语言也是。 比如 C&#43;&#43; 标准是由国际标准化组织 ( ISO ) 下属的 ISO/IEC JTC1/SC22/WG21特别工作组制定的，最新标准为 C&#43;&#43; 20 (ISO/IEC 14882:2020)，这是定义；而其实现则有 GNU 的 gcc、微软的 visual c&#43;&#43;、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。 Java 规范则是由 Oracle 主导的 JCP 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/c-with-python-intercall/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2024-01-29T09:51:00+08:00" />
-<meta property="article:modified_time" content="2024-01-29T09:51:00+08:00" />
+正如软件系统通常分为定义与实现两部分，编程语言也是。
 
+
+比如 C&#43;&#43; 标准是由国际标准化组织 ( ISO ) 下属的 ISO/IEC JTC1/SC22/WG21特别工作组制定的，最新标准为 C&#43;&#43; 20 (ISO/IEC 14882:2020)，这是定义；而其实现则有 GNU 的 gcc、微软的 visual c&#43;&#43;、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。
+
+
+Java 规范则是由 Oracle 主导的 JCP 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量不同的实现。
+
+
+更别论应用更为广泛的 JavaScript 语言，ECMAScript 的实现者至少有两位数。">
+
+  <meta property="og:url" content="https://huweicai.com/c-with-python-intercall/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="C/C&#43;&#43; & Python 融合之道">
+  <meta property="og:description" content="Python 解释器 正如软件系统通常分为定义与实现两部分，编程语言也是。
+比如 C&#43;&#43; 标准是由国际标准化组织 ( ISO ) 下属的 ISO/IEC JTC1/SC22/WG21特别工作组制定的，最新标准为 C&#43;&#43; 20 (ISO/IEC 14882:2020)，这是定义；而其实现则有 GNU 的 gcc、微软的 visual c&#43;&#43;、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。
+Java 规范则是由 Oracle 主导的 JCP 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量不同的实现。
+更别论应用更为广泛的 JavaScript 语言，ECMAScript 的实现者至少有两位数。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2024-01-29T09:51:00+08:00">
+    <meta property="article:modified_time" content="2024-01-29T09:51:00+08:00">
+    <meta property="article:tag" content="Cpp">
+    <meta property="article:tag" content="Programing">
+    <meta property="article:tag" content="Python">
 
    
 
@@ -108,7 +126,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +145,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +214,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +222,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -295,7 +313,7 @@
             <li class="middot"></li>
             <li>8 minutes read</li>
         
-        <li>3933 words</li>
+        <li>3932 words</li>
 
     </ul>
     
@@ -352,37 +370,37 @@
 <p>举个完整的例子，假设我们想要实现一个加法模块，以下是相关操作步骤。</p>
 <p>编辑 <code>add_module.c</code>文件：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 必须要 include python.h 头文件
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;Python.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;Python.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// C 函数实现加法
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="nf">add</span><span class="p">(</span><span class="n">PyObject</span><span class="o">*</span> <span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="n">PyObject</span><span class="o">*</span> <span class="nf">add</span><span class="p">(</span><span class="n">PyObject</span><span class="o">*</span> <span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span><span class="o">*</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="kt">double</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// 解析传入的Python参数为C类型变量，dd 表示两个 double 类型变量
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s">&#34;dd&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">))</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">PyArg_ParseTuple</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s">&#34;dd&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">))</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// 返回计算结果，d 表示返回一个 double 类型的变量
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="n">Py_BuildValue</span><span class="p">(</span><span class="s">&#34;d&#34;</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nf">Py_BuildValue</span><span class="p">(</span><span class="s">&#34;d&#34;</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// 定义模块要导出的方法列表
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="n">PyMethodDef</span> <span class="n">AddMethods</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="n">PyMethodDef</span> <span class="n">AddMethods</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="s">&#34;add&#34;</span><span class="p">,</span>  <span class="n">add</span><span class="p">,</span> <span class="n">METH_VARARGS</span><span class="p">,</span> <span class="s">&#34;Add two numbers&#34;</span><span class="p">},</span>
 </span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">}</span>        <span class="c1">// Sentinel，标记数组的结束（C 数组无法直接获取长度，解释器会通过 Sentinel 来判断数组结尾）
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span></span><span class="line"><span class="cl"><span class="p">};</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// 定义模块
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static</span> <span class="k">struct</span> <span class="n">PyModuleDef</span> <span class="n">addmodule</span> <span class="o">=</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="k">struct</span> <span class="n">PyModuleDef</span> <span class="n">addmodule</span> <span class="o">=</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="n">PyModuleDef_HEAD_INIT</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">    <span class="s">&#34;add_module&#34;</span><span class="p">,</span>   <span class="c1">// 模块名
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nb">NULL</span><span class="p">,</span> <span class="c1">// 模块文档，可以设置为 NULL
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">-</span><span class="mi">1</span><span class="p">,</span>       <span class="c1">// 模块保留大小，-1 表示模块保持全局状态
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">AddMethods</span> <span class="c1">// 方法列表
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nb">NULL</span><span class="p">,</span> <span class="c1">// 模块文档，可以设置为 NULL
+</span></span></span><span class="line"><span class="cl">    <span class="o">-</span><span class="mi">1</span><span class="p">,</span>       <span class="c1">// 模块保留大小，-1 表示模块保持全局状态
+</span></span></span><span class="line"><span class="cl">    <span class="n">AddMethods</span> <span class="c1">// 方法列表
+</span></span></span><span class="line"><span class="cl"><span class="p">};</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// 初始化模块
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">PyMODINIT_FUNC</span> <span class="nf">PyInit_add_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">PyModule_Create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">addmodule</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl"><span class="n">PyMODINIT_FUNC</span> <span class="nf">PyInit_add_module</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nf">PyModule_Create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">addmodule</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>为了让这个 C 代码可以被 Python 解释器识别，我们需要将其编译成一个动态链接库：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">gcc -Wall -shared -fPIC -I/usr/include/python3.9 -L/usr/lib/python3.9/config-x86_64-linux-gnu -lpython3.9 add_module.c -o add_module.so
@@ -402,19 +420,19 @@
 <p>Python 解释器提供了一套 API ( <a href="https://docs.python.org/3/c-api/index.html">Python/C API</a> )，供 C/C++ 代码调用，C/C++ 可以借由这套 API 实现对于解释器的高效集成与复杂交互操作，包括导入模块、创建和操作 Python 对象、函数调用、传输与转换数据等等，几乎所有 Python 代码能实现的操作，也能通过这套代码在 C/C++ 中实现。</p>
 <p>举个例子，科学计算正是 Python 语言的强项之一，而 NumPy 是一个非常著名的 Python 科学计算库，我们可以尝试通过 Python/C API 将这种能力导入到 C/C++ 程序中，<code>numpy.linalg.norm</code> 函数可以计算一个一维数组对应的<strong>欧几里得范数</strong>，下文将介绍如何将该函数封装到 C/C++ 程序中；</p>
 <p>由于在复杂场景下 C 代码可读性要弱于 C++ 代码，下文案例采用 C++ 实现：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;Python.h&gt; // Python 头文件</span><span class="cp">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;Python.h&gt;</span><span class="cp"> </span><span class="c1">// Python 头文件
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdexcept&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// C++ 包装函数
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">double</span> <span class="nf">numpy_linalg_norm</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">in_array</span><span class="p">)</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">double</span> <span class="nf">numpy_linalg_norm</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">in_array</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="n">Py_Initialize</span><span class="p">();</span> <span class="c1">// 初始化 Python 解释器
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pName</span> <span class="o">=</span> <span class="n">PyUnicode_FromString</span><span class="p">(</span><span class="s">&#34;numpy.linalg&#34;</span><span class="p">);</span> <span class="c1">// 加载 NumPy 模块
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pModule</span> <span class="o">=</span> <span class="n">PyImport_Import</span><span class="p">(</span><span class="n">pName</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pModule</span> <span class="o">=</span> <span class="n">PyImport_Import</span><span class="p">(</span><span class="n">pName</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">pName</span><span class="p">);</span> <span class="c1">// 释放 pName（Python 引用计数 -1）
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">pModule</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="n">PyErr_Print</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">        <span class="n">Py_Finalize</span><span class="p">();</span>
@@ -422,36 +440,36 @@
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pFunc</span> <span class="o">=</span> <span class="n">PyObject_GetAttrString</span><span class="p">(</span><span class="n">pModule</span><span class="p">,</span> <span class="s">&#34;norm&#34;</span><span class="p">);</span> <span class="c1">// 获取 norm 函数
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pFunc</span> <span class="o">||</span> <span class="o">!</span><span class="n">PyCallable_Check</span><span class="p">(</span><span class="n">pFunc</span><span class="p">))</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pFunc</span> <span class="o">||</span> <span class="o">!</span><span class="n">PyCallable_Check</span><span class="p">(</span><span class="n">pFunc</span><span class="p">))</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="n">PyErr_Print</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">        <span class="n">Py_Finalize</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&#34;Failed to retrieve norm function&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pList</span> <span class="o">=</span> <span class="n">PyList_New</span><span class="p">(</span><span class="n">in_array</span><span class="p">.</span><span class="n">size</span><span class="p">());</span> <span class="c1">// 创建一个 Python 列表
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">in_array</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 将 C++ 数组转换为 Python 列表
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">PyList_SetItem</span><span class="p">(</span><span class="n">pList</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">PyFloat_FromDouble</span><span class="p">(</span><span class="n">in_array</span><span class="p">[</span><span class="n">i</span><span class="p">]));</span>
+</span></span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">in_array</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 将 C++ 数组转换为 Python 列表
+</span></span></span><span class="line"><span class="cl">        <span class="n">PyList_SetItem</span><span class="p">(</span><span class="n">pList</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">PyFloat_FromDouble</span><span class="p">(</span><span class="n">in_array</span><span class="p">[</span><span class="n">i</span><span class="p">]));</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pArgs</span> <span class="o">=</span> <span class="n">PyTuple_New</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">// 创建参数元组
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">PyTuple_SetItem</span><span class="p">(</span><span class="n">pArgs</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pList</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="n">PyTuple_SetItem</span><span class="p">(</span><span class="n">pArgs</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pList</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">PyObject</span> <span class="o">*</span><span class="n">pValue</span> <span class="o">=</span> <span class="n">PyObject_CallObject</span><span class="p">(</span><span class="n">pFunc</span><span class="p">,</span> <span class="n">pArgs</span><span class="p">);</span> <span class="c1">// 调用函数
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">pArgs</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">pArgs</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">pValue</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 判断是否成功调用
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">PyErr_Print</span><span class="p">();</span>
+</span></span></span><span class="line"><span class="cl">        <span class="n">PyErr_Print</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">        <span class="n">Py_Finalize</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&#34;Failed to call norm function&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="kt">double</span> <span class="n">result</span> <span class="o">=</span> <span class="n">PyFloat_AsDouble</span><span class="p">(</span><span class="n">pValue</span><span class="p">);</span> <span class="c1">// 处理返回值
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">pValue</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">pFunc</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="n">Py_DECREF</span><span class="p">(</span><span class="n">pModule</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">Py_Finalize</span><span class="p">();</span>     <span class="c1">// 关闭 Python 解释器
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
@@ -554,9 +572,9 @@
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdexcept&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;numpy_wrapper.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// 初始化 Python 解释器，导入模块
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">initialize_py_interpreter</span><span class="p">()</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">initialize_py_interpreter</span><span class="p">()</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="n">PyImport_AppendInittab</span><span class="p">(</span><span class="s">&#34;numpy_wrapper&#34;</span><span class="p">,</span> <span class="n">PyInit_numpy_wrapper</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="n">Py_Initialize</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">    <span class="n">PyImport_ImportModule</span><span class="p">(</span><span class="s">&#34;numpy_wrapper&#34;</span><span class="p">);</span>

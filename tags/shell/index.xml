@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>shell on Anonymous&#39; Blog</title>
+    <title>Shell on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/shell/</link>
-    <description>Recent content in shell on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <description>Recent content in Shell on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Fri, 20 Mar 2020 19:58:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/shell/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 20 Mar 2020 19:58:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/shell/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Linux 是如何启动的</title>
       <link>https://huweicai.com/most-frequently-command/</link>
       <pubDate>Fri, 20 Mar 2020 19:58:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/most-frequently-command/</guid>
-      <description>inux系统是如何启动的？</description>
+      <description>&lt;p&gt;inux系统是如何启动的？&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>找出使用最频繁的Shell命令</title>
       <link>https://huweicai.com/most-frequently-command/</link>
       <pubDate>Fri, 20 Mar 2020 19:58:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/most-frequently-command/</guid>
-      <description>使用最频繁 TOP 10命令： history | awk &amp;#39;{map[$2]++} END { for (a in map )print map[ a ]&amp;#34; &amp;#34; map[ a ]/NR*100 &amp;#34;% &amp;#34; a }&amp;#39;| sort -rn | nl | head 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面类：Graphi</description>
+      <description>&lt;p&gt;使用最频繁 TOP 10命令：&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;history&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; awk &lt;span class=&#34;s1&#34;&gt;&amp;#39;{map[$2]++} END { for (a in map )print map[ a ]&amp;#34; &amp;#34; map[ a ]/NR*100 &amp;#34;% &amp;#34; a }&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; sort -rn &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; nl &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; head&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。&lt;/p&gt;&#xA;&lt;h2 id=&#34;shell&#34;&gt;Shell&lt;/h2&gt;&#xA;&lt;p&gt;首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？&lt;/p&gt;&#xA;&lt;p&gt;Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;图形界面类：Graphical User Interface &lt;strong&gt;GUI&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Windows Exploer&lt;/li&gt;&#xA;&lt;li&gt;GNOME：Unbuntu 17.0 所使用的GUI&lt;/li&gt;&#xA;&lt;li&gt;KDE&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;命令行类：Comand Line Interface &lt;strong&gt;CLI&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

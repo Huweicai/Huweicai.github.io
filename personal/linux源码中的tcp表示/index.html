@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="TCP协议在Linux内核中的数据结构：
+TCP套接字：include/linux/tcp.h:tcp_sock
+TCP协议头部：include/linux/tcp.h:tcphdr
+TCP套接字tcp_sock
+// u16: unsigned short int 16位
+// skb: 一个包
+
+struct tcp_sock {
+	struct inet_connection_sock	inet_conn; // socket
+	u16	tcp_header_len;	// TCP 头部长度，，16位
+	u16	gso_segs;	// GSO（Generic Segment Offload）通用分片技术，把超过MTU的大包不在TCP层分片，而是直接扔下去，在网卡驱动层面直接分隔包，拼上对应的IP和TCP头部。 TODO
+
+/*
+ *	Header prediction flags
+ *	0x5?10 &lt;&lt; 16 &#43; snd_wnd in net byte order
+ */
+	__be32	pred_flags; // TODO
+
+/*
+ *	RFC793 variables by their proper names. This means you can
+ *	read the code and the spec side by side (and laugh ...)
+ *	See RFC793 and RFC1122. The RFC writes these in capitals.
+ */
+  // ACK了多少个包，64位
+	u64	bytes_received;	/* RFC4898 tcpEStatsAppHCThruOctetsReceived
+				 * sum(delta(rcv_nxt)), or how many bytes
+				 * were acked.
+				 */
+  // 收到了多少个段
+	u32	segs_in;	/* RFC4898 tcpEStatsPerfSegsIn
+				 * total number of segments in.
+				 */
+	u32	data_segs_in;	/* RFC4898 tcpEStatsPerfDataSegsIn
+				 * total number of data segments in.
+				 */
+ 	u32	rcv_nxt;	/* What we want to receive next 	*/
+	u32	copied_seq;	/* Head of yet unread data		*/
+	u32	rcv_wup;	/* rcv_nxt on last window update sent	*/
+ 	u32	snd_nxt;	/* Next sequence we send		*/
+	u32	segs_out;	/* RFC4898 tcpEStatsPerfSegsOut
+				 * The total number of segments sent.
+				 */
+  
+  // 已经发送的数据段数量
+	u32	data_segs_out;	/* RFC4898 tcpEStatsPerfDataSegsOut
+				 * total number of data segments sent.
+				 */
+	u64	bytes_sent;	/* RFC4898 tcpEStatsPerfHCDataOctetsOut
+				 * total number of data bytes sent.
+				 */
+	u64	bytes_acked;	/* RFC4898 tcpEStatsAppHCThruOctetsAcked
+				 * sum(delta(snd_una)), or how many bytes
+				 * were acked.
+				 */
+	u32	dsack_dups;	/* RFC4898 tcpEStatsStackDSACKDups
+				 * total number of DSACK blocks received
+				 */
+ 	u32	snd_una;	/* First byte we want an ack for	*/
+ 	u32	snd_sml;	/* Last byte of the most recently transmitted small packet */
+	u32	rcv_tstamp;	// 收到的最后一个ACK的时间戳
+	u32	lsndtime;	//发出数据的最后一个时间戳
+	u32	last_oow_ack_time;  /* timestamp of last out-of-window ACK */
+	u32	compressed_ack_rcv_nxt;
+
+	u32	tsoffset;	/* timestamp offset */
+
+	struct list_head tsq_node; /* anchor in tsq_tasklet.head list */
+	struct list_head tsorted_sent_queue; /* time-sorted sent but un-SACKed skbs */
+
+	u32	snd_wl1;	/* Sequence for window update		*/
+	u32	snd_wnd;	/* The window we expect to receive	*/
+	u32	max_window;	/* Maximal window ever seen from peer	*/
+	u32	mss_cache;	/* Cached effective mss, not including SACKS */
+
+	u32	window_clamp;	/* Maximal window to advertise		*/
+	u32	rcv_ssthresh;	/* Current window clamp			*/
+	
+  
+	/* Information of the most recently (s)acked skb */
+	struct tcp_rack {
+		u64 mstamp; /* (Re)sent time of the skb */
+		u32 rtt_us;  /* Associated RTT */
+		u32 end_seq; /* Ending TCP sequence of the skb */
+		u32 last_delivered; /* tp-&gt;delivered at last reo_wnd adj */
+		u8 reo_wnd_steps;   /* Allowed reordering window */
+#define TCP_RACK_RECOVERY_THRESH 16
+		u8 reo_wnd_persist:5, /* No. of recovery since last adj */
+		   dsack_seen:1, /* Whether DSACK seen after last adj */
+		   advanced:1;	 /* mstamp advanced since last lost marking */
+	} rack;
+	u16	advmss;		/* Advertised MSS			*/
+	u8	compressed_ack;
+	u8	dup_ack_counter:2,
+		tlp_retrans:1,	/* TLP is a retransmission */
+		unused:5;
+	u32	chrono_start;	/* Start time in jiffies of a TCP chrono */
+	u32	chrono_stat[3];	/* Time in jiffies for chrono_stat stats */
+	u8	chrono_type:2,	/* current chronograph type */
+		rate_app_limited:1,  /* rate_{delivered,interval_us} limited? */
+		fastopen_connect:1, /* FASTOPEN_CONNECT sockopt */
+		fastopen_no_cookie:1, /* Allow send/recv SYN&#43;data without a cookie */
+		is_sack_reneg:1,    /* in recovery from loss with SACK reneg? */
+		fastopen_client_fail:2; /* reason why fastopen failed */
+  
+  // 关闭 Nagle 算法
+	u8	nonagle     : 4,/* Disable Nagle algorithm?             */
+		thin_lto    : 1,/* Use linear timeouts for thin streams */
+		recvmsg_inq : 1,/* Indicate # of bytes in queue upon recvmsg */
+		repair      : 1,
+		frto        : 1;/* F-RTO (RFC5682) activated in CA_Loss */
+	u8	repair_queue;
+	u8	syn_data:1,	/* SYN includes data */
+		syn_fastopen:1,	/* SYN includes Fast Open option */
+		syn_fastopen_exp:1,/* SYN includes Fast Open exp. option */
+		syn_fastopen_ch:1, /* Active TFO re-enabling probe */
+		syn_data_acked:1,/* data in SYN is acked by SYN-ACK */
+		save_syn:1,	/* Save headers of SYN packet */
+		is_cwnd_limited:1,/* forward progress limited by snd_cwnd? */
+		syn_smc:1;	/* SYN includes SMC */
+	u32	tlp_high_seq;	/* snd_nxt at the time of TLP */
+
+	u32	tcp_tx_delay;	/* delay (in usec) added to TX packets */
+	u64	tcp_wstamp_ns;	/* departure time for next sent data packet */
+	u64	tcp_clock_cache; /* cache last tcp_clock_ns() (see tcp_mstamp_refresh()) */
+
+/* RTT measurement 用于RTT计算相关 */
+	u64	tcp_mstamp;	/* most recent packet received/sent */
+	u32	srtt_us;	/* smoothed round trip time &lt;&lt; 3 in usecs */
+	u32	mdev_us;	/* medium deviation			*/
+	u32	mdev_max_us;	/* maximal mdev for the last rtt period	*/
+	u32	rttvar_us;	/* smoothed mdev_max			*/
+	u32	rtt_seq;	/* sequence number to update rttvar	*/
+	struct  minmax rtt_min;
+
+	u32	packets_out;	/* Packets which are &#34;in flight&#34;	*/
+	u32	retrans_out;	/* Retransmitted packets out		*/
+	u32	max_packets_out;  /* max packets_out in last window */
+	u32	max_packets_seq;  /* right edge of max_packets_out flight */
+
+	u16	urg_data;	/* Saved octet of OOB data and control flags */
+	u8	ecn_flags;	/* ECN status bits.			*/
+	u8	keepalive_probes; /* num of allowed keep alive probes	*/
+	u32	reordering;	/* Packet reordering metric.		*/
+	u32	reord_seen;	/* number of data packet reordering events */
+	u32	snd_up;		/* Urgent pointer		*/
+
+/*
+ *      Options received (usually on last packet, some only on SYN packets).
+ */
+	struct tcp_options_received rx_opt;
+
+/*
+ *	Slow start and congestion control (see also Nagle, and Karn &amp; Partridge)
+ */
+  // 慢启动和拥塞控制相关字段
+ 	u32	snd_ssthresh;	/* Slow start size threshold		*/
+ 	u32	snd_cwnd;	/* Sending congestion window		*/
+	u32	snd_cwnd_cnt;	/* Linear increase counter		*/
+	u32	snd_cwnd_clamp; /* Do not allow snd_cwnd to grow above this */
+	u32	snd_cwnd_used;
+	u32	snd_cwnd_stamp;
+	u32	prior_cwnd;	/* cwnd right before starting loss recovery */
+	u32	prr_delivered;	/* Number of newly delivered packets to
+				 * receiver in Recovery. */
+	u32	prr_out;	/* Total number of pkts sent during Recovery. */
+	u32	delivered;	/* Total data packets delivered incl. rexmits */
+	u32	delivered_ce;	/* Like the above but only ECE marked packets */
+	u32	lost;		/* Total data packets lost incl. rexmits */
+	u32	app_limited;	/* limited until &#34;delivered&#34; reaches this val */
+	u64	first_tx_mstamp;  /* start of window send phase */
+	u64	delivered_mstamp; /* time we reached &#34;delivered&#34; */
+	u32	rate_delivered;    /* saved rate sample: packets delivered */
+	u32	rate_interval_us;  /* saved rate sample: time elapsed */
+
+ 	u32	rcv_wnd;	/* Current receiver window		*/
+	u32	write_seq;	/* Tail(&#43;1) of data held in tcp send buffer */
+	u32	notsent_lowat;	/* TCP_NOTSENT_LOWAT */
+	u32	pushed_seq;	/* Last pushed seq, required to talk to windows */
+	u32	lost_out;	/* Lost packets			*/
+	u32	sacked_out;	/* SACK&#39;d packets			*/
+
+	struct hrtimer	pacing_timer;
+	struct hrtimer	compressed_ack_timer;
+
+	/* from STCP, retrans queue hinting */
+	struct sk_buff* lost_skb_hint;
+	struct sk_buff *retransmit_skb_hint;
+
+	/* OOO segments go in this rbtree. Socket lock must be held. */
+	struct rb_root	out_of_order_queue;
+	struct sk_buff	*ooo_last_skb; /* cache rb_last(out_of_order_queue) */
+
+	/* SACKs data, these 2 need to be together (see tcp_options_write) */
+	struct tcp_sack_block duplicate_sack[1]; /* D-SACK block */
+	struct tcp_sack_block selective_acks[4]; /* The SACKS themselves*/
+
+	struct tcp_sack_block recv_sack_cache[4];
+
+	struct sk_buff *highest_sack;   /* skb just after the highest
+					 * skb with SACKed bit set
+					 * (validity guaranteed only if
+					 * sacked_out &gt; 0)
+					 */
+
+	int     lost_cnt_hint;
+
+	u32	prior_ssthresh; /* ssthresh saved at recovery start	*/
+	u32	high_seq;	/* snd_nxt at onset of congestion	*/
+
+	u32	retrans_stamp;	/* Timestamp of the last retransmit,
+				 * also used in SYN-SENT to remember stamp of
+				 * the first SYN. */
+	u32	undo_marker;	/* snd_una upon a new recovery episode. */
+	int	undo_retrans;	/* number of undoable retransmissions. */
+	u64	bytes_retrans;	/* RFC4898 tcpEStatsPerfOctetsRetrans
+				 * Total data bytes retransmitted
+				 */
+	u32	total_retrans;	/* Total retransmits for entire connection */
+
+	u32	urg_seq;	/* Seq of received urgent pointer */
+	unsigned int		keepalive_time;	  /* time before keep alive takes place */
+	unsigned int		keepalive_intvl;  /* time interval between keep alive probes */
+
+	int			linger2;
+
+
+/* Sock_ops bpf program related variables */
+#ifdef CONFIG_BPF
+	u8	bpf_sock_ops_cb_flags;  /* Control calling BPF programs
+					 * values defined in uapi/linux/tcp.h
+					 */
+#define BPF_SOCK_OPS_TEST_FLAG(TP, ARG) (TP-&gt;bpf_sock_ops_cb_flags &amp; ARG)
+#else
+#define BPF_SOCK_OPS_TEST_FLAG(TP, ARG) 0
+#endif
+
+	u16 timeout_rehash;	/* Timeout-triggered rehash attempts */
+
+	u32 rcv_ooopack; /* Received out-of-order packets, for tcpinfo */
+
+/* Receiver side RTT estimation */
+	u32 rcv_rtt_last_tsecr;
+	struct {
+		u32	rtt_us;
+		u32	seq;
+		u64	time;
+	} rcv_rtt_est;
+
+/* Receiver queue space */
+	struct {
+		u32	space;
+		u32	seq;
+		u64	time;
+	} rcvq_space;
+
+/* TCP-specific MTU probe information. */
+	struct {
+		u32		  probe_seq_start;
+		u32		  probe_seq_end;
+	} mtu_probe;
+	u32	mtu_info; /* We received an ICMP_FRAG_NEEDED / ICMPV6_PKT_TOOBIG
+			   * while socket was owned by user.
+			   */
+#if IS_ENABLED(CONFIG_MPTCP)
+	bool	is_mptcp;
+#endif
+
+#ifdef CONFIG_TCP_MD5SIG
+/* TCP AF-Specific parts; only used by MD5 Signature support so far */
+	const struct tcp_sock_af_ops	*af_specific;
+
+/* TCP MD5 Signature Option information */
+	struct tcp_md5sig_info	__rcu *md5sig_info;
+#endif
+
+/* TCP fastopen related information */
+	struct tcp_fastopen_request *fastopen_req;
+	/* fastopen_rsk points to request_sock that resulted in this big
+	 * socket. Used to retransmit SYNACKs etc.
+	 */
+	struct request_sock __rcu *fastopen_rsk;
+	u32	*saved_syn;
+};
+">
+
+  <meta property="og:url" content="http://localhost:1313/personal/linux%E6%BA%90%E7%A0%81%E4%B8%AD%E7%9A%84tcp%E8%A1%A8%E7%A4%BA/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="Anonymous&#39; Blog">
+  <meta property="og:description" content="TCP协议在Linux内核中的数据结构：
+TCP套接字：include/linux/tcp.h:tcp_sock TCP协议头部：include/linux/tcp.h:tcphdr TCP套接字tcp_sock // u16: unsigned short int 16位 // skb: 一个包 struct tcp_sock { struct inet_connection_sock	inet_conn; // socket u16	tcp_header_len;	// TCP 头部长度，，16位 u16	gso_segs;	// GSO（Generic Segment Offload）通用分片技术，把超过MTU的大包不在TCP层分片，而是直接扔下去，在网卡驱动层面直接分隔包，拼上对应的IP和TCP头部。 TODO /* *	Header prediction flags *	0x5?10 &lt;&lt; 16 &#43; snd_wnd in net byte order */ __be32	pred_flags; // TODO /* *	RFC793 variables by their proper names. This means you can *	read the code and the spec side by side (and laugh ...) *	See RFC793 and RFC1122. The RFC writes these in capitals. */ // ACK了多少个包，64位 u64	bytes_received;	/* RFC4898 tcpEStatsAppHCThruOctetsReceived * sum(delta(rcv_nxt)), or how many bytes * were acked. */ // 收到了多少个段 u32	segs_in;	/* RFC4898 tcpEStatsPerfSegsIn * total number of segments in. */ u32	data_segs_in;	/* RFC4898 tcpEStatsPerfDataSegsIn * total number of data segments in. */ u32	rcv_nxt;	/* What we want to receive next */ u32	copied_seq;	/* Head of yet unread data	*/ u32	rcv_wup;	/* rcv_nxt on last window update sent	*/ u32	snd_nxt;	/* Next sequence we send	*/ u32	segs_out;	/* RFC4898 tcpEStatsPerfSegsOut * The total number of segments sent. */ // 已经发送的数据段数量 u32	data_segs_out;	/* RFC4898 tcpEStatsPerfDataSegsOut * total number of data segments sent. */ u64	bytes_sent;	/* RFC4898 tcpEStatsPerfHCDataOctetsOut * total number of data bytes sent. */ u64	bytes_acked;	/* RFC4898 tcpEStatsAppHCThruOctetsAcked * sum(delta(snd_una)), or how many bytes * were acked. */ u32	dsack_dups;	/* RFC4898 tcpEStatsStackDSACKDups * total number of DSACK blocks received */ u32	snd_una;	/* First byte we want an ack for	*/ u32	snd_sml;	/* Last byte of the most recently transmitted small packet */ u32	rcv_tstamp;	// 收到的最后一个ACK的时间戳 u32	lsndtime;	//发出数据的最后一个时间戳 u32	last_oow_ack_time; /* timestamp of last out-of-window ACK */ u32	compressed_ack_rcv_nxt; u32	tsoffset;	/* timestamp offset */ struct list_head tsq_node; /* anchor in tsq_tasklet.head list */ struct list_head tsorted_sent_queue; /* time-sorted sent but un-SACKed skbs */ u32	snd_wl1;	/* Sequence for window update	*/ u32	snd_wnd;	/* The window we expect to receive	*/ u32	max_window;	/* Maximal window ever seen from peer	*/ u32	mss_cache;	/* Cached effective mss, not including SACKS */ u32	window_clamp;	/* Maximal window to advertise	*/ u32	rcv_ssthresh;	/* Current window clamp	*/ /* Information of the most recently (s)acked skb */ struct tcp_rack { u64 mstamp; /* (Re)sent time of the skb */ u32 rtt_us; /* Associated RTT */ u32 end_seq; /* Ending TCP sequence of the skb */ u32 last_delivered; /* tp-&gt;delivered at last reo_wnd adj */ u8 reo_wnd_steps; /* Allowed reordering window */ #define TCP_RACK_RECOVERY_THRESH 16 u8 reo_wnd_persist:5, /* No. of recovery since last adj */ dsack_seen:1, /* Whether DSACK seen after last adj */ advanced:1;	/* mstamp advanced since last lost marking */ } rack; u16	advmss;	/* Advertised MSS	*/ u8	compressed_ack; u8	dup_ack_counter:2, tlp_retrans:1,	/* TLP is a retransmission */ unused:5; u32	chrono_start;	/* Start time in jiffies of a TCP chrono */ u32	chrono_stat[3];	/* Time in jiffies for chrono_stat stats */ u8	chrono_type:2,	/* current chronograph type */ rate_app_limited:1, /* rate_{delivered,interval_us} limited? */ fastopen_connect:1, /* FASTOPEN_CONNECT sockopt */ fastopen_no_cookie:1, /* Allow send/recv SYN&#43;data without a cookie */ is_sack_reneg:1, /* in recovery from loss with SACK reneg? */ fastopen_client_fail:2; /* reason why fastopen failed */ // 关闭 Nagle 算法 u8	nonagle : 4,/* Disable Nagle algorithm? */ thin_lto : 1,/* Use linear timeouts for thin streams */ recvmsg_inq : 1,/* Indicate # of bytes in queue upon recvmsg */ repair : 1, frto : 1;/* F-RTO (RFC5682) activated in CA_Loss */ u8	repair_queue; u8	syn_data:1,	/* SYN includes data */ syn_fastopen:1,	/* SYN includes Fast Open option */ syn_fastopen_exp:1,/* SYN includes Fast Open exp. option */ syn_fastopen_ch:1, /* Active TFO re-enabling probe */ syn_data_acked:1,/* data in SYN is acked by SYN-ACK */ save_syn:1,	/* Save headers of SYN packet */ is_cwnd_limited:1,/* forward progress limited by snd_cwnd? */ syn_smc:1;	/* SYN includes SMC */ u32	tlp_high_seq;	/* snd_nxt at the time of TLP */ u32	tcp_tx_delay;	/* delay (in usec) added to TX packets */ u64	tcp_wstamp_ns;	/* departure time for next sent data packet */ u64	tcp_clock_cache; /* cache last tcp_clock_ns() (see tcp_mstamp_refresh()) */ /* RTT measurement 用于RTT计算相关 */ u64	tcp_mstamp;	/* most recent packet received/sent */ u32	srtt_us;	/* smoothed round trip time &lt;&lt; 3 in usecs */ u32	mdev_us;	/* medium deviation	*/ u32	mdev_max_us;	/* maximal mdev for the last rtt period	*/ u32	rttvar_us;	/* smoothed mdev_max	*/ u32	rtt_seq;	/* sequence number to update rttvar	*/ struct minmax rtt_min; u32	packets_out;	/* Packets which are &#34;in flight&#34;	*/ u32	retrans_out;	/* Retransmitted packets out	*/ u32	max_packets_out; /* max packets_out in last window */ u32	max_packets_seq; /* right edge of max_packets_out flight */ u16	urg_data;	/* Saved octet of OOB data and control flags */ u8	ecn_flags;	/* ECN status bits.	*/ u8	keepalive_probes; /* num of allowed keep alive probes	*/ u32	reordering;	/* Packet reordering metric.	*/ u32	reord_seen;	/* number of data packet reordering events */ u32	snd_up;	/* Urgent pointer	*/ /* * Options received (usually on last packet, some only on SYN packets). */ struct tcp_options_received rx_opt; /* *	Slow start and congestion control (see also Nagle, and Karn &amp; Partridge) */ // 慢启动和拥塞控制相关字段 u32	snd_ssthresh;	/* Slow start size threshold	*/ u32	snd_cwnd;	/* Sending congestion window	*/ u32	snd_cwnd_cnt;	/* Linear increase counter	*/ u32	snd_cwnd_clamp; /* Do not allow snd_cwnd to grow above this */ u32	snd_cwnd_used; u32	snd_cwnd_stamp; u32	prior_cwnd;	/* cwnd right before starting loss recovery */ u32	prr_delivered;	/* Number of newly delivered packets to * receiver in Recovery. */ u32	prr_out;	/* Total number of pkts sent during Recovery. */ u32	delivered;	/* Total data packets delivered incl. rexmits */ u32	delivered_ce;	/* Like the above but only ECE marked packets */ u32	lost;	/* Total data packets lost incl. rexmits */ u32	app_limited;	/* limited until &#34;delivered&#34; reaches this val */ u64	first_tx_mstamp; /* start of window send phase */ u64	delivered_mstamp; /* time we reached &#34;delivered&#34; */ u32	rate_delivered; /* saved rate sample: packets delivered */ u32	rate_interval_us; /* saved rate sample: time elapsed */ u32	rcv_wnd;	/* Current receiver window	*/ u32	write_seq;	/* Tail(&#43;1) of data held in tcp send buffer */ u32	notsent_lowat;	/* TCP_NOTSENT_LOWAT */ u32	pushed_seq;	/* Last pushed seq, required to talk to windows */ u32	lost_out;	/* Lost packets	*/ u32	sacked_out;	/* SACK&#39;d packets	*/ struct hrtimer	pacing_timer; struct hrtimer	compressed_ack_timer; /* from STCP, retrans queue hinting */ struct sk_buff* lost_skb_hint; struct sk_buff *retransmit_skb_hint; /* OOO segments go in this rbtree. Socket lock must be held. */ struct rb_root	out_of_order_queue; struct sk_buff	*ooo_last_skb; /* cache rb_last(out_of_order_queue) */ /* SACKs data, these 2 need to be together (see tcp_options_write) */ struct tcp_sack_block duplicate_sack[1]; /* D-SACK block */ struct tcp_sack_block selective_acks[4]; /* The SACKS themselves*/ struct tcp_sack_block recv_sack_cache[4]; struct sk_buff *highest_sack; /* skb just after the highest * skb with SACKed bit set * (validity guaranteed only if * sacked_out &gt; 0) */ int lost_cnt_hint; u32	prior_ssthresh; /* ssthresh saved at recovery start	*/ u32	high_seq;	/* snd_nxt at onset of congestion	*/ u32	retrans_stamp;	/* Timestamp of the last retransmit, * also used in SYN-SENT to remember stamp of * the first SYN. */ u32	undo_marker;	/* snd_una upon a new recovery episode. */ int	undo_retrans;	/* number of undoable retransmissions. */ u64	bytes_retrans;	/* RFC4898 tcpEStatsPerfOctetsRetrans * Total data bytes retransmitted */ u32	total_retrans;	/* Total retransmits for entire connection */ u32	urg_seq;	/* Seq of received urgent pointer */ unsigned int	keepalive_time;	/* time before keep alive takes place */ unsigned int	keepalive_intvl; /* time interval between keep alive probes */ int	linger2; /* Sock_ops bpf program related variables */ #ifdef CONFIG_BPF u8	bpf_sock_ops_cb_flags; /* Control calling BPF programs * values defined in uapi/linux/tcp.h */ #define BPF_SOCK_OPS_TEST_FLAG(TP, ARG) (TP-&gt;bpf_sock_ops_cb_flags &amp; ARG) #else #define BPF_SOCK_OPS_TEST_FLAG(TP, ARG) 0 #endif u16 timeout_rehash;	/* Timeout-triggered rehash attempts */ u32 rcv_ooopack; /* Received out-of-order packets, for tcpinfo */ /* Receiver side RTT estimation */ u32 rcv_rtt_last_tsecr; struct { u32	rtt_us; u32	seq; u64	time; } rcv_rtt_est; /* Receiver queue space */ struct { u32	space; u32	seq; u64	time; } rcvq_space; /* TCP-specific MTU probe information. */ struct { u32	probe_seq_start; u32	probe_seq_end; } mtu_probe; u32	mtu_info; /* We received an ICMP_FRAG_NEEDED / ICMPV6_PKT_TOOBIG * while socket was owned by user. */ #if IS_ENABLED(CONFIG_MPTCP) bool	is_mptcp; #endif #ifdef CONFIG_TCP_MD5SIG /* TCP AF-Specific parts; only used by MD5 Signature support so far */ const struct tcp_sock_af_ops	*af_specific; /* TCP MD5 Signature Option information */ struct tcp_md5sig_info	__rcu *md5sig_info; #endif /* TCP fastopen related information */ struct tcp_fastopen_request *fastopen_req; /* fastopen_rsk points to request_sock that resulted in this big * socket. Used to retransmit SYNACKs etc. */ struct request_sock __rcu *fastopen_rsk; u32	*saved_syn; };">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="personal">
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+        | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="http://localhost:1313/personal/linux%E6%BA%90%E7%A0%81%E4%B8%AD%E7%9A%84tcp%E8%A1%A8%E7%A4%BA/">
+
+  
+  
+
+  
+  <link href="http://localhost:1313/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="http://localhost:1313/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="http://localhost:1313/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="http://localhost:1313/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="http://localhost:1313/">
+          
+        <img class="avatar imgRotate" src="http://localhost:1313/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="http://localhost:1313/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="http://localhost:1313/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="http://localhost:1313/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('http://localhost:1313/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="http://localhost:1313/">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="http://localhost:1313/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="http://localhost:1313/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading"></div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>0001-01-01</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>4 minutes read</li>
+        
+        <li>1710 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>TCP协议在Linux内核中的数据结构：</p>
+<pre tabindex="0"><code>TCP套接字：include/linux/tcp.h:tcp_sock
+TCP协议头部：include/linux/tcp.h:tcphdr
+</code></pre><h1 id="tcp套接字tcp_sock">TCP套接字tcp_sock</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// u16: unsigned short int 16位
+</span></span></span><span class="line"><span class="cl"><span class="c1">// skb: 一个包
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">tcp_sock</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">inet_connection_sock</span>	<span class="n">inet_conn</span><span class="p">;</span> <span class="c1">// socket
+</span></span></span><span class="line"><span class="cl">	<span class="n">u16</span>	<span class="n">tcp_header_len</span><span class="p">;</span>	<span class="c1">// TCP 头部长度，，16位
+</span></span></span><span class="line"><span class="cl">	<span class="n">u16</span>	<span class="n">gso_segs</span><span class="p">;</span>	<span class="c1">// GSO（Generic Segment Offload）通用分片技术，把超过MTU的大包不在TCP层分片，而是直接扔下去，在网卡驱动层面直接分隔包，拼上对应的IP和TCP头部。 TODO
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *	Header prediction flags
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *	0x5?10 &lt;&lt; 16 + snd_wnd in net byte order
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">__be32</span>	<span class="n">pred_flags</span><span class="p">;</span> <span class="c1">// TODO
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *	RFC793 variables by their proper names. This means you can
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *	read the code and the spec side by side (and laugh ...)
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *	See RFC793 and RFC1122. The RFC writes these in capitals.
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ACK了多少个包，64位
+</span></span></span><span class="line"><span class="cl">	<span class="n">u64</span>	<span class="n">bytes_received</span><span class="p">;</span>	<span class="cm">/* RFC4898 tcpEStatsAppHCThruOctetsReceived
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * sum(delta(rcv_nxt)), or how many bytes
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * were acked.
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 */</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 收到了多少个段
+</span></span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">segs_in</span><span class="p">;</span>	<span class="cm">/* RFC4898 tcpEStatsPerfSegsIn
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * total number of segments in.
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">data_segs_in</span><span class="p">;</span>	<span class="cm">/* RFC4898 tcpEStatsPerfDataSegsIn
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * total number of data segments in.
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 */</span>
+</span></span><span class="line"><span class="cl"> 	<span class="n">u32</span>	<span class="n">rcv_nxt</span><span class="p">;</span>	<span class="cm">/* What we want to receive next 	*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">copied_seq</span><span class="p">;</span>	<span class="cm">/* Head of yet unread data		*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">rcv_wup</span><span class="p">;</span>	<span class="cm">/* rcv_nxt on last window update sent	*/</span>
+</span></span><span class="line"><span class="cl"> 	<span class="n">u32</span>	<span class="n">snd_nxt</span><span class="p">;</span>	<span class="cm">/* Next sequence we send		*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">segs_out</span><span class="p">;</span>	<span class="cm">/* RFC4898 tcpEStatsPerfSegsOut
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * The total number of segments sent.
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 已经发送的数据段数量
+</span></span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">data_segs_out</span><span class="p">;</span>	<span class="cm">/* RFC4898 tcpEStatsPerfDataSegsOut
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * total number of data segments sent.
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u64</span>	<span class="n">bytes_sent</span><span class="p">;</span>	<span class="cm">/* RFC4898 tcpEStatsPerfHCDataOctetsOut
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * total number of data bytes sent.
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u64</span>	<span class="n">bytes_acked</span><span class="p">;</span>	<span class="cm">/* RFC4898 tcpEStatsAppHCThruOctetsAcked
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * sum(delta(snd_una)), or how many bytes
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * were acked.
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">dsack_dups</span><span class="p">;</span>	<span class="cm">/* RFC4898 tcpEStatsStackDSACKDups
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * total number of DSACK blocks received
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 */</span>
+</span></span><span class="line"><span class="cl"> 	<span class="n">u32</span>	<span class="n">snd_una</span><span class="p">;</span>	<span class="cm">/* First byte we want an ack for	*/</span>
+</span></span><span class="line"><span class="cl"> 	<span class="n">u32</span>	<span class="n">snd_sml</span><span class="p">;</span>	<span class="cm">/* Last byte of the most recently transmitted small packet */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">rcv_tstamp</span><span class="p">;</span>	<span class="c1">// 收到的最后一个ACK的时间戳
+</span></span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">lsndtime</span><span class="p">;</span>	<span class="c1">//发出数据的最后一个时间戳
+</span></span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">last_oow_ack_time</span><span class="p">;</span>  <span class="cm">/* timestamp of last out-of-window ACK */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">compressed_ack_rcv_nxt</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">tsoffset</span><span class="p">;</span>	<span class="cm">/* timestamp offset */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">tsq_node</span><span class="p">;</span> <span class="cm">/* anchor in tsq_tasklet.head list */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">tsorted_sent_queue</span><span class="p">;</span> <span class="cm">/* time-sorted sent but un-SACKed skbs */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">snd_wl1</span><span class="p">;</span>	<span class="cm">/* Sequence for window update		*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">snd_wnd</span><span class="p">;</span>	<span class="cm">/* The window we expect to receive	*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">max_window</span><span class="p">;</span>	<span class="cm">/* Maximal window ever seen from peer	*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">mss_cache</span><span class="p">;</span>	<span class="cm">/* Cached effective mss, not including SACKS */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">window_clamp</span><span class="p">;</span>	<span class="cm">/* Maximal window to advertise		*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">rcv_ssthresh</span><span class="p">;</span>	<span class="cm">/* Current window clamp			*/</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">	<span class="cm">/* Information of the most recently (s)acked skb */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">tcp_rack</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u64</span> <span class="n">mstamp</span><span class="p">;</span> <span class="cm">/* (Re)sent time of the skb */</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u32</span> <span class="n">rtt_us</span><span class="p">;</span>  <span class="cm">/* Associated RTT */</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u32</span> <span class="n">end_seq</span><span class="p">;</span> <span class="cm">/* Ending TCP sequence of the skb */</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u32</span> <span class="n">last_delivered</span><span class="p">;</span> <span class="cm">/* tp-&gt;delivered at last reo_wnd adj */</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u8</span> <span class="n">reo_wnd_steps</span><span class="p">;</span>   <span class="cm">/* Allowed reordering window */</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define TCP_RACK_RECOVERY_THRESH 16
+</span></span></span><span class="line"><span class="cl">		<span class="n">u8</span> <span class="nl">reo_wnd_persist</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="cm">/* No. of recovery since last adj */</span>
+</span></span><span class="line"><span class="cl">		   <span class="nl">dsack_seen</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="cm">/* Whether DSACK seen after last adj */</span>
+</span></span><span class="line"><span class="cl">		   <span class="nl">advanced</span><span class="p">:</span><span class="mi">1</span><span class="p">;</span>	 <span class="cm">/* mstamp advanced since last lost marking */</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="n">rack</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u16</span>	<span class="n">advmss</span><span class="p">;</span>		<span class="cm">/* Advertised MSS			*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u8</span>	<span class="n">compressed_ack</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u8</span>	<span class="nl">dup_ack_counter</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">tlp_retrans</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>	<span class="cm">/* TLP is a retransmission */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">unused</span><span class="p">:</span><span class="mi">5</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">chrono_start</span><span class="p">;</span>	<span class="cm">/* Start time in jiffies of a TCP chrono */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">chrono_stat</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>	<span class="cm">/* Time in jiffies for chrono_stat stats */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u8</span>	<span class="nl">chrono_type</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>	<span class="cm">/* current chronograph type */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">rate_app_limited</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>  <span class="cm">/* rate_{delivered,interval_us} limited? */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">fastopen_connect</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="cm">/* FASTOPEN_CONNECT sockopt */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">fastopen_no_cookie</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="cm">/* Allow send/recv SYN+data without a cookie */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">is_sack_reneg</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>    <span class="cm">/* in recovery from loss with SACK reneg? */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">fastopen_client_fail</span><span class="p">:</span><span class="mi">2</span><span class="p">;</span> <span class="cm">/* reason why fastopen failed */</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 关闭 Nagle 算法
+</span></span></span><span class="line"><span class="cl">	<span class="n">u8</span>	<span class="nl">nonagle</span>     <span class="p">:</span> <span class="mi">4</span><span class="p">,</span><span class="cm">/* Disable Nagle algorithm?             */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">thin_lto</span>    <span class="p">:</span> <span class="mi">1</span><span class="p">,</span><span class="cm">/* Use linear timeouts for thin streams */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">recvmsg_inq</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span><span class="cm">/* Indicate # of bytes in queue upon recvmsg */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">repair</span>      <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">frto</span>        <span class="p">:</span> <span class="mi">1</span><span class="p">;</span><span class="cm">/* F-RTO (RFC5682) activated in CA_Loss */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u8</span>	<span class="n">repair_queue</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u8</span>	<span class="nl">syn_data</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>	<span class="cm">/* SYN includes data */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">syn_fastopen</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>	<span class="cm">/* SYN includes Fast Open option */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">syn_fastopen_exp</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="cm">/* SYN includes Fast Open exp. option */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">syn_fastopen_ch</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="cm">/* Active TFO re-enabling probe */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">syn_data_acked</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="cm">/* data in SYN is acked by SYN-ACK */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">save_syn</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>	<span class="cm">/* Save headers of SYN packet */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">is_cwnd_limited</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="cm">/* forward progress limited by snd_cwnd? */</span>
+</span></span><span class="line"><span class="cl">		<span class="nl">syn_smc</span><span class="p">:</span><span class="mi">1</span><span class="p">;</span>	<span class="cm">/* SYN includes SMC */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">tlp_high_seq</span><span class="p">;</span>	<span class="cm">/* snd_nxt at the time of TLP */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">tcp_tx_delay</span><span class="p">;</span>	<span class="cm">/* delay (in usec) added to TX packets */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u64</span>	<span class="n">tcp_wstamp_ns</span><span class="p">;</span>	<span class="cm">/* departure time for next sent data packet */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u64</span>	<span class="n">tcp_clock_cache</span><span class="p">;</span> <span class="cm">/* cache last tcp_clock_ns() (see tcp_mstamp_refresh()) */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* RTT measurement 用于RTT计算相关 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u64</span>	<span class="n">tcp_mstamp</span><span class="p">;</span>	<span class="cm">/* most recent packet received/sent */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">srtt_us</span><span class="p">;</span>	<span class="cm">/* smoothed round trip time &lt;&lt; 3 in usecs */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">mdev_us</span><span class="p">;</span>	<span class="cm">/* medium deviation			*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">mdev_max_us</span><span class="p">;</span>	<span class="cm">/* maximal mdev for the last rtt period	*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">rttvar_us</span><span class="p">;</span>	<span class="cm">/* smoothed mdev_max			*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">rtt_seq</span><span class="p">;</span>	<span class="cm">/* sequence number to update rttvar	*/</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span>  <span class="n">minmax</span> <span class="n">rtt_min</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">packets_out</span><span class="p">;</span>	<span class="cm">/* Packets which are &#34;in flight&#34;	*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">retrans_out</span><span class="p">;</span>	<span class="cm">/* Retransmitted packets out		*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">max_packets_out</span><span class="p">;</span>  <span class="cm">/* max packets_out in last window */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">max_packets_seq</span><span class="p">;</span>  <span class="cm">/* right edge of max_packets_out flight */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">u16</span>	<span class="n">urg_data</span><span class="p">;</span>	<span class="cm">/* Saved octet of OOB data and control flags */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u8</span>	<span class="n">ecn_flags</span><span class="p">;</span>	<span class="cm">/* ECN status bits.			*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u8</span>	<span class="n">keepalive_probes</span><span class="p">;</span> <span class="cm">/* num of allowed keep alive probes	*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">reordering</span><span class="p">;</span>	<span class="cm">/* Packet reordering metric.		*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">reord_seen</span><span class="p">;</span>	<span class="cm">/* number of data packet reordering events */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">snd_up</span><span class="p">;</span>		<span class="cm">/* Urgent pointer		*/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *      Options received (usually on last packet, some only on SYN packets).
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">tcp_options_received</span> <span class="n">rx_opt</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *	Slow start and congestion control (see also Nagle, and Karn &amp; Partridge)
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 慢启动和拥塞控制相关字段
+</span></span></span><span class="line"><span class="cl"> 	<span class="n">u32</span>	<span class="n">snd_ssthresh</span><span class="p">;</span>	<span class="cm">/* Slow start size threshold		*/</span>
+</span></span><span class="line"><span class="cl"> 	<span class="n">u32</span>	<span class="n">snd_cwnd</span><span class="p">;</span>	<span class="cm">/* Sending congestion window		*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">snd_cwnd_cnt</span><span class="p">;</span>	<span class="cm">/* Linear increase counter		*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">snd_cwnd_clamp</span><span class="p">;</span> <span class="cm">/* Do not allow snd_cwnd to grow above this */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">snd_cwnd_used</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">snd_cwnd_stamp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">prior_cwnd</span><span class="p">;</span>	<span class="cm">/* cwnd right before starting loss recovery */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">prr_delivered</span><span class="p">;</span>	<span class="cm">/* Number of newly delivered packets to
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * receiver in Recovery. */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">prr_out</span><span class="p">;</span>	<span class="cm">/* Total number of pkts sent during Recovery. */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">delivered</span><span class="p">;</span>	<span class="cm">/* Total data packets delivered incl. rexmits */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">delivered_ce</span><span class="p">;</span>	<span class="cm">/* Like the above but only ECE marked packets */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">lost</span><span class="p">;</span>		<span class="cm">/* Total data packets lost incl. rexmits */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">app_limited</span><span class="p">;</span>	<span class="cm">/* limited until &#34;delivered&#34; reaches this val */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u64</span>	<span class="n">first_tx_mstamp</span><span class="p">;</span>  <span class="cm">/* start of window send phase */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u64</span>	<span class="n">delivered_mstamp</span><span class="p">;</span> <span class="cm">/* time we reached &#34;delivered&#34; */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">rate_delivered</span><span class="p">;</span>    <span class="cm">/* saved rate sample: packets delivered */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">rate_interval_us</span><span class="p">;</span>  <span class="cm">/* saved rate sample: time elapsed */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> 	<span class="n">u32</span>	<span class="n">rcv_wnd</span><span class="p">;</span>	<span class="cm">/* Current receiver window		*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">write_seq</span><span class="p">;</span>	<span class="cm">/* Tail(+1) of data held in tcp send buffer */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">notsent_lowat</span><span class="p">;</span>	<span class="cm">/* TCP_NOTSENT_LOWAT */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">pushed_seq</span><span class="p">;</span>	<span class="cm">/* Last pushed seq, required to talk to windows */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">lost_out</span><span class="p">;</span>	<span class="cm">/* Lost packets			*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">sacked_out</span><span class="p">;</span>	<span class="cm">/* SACK&#39;d packets			*/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">hrtimer</span>	<span class="n">pacing_timer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">hrtimer</span>	<span class="n">compressed_ack_timer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="cm">/* from STCP, retrans queue hinting */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">sk_buff</span><span class="o">*</span> <span class="n">lost_skb_hint</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">sk_buff</span> <span class="o">*</span><span class="n">retransmit_skb_hint</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="cm">/* OOO segments go in this rbtree. Socket lock must be held. */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">rb_root</span>	<span class="n">out_of_order_queue</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">sk_buff</span>	<span class="o">*</span><span class="n">ooo_last_skb</span><span class="p">;</span> <span class="cm">/* cache rb_last(out_of_order_queue) */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="cm">/* SACKs data, these 2 need to be together (see tcp_options_write) */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">tcp_sack_block</span> <span class="n">duplicate_sack</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span> <span class="cm">/* D-SACK block */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">tcp_sack_block</span> <span class="n">selective_acks</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span> <span class="cm">/* The SACKS themselves*/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">tcp_sack_block</span> <span class="n">recv_sack_cache</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">sk_buff</span> <span class="o">*</span><span class="n">highest_sack</span><span class="p">;</span>   <span class="cm">/* skb just after the highest
+</span></span></span><span class="line"><span class="cl"><span class="cm">					 * skb with SACKed bit set
+</span></span></span><span class="line"><span class="cl"><span class="cm">					 * (validity guaranteed only if
+</span></span></span><span class="line"><span class="cl"><span class="cm">					 * sacked_out &gt; 0)
+</span></span></span><span class="line"><span class="cl"><span class="cm">					 */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>     <span class="n">lost_cnt_hint</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">prior_ssthresh</span><span class="p">;</span> <span class="cm">/* ssthresh saved at recovery start	*/</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">high_seq</span><span class="p">;</span>	<span class="cm">/* snd_nxt at onset of congestion	*/</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">retrans_stamp</span><span class="p">;</span>	<span class="cm">/* Timestamp of the last retransmit,
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * also used in SYN-SENT to remember stamp of
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * the first SYN. */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">undo_marker</span><span class="p">;</span>	<span class="cm">/* snd_una upon a new recovery episode. */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>	<span class="n">undo_retrans</span><span class="p">;</span>	<span class="cm">/* number of undoable retransmissions. */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u64</span>	<span class="n">bytes_retrans</span><span class="p">;</span>	<span class="cm">/* RFC4898 tcpEStatsPerfOctetsRetrans
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 * Total data bytes retransmitted
+</span></span></span><span class="line"><span class="cl"><span class="cm">				 */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">total_retrans</span><span class="p">;</span>	<span class="cm">/* Total retransmits for entire connection */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">urg_seq</span><span class="p">;</span>	<span class="cm">/* Seq of received urgent pointer */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">unsigned</span> <span class="kt">int</span>		<span class="n">keepalive_time</span><span class="p">;</span>	  <span class="cm">/* time before keep alive takes place */</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">unsigned</span> <span class="kt">int</span>		<span class="n">keepalive_intvl</span><span class="p">;</span>  <span class="cm">/* time interval between keep alive probes */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span>			<span class="n">linger2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Sock_ops bpf program related variables */</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#ifdef CONFIG_BPF
+</span></span></span><span class="line"><span class="cl">	<span class="n">u8</span>	<span class="n">bpf_sock_ops_cb_flags</span><span class="p">;</span>  <span class="cm">/* Control calling BPF programs
+</span></span></span><span class="line"><span class="cl"><span class="cm">					 * values defined in uapi/linux/tcp.h
+</span></span></span><span class="line"><span class="cl"><span class="cm">					 */</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define BPF_SOCK_OPS_TEST_FLAG(TP, ARG) (TP-&gt;bpf_sock_ops_cb_flags &amp; ARG)
+</span></span></span><span class="line"><span class="cl"><span class="cp">#else
+</span></span></span><span class="line"><span class="cl"><span class="cp">#define BPF_SOCK_OPS_TEST_FLAG(TP, ARG) 0
+</span></span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">u16</span> <span class="n">timeout_rehash</span><span class="p">;</span>	<span class="cm">/* Timeout-triggered rehash attempts */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span> <span class="n">rcv_ooopack</span><span class="p">;</span> <span class="cm">/* Received out-of-order packets, for tcpinfo */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Receiver side RTT estimation */</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span> <span class="n">rcv_rtt_last_tsecr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u32</span>	<span class="n">rtt_us</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u32</span>	<span class="n">seq</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u64</span>	<span class="n">time</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="n">rcv_rtt_est</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Receiver queue space */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u32</span>	<span class="n">space</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u32</span>	<span class="n">seq</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u64</span>	<span class="n">time</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="n">rcvq_space</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* TCP-specific MTU probe information. */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u32</span>		  <span class="n">probe_seq_start</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">u32</span>		  <span class="n">probe_seq_end</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="n">mtu_probe</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="n">mtu_info</span><span class="p">;</span> <span class="cm">/* We received an ICMP_FRAG_NEEDED / ICMPV6_PKT_TOOBIG
+</span></span></span><span class="line"><span class="cl"><span class="cm">			   * while socket was owned by user.
+</span></span></span><span class="line"><span class="cl"><span class="cm">			   */</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#if IS_ENABLED(CONFIG_MPTCP)
+</span></span></span><span class="line"><span class="cl">	<span class="kt">bool</span>	<span class="n">is_mptcp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">#ifdef CONFIG_TCP_MD5SIG
+</span></span></span><span class="line"><span class="cl"><span class="cm">/* TCP AF-Specific parts; only used by MD5 Signature support so far */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">const</span> <span class="k">struct</span> <span class="n">tcp_sock_af_ops</span>	<span class="o">*</span><span class="n">af_specific</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* TCP MD5 Signature Option information */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">tcp_md5sig_info</span>	<span class="n">__rcu</span> <span class="o">*</span><span class="n">md5sig_info</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* TCP fastopen related information */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">tcp_fastopen_request</span> <span class="o">*</span><span class="n">fastopen_req</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="cm">/* fastopen_rsk points to request_sock that resulted in this big
+</span></span></span><span class="line"><span class="cl"><span class="cm">	 * socket. Used to retransmit SYNACKs etc.
+</span></span></span><span class="line"><span class="cl"><span class="cm">	 */</span>
+</span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">request_sock</span> <span class="n">__rcu</span> <span class="o">*</span><span class="n">fastopen_rsk</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="n">u32</span>	<span class="o">*</span><span class="n">saved_syn</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=http://localhost:1313/personal/%E5%8D%95%E6%9C%BA%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span></span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=http://localhost:1313/personal/linux%E4%B8%8B%E6%8E%8C%E6%8E%A7tcp%E5%8D%8F%E8%AE%AE/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span></span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#tcp%e5%a5%97%e6%8e%a5%e5%ad%97tcp_sock">
+												 TCP套接字tcp_sock
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2026 &copy; <a href="http://localhost:1313/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.6.1/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.20.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="http://localhost:1313/js/main.js"></script>
+
+
+
+
+  <script src="http://localhost:1313/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+  </body>
+</html>

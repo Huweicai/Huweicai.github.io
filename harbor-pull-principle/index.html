@@ -7,15 +7,30 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="Harbor简介 Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。 Harbor 的系统架构如下图所示，箭头所指方向为数据流向： 一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。 在开始之前 我">
+  <meta name="description" content="Harbor简介
+Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。
+Harbor 的系统架构如下图所示，箭头所指方向为数据流向：
 
-  <meta property="og:title" content="镜像仓库Harbor Pull实现原理" />
-<meta property="og:description" content="Harbor简介 Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。 Harbor 的系统架构如下图所示，箭头所指方向为数据流向： 一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。 在开始之前 我" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/harbor-pull-principle/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2021-12-04T01:19:00+08:00" />
-<meta property="article:modified_time" content="2021-12-04T01:19:00+08:00" />
+一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。
+在开始之前
+我们先申明一些基本信息，避免版本更迭引入的改动给大家带来困扰：">
 
+  <meta property="og:url" content="https://huweicai.com/harbor-pull-principle/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="镜像仓库Harbor Pull实现原理">
+  <meta property="og:description" content="Harbor简介 Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。
+Harbor 的系统架构如下图所示，箭头所指方向为数据流向：
+一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。
+在开始之前 我们先申明一些基本信息，避免版本更迭引入的改动给大家带来困扰：">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2021-12-04T01:19:00+08:00">
+    <meta property="article:modified_time" content="2021-12-04T01:19:00+08:00">
+    <meta property="article:tag" content="容器">
+    <meta property="article:tag" content="镜像">
+    <meta property="article:tag" content="Docker">
+    <meta property="article:tag" content="Harbor">
+    <meta property="article:tag" content="Cloudnative">
 
    
 
@@ -108,7 +123,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +142,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +211,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +219,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -293,9 +308,9 @@
 
         
             <li class="middot"></li>
-            <li>11 minutes read</li>
+            <li>10 minutes read</li>
         
-        <li>5037 words</li>
+        <li>4830 words</li>
 
     </ul>
     
@@ -372,21 +387,21 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="nt">&#34;schemaVersion&#34;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">	  <span class="c1">// manifest 格式
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span><span class="p">,</span>
+</span></span></span><span class="line"><span class="cl">	<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">	<span class="nt">&#34;config&#34;</span><span class="p">:</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">  	  <span class="c1">// 镜像配置文件格式
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.container.image.v1+json&#34;</span><span class="p">,</span>
+</span></span></span><span class="line"><span class="cl">		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.container.image.v1+json&#34;</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">			<span class="c1">// 镜像配置文件大小，单位字节
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">8881</span><span class="p">,</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">8881</span><span class="p">,</span>
 </span></span><span class="line"><span class="cl">    	<span class="c1">// 镜像配置文件摘要
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nt">&#34;digest&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:7d899ed163ee9e7979519c4c00be7e38a2cd4b8b8936524f1a8e29c1cd3a0c7a&#34;</span> 
+</span></span></span><span class="line"><span class="cl">		<span class="nt">&#34;digest&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:7d899ed163ee9e7979519c4c00be7e38a2cd4b8b8936524f1a8e29c1cd3a0c7a&#34;</span> 
 </span></span><span class="line"><span class="cl">	<span class="p">},</span>
 </span></span><span class="line"><span class="cl">  	<span class="c1">// 镜像对应的所有压缩包文件地址
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nt">&#34;layers&#34;</span><span class="p">:</span> <span class="p">[{</span>
+</span></span></span><span class="line"><span class="cl">	<span class="nt">&#34;layers&#34;</span><span class="p">:</span> <span class="p">[{</span>
 </span></span><span class="line"><span class="cl">      	<span class="c1">// 申明了该文件的格式：tar + gzip
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span><span class="p">,</span> 
+</span></span></span><span class="line"><span class="cl">		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span><span class="p">,</span> 
 </span></span><span class="line"><span class="cl">    	<span class="c1">// 该层的大小，单位字节
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">2830948</span><span class="p">,</span> 
+</span></span></span><span class="line"><span class="cl">		<span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="mi">2830948</span><span class="p">,</span> 
 </span></span><span class="line"><span class="cl">		<span class="nt">&#34;digest&#34;</span><span class="p">:</span> <span class="s2">&#34;sha256:5420e0d28c84ecb16748cb90cc6acf8e2a81dab10cb1f674f3eee8533e53c62a&#34;</span>
 </span></span><span class="line"><span class="cl">	<span class="p">},</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">		<span class="nt">&#34;mediaType&#34;</span><span class="p">:</span> <span class="s2">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span><span class="p">,</span>
@@ -593,11 +608,11 @@
 <li>
 <p>入参是 TAG 时，此时一共会查询三张表：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="o">#</span><span class="w"> </span><span class="err">先根据仓库名称查到仓库</span><span class="n">ID</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s2">&#34;repository&#34;</span><span class="w">  </span><span class="k">WHERE</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;test/nginx&#39;</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">根据仓库</span><span class="n">ID和TAG名称查询TAG表中存储的artifact_id</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="n">artifact_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s2">&#34;tag&#34;</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="s2">&#34;repository_id&#34;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">${</span><span class="n">repository</span><span class="p">.</span><span class="n">id</span><span class="err">}</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s2">&#34;name&#34;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;1.20.2-alpine&#39;</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">根据</span><span class="n">ID查询artifact信息</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s2">&#34;artifact&#34;</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="s2">&#34;id&#34;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">${</span><span class="n">artifact_id</span><span class="err">}</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s2">&#34;repository&#34;</span><span class="w">  </span><span class="k">WHERE</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;test/nginx&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">#</span><span class="w"> </span><span class="err">根据仓库</span><span class="n">ID和TAG名称查询TAG表中存储的artifact_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">artifact_id</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s2">&#34;tag&#34;</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="s2">&#34;repository_id&#34;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">${</span><span class="n">repository</span><span class="p">.</span><span class="n">id</span><span class="err">}</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s2">&#34;name&#34;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;1.20.2-alpine&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="o">#</span><span class="w"> </span><span class="err">根据</span><span class="n">ID查询artifact信息</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s2">&#34;artifact&#34;</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="s2">&#34;id&#34;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">${</span><span class="n">artifact_id</span><span class="err">}</span><span class="p">;</span><span class="w">
 </span></span></span></code></pre></div></li>
 <li>
 <p>入参是摘要时，只需一次查询即可：</p>
@@ -608,91 +623,91 @@
 <p>harbor 处理完自己内部的逻辑之后，会将请求转发给 <code>registry</code>进行处理。</p>
 <h3 id="registry流程">Registry流程</h3>
 <p>registry 这一块儿的处理逻辑入口在：<a href="https://github.com/distribution/distribution/blob/2461543d988979529609e8cb6fca9ca190dc48da/registry/handlers/manifests.go#L82">/registry/handlers/manifests.go:GetManifest</a> 方法，精简后的代码如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">imh</span> <span class="o">*</span><span class="nx">manifestHandler</span><span class="p">)</span> <span class="nf">GetManifest</span><span class="p">(</span><span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="cm">/*
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">imh</span><span class="w"> </span><span class="o">*</span><span class="nx">manifestHandler</span><span class="p">)</span><span class="w"> </span><span class="nf">GetManifest</span><span class="p">(</span><span class="nx">w</span><span class="w"> </span><span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">	...
 </span></span></span><span class="line"><span class="cl"><span class="cm">	根据 Accept Header判断客户端支持的版本
 </span></span></span><span class="line"><span class="cl"><span class="cm">	...
-</span></span></span><span class="line"><span class="cl"><span class="cm">	*/</span>
-</span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	<span class="c1">// 如果传入的是TAG，根据TAG查找摘要
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Tag</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">tags</span> <span class="o">:=</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Repository</span><span class="p">.</span><span class="nf">Tags</span><span class="p">(</span><span class="nx">imh</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">desc</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tags</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">imh</span><span class="p">,</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Tag</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="nx">err</span>
-</span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span> <span class="p">=</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nf">etagMatch</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">w</span><span class="p">.</span><span class="nf">WriteHeader</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusNotModified</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="c1">// 根据摘要获取文件对象
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">manifest</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">manifests</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">imh</span><span class="p">,</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">,</span> <span class="nx">options</span><span class="o">...</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">err</span><span class="p">.(</span><span class="nx">distribution</span><span class="p">.</span><span class="nx">ErrManifestUnknownRevision</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span><span class="p">,</span> <span class="nx">v2</span><span class="p">.</span><span class="nx">ErrorCodeManifestUnknown</span><span class="p">.</span><span class="nf">WithDetail</span><span class="p">(</span><span class="nx">err</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">			<span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span><span class="p">,</span> <span class="nx">errcode</span><span class="p">.</span><span class="nx">ErrorCodeUnknown</span><span class="p">.</span><span class="nf">WithDetail</span><span class="p">(</span><span class="nx">err</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">		<span class="p">}</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="cm">/*
+</span></span></span><span class="line"><span class="cl"><span class="cm">	*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="c1">// 如果传入的是TAG，根据TAG查找摘要</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">if</span><span class="w"> </span><span class="nx">imh</span><span class="p">.</span><span class="nx">Tag</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&#34;&#34;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">tags</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">imh</span><span class="p">.</span><span class="nx">Repository</span><span class="p">.</span><span class="nf">Tags</span><span class="p">(</span><span class="nx">imh</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">desc</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">tags</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">imh</span><span class="p">,</span><span class="w"> </span><span class="nx">imh</span><span class="p">.</span><span class="nx">Tag</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="k">return</span><span class="w"> </span><span class="nx">err</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">if</span><span class="w"> </span><span class="nf">etagMatch</span><span class="p">(</span><span class="nx">r</span><span class="p">,</span><span class="w"> </span><span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">w</span><span class="p">.</span><span class="nf">WriteHeader</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusNotModified</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">return</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="c1">// 根据摘要获取文件对象</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">manifest</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">manifests</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">imh</span><span class="p">,</span><span class="w"> </span><span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">,</span><span class="w"> </span><span class="nx">options</span><span class="o">...</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">if</span><span class="w"> </span><span class="nx">_</span><span class="p">,</span><span class="w"> </span><span class="nx">ok</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">err</span><span class="p">.(</span><span class="nx">distribution</span><span class="p">.</span><span class="nx">ErrManifestUnknownRevision</span><span class="p">);</span><span class="w"> </span><span class="nx">ok</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span><span class="p">,</span><span class="w"> </span><span class="nx">v2</span><span class="p">.</span><span class="nx">ErrorCodeManifestUnknown</span><span class="p">.</span><span class="nf">WithDetail</span><span class="p">(</span><span class="nx">err</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">			</span><span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nb">append</span><span class="p">(</span><span class="nx">imh</span><span class="p">.</span><span class="nx">Errors</span><span class="p">,</span><span class="w"> </span><span class="nx">errcode</span><span class="p">.</span><span class="nx">ErrorCodeUnknown</span><span class="p">.</span><span class="nf">WithDetail</span><span class="p">(</span><span class="nx">err</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">return</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="cm">/*
 </span></span></span><span class="line"><span class="cl"><span class="cm">	...
 </span></span></span><span class="line"><span class="cl"><span class="cm">	配合 &#39;Accpet&#39; 返回给客户端需要的版本，
 </span></span></span><span class="line"><span class="cl"><span class="cm">	...
-</span></span></span><span class="line"><span class="cl"><span class="cm">	*/</span>
-</span></span><span class="line"><span class="cl">	
-</span></span><span class="line"><span class="cl">	<span class="c1">// 构造返回 response
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Type&#34;</span><span class="p">,</span> <span class="nx">ct</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Length&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">p</span><span class="p">)))</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Docker-Content-Digest&#34;</span><span class="p">,</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Etag&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`&#34;%s&#34;`</span><span class="p">,</span> <span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">manifest</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>逻辑并不复杂，关键的两步操作就是将 TAG 转化为摘要，然后根据摘要获取对应的文件对象。</p>
+</span></span></span><span class="line"><span class="cl"><span class="cm">	*/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="c1">// 构造返回 response</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Type&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">ct</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Length&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">p</span><span class="p">)))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Docker-Content-Digest&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Etag&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`&#34;%s&#34;`</span><span class="p">,</span><span class="w"> </span><span class="nx">imh</span><span class="p">.</span><span class="nx">Digest</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">manifest</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>逻辑并不复杂，关键的两步操作就是将 TAG 转化为摘要，然后根据摘要获取对应的文件对象。</p>
 <p>再回到我们这个镜像，<code>/v2/test/nginx/manifests/1.20.2-alpine</code> ，第一步对应的操作理论上如下，<code>registry</code>会调用 S3的接口去读取路径位于：<code>/docker/registry/v2/repositories/test/nginx/_manifests/tags/1.20.2-alpine/current/link</code>位置的文件，下载之后会发现里面就是这个<code>TAG</code>指向的真实的摘要地址：</p>
 <pre tabindex="0"><code>sha256:c3ffe58e1eb09a16b3952c2bbe92363c50084f55a0da5c2ad38d6ae798c64599
 </code></pre><p>拿到摘要之后，<code>registry</code> 就能拼出这个文件的真实路径了：<code>/docker/registry/v2/blobs/sha256/c3/c3ffe58e1eb09a16b3952c2bbe92363c50084f55a0da5c2ad38d6ae798c64599/data</code> ，然后调用<code>S3</code>的接口去读取，返回给 harbor，harbor 再返回给客户端，获取<code>manifest</code>的流程就到此结束了。</p>
 <h2 id="v2blobs接口">/v2/*/blobs/*接口</h2>
 <p>客户端拿到 manifest 文件之后，就会根据其中的摘要，并行调用 blobs 接口下载其中的镜像层文件了。</p>
 <p>blobs 接口的处理逻辑其实是获取 manifest 接口逻辑的子集，也非常简单，大家直接看下方代码即可：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">bs</span> <span class="o">*</span><span class="nx">blobServer</span><span class="p">)</span> <span class="nf">ServeBlob</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">w</span> <span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span> <span class="nx">r</span> <span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">,</span> <span class="nx">dgst</span> <span class="nx">digest</span><span class="p">.</span><span class="nx">Digest</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 获取文件元信息，会尝试从Redis中读取
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">desc</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">bs</span><span class="p">.</span><span class="nx">statter</span><span class="p">.</span><span class="nf">Stat</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">dgst</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="c1">// 根据摘要拼接地址：/docker/registry/v2/blobs/sha256/${DIGEST}
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">path</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">bs</span><span class="p">.</span><span class="nf">pathFn</span><span class="p">(</span><span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="c1">// 读取文件
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">br</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">newFileReader</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">bs</span><span class="p">.</span><span class="nx">driver</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">Size</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="c1">// 设置缓存相关Header
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;ETag&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`&#34;%s&#34;`</span><span class="p">,</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">))</span> <span class="c1">// If-None-Match handled by ServeContent
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Cache-Control&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;max-age=%.f&#34;</span><span class="p">,</span> <span class="nx">blobCacheControlMaxAge</span><span class="p">.</span><span class="nf">Seconds</span><span class="p">()))</span>
-</span></span><span class="line"><span class="cl">	<span class="c1">// 写入摘要 Header
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;Docker-Content-Digest&#34;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">		<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Docker-Content-Digest&#34;</span><span class="p">,</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
-</span></span><span class="line"><span class="cl">	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Type&#34;</span><span class="p">,</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">MediaType</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Length&#34;</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nx">desc</span><span class="p">.</span><span class="nx">Size</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">http</span><span class="p">.</span><span class="nf">ServeContent</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">(),</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">{},</span> <span class="nx">br</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h1 id="总结">总结</h1>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">bs</span><span class="w"> </span><span class="o">*</span><span class="nx">blobServer</span><span class="p">)</span><span class="w"> </span><span class="nf">ServeBlob</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">w</span><span class="w"> </span><span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">,</span><span class="w"> </span><span class="nx">dgst</span><span class="w"> </span><span class="nx">digest</span><span class="p">.</span><span class="nx">Digest</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="c1">// 获取文件元信息，会尝试从Redis中读取</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">desc</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">bs</span><span class="p">.</span><span class="nx">statter</span><span class="p">.</span><span class="nf">Stat</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">dgst</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">return</span><span class="w"> </span><span class="nx">err</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="c1">// 根据摘要拼接地址：/docker/registry/v2/blobs/sha256/${DIGEST}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">path</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">bs</span><span class="p">.</span><span class="nf">pathFn</span><span class="p">(</span><span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">return</span><span class="w"> </span><span class="nx">err</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="c1">// 读取文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">br</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nf">newFileReader</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">bs</span><span class="p">.</span><span class="nx">driver</span><span class="p">,</span><span class="w"> </span><span class="nx">path</span><span class="p">,</span><span class="w"> </span><span class="nx">desc</span><span class="p">.</span><span class="nx">Size</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="k">return</span><span class="w"> </span><span class="nx">err</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="c1">// 设置缓存相关Header</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;ETag&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">`&#34;%s&#34;`</span><span class="p">,</span><span class="w"> </span><span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">))</span><span class="w"> </span><span class="c1">// If-None-Match handled by ServeContent</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Cache-Control&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;max-age=%.f&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">blobCacheControlMaxAge</span><span class="p">.</span><span class="nf">Seconds</span><span class="p">()))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="c1">// 写入摘要 Header</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">if</span><span class="w"> </span><span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;Docker-Content-Digest&#34;</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&#34;&#34;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Docker-Content-Digest&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Type&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">desc</span><span class="p">.</span><span class="nx">MediaType</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">w</span><span class="p">.</span><span class="nf">Header</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;Content-Length&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nx">desc</span><span class="p">.</span><span class="nx">Size</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">http</span><span class="p">.</span><span class="nf">ServeContent</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span><span class="w"> </span><span class="nx">r</span><span class="p">,</span><span class="w"> </span><span class="nx">desc</span><span class="p">.</span><span class="nx">Digest</span><span class="p">.</span><span class="nf">String</span><span class="p">(),</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">{},</span><span class="w"> </span><span class="nx">br</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h1 id="总结">总结</h1>
 <p>到这里服务端视角的镜像拉取流程我们就分析完了，客户端( docker )拿到这些文件之后，就可以根据 manifest 中配置的命令和参数，然后再将下载到的镜像层通过 <code>overlay</code> 等uino file system 合并成一个文件系统，就可以将这些文件 run 起来了。</p>
 
           </div>

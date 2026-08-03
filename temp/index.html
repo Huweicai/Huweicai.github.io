@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="好奇心探索世界，善意假设，做最酷的事情">
+
+  <meta property="og:url" content="http://localhost:1313/temp/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="Anonymous&#39; Blog">
+  <meta property="og:description" content="函数式编程 123213123">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="website">
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+        | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="http://localhost:1313/temp/">
+
+  
+  
+
+  
+  <link href="http://localhost:1313/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="http://localhost:1313/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="http://localhost:1313/img/profile.svg"
+  
+  >
+
+
+  <link href="http://localhost:1313/temp/index.xml" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="http://localhost:1313/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="http://localhost:1313/">
+          
+        <img class="avatar imgRotate" src="http://localhost:1313/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="http://localhost:1313/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="http://localhost:1313/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="http://localhost:1313/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('http://localhost:1313/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="http://localhost:1313/">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="http://localhost:1313/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="http://localhost:1313/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href="http://localhost:1313/temp/index.xml"><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  <main class="post-main-wrapper px-5">
+    
+    <div class="row">
+
+      
+      
+        
+        <div class="col-md-3">
+          
+
+
+
+
+
+    
+          
+
+  
+
+
+
+
+
+  <hr>
+  
+    <div class="post-meta">
+      <div class="mb-2">
+        <a href="http://localhost:1313/tags/">
+          <span class="font-weight-bold text-uppercase post-meta">
+            <i class="fas fa-tags pr-1" aria-hidden="true"></i>
+            Featured Tags
+          </span>
+        </a>
+      </div>
+
+      <div class="li-x post-meta tags-md" style="margin-left: -8px;">
+
+        
+            <li><a href="http://localhost:1313/tags/linux" role="button"><span>linux (14)</span></a></li>
+        
+            <li><a href="http://localhost:1313/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button"><span>操作系统 (12)</span></a></li>
+        
+            <li><a href="http://localhost:1313/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (8)</span></a></li>
+        
+      </div>
+    </div>
+
+    
+  
+
+          
+
+
+
+
+
+
+  
+
+        </div>
+        
+
+        
+        
+        <div class="col-md-9 mt-3">  
+      
+          <ul>
+            <div class="div-x">
+              <div class='post-heading'>
+  
+      
+  
+</div>
+
+              
+              
+                <div class="px-2 middot"></div>
+                <div>
+                  19 posts
+                </div>
+              
+            </div>
+
+            
+              <div class="post-content markdown">
+                <h1 id="函数式编程">函数式编程</h1>
+<p><a href="https://pkgs.org/download/gawk">123213123</a></p>
+
+              </div>
+            
+        </ul>
+        <div>
+          <div class="pagination pagination-outline justify-content-end active-color">
+            
+            
+    <ul class="pagination pagination-default">
+      <li class="page-item disabled">
+        <a aria-disabled="true" aria-label="First" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&laquo;&laquo;</span></a>
+      </li>
+      <li class="page-item disabled">
+        <a aria-disabled="true" aria-label="Previous" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&laquo;</span></a>
+      </li>
+      <li class="page-item active">
+        <a aria-current="page" aria-label="Page 1" class="page-link" role="button">1</a>
+      </li>
+      <li class="page-item">
+        <a href="http://localhost:1313/temp/page/2/" aria-label="Page 2" class="page-link" role="button">2</a>
+      </li>
+      <li class="page-item">
+        <a href="http://localhost:1313/temp/page/2/" aria-label="Next" class="page-link" role="button"><span aria-hidden="true">&raquo;</span></a>
+      </li>
+      <li class="page-item">
+        <a href="http://localhost:1313/temp/page/2/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
+      </li>
+    </ul>
+          </div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="http://localhost:1313/temp/tekton/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">CI/CD框架的框架Tekton</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2021-02-03</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>One minute read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      任务Task 条件控制 我们可以通
+串并行控制 流水线 触发器 管理后台......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="http://localhost:1313/temp/iptables/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">IPTABLES</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2021-01-06</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>One minute read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      广义的 iptalbes 是指一套 Linux 包过滤系统，由几个运行在内核态的 netfilter 钩子模块和一个运行在用户态的同名前端工具组成，iptables工具在用户空间通过 netlink（一种特殊的socket）和内核netfilter模块进行通信。
+顾名思义，iptables，IP表，是一张基于 IP 协议的表，其面向的对象是一个一个 IP 包。
+还有一些基于 iptables 封装的 GUI 软件，比如：shorewall，easywall等等，甚至有些 Linux 发行版也会自己集成 iptables 的 gui 管理，比如：openwrt。 Linux包处理系统进化史 基本概念 操作类别 -A –append 追加规则 规则位置 表 链 规则内容 条件 动作 例子......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="http://localhost:1313/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="http://localhost:1313/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
+      
+    
+      <li><a href="http://localhost:1313/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
+      
+    
+      <li><a href="http://localhost:1313/tags/linux" role="button">Linux </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="http://localhost:1313/temp/mq-compare/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">主流消息队列对比</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>0001-01-01</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>One minute read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+       消息队列 RocketMQ Kafka NSQ RabbitMQ ActiveMQ 官网地址 https://rocketmq.apache.org https://kafka.apache.org https://nsq.io https://www.rabbitmq.com http://activemq.apache.org 广播消息 支持 半支持（所有节点都自己注册一个group） 顺序消费 优先级队列 服务发现 自己搭的 ZooKeeper 一致性算法 Raft(Dledger) ZAB( ZooKeeper Atomic Broadcast) 延迟消息 支持 不支持 支持 支持 吞吐量 实时性 事务 消息过滤 实现语言 Java Java Golang Erlang Java 支持协议 AMQP AMQP、STOMP、MQTT、JMS ......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="http://localhost:1313/temp/tcp%E7%9F%A5%E8%AF%86%E7%82%B9/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">TCP知识点</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>0001-01-01</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>4 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      TCP 在 Linux 中的底层实现 /include/linux/tcp.h 下的 tcp_sock 结构体：
+struct tcp_sock { struct inet_sock { __u32	daddr;	// 对端 IPv4 地址 __u32	rcv_saddr;	// 绑定的本地 IPv4 地址 __u16	dport;	// 对端端口 __u16	num;	// 本地端口 __u16	sport;	// 源端口 } int	tcp_header_len;	// 头部长度 /* *	Header prediction flags *	0x5?10 &lt;&lt; 16 &#43; snd_wnd in net byte order */ __u32	pred_flags; __u32	rcv_nxt;	// 期望收到的下一个序列号：ACK __u32	snd_nxt; // 下一个要发送的序列号 __u32	rcv_tstamp;	/* 最后 ACK 的时间 (for keepalives) */ __u32	lsndtime;	/* 最后发出包的时间 (for restart window) */ /* Delayed ACK control data */ struct { __u8	pending;	/* ACK is pending */ __u8	quick;	/* Scheduled number of quick acks	*/ __u8	pingpong;	/* The session is interactive	*/ __u8	blocked;	/* Delayed ACK was blocked by socket lock*/ __u32	ato;	/* Predicted tick of soft clock	*/ unsigned long timeout;	/* Currently scheduled timeout	*/ __u32	lrcvtime;	/* timestamp of last received data packet*/ __u16	last_seg_size;	/* Size of last incoming segment	*/ __u16	rcv_mss;	/* MSS used for delayed ACK decisions	*/ } ack; /* Data for direct copy to user */ struct { struct sk_buff_head	prequeue; struct task_struct	*task; struct iovec	*iov; int	memory; int	len; } ucopy; __u32	snd_wl1;	/* Sequence for window update	*/ __u32	snd_wnd;	/* The window we expect to receive	*/ __u32	max_window;	/* Maximal window ever seen from peer	*/ __u32	pmtu_cookie;	/* Last pmtu seen by socket	*/ __u32	mss_cache;	/* Cached effective mss, not including SACKS */ __u16	mss_cache_std;	/* Like mss_cache, but without TSO */ __u16	ext_header_len;	/* Network protocol overhead (IP/IPv6 options) */ __u16	ext2_header_len;/* Options depending on route */ __u8	ca_state;	/* State of fast-retransmit machine */ __u8	retransmits;	/* Number of unrecovered RTO timeouts.	*/ __u32	frto_highmark;	/* snd_nxt when RTO occurred */ __u8	reordering;	/* Packet reordering metric.	*/ __u8	frto_counter;	/* Number of new acks after RTO */ __u8	adv_cong;	/* Using Vegas, Westwood, or BIC */ __u8	defer_accept;	/* User waits for some data after accept() */ /* RTT measurement */ __u32	srtt;	/* smoothed round trip time &lt;&lt; 3	*/ __u32	mdev;	/* medium deviation	*/ __u32	mdev_max;	/* maximal mdev for the last rtt period	*/ __u32	rttvar;	/* smoothed mdev_max	*/ __u32	rtt_seq;	/* sequence number to update rttvar	*/ __u32	rto;	/* retransmit timeout	*/ __u32	packets_out;	/* Packets which are &#34;in flight&#34;	*/ __u32	left_out;	/* Packets which leaved network	*/ __u32	retrans_out;	/* Retransmitted packets out	*/ __u8	backoff;	/* backoff	*/ /* * Options received (usually on last packet, some only on SYN packets). */ __u8	nonagle;	/* Disable Nagle algorithm? */ __u8	keepalive_probes; /* num of allowed keep alive probes	*/ __u8	probes_out;	/* unanswered 0 window probes	*/ struct tcp_options_received rx_opt; /* *	Slow start and congestion control (see also Nagle, and Karn &amp; Partridge) */ __u32	snd_ssthresh;	/* Slow start size threshold	*/ __u32	snd_cwnd;	/* Sending congestion window	*/ __u16	snd_cwnd_cnt;	/* Linear increase counter	*/ __u16	snd_cwnd_clamp; /* Do not allow snd_cwnd to grow above this */ __u32	snd_cwnd_used; __u32	snd_cwnd_stamp; /* Two commonly used timers in both sender and receiver paths. */ unsigned long	timeout; struct timer_list	retransmit_timer;	/* Resend (no ack)	*/ struct timer_list	delack_timer;	/* Ack delay */ struct sk_buff_head	out_of_order_queue; /* Out of order segments go here */ struct tcp_func	*af_specific;	/* Operations which are AF_INET{4,6} specific	*/ __u32	rcv_wnd;	/* Current receiver window	*/ __u32	rcv_wup;	/* rcv_nxt on last window update sent	*/ __u32	write_seq;	/* Tail(&#43;1) of data held in tcp send buffer */ __u32	pushed_seq;	/* Last pushed seq, required to talk to windows */ __u32	copied_seq;	/* Head of yet unread data	*/ /*	SACKs data	*/ struct tcp_sack_block duplicate_sack[1]; /* D-SACK block */ struct tcp_sack_block selective_acks[4]; /* The SACKS themselves*/ __u32	window_clamp;	/* Maximal window to advertise	*/ __u32	rcv_ssthresh;	/* Current window clamp	*/ __u16	advmss;	/* Advertised MSS	*/ __u8	syn_retries;	/* num of allowed syn retries */ __u8	ecn_flags;	/* ECN status bits.	*/ __u16	prior_ssthresh; /* ssthresh saved at recovery start	*/ __u16	__pad1; __u32	lost_out;	/* Lost packets	*/ __u32	sacked_out;	/* SACK&#39;d packets	*/ __u32	fackets_out;	/* FACK&#39;d packets	*/ __u32	high_seq;	/* snd_nxt at onset of congestion	*/ __u32	retrans_stamp;	/* Timestamp of the last retransmit, * also used in SYN-SENT to remember stamp of * the first SYN. */ __u32	undo_marker;	/* tracking retrans started here. */ int	undo_retrans;	/* number of undoable retransmissions. */ __u32	urg_seq;	/* Seq of received urgent pointer */ __u16	urg_data;	/* Saved octet of OOB data and control flags */ __u8	pending;	/* Scheduled timer event	*/ __u8	urg_mode;	/* In urgent mode	*/ __u32	snd_up;	/* Urgent pointer	*/ __u32	total_retrans;	/* Total retransmits for entire connection */ /* The syn_wait_lock is necessary only to avoid proc interface having * to grab the main lock sock while browsing the listening hash * (otherwise it&#39;s deadlock prone). * This lock is acquired in read mode only from listening_get_next() * and it&#39;s acquired in write mode _only_ from code that is actively * changing the syn_wait_queue. All readers that are holding * the master sock lock don&#39;t need to grab this lock in read mode * too as the syn_wait_queue writes are always protected from * the main sock lock. */ rwlock_t	syn_wait_lock; struct tcp_listen_opt	*listen_opt; /* FIFO of established children */ struct open_request	*accept_queue; struct open_request	*accept_queue_tail; unsigned int	keepalive_time;	/* time before keep alive takes place */ unsigned int	keepalive_intvl; /* time interval between keep alive probes */ int	linger2; unsigned long last_synq_overflow; /* Receiver side RTT estimation */ struct { __u32	rtt; __u32	seq; __u32	time; } rcv_rtt_est; /* Receiver queue space */ struct { int	space; __u32	seq; __u32	time; } rcvq_space; /* TCP Westwood structure */ struct { __u32 bw_ns_est; /* first bandwidth estimation..not too smoothed 8) */ __u32 bw_est; /* bandwidth estimate */ __u32 rtt_win_sx; /* here starts a new evaluation... */ __u32 bk; __u32 snd_una; /* used for evaluating the number of acked bytes */ __u32 cumul_ack; __u32 accounted; __u32 rtt; __u32 rtt_min; /* minimum observed RTT */ } westwood; /* Vegas variables */ struct { __u32	beg_snd_nxt;	/* right edge during last RTT */ __u32	beg_snd_una;	/* left edge during last RTT */ __u32	beg_snd_cwnd;	/* saves the size of the cwnd */ __u8	doing_vegas_now;/* if true, do vegas for this RTT */ __u16	cntRTT;	/* # of RTTs measured within last RTT */ __u32	minRTT;	/* min of RTTs measured within last RTT (in usec) */ __u32	baseRTT;	/* the min of all Vegas RTT measurements seen (in usec) */ } vegas; /* BI TCP Parameters */ struct { __u32	cnt;	/* increase cwnd by 1 after this number of ACKs */ __u32 last_max_cwnd;	/* last maximium snd_cwnd */ __u32	last_cwnd;	/* the last snd_cwnd */ __u32 last_stamp; /* time when updated last_cwnd */ } bictcp; }; SO_REUSEPORT 可以让同一个端口被多个进程冲突，做到多进程同时提供服务，内核来进行负载均衡。
+......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="http://localhost:1313/temp/pool/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">Pool</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>0001-01-01</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>2 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      常见硬件设备的速度 Linux守护进程是什么 僵尸进程孤儿进程是什么 进程间通信的方式 操作系统线程切换过程 Linux进程生命周期 Linux进程调度策略 分页和分段有什么区别 虚拟内存的意义 进程内存隔离 提供超过物理内存的空间 给应用程序提供固定的内存地址 降低物理内存占用率：不使用的空间就不会出现在物理内存中 Linux内存管理机制 有数据的地方就有格式。磁盘有文件格式，网络有协议格式，而内存则也有其一套对应的管理机制。
+物理内存管理 分段：将内存地址分成很多个大段，实际访问时需要同时传入段号和逻辑地址，段号即对应的基址地址，然后经由 MMU 翻译找到对应的线性页地址，然后 MMU 再翻译到最终的物理内存地址；分段可以隔离内存空间，比如每个应用一个段，或者应用之内又分为代码段、栈段等，但是只能将整个段替换至交换区，仍然无法解决加载不了超过内存大小的应用的问题。Linux 并没有使用分段功能，将整块内存视为了一个段，因为很多 RISC 处理器并不支持分段功能。
+......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="http://localhost:1313/temp/%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E6%A8%A1%E5%9E%8B/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">IO多路复用模型：KQueue</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>0001-01-01</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>6 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      输入输出 输入输出是冯·诺依曼结构型计算机中一个非常重要的组成部分，一台计算机中除了计算单元和内存其他的组成设备都可以抽象成I/O设备，比如：网卡、磁盘、键盘鼠标、耳机音响显示器。
+文件 Unix 类系统把所有的 I/O 设备都抽象成了一个文件，文件具有 read 和 write 两种方法。在 Linux 中，文件以文件描述符（FileDescriptor：FD）的方式表示，FD 在 Linux 的 API 中是一个非负的 int 数字，而在 64位机器上，int 是一个 64位的数字，所以理论上最大打开文件的数量是：2^63-1 = 9223372036854775807，但是这个通常受内存等很多因素的限制，最直接的内核会限制打开文件的最大数量，可以通过修改和查看文件 /proc/sys/fs/file-max 来设置：
+......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="http://localhost:1313/temp/%E8%BF%91%E8%A7%86%E7%9A%84%E6%9C%AC%E8%B4%A8/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading"></div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>0001-01-01</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>One minute read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      https://www.ixueshu.com/download/c2ce2a60dbe1de5d6a92cef1e8e10afb318947a18e7f9386.html
+部分学者有一个很有意思的观点，近视有可能是人类现代社会化的正常产物，我们不应该视其为洪水猛兽，而应正常对待，只有一个人戴眼镜校正后的视力是正常的，那么他就是一个健康的正常人。
+......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="http://localhost:1313/temp/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E5%AF%B9%E6%AF%94/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading"></div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>0001-01-01</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>One minute read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+       Java Golang Node JS 包管理 maven module npm 依赖描述文件 pom.xml go.mod package.json ......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="http://localhost:1313/temp/%E7%AE%97%E6%B3%95%E5%BF%83%E5%BE%97/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading"></div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>0001-01-01</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>One minute read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      链表类 数组类 二叉树类......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+              <div class="post-wrapper white-bg post-card">
+  
+  <a href="http://localhost:1313/temp/%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading"></div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>0001-01-01</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>One minute read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      HBase Hadoop Database 一个分布式、面向列的数据库。 HBase 是 Google Bigtable 的开源实现，基于 HDFS（Hadoop Distributed File System）这个文件系统实现。
+相较于 Hive，HBase 是实时的在线的，而Hive只是一个离线的ETL计算工具。
+使用 Zookeeper 存放集群元信息。
+Hive hive 是一个工具，可以将 SQL 转换为 MapReduce 逻辑去执行。
+MapReduce MapReduce是 Hadoop 生态下的一个离线分布式计算引擎，主要用于单机无法处理的数据规模的场景，配合 HDFS 使用。
+MapReduce、Spark 本质上是批处理计算引擎，而 Flink 和 Strom 则是一个在线、低延迟流处理引擎。
+......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+            
+        </div>
+      </div>
+      
+
+    </div>
+  </main>
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href="http://localhost:1313/temp/index.xml"><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2026 &copy; <a href="http://localhost:1313/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.6.1/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.20.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="http://localhost:1313/js/main.js"></script>
+
+
+
+
+  <script src="http://localhost:1313/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+  </body>
+</html>

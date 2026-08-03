@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dns on Anonymous&#39; Blog</title>
+    <link>http://localhost:1313/tags/dns/</link>
+    <description>Recent content in Dns on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Thu, 23 Dec 2021 01:19:00 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/dns/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>NodeLocalDNS实现原理</title>
+      <link>http://localhost:1313/nodelocaldns-principle/</link>
+      <pubDate>Thu, 23 Dec 2021 01:19:00 +0800</pubDate>
+      <guid>http://localhost:1313/nodelocaldns-principle/</guid>
+      <description>&lt;h1 id=&#34;nodelocaldns&#34;&gt;NodeLocalDNS&lt;/h1&gt;&#xA;&lt;p&gt;引入NodeLocalDNS的意义：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;避免 contra&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+    </item>
+  </channel>
+</rss>

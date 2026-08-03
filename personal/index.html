@@ -7,13 +7,14 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="[好奇心探索世界 善意假设 做最酷的事情]">
+  <meta name="description" content="好奇心探索世界，善意假设，做最酷的事情">
 
-  <meta property="og:title" content="Personals" />
-<meta property="og:description" content="[好奇心探索世界 善意假设 做最酷的事情]" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://huweicai.com/personal/" />
-
+  <meta property="og:url" content="https://huweicai.com/personal/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="Personals">
+  <meta property="og:description" content="好奇心探索世界，善意假设，做最酷的事情">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="website">
 
    
 
@@ -106,7 +107,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -125,7 +126,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -194,7 +195,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -202,7 +203,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -314,7 +315,7 @@
     
 
     
-      slug: &#34;stand-alone-network-model &#34; tags: [&#34;操作系统&#34;,&#34;网络&#34;,&#34;Linux&#34;,&#34;docker&#34;,&#34;容器&#34;] date: 2021-06-20T01:20:00&#43;08:00 toc: true title: 经典单机容器网络模型-Docker # 参考文档 1. https://docs.docker.com/network/bridge/ 2. https://docs.docker.com/network/iptables/......
+      slug: &#34;stand-alone-network-model&#34; tags: [&#34;操作系统&#34;,&#34;网络&#34;,&#34;Linux&#34;,&#34;docker&#34;,&#34;容器&#34;] date: 2021-06-20T01:20:00&#43;08:00 toc: true title: 经典单机容器网络模型-Docker # 参考文档 1. https://docs.docker.com/network/bridge/ 2. https://docs.docker.com/network/iptables/ ......
     
   </a>
 
@@ -353,7 +354,12 @@
     
 
     
-      Go内存示意图 page 内存页面的最小单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB mheap 是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。 mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。 type mheap struct { allspans []*mspan // all spans out there arenas [1]*[4194304]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB // pagesPerArena = 8192 = 8 * 1024 // heapArenaBitmapBytes = 2097152......
+      Go内存示意图 page 内存页面的最小单元，大小为：_PageShift = 13;_PageSize = 1 &lt;&lt; _PageShift = 8KB
+mheap 是一个全局唯一的对象，代表整个堆，当堆空间不够时，会通过 mmap 系统调用申请一块大小为 64MB 的内存，封装为一个 arena 进行管理。
+mheap 中 arenas 数组最多可以管理：4194304 个 arena，每个 arena 64MB，所以 mheap 总共可以管理 256TB 的内存。
+type mheap struct { allspans []*mspan // all spans out there arenas [1]*[4194304]*heapArena central [134]struct { // 134 = 57 * 2，有 57 种大小类型的内存 mcentral mcentral } } arena 每个 arena 64 MB
+// pagesPerArena = 8192 = 8 * 1024 // heapArenaBitmapBytes = 2097152 = 2 * 1024 * 1024 type heapArena struct { // bitmap stores the pointer/scalar bitmap for the words in // this arena. See mbitmap.go for a description. Use the // heapBits type to access this. bitmap [heapArenaBitmapBytes]byte spans [pagesPerArena]*mspan // 页到 mspan 的映射 pageInUse [pagesPerArena / 8]uint8 // bitmap 标记哪些页在使用中 } mspan Go 内存分配的最基本单元，从 8KB 到 32KB 分为 67 个不同的类别
+......
     
   </a>
 

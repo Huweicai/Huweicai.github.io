@@ -7,15 +7,36 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。 基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。 Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：">
+  <meta name="description" content="Fluent Bit
 
-  <meta property="og:title" content="Fluent Bit介绍" />
-<meta property="og:description" content="Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。 基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。 Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/fluent-bit/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2021-05-05T13:58:00+08:00" />
-<meta property="article:modified_time" content="2021-05-05T13:58:00+08:00" />
+Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。
+基本概念
+大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。
+Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：
 
+输入部分负责采集原始日志；
+解析部分将原始日志结构化，比如提取字段、解转义等操作；
+过滤部分可以对日志做一些的统一的过滤和修改操作，比如增加一些统一的字段，过滤一些脏日志等等
+然后日志会被放到缓冲区等待发送
+路由部分会决策这个包应该发送到哪些输出
+输出将日志真正转发出去
+
+">
+
+  <meta property="og:url" content="https://huweicai.com/fluent-bit/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="Fluent Bit介绍">
+  <meta property="og:description" content="Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。
+基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。
+Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：
+输入部分负责采集原始日志； 解析部分将原始日志结构化，比如提取字段、解转义等操作； 过滤部分可以对日志做一些的统一的过滤和修改操作，比如增加一些统一的字段，过滤一些脏日志等等 然后日志会被放到缓冲区等待发送 路由部分会决策这个包应该发送到哪些输出 输出将日志真正转发出去">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2021-05-05T13:58:00+08:00">
+    <meta property="article:modified_time" content="2021-05-05T13:58:00+08:00">
+    <meta property="article:tag" content="容器">
+    <meta property="article:tag" content="日志">
+    <meta property="article:tag" content="Cloudnative">
 
    
 
@@ -108,7 +129,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +148,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +217,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +225,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -411,55 +432,55 @@
 <img src="https://dytvr9ot2sszz.cloudfront.net/wp-content/uploads/2018/06/kuberbetes-monitoring-arch-1.jpg" alt="img" style="zoom:50%;" />
 <p>详细对比：</p>
 <table>
-<thead>
-<tr>
-<th></th>
-<th>Fluentd</th>
-<th>Fluent Bit</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>使用范围</td>
-<td>容器 / 服务器</td>
-<td>嵌入式 Linux / 容器 / 服务器</td>
-</tr>
-<tr>
-<td>语言</td>
-<td>C &amp; Ruby</td>
-<td>C</td>
-</tr>
-<tr>
-<td>内存</td>
-<td>~40MB</td>
-<td>~650KB</td>
-</tr>
-<tr>
-<td>性能</td>
-<td>高</td>
-<td>高</td>
-</tr>
-<tr>
-<td>日志聚合</td>
-<td>YES</td>
-<td>NO</td>
-</tr>
-<tr>
-<td>依赖</td>
-<td>依赖一些 ruby gem</td>
-<td>零依赖</td>
-</tr>
-<tr>
-<td>插件</td>
-<td>1000+</td>
-<td>70+</td>
-</tr>
-<tr>
-<td>Github Star</td>
-<td>10.2k</td>
-<td>2.7k</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th></th>
+          <th>Fluentd</th>
+          <th>Fluent Bit</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>使用范围</td>
+          <td>容器 / 服务器</td>
+          <td>嵌入式 Linux / 容器 / 服务器</td>
+      </tr>
+      <tr>
+          <td>语言</td>
+          <td>C &amp; Ruby</td>
+          <td>C</td>
+      </tr>
+      <tr>
+          <td>内存</td>
+          <td>~40MB</td>
+          <td>~650KB</td>
+      </tr>
+      <tr>
+          <td>性能</td>
+          <td>高</td>
+          <td>高</td>
+      </tr>
+      <tr>
+          <td>日志聚合</td>
+          <td>YES</td>
+          <td>NO</td>
+      </tr>
+      <tr>
+          <td>依赖</td>
+          <td>依赖一些 ruby gem</td>
+          <td>零依赖</td>
+      </tr>
+      <tr>
+          <td>插件</td>
+          <td>1000+</td>
+          <td>70+</td>
+      </tr>
+      <tr>
+          <td>Github Star</td>
+          <td>10.2k</td>
+          <td>2.7k</td>
+      </tr>
+  </tbody>
 </table>
 <h1 id="hello-world">HELLO WORLD</h1>
 <h2 id="安装">安装</h2>

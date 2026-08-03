@@ -7,15 +7,38 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="这是一个很常见的 SQL 建表语句： CREATETABLE`people`(`id`intNOTNULLAUTO_INCREMENT,`name`varchar(40)DEFAULTNULL,PRIMARYKEY(`id`))ENGINE=InnoDBDEFAULTCHARSET=utf8SQL 建表语句结构如下： CREATE[TEMPORARY]TABLE[IFNOTEXISTS]tbl_name(create_definition,...)[table_options]我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一">
+  <meta name="description" content="这是一个很常见的 SQL 建表语句：
+CREATE TABLE `people` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+SQL 建表语句结构如下：
+CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name
+    (create_definition,...)
+    [table_options]
+我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。
+AUTO_INCREMENT
+MySQL 一张表中可以指定一个字段为  auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过：
+select LAST_INSERT_ID();
+来获取 MySQL 自动生成的 ID。">
 
-  <meta property="og:title" content="MySQL建表选项" />
-<meta property="og:description" content="这是一个很常见的 SQL 建表语句： CREATETABLE`people`(`id`intNOTNULLAUTO_INCREMENT,`name`varchar(40)DEFAULTNULL,PRIMARYKEY(`id`))ENGINE=InnoDBDEFAULTCHARSET=utf8SQL 建表语句结构如下： CREATE[TEMPORARY]TABLE[IFNOTEXISTS]tbl_name(create_definition,...)[table_options]我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。 AUTO_INCREMENT MySQL 一张表中可以指定一" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/mysql-create-options/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2019-11-13T00:13:31+08:00" />
-<meta property="article:modified_time" content="2019-11-13T00:13:31+08:00" />
-
+  <meta property="og:url" content="https://huweicai.com/mysql-create-options/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="MySQL建表选项">
+  <meta property="og:description" content="这是一个很常见的 SQL 建表语句：
+CREATE TABLE `people` ( `id` int NOT NULL AUTO_INCREMENT, `name` varchar(40) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 SQL 建表语句结构如下：
+CREATE [TEMPORARY] TABLE [IF NOT EXISTS] tbl_name (create_definition,...) [table_options] 我们对照结构可以看到我们的建表语句最后一部分是表选项，而在这里我们指定了两个选项：引擎和字符集，那么总共都有哪些选项可以设置呢？参照MySQL官方文档，我们一起来看看。
+AUTO_INCREMENT MySQL 一张表中可以指定一个字段为 auto increment，这样在当这个字段没有指定值时就在当前表最大值的基础上自增，在插入了自增的一列后，可以通过：
+select LAST_INSERT_ID(); 来获取 MySQL 自动生成的 ID。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2019-11-13T00:13:31+08:00">
+    <meta property="article:modified_time" content="2019-11-13T00:13:31+08:00">
+    <meta property="article:tag" content="MySQL">
+    <meta property="article:tag" content="InnoDB">
+    <meta property="article:tag" content="数据库">
+    <meta property="article:tag" content="存储">
 
    
 
@@ -108,7 +131,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +150,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +219,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +227,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -295,7 +318,7 @@
             <li class="middot"></li>
             <li>7 minutes read</li>
         
-        <li>3424 words</li>
+        <li>3226 words</li>
 
     </ul>
     
@@ -309,7 +332,7 @@
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">)</span><span class="w"> </span><span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8</span><span class="w">
 </span></span></span></code></pre></div><p>SQL 建表语句结构如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="p">[</span><span class="k">TEMPORARY</span><span class="p">]</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="p">[</span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="p">]</span><span class="w"> </span><span class="n">tbl_name</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">(</span><span class="n">create_definition</span><span class="p">,...)</span><span class="w">
@@ -323,7 +346,7 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">peoples</span><span class="w"> </span><span class="p">(</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">auto_increment</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="k">null</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">13</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">)</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">13</span><span class="p">;</span><span class="w">
 </span></span></span></code></pre></div><h4 id="avg_row_length">AVG_ROW_LENGTH</h4>
 <h4 id="character-set">CHARACTER SET</h4>
 <p>可以指定这个表使用的默认字符集（因为也可以针对列单独设置字符集），如果表不指定或者设置成 default 的话则会使用库的默认字符集，如果数据库的也没有设置的，MySQL Server 的默认字符集是 utf8mb4。</p>
@@ -353,54 +376,54 @@ CREATE TABLE `people` (
 <p><code>SHOW CHARACTER SET where Charset= 'utf8mb4';</code></p>
 <p>输出：</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Charset</th>
-<th style="text-align:left">Description</th>
-<th style="text-align:left">Default collation</th>
-<th style="text-align:left">Maxlen</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">utf8mb4</td>
-<td style="text-align:left">UTF-8 Unicode</td>
-<td style="text-align:left">utf8mb4_0900_ai_ci</td>
-<td style="text-align:left">4</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Charset</th>
+          <th style="text-align: left">Description</th>
+          <th style="text-align: left">Default collation</th>
+          <th style="text-align: left">Maxlen</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">utf8mb4</td>
+          <td style="text-align: left">UTF-8 Unicode</td>
+          <td style="text-align: left">utf8mb4_0900_ai_ci</td>
+          <td style="text-align: left">4</td>
+      </tr>
+  </tbody>
 </table>
 <p>ai 表示 accent insensitive，口音无关，比如：e, è, é, ê 会被视为一样的；</p>
 <p>ci 则代表 case insensitive，大小写无关，A 和 a 会被视为同样的字符，所以我们会看到非常神奇的一幕：</p>
 <p>执行：<code>select 'A' = 'a','A'= 'A','A' = 'B'</code>;</p>
 <p>输出：</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"><code>'A' = 'a'</code></th>
-<th style="text-align:left"><code>'A'= 'A'</code></th>
-<th style="text-align:left"><code>'A' = 'B'</code></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">1</td>
-<td style="text-align:left">1</td>
-<td style="text-align:left">0</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"><code>'A' = 'a'</code></th>
+          <th style="text-align: left"><code>'A'= 'A'</code></th>
+          <th style="text-align: left"><code>'A' = 'B'</code></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">1</td>
+          <td style="text-align: left">1</td>
+          <td style="text-align: left">0</td>
+      </tr>
+  </tbody>
 </table>
 <p>所以 <code>select * from table where string=&quot;xxx&quot;</code> 的时候就要注意了，默认是不区分大小写的，可以临时指定使用其他的字符序，或者根据业务场景判断是否需要在建表的时候就把表的字符序就设置为大小写敏感的字符序，比如：<code>utf8mb4_0900_as_cs</code> 等包含 _cs 的字符序：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">people</span><span class="w"> </span><span class="p">(</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">auto_increment</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="k">null</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="nb">character</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;utf8mb4&#39;</span><span class="w"> </span><span class="k">collate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;utf8mb4_0900_as_cs&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">)</span><span class="w"> </span><span class="nb">character</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;utf8mb4&#39;</span><span class="w"> </span><span class="k">collate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;utf8mb4_0900_as_cs&#39;</span><span class="p">;</span><span class="w">
 </span></span></span></code></pre></div><h4 id="comment">COMMENT</h4>
 <p>加个注释，方便日后维护，写注释是个好习惯，有的公司的 SQL 工单平台甚至会强制必须有注释。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">people</span><span class="w"> </span><span class="p">(</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">auto_increment</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="k">null</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="k">comment</span><span class="w"> </span><span class="s1">&#39;存储人物信息&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">)</span><span class="w"> </span><span class="k">comment</span><span class="w"> </span><span class="s1">&#39;存储人物信息&#39;</span><span class="p">;</span><span class="w">
 </span></span></span></code></pre></div><h4 id="compression">COMPRESSION</h4>
 <p>开启表压缩选项，只对 InnoDB 引擎有效，支持：Zlib 和 LZ4两种压缩算法，可以置成 None 关闭。</p>
 <h4 id="connection">CONNECTION</h4>
@@ -416,236 +439,236 @@ CREATE TABLE `people` (
 <h4 id="engine">ENGINE</h4>
 <p>这应该是被使用最多的选项了，为要创建的这个表单独指定存储引擎。支持的引擎如下：</p>
 <table>
-<thead>
-<tr>
-<th>引擎</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>InnoDB</td>
-<td>支持事务、行锁、外键等高级特性，主键聚簇。具有良好的性能和可靠性。MySQL默认的存储引擎。</td>
-</tr>
-<tr>
-<td>MyISAM</td>
-<td>由ISAM（Indexed Sequential Access Metod）引擎改良，可移植性好，占用空间小，但是表级别的锁使得并发读写性能较差，适用于只有查询或者读多写少的场景，如：服务配置存储等。</td>
-</tr>
-<tr>
-<td>Memory</td>
-<td>又被叫做：Heap，数据存储在内存中，可靠性较低，一般用于临时表场景使用。另外 InnoDB 也支持内存缓存可以大量甚至全部数据载入内存，所以这个引擎使用场景越来越少了。</td>
-</tr>
-<tr>
-<td>CSV</td>
-<td>数据通过 CSV(Comma-Separated Values)的格式存储，可读性和可操作性非常好，但是由于数据未经过索引，性能很差，所以一般用于将其他表中的数据导过来用于与其他应用交互。</td>
-</tr>
-<tr>
-<td>Archive</td>
-<td>支持压缩，无索引，适用于存储大量冷门归档数据。</td>
-</tr>
-<tr>
-<td>Blackhole</td>
-<td>黑洞，不存储数据，查询也都会返回空。但这也并不代表这个引擎没有实际价值，它虽然不存储数据但是 binlog 还是会有，所以经常用于做为伪从库减轻主库压力或者记录binlog用。</td>
-</tr>
-<tr>
-<td>NDB</td>
-<td>全称Network DataBase，是一个分布式存储引擎。</td>
-</tr>
-<tr>
-<td>Merge</td>
-<td>可以用于将一系列 MyISM 抽象为一张表。</td>
-</tr>
-<tr>
-<td>Federated</td>
-<td>可以将其他远程数据的表映射到本地。</td>
-</tr>
-<tr>
-<td>Example</td>
-<td>主要是一个 demo，供开发人员学习如何开发一个存储引擎。</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>引擎</th>
+          <th>描述</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>InnoDB</td>
+          <td>支持事务、行锁、外键等高级特性，主键聚簇。具有良好的性能和可靠性。MySQL默认的存储引擎。</td>
+      </tr>
+      <tr>
+          <td>MyISAM</td>
+          <td>由ISAM（Indexed Sequential Access Metod）引擎改良，可移植性好，占用空间小，但是表级别的锁使得并发读写性能较差，适用于只有查询或者读多写少的场景，如：服务配置存储等。</td>
+      </tr>
+      <tr>
+          <td>Memory</td>
+          <td>又被叫做：Heap，数据存储在内存中，可靠性较低，一般用于临时表场景使用。另外 InnoDB 也支持内存缓存可以大量甚至全部数据载入内存，所以这个引擎使用场景越来越少了。</td>
+      </tr>
+      <tr>
+          <td>CSV</td>
+          <td>数据通过 CSV(Comma-Separated Values)的格式存储，可读性和可操作性非常好，但是由于数据未经过索引，性能很差，所以一般用于将其他表中的数据导过来用于与其他应用交互。</td>
+      </tr>
+      <tr>
+          <td>Archive</td>
+          <td>支持压缩，无索引，适用于存储大量冷门归档数据。</td>
+      </tr>
+      <tr>
+          <td>Blackhole</td>
+          <td>黑洞，不存储数据，查询也都会返回空。但这也并不代表这个引擎没有实际价值，它虽然不存储数据但是 binlog 还是会有，所以经常用于做为伪从库减轻主库压力或者记录binlog用。</td>
+      </tr>
+      <tr>
+          <td>NDB</td>
+          <td>全称Network DataBase，是一个分布式存储引擎。</td>
+      </tr>
+      <tr>
+          <td>Merge</td>
+          <td>可以用于将一系列 MyISM 抽象为一张表。</td>
+      </tr>
+      <tr>
+          <td>Federated</td>
+          <td>可以将其他远程数据的表映射到本地。</td>
+      </tr>
+      <tr>
+          <td>Example</td>
+          <td>主要是一个 demo，供开发人员学习如何开发一个存储引擎。</td>
+      </tr>
+  </tbody>
 </table>
 <p>各引擎支持的功能特性对比：</p>
 <table>
-<thead>
-<tr>
-<th>Feature</th>
-<th>MyISAM</th>
-<th>Memory</th>
-<th>InnoDB</th>
-<th>Archive</th>
-<th>NDB</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>B树索引</strong></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><strong>备份/恢复</strong></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><strong>分布式集群支持</strong></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><strong>聚簇索引</strong></td>
-<td>No</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><strong>数据压缩</strong></td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-<tr>
-<td><strong>数据缓存</strong></td>
-<td>No</td>
-<td>N/A</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><strong>数据加密</strong></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><strong>外键</strong></td>
-<td>No</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><strong>全文搜索（倒排）</strong></td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><strong>地理空间数据</strong></td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><strong>地理空间索引</strong></td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><strong>散列索引</strong></td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><strong>索引缓存</strong></td>
-<td>Yes</td>
-<td>N/A</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><strong>锁粒度</strong></td>
-<td>Table</td>
-<td>Table</td>
-<td>Row</td>
-<td>Row</td>
-<td>Row</td>
-</tr>
-<tr>
-<td><strong>MVCC</strong></td>
-<td>No</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td><strong>冗余存储</strong> (note 1)</td>
-<td>Yes</td>
-<td>Limited</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><strong>存储限制</strong></td>
-<td>256TB</td>
-<td>RAM</td>
-<td>64TB</td>
-<td>None</td>
-<td>384EB</td>
-</tr>
-<tr>
-<td><strong>T树索引</strong></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><strong>事务</strong></td>
-<td>No</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td><strong>更新数据字典的统计信息</strong></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>Feature</th>
+          <th>MyISAM</th>
+          <th>Memory</th>
+          <th>InnoDB</th>
+          <th>Archive</th>
+          <th>NDB</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>B树索引</strong></td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>No</td>
+      </tr>
+      <tr>
+          <td><strong>备份/恢复</strong></td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+      </tr>
+      <tr>
+          <td><strong>分布式集群支持</strong></td>
+          <td>No</td>
+          <td>No</td>
+          <td>No</td>
+          <td>No</td>
+          <td>Yes</td>
+      </tr>
+      <tr>
+          <td><strong>聚簇索引</strong></td>
+          <td>No</td>
+          <td>No</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>No</td>
+      </tr>
+      <tr>
+          <td><strong>数据压缩</strong></td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>No</td>
+      </tr>
+      <tr>
+          <td><strong>数据缓存</strong></td>
+          <td>No</td>
+          <td>N/A</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Yes</td>
+      </tr>
+      <tr>
+          <td><strong>数据加密</strong></td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+      </tr>
+      <tr>
+          <td><strong>外键</strong></td>
+          <td>No</td>
+          <td>No</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Yes</td>
+      </tr>
+      <tr>
+          <td><strong>全文搜索（倒排）</strong></td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>No</td>
+      </tr>
+      <tr>
+          <td><strong>地理空间数据</strong></td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+      </tr>
+      <tr>
+          <td><strong>地理空间索引</strong></td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>No</td>
+      </tr>
+      <tr>
+          <td><strong>散列索引</strong></td>
+          <td>No</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>No</td>
+          <td>Yes</td>
+      </tr>
+      <tr>
+          <td><strong>索引缓存</strong></td>
+          <td>Yes</td>
+          <td>N/A</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Yes</td>
+      </tr>
+      <tr>
+          <td><strong>锁粒度</strong></td>
+          <td>Table</td>
+          <td>Table</td>
+          <td>Row</td>
+          <td>Row</td>
+          <td>Row</td>
+      </tr>
+      <tr>
+          <td><strong>MVCC</strong></td>
+          <td>No</td>
+          <td>No</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>No</td>
+      </tr>
+      <tr>
+          <td><strong>冗余存储</strong> (note 1)</td>
+          <td>Yes</td>
+          <td>Limited</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+      </tr>
+      <tr>
+          <td><strong>存储限制</strong></td>
+          <td>256TB</td>
+          <td>RAM</td>
+          <td>64TB</td>
+          <td>None</td>
+          <td>384EB</td>
+      </tr>
+      <tr>
+          <td><strong>T树索引</strong></td>
+          <td>No</td>
+          <td>No</td>
+          <td>No</td>
+          <td>No</td>
+          <td>Yes</td>
+      </tr>
+      <tr>
+          <td><strong>事务</strong></td>
+          <td>No</td>
+          <td>No</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>Yes</td>
+      </tr>
+      <tr>
+          <td><strong>更新数据字典的统计信息</strong></td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+      </tr>
+  </tbody>
 </table>
 <p>注：关于存储限制虽然上限都很高，但是将数据都存储在一个文件的引擎会受操作系统的文件大小限制（TB级别）。</p>
 <p>Example，创建一个 MyISAM 的表：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">exists</span><span class="w"> </span><span class="n">people</span><span class="w"> </span><span class="p">(</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">auto_increment</span><span class="p">,</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span><span class="w"> </span><span class="k">null</span><span class="p">,</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="k">comment</span><span class="w"> </span><span class="s1">&#39;存储人物信息&#39;</span><span class="w"> </span><span class="n">engine</span><span class="o">=</span><span class="s1">&#39;myisam;
+</span></span></span><span class="line"><span class="cl"><span class="p">)</span><span class="w"> </span><span class="k">comment</span><span class="w"> </span><span class="s1">&#39;存储人物信息&#39;</span><span class="w"> </span><span class="n">engine</span><span class="o">=</span><span class="s1">&#39;myisam;
 </span></span></span></code></pre></div><h4 id="engine_attribute">ENGINE_ATTRIBUTE</h4>
 <p>保留字段，以后用于透传信息到引擎层。</p>
 <h4 id="insert_method">INSERT_METHOD</h4>
@@ -672,50 +695,50 @@ CREATE TABLE `people` (
 <p>Compressed 会对数据使用 zlib 压缩，能进一步减少空间占用。</p>
 <p>各种格式的特性对比：</p>
 <table>
-<thead>
-<tr>
-<th>行格式</th>
-<th>紧凑存储</th>
-<th>变长列完全溢出页存储</th>
-<th>大索引支持</th>
-<th>压缩</th>
-<th>支持的表空间类型</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>REDUNDANT</code></td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>system, file-per-table, general</td>
-</tr>
-<tr>
-<td><code>COMPACT</code></td>
-<td>Yes</td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-<td>system, file-per-table, general</td>
-</tr>
-<tr>
-<td><code>DYNAMIC</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>No</td>
-<td>system, file-per-table, general</td>
-</tr>
-<tr>
-<td><code>COMPRESSED</code></td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>Yes</td>
-<td>file-per-table, general</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>行格式</th>
+          <th>紧凑存储</th>
+          <th>变长列完全溢出页存储</th>
+          <th>大索引支持</th>
+          <th>压缩</th>
+          <th>支持的表空间类型</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>REDUNDANT</code></td>
+          <td>No</td>
+          <td>No</td>
+          <td>No</td>
+          <td>No</td>
+          <td>system, file-per-table, general</td>
+      </tr>
+      <tr>
+          <td><code>COMPACT</code></td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>No</td>
+          <td>No</td>
+          <td>system, file-per-table, general</td>
+      </tr>
+      <tr>
+          <td><code>DYNAMIC</code></td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>No</td>
+          <td>system, file-per-table, general</td>
+      </tr>
+      <tr>
+          <td><code>COMPRESSED</code></td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>Yes</td>
+          <td>file-per-table, general</td>
+      </tr>
+  </tbody>
 </table>
 <h4 id="secondary_engine_attribute">SECONDARY_ENGINE_ATTRIBUTE</h4>
 <p>同 ENGINE_ATTRIBUTE。</p>

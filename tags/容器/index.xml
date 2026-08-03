@@ -4,62 +4,51 @@
     <title>容器 on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/</link>
     <description>Recent content in 容器 on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 27 Apr 2022 23:42:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 27 Apr 2022 23:42:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>容器网络可视化：Weave Scope</title>
       <link>https://huweicai.com/weave-scope/</link>
       <pubDate>Wed, 27 Apr 2022 23:42:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/weave-scope/</guid>
-      <description>Scope 简介 scope 是 weavework 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还能提供对容器进行简单的详情查看、销毁、远程登录等管理功能。 功能 Overview 下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表一个个容器，而容器之间的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之</description>
+      <description>&lt;h1 id=&#34;scope&#34;&gt;Scope&lt;/h1&gt;&#xA;&lt;h2 id=&#34;简介&#34;&gt;简介&lt;/h2&gt;&#xA;&lt;p&gt;scope 是 &lt;a href=&#34;https://www.weave.works&#34;&gt;weavework&lt;/a&gt; 开源的一款容器集群网络可视化监控方案，可以提供整个集群的实时网络拓扑，能具体到容器内进程这一粒度，同时还能提供对容器进行简单的详情查看、销毁、远程登录等管理功能。&lt;/p&gt;&#xA;&lt;h2 id=&#34;功能-overview&#34;&gt;功能 Overview&lt;/h2&gt;&#xA;&lt;p&gt;下图是 scope 的管理后台，打开可以看到图中有很多个六边形，代表一个个容器，而容器之间的连线则代表它们之间当前存在网络连接，鼠标悬浮到线条之上还能看到连接发起的方向，这样我们就能直观地观察到整个集群的网络流量拓扑了，哪几个服务之间有流量依赖，一目了然。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Cilium 容器数据路径</title>
       <link>https://huweicai.com/cilium-container-datapath/</link>
       <pubDate>Sat, 19 Feb 2022 11:00:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/cilium-container-datapath/</guid>
-      <description>Cilium Cilium 提供了一套基于 eBPF 的容器网络方案，在网络可观测性和隔离策略方面提供了非常多强大的特性。 我们今天主要关注 Cilium 容器数据面路径这个话题，即一个使用 Cilium 做为 CNI 的 Pod 的数据是如何流动的。 这里我们以在 Pod 中向 1.1.1.1:80发起 TCP 连接（nc -v 1.1.1.1 80）的流量为例进行分析，演示的 Cilium 集群使用 veth pair 打通容器和宿主机网络命名空间，同时使用 vxlan 模式来进行跨主机间的 Pod 通信。 这里我们使用 Pod 10.1.128.86 进行演示，其所在 Node IP 为 10.11.224</description>
+      <description>&lt;h1 id=&#34;cilium&#34;&gt;Cilium&lt;/h1&gt;&#xA;&lt;p&gt;Cilium 提供了一套基于 eBPF 的容器网络方案，在网络可观测性和隔离策略方面提供了非常多强大的特性。&lt;/p&gt;&#xA;&lt;p&gt;我们今天主要关注 Cilium 容器数据面路径这个话题，即一个使用 Cilium 做为 CNI 的 Pod 的数据是如何流动的。&lt;/p&gt;&#xA;&lt;p&gt;这里我们以在 Pod 中向 &lt;code&gt;1.1.1.1:80&lt;/code&gt;发起 TCP 连接（&lt;code&gt;nc -v 1.1.1.1 80&lt;/code&gt;）的流量为例进行分析，演示的 Cilium 集群使用 &lt;strong&gt;veth pair&lt;/strong&gt; 打通容器和宿主机网络命名空间，同时使用 &lt;code&gt;vxlan&lt;/code&gt; 模式来进行跨主机间的 Pod 通信。&lt;/p&gt;&#xA;&lt;p&gt;这里我们使用 Pod &lt;strong&gt;10.1.128.86&lt;/strong&gt; 进行演示，其所在 Node IP 为 &lt;strong&gt;10.11.224.56&lt;/strong&gt;，Cilium 集群信息如下：&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>镜像仓库Harbor Pull实现原理</title>
       <link>https://huweicai.com/harbor-pull-principle/</link>
       <pubDate>Sat, 04 Dec 2021 01:19:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/harbor-pull-principle/</guid>
-      <description>Harbor简介 Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。 Harbor 的系统架构如下图所示，箭头所指方向为数据流向： 一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。 在开始之前 我</description>
+      <description>&lt;h1 id=&#34;harbor简介&#34;&gt;Harbor简介&lt;/h1&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://github.com/goharbor/harbor&#34;&gt;Harbor&lt;/a&gt; 是 &lt;a href=&#34;https://www.vmware.com/&#34;&gt;VMWare&lt;/a&gt; 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 &lt;a href=&#34;https://www.docker.com/&#34;&gt;docker&lt;/a&gt; 开源的 &lt;a href=&#34;https://github.com/distribution/distribution&#34;&gt;registry&lt;/a&gt; (后更名为 &lt;code&gt;distribution&lt;/code&gt;)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。&lt;/p&gt;&#xA;&lt;p&gt;Harbor 的系统架构如下图所示，箭头所指方向为数据流向：&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Huweicai/images/20211119181205.png&#34; alt=&#34;image-20211119181205666&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;一个镜像仓库最核心的功能就是&lt;code&gt;推送&lt;/code&gt;和&lt;code&gt;拉取&lt;/code&gt;，本文主要讨论 &lt;code&gt;Harbor&lt;/code&gt; 镜像拉取具体的实现细节。&lt;/p&gt;&#xA;&lt;h1 id=&#34;在开始之前&#34;&gt;在开始之前&lt;/h1&gt;&#xA;&lt;p&gt;我们先申明一些基本信息，避免版本更迭引入的改动给大家带来困扰：&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Fluent Bit介绍</title>
       <link>https://huweicai.com/fluent-bit/</link>
       <pubDate>Wed, 05 May 2021 13:58:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/fluent-bit/</guid>
-      <description>Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;amp;过滤&amp;amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。 基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。 Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：</description>
+      <description>&lt;h1 id=&#34;fluent-bit&#34;&gt;Fluent Bit&lt;/h1&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://fluentbit.io/&#34;&gt;&lt;img src=&#34;https://fluentbit.io/assets/img/logo1-default.png&#34; alt=&#34;Logo&#34;&gt;&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;Fluent Bit&lt;/strong&gt; 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;amp;过滤&amp;amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。&lt;/p&gt;&#xA;&lt;h1 id=&#34;基本概念&#34;&gt;基本概念&lt;/h1&gt;&#xA;&lt;p&gt;大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;Fluent Bit&lt;/strong&gt; 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;输入部分负责采集原始日志；&lt;/li&gt;&#xA;&lt;li&gt;解析部分将原始日志结构化，比如提取字段、解转义等操作；&lt;/li&gt;&#xA;&lt;li&gt;过滤部分可以对日志做一些的统一的过滤和修改操作，比如增加一些统一的字段，过滤一些脏日志等等&lt;/li&gt;&#xA;&lt;li&gt;然后日志会被放到缓冲区等待发送&lt;/li&gt;&#xA;&lt;li&gt;路由部分会决策这个包应该发送到哪些输出&lt;/li&gt;&#xA;&lt;li&gt;输出将日志真正转发出去&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Huweicai/images/20210421173801.png&#34; alt=&#34;image-20210421173801544&#34;&gt;&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>手动实现一个Linux容器</title>
       <link>https://huweicai.com/run-linux-container-manual/</link>
       <pubDate>Wed, 14 Apr 2021 16:20:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/run-linux-container-manual/</guid>
-      <description>容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打</description>
+      <description>&lt;h1 id=&#34;容器&#34;&gt;容器&lt;/h1&gt;&#xA;&lt;p&gt;容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 &lt;code&gt;run everywhere&lt;/code&gt; 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了：&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;Accelerate how you build, share and run modern applications.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了&lt;code&gt;jdk 14.0.1&lt;/code&gt;以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 &lt;code&gt;debian buster&lt;/code&gt;发行版上，那么我们可以把这些通通打入一个镜像中，或者叫一个静态的容器，任何会影响运行时的东西我们都可以打入镜像中，这使得其具有非常高的可移植性。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Kubernetes权限管理概述</title>
       <link>https://huweicai.com/kubernetes-permissions-overview/</link>
       <pubDate>Thu, 18 Mar 2021 21:29:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/kubernetes-permissions-overview/</guid>
-      <description>对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。 以 Git 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。 通常在校验权限中分为两个流程，认证和鉴权。 即先判断你是谁：认证，然后再鉴权，判断你有没有这个资源的权限。 毫无疑问，复杂的Kubernetes也具</description>
+      <description>&lt;p&gt;对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。&lt;/p&gt;&#xA;&lt;p&gt;以 &lt;code&gt;Git&lt;/code&gt; 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。&lt;/p&gt;&#xA;&lt;p&gt;通常在校验权限中分为两个流程，&lt;code&gt;认证&lt;/code&gt;和&lt;code&gt;鉴权&lt;/code&gt;。&lt;/p&gt;&#xA;&lt;p&gt;即先判断你是谁：&lt;code&gt;认证&lt;/code&gt;，然后再&lt;code&gt;鉴权&lt;/code&gt;，判断你有没有这个资源的权限。&lt;/p&gt;&#xA;&lt;p&gt;毫无疑问，复杂的&lt;code&gt;Kubernetes&lt;/code&gt;也具有一套复杂的权限管理系统，如果要用一句话简单介绍一下的话：&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

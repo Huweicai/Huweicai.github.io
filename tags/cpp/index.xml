@@ -1,38 +1,33 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>cpp on Anonymous&#39; Blog</title>
+    <title>Cpp on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/cpp/</link>
-    <description>Recent content in cpp on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <description>Recent content in Cpp on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sat, 12 Jul 2025 19:58:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/cpp/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 12 Jul 2025 19:58:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/cpp/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>一些有意思的C&#43;&#43;代码</title>
       <link>https://huweicai.com/cpp-fun-codes/</link>
       <pubDate>Sat, 12 Jul 2025 19:58:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/cpp-fun-codes/</guid>
-      <description>三行情诗 谁说我们写 C++ 的就不懂浪漫了： // 我的心必须通过&amp;#34;爱你&amp;#34;的约束才能实例化 template&amp;lt;typename Heart&amp;gt; requires loves&amp;lt;Heart, You&amp;gt; // 激情、忠诚、永恒置入爱的元组，这份爱在编译时就已确定，不会因运行时的变化而改变 // 是写在源码里的承诺，是嵌入二进制的誓言 constexpr auto my_feelings = std::tuple{passion, devotion, eternity}; // 在 C++ 的类型系统中，我们的未来被特化为永远为真，这是编译器都认可的事实 template&amp;lt;&amp;gt; struct future&amp;lt;us&amp;gt; : std::true_type { static constexpr auto value = forever; }; 不愧是我们写 C++ 的，写出来的情诗都能是零运行时开销的。 AND 下面这段代码能</description>
+      <description>&lt;h3 id=&#34;三行情诗&#34;&gt;三行情诗&lt;/h3&gt;&#xA;&lt;p&gt;谁说我们写 C++ 的就不懂浪漫了：&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 我的心必须通过&amp;#34;爱你&amp;#34;的约束才能实例化&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;template&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;typename&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Heart&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;requires&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;loves&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Heart&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;You&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 激情、忠诚、永恒置入爱的元组，这份爱在编译时就已确定，不会因运行时的变化而改变&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 是写在源码里的承诺，是嵌入二进制的誓言&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;constexpr&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;auto&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;my_feelings&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;std&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;tuple&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;passion&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;devotion&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;eternity&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 在 C++ 的类型系统中，我们的未来被特化为永远为真，这是编译器都认可的事实&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;template&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;struct&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;future&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;us&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;std&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;true_type&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;constexpr&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;auto&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;value&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;forever&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;};&lt;/span&gt;&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;不愧是我们写 C++ 的，写出来的情诗都能是零运行时开销的。&lt;/p&gt;&#xA;&lt;h3 id=&#34;and&#34;&gt;AND&lt;/h3&gt;&#xA;&lt;p&gt;下面这段代码能正常编译运行：&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-c++&#34; data-lang=&#34;c++&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;and&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 是的你没有看错，这里有个 and...&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 是的你还是没有看错，这个 and a 还能被赋值&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这一段代码有两个非常有意思的地方，首先第一行的&lt;code&gt;and&lt;/code&gt; 本身是一个非常冷门但是古老的关键字，ISO 646 标准引入的——与符号（&lt;code&gt;&amp;amp;&amp;amp;&lt;/code&gt;）的别名，早期很多键盘无法输入特殊符号所以引入了这个关键字。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>不解剖，也能看懂大脑 —— 用外部视角解读你的思维世界</title>
       <link>https://huweicai.com/cpp-fun-codes/</link>
       <pubDate>Sat, 12 Jul 2025 19:58:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/cpp-fun-codes/</guid>
-      <description>当我们谈起大脑时，很多人第一反应就是复杂的解剖图：沟回纵横、名字拗口，好像非得读过医学教科书才能懂。可事实上，大脑也可以用一种“外行能看懂”的方式去理解。就像看一座城市，不必钻进地下管道或电线分布图，只要站在高处，分清大街小巷，也能明白这座城市的大体功能。 这篇文章，我想带你从外部视角来看看我们的脑袋：不解剖，不掉进术语的陷阱，而是把大脑当作一个生活中真实存在的“司令部”，逐块认识它。你会发现，额头</description>
+      <description>&lt;p&gt;当我们谈起大脑时，很多人第一反应就是复杂的解剖图：沟回纵横、名字拗口，好像非得读过医学教科书才能懂。可事实上，大脑也可以用一种“外行能看懂”的方式去理解。就像看一座城市，不必钻进地下管道或电线分布图，只要站在高处，分清大街小巷，也能明白这座城市的大体功能。&lt;/p&gt;&#xA;&lt;p&gt;这篇文章，我想带你从外部视角来看看我们的脑袋：不解剖，不掉进术语的陷阱，而是把大脑当作一个生活中真实存在的“司令部”，逐块认识它。你会发现，额头后面是思考和决策的“办公室”，头顶管着感觉和动作的“调度中心”，耳边深处藏着记忆和情绪的“资料库”，后脑勺就是视觉的“投影厅”。而小脑和脑干，则像是幕后的“稳定器”和“生命保障线”。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>C/C&#43;&#43; &amp; Python 融合之道</title>
       <link>https://huweicai.com/c-with-python-intercall/</link>
       <pubDate>Mon, 29 Jan 2024 09:51:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/c-with-python-intercall/</guid>
-      <description>Python 解释器 正如软件系统通常分为定义与实现两部分，编程语言也是。 比如 C++ 标准是由国际标准化组织 ( ISO ) 下属的 ISO/IEC JTC1/SC22/WG21特别工作组制定的，最新标准为 C++ 20 (ISO/IEC 14882:2020)，这是定义；而其实现则有 GNU 的 gcc、微软的 visual c++、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。 Java 规范则是由 Oracle 主导的 JCP 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量</description>
+      <description>&lt;h1 id=&#34;python-解释器&#34;&gt;Python 解释器&lt;/h1&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://gcore.jsdelivr.net/gh/Huweicai/images/20240330184739.webp&#34; alt=&#34;4c932dd0-77c4-4ac0-b31e-787de00fc4dd&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;正如软件系统通常分为定义与实现两部分，编程语言也是。&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;比如 C++ 标准是由国际标准化组织 ( ISO ) 下属的 &lt;code&gt;ISO/IEC JTC1/SC22/WG21&lt;/code&gt;特别工作组制定的，最新标准为 C++ 20 (&lt;a href=&#34;https://www.iso.org/standard/79358.html&#34;&gt;ISO/IEC 14882:2020&lt;/a&gt;)，这是定义；而其实现则有 GNU 的 &lt;a href=&#34;https://gcc.gnu.org/&#34;&gt;gcc&lt;/a&gt;、微软的 visual c++、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;Java 规范则是由 Oracle 主导的 &lt;a href=&#34;https://www.jcp.org&#34;&gt;JCP&lt;/a&gt; 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量不同的实现。&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;更别论应用更为广泛的 JavaScript 语言，&lt;a href=&#34;https://tc39.es/ecma262/&#34;&gt;ECMAScript&lt;/a&gt; 的实现者至少有两位数。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

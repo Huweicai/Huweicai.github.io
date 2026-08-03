@@ -7,15 +7,25 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="Redis 官网 FAQ 翻译以及部分自己生产实践总结的问题 官网FAQ地址 Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。 而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留 AOF 日志，在">
+  <meta name="description" content="Redis 官网 FAQ 翻译以及部分自己生产实践总结的问题
+官网FAQ地址
+Redos持久化策略：RDB和AOF
+RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。
+AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。
+而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留 AOF 日志，在快照之前的日志就可以删除了，这样既节省了空间，同时又能加快恢复速度，还能保证解决的数据持久可靠性。">
 
-  <meta property="og:title" content="Redis FAQ" />
-<meta property="og:description" content="Redis 官网 FAQ 翻译以及部分自己生产实践总结的问题 官网FAQ地址 Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。 而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留 AOF 日志，在" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/redis-faq/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2019-01-04T22:43:00+08:00" />
-<meta property="article:modified_time" content="2019-01-04T22:43:00+08:00" />
-
+  <meta property="og:url" content="https://huweicai.com/redis-faq/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="Redis FAQ">
+  <meta property="og:description" content="Redis 官网 FAQ 翻译以及部分自己生产实践总结的问题 官网FAQ地址
+Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。
+而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留 AOF 日志，在快照之前的日志就可以删除了，这样既节省了空间，同时又能加快恢复速度，还能保证解决的数据持久可靠性。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2019-01-04T22:43:00+08:00">
+    <meta property="article:modified_time" content="2019-01-04T22:43:00+08:00">
+    <meta property="article:tag" content="Redis">
+    <meta property="article:tag" content="存储">
 
    
 
@@ -108,7 +118,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +137,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +206,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +214,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>

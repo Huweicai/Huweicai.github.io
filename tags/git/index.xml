@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>git on Anonymous&#39; Blog</title>
+    <title>Git on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/git/</link>
-    <description>Recent content in git on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <description>Recent content in Git on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 11 Nov 2020 01:43:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 11 Nov 2020 01:43:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/git/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Git实现原理</title>
       <link>https://huweicai.com/git-implementation/</link>
       <pubDate>Wed, 11 Nov 2020 01:43:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/git-implementation/</guid>
-      <description>基本概念 概述 Git 是一个基于快照的文件版本管理系统。它会为每个文件计算一个 hash 值，并压缩存储到 .git/objects 目录。普通文件是 blob 对象，文件夹会生成 tree 对象。一个版本的文件由根目录 tree 串起来，它的上层是 commit 对象。commit 会有一个或多个 parent 指针，指向上一个提交。 commit 的上层还有一个概念叫分支，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。 这是一个最常用的模型，后面很多命令都在这三层之间移动内容： 工作区 --git add--&amp;gt; 暂存区(index</description>
+      <description>&lt;h1 id=&#34;基本概念&#34;&gt;基本概念&lt;/h1&gt;&#xA;&lt;h2 id=&#34;概述&#34;&gt;概述&lt;/h2&gt;&#xA;&lt;p&gt;Git 是一个&lt;strong&gt;基于快照的文件版本管理系统&lt;/strong&gt;。它会为每个文件计算一个 hash 值，并压缩存储到 &lt;code&gt;.git/objects&lt;/code&gt; 目录。普通文件是 blob 对象，文件夹会生成 tree 对象。一个版本的文件由根目录 tree 串起来，它的上层是 commit 对象。commit 会有一个或多个 parent 指针，指向上一个提交。&lt;/p&gt;&#xA;&lt;p&gt;commit 的上层还有一个概念叫&lt;strong&gt;分支&lt;/strong&gt;，分支是一个指向 commit 的指针，相当于是对这一系列 commit 的抽象。&lt;/p&gt;&#xA;&lt;p&gt;这是一个最常用的模型，后面很多命令都在这三层之间移动内容：&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;工作区 --git add--&amp;gt; 暂存区(index) --git commit--&amp;gt; commit/tree/blob&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这是一个&lt;a href=&#34;https://github.com/Huweicai/gitdemo&#34;&gt;简单仓库&lt;/a&gt;的示意图，我们会在文章末尾详细分析其构成。&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Huweicai/images/20201111120427.png&#34; alt=&#34;image-20201110005626068&#34;&gt;&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

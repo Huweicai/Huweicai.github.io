@@ -7,15 +7,29 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。 我们经常能在教科书上看到对于进程和线程的定义： 进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。 这句话没错，但是只是从职责上给出的定义，而不是基于底层实现出发的。 广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充">
+  <meta name="description" content="现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。
+我们经常能在教科书上看到对于进程和线程的定义：
 
-  <meta property="og:title" content="进程线程协程的本质区别" />
-<meta property="og:description" content="现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。 我们经常能在教科书上看到对于进程和线程的定义： 进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。 这句话没错，但是只是从职责上给出的定义，而不是基于底层实现出发的。 广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/process-thread-goroutine/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2020-03-17T01:20:00+08:00" />
-<meta property="article:modified_time" content="2020-03-17T01:20:00+08:00" />
+进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。
 
+这句话没错，但是只是从职责上给出的定义，而不是基于底层实现出发的。
+广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充分利用硬件资源，而用户态线程实现简单上下文切换开销小，后者也被称作我们所熟知的：协程。">
+
+  <meta property="og:url" content="https://huweicai.com/process-thread-goroutine/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="进程线程协程的本质区别">
+  <meta property="og:description" content="现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。
+我们经常能在教科书上看到对于进程和线程的定义：
+进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。
+这句话没错，但是只是从职责上给出的定义，而不是基于底层实现出发的。
+广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充分利用硬件资源，而用户态线程实现简单上下文切换开销小，后者也被称作我们所熟知的：协程。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2020-03-17T01:20:00+08:00">
+    <meta property="article:modified_time" content="2020-03-17T01:20:00+08:00">
+    <meta property="article:tag" content="操作系统">
+    <meta property="article:tag" content="Go">
+    <meta property="article:tag" content="Linux">
 
    
 
@@ -108,7 +122,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +141,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +210,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +218,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -322,45 +336,45 @@
 <p>Linux 中进程的代码实现是一个 task_struct 对象，定义于：<code>/include/linux/sched.h</code>，主要包括：各种ID、进程状态、进程调度、内存、文件、ptrace、信号处理等功能相关的字段，整理了重要的字段，定义如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">task_struct</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl"><span class="cm">/*** 各种标识符 ***/</span>
-</span></span><span class="line"><span class="cl">	<span class="n">pid_t</span> <span class="n">pid</span><span class="p">;</span> <span class="c1">// process id 进程ID or 线程ID
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">pid_t</span> <span class="n">tgid</span><span class="p">;</span> <span class="c1">// 线程对应的进程ID
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">uid_t</span> <span class="n">uid</span><span class="p">,</span><span class="n">euid</span><span class="p">,</span><span class="n">suid</span><span class="p">,</span><span class="n">fsuid</span><span class="p">;</span> <span class="c1">// 进程所属用户ID
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">gid_t</span> <span class="n">gid</span><span class="p">,</span><span class="n">egid</span><span class="p">,</span><span class="n">sgid</span><span class="p">,</span><span class="n">fsgid</span><span class="p">;</span> <span class="c1">// 进程所属组ID
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="kt">pid_t</span> <span class="n">pid</span><span class="p">;</span> <span class="c1">// process id 进程ID or 线程ID
+</span></span></span><span class="line"><span class="cl">	<span class="kt">pid_t</span> <span class="n">tgid</span><span class="p">;</span> <span class="c1">// 线程对应的进程ID
+</span></span></span><span class="line"><span class="cl">    <span class="kt">uid_t</span> <span class="n">uid</span><span class="p">,</span><span class="n">euid</span><span class="p">,</span><span class="n">suid</span><span class="p">,</span><span class="n">fsuid</span><span class="p">;</span> <span class="c1">// 进程所属用户ID
+</span></span></span><span class="line"><span class="cl">	<span class="kt">gid_t</span> <span class="n">gid</span><span class="p">,</span><span class="n">egid</span><span class="p">,</span><span class="n">sgid</span><span class="p">,</span><span class="n">fsgid</span><span class="p">;</span> <span class="c1">// 进程所属组ID
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="cm">/*** 状态信息 ***/</span>
 </span></span><span class="line"><span class="cl">	<span class="k">volatile</span> <span class="kt">long</span> <span class="n">state</span><span class="p">;</span> <span class="c1">// 进程状态，-1 不可运行，0 可以运行，&gt; 0 停止状态（多种状态码细分）
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">thread_info</span> <span class="o">*</span><span class="n">thread_info</span><span class="p">;</span> <span class="c1">// 内核栈空间 8KB
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">;</span> <span class="c1">// 一些进程状态的位图集合
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">int</span> <span class="n">exit_code</span><span class="p">;</span> <span class="c1">// 终止返回的结束码
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">timespec</span> <span class="n">start_time</span><span class="p">;</span> <span class="c1">// 进程创建时间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">thread_info</span> <span class="o">*</span><span class="n">thread_info</span><span class="p">;</span> <span class="c1">// 内核栈空间 8KB
+</span></span></span><span class="line"><span class="cl">	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">;</span> <span class="c1">// 一些进程状态的位图集合
+</span></span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">exit_code</span><span class="p">;</span> <span class="c1">// 终止返回的结束码
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">timespec</span> <span class="n">start_time</span><span class="p">;</span> <span class="c1">// 进程创建时间
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="cm">/*** 调度信息 ***/</span>
 </span></span><span class="line"><span class="cl"><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">policy</span><span class="p">;</span> <span class="c1">// 调度策略
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">int</span> <span class="n">prio</span><span class="p">;</span>   <span class="c1">// 动态优先级
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">static_prio</span><span class="p">;</span> <span class="c1">// 静态优先级：nice 值
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">sched_info</span> <span class="n">sched_info</span><span class="p">;</span> <span class="c1">// 用于调度器统计进程的运行信息：运行时间、等待时间等
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">rt_priority</span><span class="p">;</span> <span class="c1">// 实时优先级
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">nvcsw</span><span class="p">,</span> <span class="n">nivcsw</span><span class="p">;</span> <span class="c1">// 上下文切换次数：自愿/非自愿
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">cputime_t</span> <span class="n">utime</span><span class="p">,</span> <span class="n">stime</span><span class="p">;</span> <span class="c1">// utime 用户态执行时间、stime 内核态执行时间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">prio</span><span class="p">;</span>   <span class="c1">// 动态优先级
+</span></span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">static_prio</span><span class="p">;</span> <span class="c1">// 静态优先级：nice 值
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">sched_info</span> <span class="n">sched_info</span><span class="p">;</span> <span class="c1">// 用于调度器统计进程的运行信息：运行时间、等待时间等
+</span></span></span><span class="line"><span class="cl">	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">rt_priority</span><span class="p">;</span> <span class="c1">// 实时优先级
+</span></span></span><span class="line"><span class="cl">	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">nvcsw</span><span class="p">,</span> <span class="n">nivcsw</span><span class="p">;</span> <span class="c1">// 上下文切换次数：自愿/非自愿
+</span></span></span><span class="line"><span class="cl">	<span class="kt">cputime_t</span> <span class="n">utime</span><span class="p">,</span> <span class="n">stime</span><span class="p">;</span> <span class="c1">// utime 用户态执行时间、stime 内核态执行时间
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="cm">/*** 内存信息 ***/</span>
 </span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">mm_struct</span> <span class="o">*</span><span class="n">mm</span><span class="p">,</span> <span class="o">*</span><span class="n">active_mm</span><span class="p">;</span> <span class="c1">// 进程地址空间;内核线程所借用的地址空间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="cm">/*** 指向其他进程的变量：用于构建进程数据集合 ***/</span>
 </span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">parent</span><span class="p">;</span>  <span class="c1">// 父进程
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">children</span><span class="p">;</span> <span class="c1">// 子进程
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">sibling</span><span class="p">;</span>  <span class="c1">// 兄弟进程
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">tasks</span><span class="p">;</span> <span class="c1">// 用于构建进程链表，包含一个 pre 和 next
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">pid</span> <span class="n">pids</span><span class="p">[</span><span class="n">PIDTYPE_MAX</span><span class="p">];</span> <span class="c1">// 用于构建进程HashMap
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">children</span><span class="p">;</span> <span class="c1">// 子进程
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">sibling</span><span class="p">;</span>  <span class="c1">// 兄弟进程
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">list_head</span> <span class="n">tasks</span><span class="p">;</span> <span class="c1">// 用于构建进程链表，包含一个 pre 和 next
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">pid</span> <span class="n">pids</span><span class="p">[</span><span class="n">PIDTYPE_MAX</span><span class="p">];</span> <span class="c1">// 用于构建进程HashMap
+</span></span></span><span class="line"><span class="cl">    
 </span></span><span class="line"><span class="cl"><span class="cm">/*** 文件信息 ***/</span>
 </span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">fs_struct</span> <span class="o">*</span><span class="n">fs</span><span class="p">;</span> <span class="c1">// 所在文件系统
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">files_struct</span> <span class="o">*</span><span class="n">files</span><span class="p">;</span> <span class="c1">// 打开文件
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">u64</span> <span class="n">rchar</span><span class="p">,</span> <span class="n">wchar</span><span class="p">,</span> <span class="n">syscr</span><span class="p">,</span> <span class="n">syscw</span><span class="p">;</span>  <span class="c1">// I/O统计信息：读、写、系统调用读、系统调用写
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">void</span> <span class="o">*</span><span class="n">journal_info</span><span class="p">;</span> <span class="c1">// journal 日志文件系统信息
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">backing_dev_info</span> <span class="o">*</span><span class="n">backing_dev_info</span><span class="p">;</span> <span class="c1">// 块设备IO信息
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">io_context</span> <span class="o">*</span><span class="n">io_context</span><span class="p">;</span> <span class="c1">// I/O调度器使用
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">files_struct</span> <span class="o">*</span><span class="n">files</span><span class="p">;</span> <span class="c1">// 打开文件
+</span></span></span><span class="line"><span class="cl">    <span class="n">u64</span> <span class="n">rchar</span><span class="p">,</span> <span class="n">wchar</span><span class="p">,</span> <span class="n">syscr</span><span class="p">,</span> <span class="n">syscw</span><span class="p">;</span>  <span class="c1">// I/O统计信息：读、写、系统调用读、系统调用写
+</span></span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="o">*</span><span class="n">journal_info</span><span class="p">;</span> <span class="c1">// journal 日志文件系统信息
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">backing_dev_info</span> <span class="o">*</span><span class="n">backing_dev_info</span><span class="p">;</span> <span class="c1">// 块设备IO信息
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">io_context</span> <span class="o">*</span><span class="n">io_context</span><span class="p">;</span> <span class="c1">// I/O调度器使用
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="cm">/*** 子进程追踪控制（ptrace）相关信息 ***/</span>
 </span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">ptrace</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">list_head</span> <span class="n">ptrace_children</span><span class="p">;</span>
@@ -369,64 +383,64 @@
 </span></span><span class="line"><span class="cl">    
 </span></span><span class="line"><span class="cl"><span class="cm">/*** 其他 ***/</span>
 </span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">namespace</span> <span class="o">*</span><span class="n">namespace</span><span class="p">;</span> <span class="c1">// 所在命名空间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">signal_struct</span> <span class="o">*</span><span class="n">signal</span><span class="p">;</span> <span class="c1">// 指向进程的信号描述符
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">sighand_struct</span> <span class="o">*</span><span class="n">sighand</span><span class="p">;</span> <span class="c1">// 信号处理函数
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">signal_struct</span> <span class="o">*</span><span class="n">signal</span><span class="p">;</span> <span class="c1">// 指向进程的信号描述符
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">sighand_struct</span> <span class="o">*</span><span class="n">sighand</span><span class="p">;</span> <span class="c1">// 信号处理函数
+</span></span></span><span class="line"><span class="cl"><span class="p">};</span>
 </span></span></code></pre></div><h3 id="进程状态">进程状态</h3>
 <p>一个进程在 Linux 源码中存在如下六个枚举状态：</p>
 <table>
-<thead>
-<tr>
-<th>值</th>
-<th>状态</th>
-<th>代号</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>TASK_RUNNING</td>
-<td>R (running)</td>
-<td></td>
-</tr>
-<tr>
-<td>1</td>
-<td>TASK_INTERRUPTIBLE</td>
-<td>S (sleeping)</td>
-<td></td>
-</tr>
-<tr>
-<td>2</td>
-<td>TASK_UNINTERRUPTIBLE</td>
-<td>D (disk sleep)</td>
-<td></td>
-</tr>
-<tr>
-<td>4</td>
-<td>TASK_STOPPED</td>
-<td>T (stopped)</td>
-<td></td>
-</tr>
-<tr>
-<td>8</td>
-<td>TASK_TRACED</td>
-<td>T (tracing stop)</td>
-<td></td>
-</tr>
-<tr>
-<td>16</td>
-<td>EXIT_ZOMBIE</td>
-<td>Z (zombie)</td>
-<td></td>
-</tr>
-<tr>
-<td>32</td>
-<td>EXIT_DEAD</td>
-<td>X (dead)</td>
-<td></td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>值</th>
+          <th>状态</th>
+          <th>代号</th>
+          <th>说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>0</td>
+          <td>TASK_RUNNING</td>
+          <td>R (running)</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td>TASK_INTERRUPTIBLE</td>
+          <td>S (sleeping)</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>TASK_UNINTERRUPTIBLE</td>
+          <td>D (disk sleep)</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>TASK_STOPPED</td>
+          <td>T (stopped)</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>8</td>
+          <td>TASK_TRACED</td>
+          <td>T (tracing stop)</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>16</td>
+          <td>EXIT_ZOMBIE</td>
+          <td>Z (zombie)</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>32</td>
+          <td>EXIT_DEAD</td>
+          <td>X (dead)</td>
+          <td></td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="调度策略">调度策略</h3>
 <p>CPU在运行代码时，当前的这个进程不可能一直的跑下去，它会阻塞、会退出，所以这个时候需要再找一个其他的进程给CPU来执行，怎么缜密合理地完成这个过程呢？如何让整体程序运行吞吐量高同时又不会让某些进程饿死？这就是 Linux 进程调度模块所完成的事情。</p>
@@ -445,7 +459,7 @@
 <p>在有的系统里面，线程是做为一个从属于进程存在的实体而存在的，比如 Windows，但在 Linux 中，<strong>线程和进程底层数据结构是一样的</strong>，都是 <code>/include/linux/sched.h</code>头文件中的 <code>task_struct</code> 结构体，所以 Linux 下的线程通常又被称为<strong>轻量级进程</strong>。</p>
 <p>Linux 下可以通过 <code>clone</code> 创建一个线程，<code>clone</code> 和 fork 一样都会复制一个执行同一份代码的新进程，但区别是，<code>clone</code> 函数有一个参数选项，可以选择要拷贝哪些数据，而不是像 fork 那样全部拷贝。</p>
 <p>Linux 创建线程的底层函数和创建进程一样，也是 <code>do_fork</code>：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">do_fork</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">int</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="n">__user</span> <span class="o">*</span><span class="p">);</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">do_fork</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span><span class="p">,</span> <span class="kt">int</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="kt">int</span> <span class="n">__user</span> <span class="o">*</span><span class="p">);</span>
 </span></span></code></pre></div><p>只是创建线程时，第一个参数会多传入如下四个拷贝标志位：</p>
 <ul>
 <li>CLONE_VM：共享虚拟内存</li>
@@ -474,99 +488,99 @@ P 中管理了一个协程队列，M 每次就从这个队列中取协程来运�
 </ul>
 <h3 id="协程数据结构">协程数据结构</h3>
 <p>协程的底层数据结构是 runtime 包中的 g 结构体，包含了一段代码运行所需要的方法栈、程序计数器、栈指针等所有结构，这里选取了一些核心的字段标注如下：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">g</span> <span class="kd">struct</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">stack</span> <span class="kd">struct</span> <span class="p">{</span> <span class="c1">// 方法栈，初始大小 2K，每次扩容一倍
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">lo</span> <span class="kt">uintptr</span> <span class="c1">// 栈开始位置
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">hi</span> <span class="kt">uintptr</span> <span class="c1">// 栈结束位置
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">_panic</span> <span class="o">*</span><span class="nx">_panic</span> <span class="c1">// panic 调用链
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">_defer</span> <span class="o">*</span><span class="nx">_defer</span> <span class="c1">// defer 调用链
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">m</span>      <span class="o">*</span><span class="nx">m</span>      <span class="c1">// 指向当前的 M
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">sched</span>  <span class="kd">struct</span> <span class="p">{</span> <span class="c1">// 运行上下文，用于调度恢复
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">sp</span>   <span class="kt">uintptr</span>        <span class="c1">// stack pointers 栈指针
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">pc</span>   <span class="kt">uintptr</span>        <span class="c1">// program counter 程序计数器
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">ctxt</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span> <span class="c1">// 闭包函数的上下文
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">bp</span>   <span class="kt">uintptr</span>        <span class="c1">// 栈底指针
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
-</span></span><span class="line"><span class="cl">	<span class="nx">atomicstatus</span> <span class="kt">uint32</span>     <span class="c1">// 协程状态
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">goid</span>         <span class="kt">int64</span>      <span class="c1">// 协程ID，不对外暴露
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">waitsince</span>    <span class="kt">int64</span>      <span class="c1">// approx time when the g become blocked
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">waitreason</span>   <span class="nx">waitReason</span> <span class="c1">// if status==Gwaiting
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">preempt</span>      <span class="kt">bool</span>       <span class="c1">// 是否运行抢占当前协程
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">lockedm</span>      <span class="nx">muintptr</span>   <span class="c1">// 用于锁定M运行
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">startpc</span>      <span class="kt">uintptr</span>    <span class="c1">// 创建协程时传入的函数的
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">timer</span>        <span class="o">*</span><span class="nx">timer</span>     <span class="c1">// 调用time.Sleep的计时器
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
-</span></span></code></pre></div><p>所有的协程都维护在一个全局的数据结构：allgs 中：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">allgs</span>    <span class="p">[]</span><span class="o">*</span><span class="nx">g</span>
-</span></span></code></pre></div><p><code>allgs</code> 是一个切片，因此协程的数量会受到切片的长度限制，而切片的长度用了一个 <code>int</code> 表示，所以在64位机器下协程的最大数量为：<code>2^63 - 1</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">g</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">stack</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 方法栈，初始大小 2K，每次扩容一倍</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">lo</span><span class="w"> </span><span class="kt">uintptr</span><span class="w"> </span><span class="c1">// 栈开始位置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">hi</span><span class="w"> </span><span class="kt">uintptr</span><span class="w"> </span><span class="c1">// 栈结束位置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">_panic</span><span class="w"> </span><span class="o">*</span><span class="nx">_panic</span><span class="w"> </span><span class="c1">// panic 调用链</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">_defer</span><span class="w"> </span><span class="o">*</span><span class="nx">_defer</span><span class="w"> </span><span class="c1">// defer 调用链</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">m</span><span class="w">      </span><span class="o">*</span><span class="nx">m</span><span class="w">      </span><span class="c1">// 指向当前的 M</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">sched</span><span class="w">  </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 运行上下文，用于调度恢复</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">sp</span><span class="w">   </span><span class="kt">uintptr</span><span class="w">        </span><span class="c1">// stack pointers 栈指针</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">pc</span><span class="w">   </span><span class="kt">uintptr</span><span class="w">        </span><span class="c1">// program counter 程序计数器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">ctxt</span><span class="w"> </span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="w"> </span><span class="c1">// 闭包函数的上下文</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">		</span><span class="nx">bp</span><span class="w">   </span><span class="kt">uintptr</span><span class="w">        </span><span class="c1">// 栈底指针</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">atomicstatus</span><span class="w"> </span><span class="kt">uint32</span><span class="w">     </span><span class="c1">// 协程状态</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">goid</span><span class="w">         </span><span class="kt">int64</span><span class="w">      </span><span class="c1">// 协程ID，不对外暴露</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">waitsince</span><span class="w">    </span><span class="kt">int64</span><span class="w">      </span><span class="c1">// approx time when the g become blocked</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">waitreason</span><span class="w">   </span><span class="nx">waitReason</span><span class="w"> </span><span class="c1">// if status==Gwaiting</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">preempt</span><span class="w">      </span><span class="kt">bool</span><span class="w">       </span><span class="c1">// 是否运行抢占当前协程</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">lockedm</span><span class="w">      </span><span class="nx">muintptr</span><span class="w">   </span><span class="c1">// 用于锁定M运行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">startpc</span><span class="w">      </span><span class="kt">uintptr</span><span class="w">    </span><span class="c1">// 创建协程时传入的函数的</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="nx">timer</span><span class="w">        </span><span class="o">*</span><span class="nx">timer</span><span class="w">     </span><span class="c1">// 调用time.Sleep的计时器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>所有的协程都维护在一个全局的数据结构：allgs 中：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">allgs</span><span class="w">    </span><span class="p">[]</span><span class="o">*</span><span class="nx">g</span><span class="w">
+</span></span></span></code></pre></div><p><code>allgs</code> 是一个切片，因此协程的数量会受到切片的长度限制，而切片的长度用了一个 <code>int</code> 表示，所以在64位机器下协程的最大数量为：<code>2^63 - 1</code>。</p>
 <h3 id="协程状态">协程状态</h3>
 <p>协程具有如下状态，枚举于：<code>/runtime/runtime2.go</code> 文件中：</p>
 <table>
-<thead>
-<tr>
-<th>值</th>
-<th>状态</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>0</td>
-<td>_Gidle</td>
-<td>刚刚创建，还没有初始化</td>
-</tr>
-<tr>
-<td>1</td>
-<td>_Grunnable</td>
-<td>可运行，排队中</td>
-</tr>
-<tr>
-<td>2</td>
-<td>_Grunning</td>
-<td>可能在运行中，已经绑定了 M P</td>
-</tr>
-<tr>
-<td>3</td>
-<td>_Gsyscall</td>
-<td>绑定了 M，在执行系统调用中</td>
-</tr>
-<tr>
-<td>4</td>
-<td>_Gwaiting</td>
-<td>阻塞了（锁、管道），等待中</td>
-</tr>
-<tr>
-<td>5</td>
-<td>_Gmoribund_unused</td>
-<td>暂时没用</td>
-</tr>
-<tr>
-<td>6</td>
-<td>_Gdead</td>
-<td>没有在使用，可能在等待复用</td>
-</tr>
-<tr>
-<td>7</td>
-<td>_Genqueue_unused</td>
-<td>暂时没用</td>
-</tr>
-<tr>
-<td>8</td>
-<td>_Gcopystack</td>
-<td>栈复制中</td>
-</tr>
-<tr>
-<td>9</td>
-<td>_Gpreempted</td>
-<td>被抢占了</td>
-</tr>
-<tr>
-<td>10</td>
-<td>_Gscan</td>
-<td>GC正在扫描这个协程</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>值</th>
+          <th>状态</th>
+          <th>说明</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>0</td>
+          <td>_Gidle</td>
+          <td>刚刚创建，还没有初始化</td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td>_Grunnable</td>
+          <td>可运行，排队中</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>_Grunning</td>
+          <td>可能在运行中，已经绑定了 M P</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>_Gsyscall</td>
+          <td>绑定了 M，在执行系统调用中</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>_Gwaiting</td>
+          <td>阻塞了（锁、管道），等待中</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>_Gmoribund_unused</td>
+          <td>暂时没用</td>
+      </tr>
+      <tr>
+          <td>6</td>
+          <td>_Gdead</td>
+          <td>没有在使用，可能在等待复用</td>
+      </tr>
+      <tr>
+          <td>7</td>
+          <td>_Genqueue_unused</td>
+          <td>暂时没用</td>
+      </tr>
+      <tr>
+          <td>8</td>
+          <td>_Gcopystack</td>
+          <td>栈复制中</td>
+      </tr>
+      <tr>
+          <td>9</td>
+          <td>_Gpreempted</td>
+          <td>被抢占了</td>
+      </tr>
+      <tr>
+          <td>10</td>
+          <td>_Gscan</td>
+          <td>GC正在扫描这个协程</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="调度逻辑">调度逻辑</h3>
 <p>Go的协程采用了一种无优先级可抢占FIFO时间片轮转调度算法：Go 的协程调度本质是给绑定在 P 的 M 选择下一个可以运行的 G 来运行的过程。</p>
@@ -583,106 +597,106 @@ P 中管理了一个协程队列，M 每次就从这个队列中取协程来运�
 </ul>
 <h2 id="进程线程协程对比表">进程线程协程对比表</h2>
 <table>
-<thead>
-<tr>
-<th></th>
-<th>进程</th>
-<th>线程</th>
-<th>协程</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>数据结构</td>
-<td><code>linux:/include/linux/sched.h: *task_struct</code></td>
-<td><code>linux:/include/linux/sched.h: *task_struct</code></td>
-<td><code>go:/runtime/runtime2.go:*g</code></td>
-</tr>
-<tr>
-<td>调度策略</td>
-<td>CFS(Compeletly Fair Scheduler)<br />可抢占支持优先级时间片动态轮转调度算法</td>
-<td>同进程</td>
-<td>无优先级可抢占FIFO时间片轮转调度算法</td>
-</tr>
-<tr>
-<td>调度是否公平</td>
-<td>相对公平</td>
-<td>同进程</td>
-<td>不是那么公平</td>
-</tr>
-<tr>
-<td>维护集合</td>
-<td>- 进程链表<br />- 进程HashMap</td>
-<td>同进程</td>
-<td>全局协程列表：allgs</td>
-</tr>
-<tr>
-<td>数量限制</td>
-<td>1. 最大上限：2^32-1<br />2. unlimit -a 查看限制</td>
-<td>同进程</td>
-<td>2 ^ 63 -1</td>
-</tr>
-<tr>
-<td>如何创建</td>
-<td>调用 fork()</td>
-<td>调用 fork()</td>
-<td>调用 go 关键字</td>
-</tr>
-<tr>
-<td>最大优势</td>
-<td>进程之间资源彻底隔离</td>
-<td>实现简单，直接调用系统 API 即可</td>
-<td>上下文切换快速</td>
-</tr>
-<tr>
-<td>调度优先级</td>
-<td>支持（nice值）</td>
-<td>同进程</td>
-<td>不支持</td>
-</tr>
-<tr>
-<td>终止方式</td>
-<td>调用 exit()</td>
-<td>pthread_cancel、pthread_exit、自然退出</td>
-<td>自然退出</td>
-</tr>
-<tr>
-<td>状态枚举</td>
-<td>R (running)<br/>S (sleeping)<br/>D (disk sleep)<br/>T (stopped)<br/>T (tracing stop)<br/>Z (zombie)<br/>X (dead)</td>
-<td>同进程</td>
-<td>idle<br/>runnable<br/>running<br/>syscall<br/>waiting<br/>dead<br/>copystack<br/>preempted<br/>scan</td>
-</tr>
-<tr>
-<td>创建开销</td>
-<td>8MB初始栈（可以通过unlimit设置）</td>
-<td>同进程</td>
-<td>2KB初始栈</td>
-</tr>
-<tr>
-<td>切换开销</td>
-<td>高：需要切换寄存器、栈指针、程序计数器等上下文，需要进行系统调用</td>
-<td>同进程</td>
-<td>低：需要切换栈指针、程序计数器等上下文，不需要进行系统调用</td>
-</tr>
-<tr>
-<td>个体间通信方式</td>
-<td>- 通过操作系统提供的信息交换API：信号、管道、命名管道、消息队列<br />- 直接共享内存<br />- socket</td>
-<td>线程之间内存天然共享，可以辅以锁等手段来协助通信</td>
-<td>同线程，不过 Go 提供了很方便的机制：channel 来通信</td>
-</tr>
-<tr>
-<td>标识</td>
-<td>PID(Process ID)<br />TGID(Thread Group ID)</td>
-<td>PID同进程，有时候也叫TID（Thread ID）</td>
-<td>GID(Goroutine ID，不对外暴露)</td>
-</tr>
-<tr>
-<td>调度周期</td>
-<td>根据CPU运行状态计算</td>
-<td>同进程</td>
-<td>10ms</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th></th>
+          <th>进程</th>
+          <th>线程</th>
+          <th>协程</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>数据结构</td>
+          <td><code>linux:/include/linux/sched.h: *task_struct</code></td>
+          <td><code>linux:/include/linux/sched.h: *task_struct</code></td>
+          <td><code>go:/runtime/runtime2.go:*g</code></td>
+      </tr>
+      <tr>
+          <td>调度策略</td>
+          <td>CFS(Compeletly Fair Scheduler)<br />可抢占支持优先级时间片动态轮转调度算法</td>
+          <td>同进程</td>
+          <td>无优先级可抢占FIFO时间片轮转调度算法</td>
+      </tr>
+      <tr>
+          <td>调度是否公平</td>
+          <td>相对公平</td>
+          <td>同进程</td>
+          <td>不是那么公平</td>
+      </tr>
+      <tr>
+          <td>维护集合</td>
+          <td>- 进程链表<br />- 进程HashMap</td>
+          <td>同进程</td>
+          <td>全局协程列表：allgs</td>
+      </tr>
+      <tr>
+          <td>数量限制</td>
+          <td>1. 最大上限：2^32-1<br />2. unlimit -a 查看限制</td>
+          <td>同进程</td>
+          <td>2 ^ 63 -1</td>
+      </tr>
+      <tr>
+          <td>如何创建</td>
+          <td>调用 fork()</td>
+          <td>调用 fork()</td>
+          <td>调用 go 关键字</td>
+      </tr>
+      <tr>
+          <td>最大优势</td>
+          <td>进程之间资源彻底隔离</td>
+          <td>实现简单，直接调用系统 API 即可</td>
+          <td>上下文切换快速</td>
+      </tr>
+      <tr>
+          <td>调度优先级</td>
+          <td>支持（nice值）</td>
+          <td>同进程</td>
+          <td>不支持</td>
+      </tr>
+      <tr>
+          <td>终止方式</td>
+          <td>调用 exit()</td>
+          <td>pthread_cancel、pthread_exit、自然退出</td>
+          <td>自然退出</td>
+      </tr>
+      <tr>
+          <td>状态枚举</td>
+          <td>R (running)<br/>S (sleeping)<br/>D (disk sleep)<br/>T (stopped)<br/>T (tracing stop)<br/>Z (zombie)<br/>X (dead)</td>
+          <td>同进程</td>
+          <td>idle<br/>runnable<br/>running<br/>syscall<br/>waiting<br/>dead<br/>copystack<br/>preempted<br/>scan</td>
+      </tr>
+      <tr>
+          <td>创建开销</td>
+          <td>8MB初始栈（可以通过unlimit设置）</td>
+          <td>同进程</td>
+          <td>2KB初始栈</td>
+      </tr>
+      <tr>
+          <td>切换开销</td>
+          <td>高：需要切换寄存器、栈指针、程序计数器等上下文，需要进行系统调用</td>
+          <td>同进程</td>
+          <td>低：需要切换栈指针、程序计数器等上下文，不需要进行系统调用</td>
+      </tr>
+      <tr>
+          <td>个体间通信方式</td>
+          <td>- 通过操作系统提供的信息交换API：信号、管道、命名管道、消息队列<br />- 直接共享内存<br />- socket</td>
+          <td>线程之间内存天然共享，可以辅以锁等手段来协助通信</td>
+          <td>同线程，不过 Go 提供了很方便的机制：channel 来通信</td>
+      </tr>
+      <tr>
+          <td>标识</td>
+          <td>PID(Process ID)<br />TGID(Thread Group ID)</td>
+          <td>PID同进程，有时候也叫TID（Thread ID）</td>
+          <td>GID(Goroutine ID，不对外暴露)</td>
+      </tr>
+      <tr>
+          <td>调度周期</td>
+          <td>根据CPU运行状态计算</td>
+          <td>同进程</td>
+          <td>10ms</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="总结">总结</h2>
 <p>最后再简单简单总结一下进程、线程和协程的本质区别：</p>

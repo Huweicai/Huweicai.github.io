@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>python on Anonymous&#39; Blog</title>
+    <title>Python on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/python/</link>
-    <description>Recent content in python on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <description>Recent content in Python on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Mon, 29 Jan 2024 09:51:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 29 Jan 2024 09:51:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/python/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>C/C&#43;&#43; &amp; Python 融合之道</title>
       <link>https://huweicai.com/c-with-python-intercall/</link>
       <pubDate>Mon, 29 Jan 2024 09:51:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/c-with-python-intercall/</guid>
-      <description>Python 解释器 正如软件系统通常分为定义与实现两部分，编程语言也是。 比如 C++ 标准是由国际标准化组织 ( ISO ) 下属的 ISO/IEC JTC1/SC22/WG21特别工作组制定的，最新标准为 C++ 20 (ISO/IEC 14882:2020)，这是定义；而其实现则有 GNU 的 gcc、微软的 visual c++、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。 Java 规范则是由 Oracle 主导的 JCP 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量</description>
+      <description>&lt;h1 id=&#34;python-解释器&#34;&gt;Python 解释器&lt;/h1&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://gcore.jsdelivr.net/gh/Huweicai/images/20240330184739.webp&#34; alt=&#34;4c932dd0-77c4-4ac0-b31e-787de00fc4dd&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;正如软件系统通常分为定义与实现两部分，编程语言也是。&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;比如 C++ 标准是由国际标准化组织 ( ISO ) 下属的 &lt;code&gt;ISO/IEC JTC1/SC22/WG21&lt;/code&gt;特别工作组制定的，最新标准为 C++ 20 (&lt;a href=&#34;https://www.iso.org/standard/79358.html&#34;&gt;ISO/IEC 14882:2020&lt;/a&gt;)，这是定义；而其实现则有 GNU 的 &lt;a href=&#34;https://gcc.gnu.org/&#34;&gt;gcc&lt;/a&gt;、微软的 visual c++、Apple 发起的 clang 等等，任何人都可以按照定义去实现自己的实现。&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;Java 规范则是由 Oracle 主导的 &lt;a href=&#34;https://www.jcp.org&#34;&gt;JCP&lt;/a&gt; 所制定，有 Oracle Java SE、OpenJDK、Corretto、AdoptOpen 等大量不同的实现。&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;更别论应用更为广泛的 JavaScript 语言，&lt;a href=&#34;https://tc39.es/ecma262/&#34;&gt;ECMAScript&lt;/a&gt; 的实现者至少有两位数。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

@@ -4,17 +4,16 @@
     <title>TCP on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/tcp/</link>
     <description>Recent content in TCP on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 01 Jul 2020 01:47:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/tcp/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 01 Jul 2020 01:47:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/tcp/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>一个网络数据包的深度解剖</title>
       <link>https://huweicai.com/who-network-capture-analysis/</link>
       <pubDate>Wed, 01 Jul 2020 01:47:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/who-network-capture-analysis/</guid>
-      <description>众所周知，网络是分层的，国际标准化组织将网络划分了七层，定义于 ISO/IEC 7498-1，也就是我们所熟知的 ISO 七层模型。 自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。 以我们所熟知的应用层协议，超文本传输协议（HTTP: HyperText Transfer Protocol）为例，它位于这个模型中的最高的一层，应用进程发送 HTTP 请求包发出之后，会一层一层往下叠加头部直到最终变成最底层的物理信号 0 1 0 1 比特流在网线上传输</description>
+      <description>&lt;p&gt;众所周知，网络是分层的，国际标准化组织将网络划分了七层，定义于 &lt;a href=&#34;https://www.iso.org/standard/20269.html&#34;&gt;ISO/IEC 7498-1&lt;/a&gt;，也就是我们所熟知的 ISO 七层模型。&lt;/p&gt;&#xA;&lt;p&gt;自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Huweicai/images/20200910165651.png&#34; alt=&#34;网络分层 (1)&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;以我们所熟知的应用层协议，超文本传输协议（HTTP: HyperText Transfer Protocol）为例，它位于这个模型中的最高的一层，应用进程发送 HTTP 请求包发出之后，会一层一层往下叠加头部直到最终变成最底层的物理信号 0 1 0 1 比特流在网线上传输，那么最终一层一层裹出来的这一串东西，到底是长什么样呢？这串东西里面每个 0 和 1 分别表示什么意思呢？&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

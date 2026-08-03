@@ -7,15 +7,27 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="WHY 共享内存 进程间通信有许多种方式，不同的场景有不同的选择。 当通信内容非常简单的时候，可以考虑信号、信号量甚至 flock() 这种最基础的通信方式。 当需要传递不仅仅是信号这种规模的数据时，可以考虑 FIFO、MQ 等内核 API，也非常的简单易用 。 当我们的传输内容再进一步复杂，需要用“协议”去抽象这种复杂度的时候，Unix Domain Socket 会是一个不错的选择，比如常见的 gRPC over UDS；或者牺牲一点网络栈开销，直接使用基于 TCP / UDP 的 Socket 也非常">
+  <meta name="description" content="WHY 共享内存
+进程间通信有许多种方式，不同的场景有不同的选择。
+当通信内容非常简单的时候，可以考虑信号、信号量甚至 flock() 这种最基础的通信方式。
+当需要传递不仅仅是信号这种规模的数据时，可以考虑 FIFO、MQ 等内核 API，也非常的简单易用 。
+当我们的传输内容再进一步复杂，需要用“协议”去抽象这种复杂度的时候，Unix Domain Socket 会是一个不错的选择，比如常见的 gRPC over UDS；或者牺牲一点网络栈开销，直接使用基于 TCP / UDP 的 Socket 也非常方便。
+十八般兵器各有神通，但本文主角——共享内存，光凭零数据拷贝这一特性就能稳坐最快进程间通信方式这一宝座。">
 
-  <meta property="og:title" content="很快的共享内存" />
-<meta property="og:description" content="WHY 共享内存 进程间通信有许多种方式，不同的场景有不同的选择。 当通信内容非常简单的时候，可以考虑信号、信号量甚至 flock() 这种最基础的通信方式。 当需要传递不仅仅是信号这种规模的数据时，可以考虑 FIFO、MQ 等内核 API，也非常的简单易用 。 当我们的传输内容再进一步复杂，需要用“协议”去抽象这种复杂度的时候，Unix Domain Socket 会是一个不错的选择，比如常见的 gRPC over UDS；或者牺牲一点网络栈开销，直接使用基于 TCP / UDP 的 Socket 也非常" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/shared-memory/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2023-08-08T13:42:00+08:00" />
-<meta property="article:modified_time" content="2023-08-08T13:42:00+08:00" />
-
+  <meta property="og:url" content="https://huweicai.com/shared-memory/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="很快的共享内存">
+  <meta property="og:description" content="WHY 共享内存 进程间通信有许多种方式，不同的场景有不同的选择。
+当通信内容非常简单的时候，可以考虑信号、信号量甚至 flock() 这种最基础的通信方式。
+当需要传递不仅仅是信号这种规模的数据时，可以考虑 FIFO、MQ 等内核 API，也非常的简单易用 。
+当我们的传输内容再进一步复杂，需要用“协议”去抽象这种复杂度的时候，Unix Domain Socket 会是一个不错的选择，比如常见的 gRPC over UDS；或者牺牲一点网络栈开销，直接使用基于 TCP / UDP 的 Socket 也非常方便。
+十八般兵器各有神通，但本文主角——共享内存，光凭零数据拷贝这一特性就能稳坐最快进程间通信方式这一宝座。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2023-08-08T13:42:00+08:00">
+    <meta property="article:modified_time" content="2023-08-08T13:42:00+08:00">
+    <meta property="article:tag" content="操作系统">
+    <meta property="article:tag" content="Linux">
 
    
 
@@ -108,7 +120,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +139,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +208,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +216,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -295,7 +307,7 @@
             <li class="middot"></li>
             <li>8 minutes read</li>
         
-        <li>3837 words</li>
+        <li>3854 words</li>
 
     </ul>
     
@@ -337,13 +349,13 @@
 <h3 id="api">API</h3>
 <p>POSIX 共享内存由如下几个相关函数组成：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 打开一个代表共享内存的临时文件，返回其对应的 fd
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">shm_open</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">oflag</span><span class="p">,</span> <span class="n">mode_t</span> <span class="n">mode</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">shm_open</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">oflag</span><span class="p">,</span> <span class="kt">mode_t</span> <span class="n">mode</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// 分配空间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">ftruncate</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="n">off_t</span> <span class="n">length</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">ftruncate</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="kt">off_t</span> <span class="n">length</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// 关闭共享内存
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">shm_unlink</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">shm_unlink</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">);</span>
 </span></span></code></pre></div><h3 id="实现原理">实现原理</h3>
 <p><strong>POSIX</strong> 的大部分标准在 <code>glibc</code> 中都有实现，共享内存也是如此，其实现非常简洁。</p>
 <p><code>tmpfs</code> 是一种特殊的文件系统，与磁盘文件系统不同，<code>tmpfs</code>的数据存储在内存中，Linux 在启动之后会挂载多个 <code>tmpfs</code>实例，各自有其不同的用途，其中之一 <code>/dev/shm</code>就是为共享内存提供服务的。</p>
@@ -361,30 +373,30 @@
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;fcntl.h&gt; /* For O_* constants */</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="cp">#define PATH &#34;/testing-shared-memory&#34;
 </span></span></span><span class="line"><span class="cl"><span class="cp">#define SIZE  1024
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">shm_open</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="n">O_CREAT</span> <span class="o">|</span> <span class="n">O_RDWR</span><span class="p">,</span> <span class="mo">0600</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="nf">shm_open</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="n">O_CREAT</span> <span class="o">|</span> <span class="n">O_RDWR</span><span class="p">,</span> <span class="mo">0600</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 申请空间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">ftruncate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nf">ftruncate</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 内存映射
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">mmap</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">,</span> <span class="n">PROT_WRITE</span><span class="p">,</span> <span class="n">MAP_SHARED</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="nf">mmap</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">,</span> <span class="n">PROT_WRITE</span><span class="p">,</span> <span class="n">MAP_SHARED</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">shm</span> <span class="o">==</span> <span class="n">MAP_FAILED</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 共享内存写入
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">strcpy</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="s">&#34;HELLO WORLD&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">strcpy</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="s">&#34;HELLO WORLD&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 回收资源，这里其实 mmap 之后 fd 就用不到可以 close 了
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="n">munmap</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">munmap</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><ul>
 <li>读取部分：<code>reader.c</code></li>
@@ -395,30 +407,30 @@
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="cp">#define PATH &#34;/testing-shared-memory&#34;
 </span></span></span><span class="line"><span class="cl"><span class="cp">#define SIZE  1024
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">shm_open</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">,</span> <span class="mo">0600</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="nf">shm_open</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">,</span> <span class="mo">0600</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 内存映射
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">mmap</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">,</span> <span class="n">PROT_READ</span><span class="p">,</span> <span class="n">MAP_SHARED</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="nf">mmap</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">,</span> <span class="n">PROT_READ</span><span class="p">,</span> <span class="n">MAP_SHARED</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">shm</span> <span class="o">==</span> <span class="n">MAP_FAILED</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 读取内存内容
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">shm</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">shm</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 回收资源
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="n">munmap</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">munmap</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="n">SIZE</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">  
 </span></span><span class="line"><span class="cl">    <span class="c1">// 删除这段空间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">shm_unlink</span><span class="p">(</span><span class="n">PATH</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">shm_unlink</span><span class="p">(</span><span class="n">PATH</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>保存好 <code>writer.c</code>和<code>reader.c</code>之后，我们编译并运行就可以看到 reader 能成功读出来 writer 写入的数据了：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 编译, rt 是 shm_open 所在的库</span>
@@ -435,34 +447,34 @@
 <p>System V IPC 由三部分组成：消息队列、信号量和共享内存，消息队列允许进程通过在队列中传递消息来进行通信，信号量可用于控制对共享资源的访问，而共享内存则允许多个进程共享同一块内存区域，从而实现更快速的数据交换。</p>
 <h3 id="api-1">API</h3>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// 申请一块共享内存
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">shmget</span><span class="p">(</span><span class="n">key_t</span> <span class="n">key</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">int</span> <span class="n">shmflg</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">shmget</span><span class="p">(</span><span class="kt">key_t</span> <span class="n">key</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">int</span> <span class="n">shmflg</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// 将创建好的共享内存地址附加到当前进程的内存地址空间（其实就是 mmap）
 </span></span></span><span class="line"><span class="cl"><span class="c1">// shmaddr 是目标地址可以不用指定，由内核分配
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="o">*</span><span class="nf">shmat</span><span class="p">(</span><span class="kt">int</span> <span class="n">shmid</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">_Nullable</span> <span class="n">shmaddr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">shmflg</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="o">*</span><span class="nf">shmat</span><span class="p">(</span><span class="kt">int</span> <span class="n">shmid</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">_Nullable</span> <span class="n">shmaddr</span><span class="p">,</span> <span class="kt">int</span> <span class="n">shmflg</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// 取消内存映射
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">shmdt</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">shmaddr</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">shmdt</span><span class="p">(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">shmaddr</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// 控制共享内存，可以传入不同的 cmd 查询或者删除 shmid 所对应的共享内存
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="nf">shmctl</span><span class="p">(</span><span class="kt">int</span> <span class="n">shmid</span><span class="p">,</span> <span class="kt">int</span> <span class="n">cmd</span><span class="p">,</span> <span class="k">struct</span> <span class="n">shmid_ds</span> <span class="o">*</span><span class="n">buf</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">shmctl</span><span class="p">(</span><span class="kt">int</span> <span class="n">shmid</span><span class="p">,</span> <span class="kt">int</span> <span class="n">cmd</span><span class="p">,</span> <span class="k">struct</span> <span class="n">shmid_ds</span> <span class="o">*</span><span class="n">buf</span><span class="p">);</span>
 </span></span></code></pre></div><h3 id="实现原理-1">实现原理</h3>
 <p>System V 共享内存的代码实现在<a href="https://elixir.bootlin.com/linux/v6.4/source/ipc/shm.c">Linux 内核内部</a>，其实现原理和 glibc 实现的共享内存类似，它同样是通过内存文件系统打开一个文件，然后将其映射到内存中，从而实现进程间的共享数据，这里就不详细展开了。</p>
 <p>一段 System V  共享内存在 Linux 里被叫做<code>Segment</code>，每段共享内存在内核里面对应一个 <code>shmid_kernel</code>的数据结构：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">shmid_kernel</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">kern_ipc_perm</span>	<span class="n">shm_perm</span><span class="p">;</span> <span class="c1">// 
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">file</span>		<span class="o">*</span><span class="n">shm_file</span><span class="p">;</span>   <span class="c1">// 对应的内存临时文件
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">shm_nattch</span><span class="p">;</span> <span class="c1">// Attach 的内存数量
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">shm_segsz</span><span class="p">;</span> <span class="c1">// 共享内存大小（Bytes）
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">time64_t</span>		<span class="n">shm_atim</span><span class="p">;</span> <span class="c1">// 最后一次访问时间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">time64_t</span>		<span class="n">shm_dtim</span><span class="p">;</span> <span class="c1">// 最后一次连接断开时间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="n">time64_t</span>		<span class="n">shm_ctim</span><span class="p">;</span> <span class="c1">// 创建时间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">pid</span>		<span class="o">*</span><span class="n">shm_cprid</span><span class="p">;</span> <span class="c1">// 控制进程的 PID （通常就是创建者，但是创建者可能会退出）
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">pid</span>		<span class="o">*</span><span class="n">shm_lprid</span><span class="p">;</span> <span class="c1">// 也是指向控制进程的 PID
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">user_struct</span>	<span class="o">*</span><span class="n">mlock_user</span><span class="p">;</span>
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">file</span>		<span class="o">*</span><span class="n">shm_file</span><span class="p">;</span>   <span class="c1">// 对应的内存临时文件
+</span></span></span><span class="line"><span class="cl">	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">shm_nattch</span><span class="p">;</span> <span class="c1">// Attach 的内存数量
+</span></span></span><span class="line"><span class="cl">	<span class="kt">unsigned</span> <span class="kt">long</span>		<span class="n">shm_segsz</span><span class="p">;</span> <span class="c1">// 共享内存大小（Bytes）
+</span></span></span><span class="line"><span class="cl">	<span class="kt">time64_t</span>		<span class="n">shm_atim</span><span class="p">;</span> <span class="c1">// 最后一次访问时间
+</span></span></span><span class="line"><span class="cl">	<span class="kt">time64_t</span>		<span class="n">shm_dtim</span><span class="p">;</span> <span class="c1">// 最后一次连接断开时间
+</span></span></span><span class="line"><span class="cl">	<span class="kt">time64_t</span>		<span class="n">shm_ctim</span><span class="p">;</span> <span class="c1">// 创建时间
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">pid</span>		<span class="o">*</span><span class="n">shm_cprid</span><span class="p">;</span> <span class="c1">// 控制进程的 PID （通常就是创建者，但是创建者可能会退出）
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">pid</span>		<span class="o">*</span><span class="n">shm_lprid</span><span class="p">;</span> <span class="c1">// 也是指向控制进程的 PID
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">user_struct</span>	<span class="o">*</span><span class="n">mlock_user</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">task_struct</span>	<span class="o">*</span><span class="n">shm_creator</span><span class="p">;</span> <span class="c1">// 指向创建进程的 task_struct
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">shm_clist</span><span class="p">;</span>	<span class="c1">// 被同一进程创建的共享内存会通过这个链表串联
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span> 
+</span></span></span><span class="line"><span class="cl">	<span class="k">struct</span> <span class="n">list_head</span>	<span class="n">shm_clist</span><span class="p">;</span>	<span class="c1">// 被同一进程创建的共享内存会通过这个链表串联
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span> 
 </span></span></code></pre></div><p>我们可以通过 <code>ipcs -m</code> 命令来查看这个结构体的关键信息。</p>
 <p>在 Linux 中，默认情况下，每个共享内存段（Segment）的最小长度为 1KB。而最大长度可以达到 2^64 - 2^24，这几乎相当于没有限制。</p>
 <p>此外，默认情况下，系统允许创建的最大共享内存段数量是 4096。如果需要创建更多的共享内存段，就需要使用 sysctl 命令进行调整。</p>
@@ -476,29 +488,29 @@
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/ipc.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/shm.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="cp">#define SHM_SIZE 1024 </span><span class="c1">// 共享内存大小，以字节为单位
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">key_t</span> <span class="n">key</span> <span class="o">=</span> <span class="n">ftok</span><span class="p">(</span><span class="s">&#34;testing-shared-memory&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// 创建一个唯一的键
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="kt">key_t</span> <span class="n">key</span> <span class="o">=</span> <span class="nf">ftok</span><span class="p">(</span><span class="s">&#34;testing-shared-memory&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// 创建一个唯一的键
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 创建共享内存段
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">id</span> <span class="o">=</span> <span class="n">shmget</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">SHM_SIZE</span><span class="p">,</span> <span class="n">IPC_CREAT</span> <span class="o">|</span> <span class="mo">0666</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">id</span> <span class="o">=</span> <span class="nf">shmget</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">SHM_SIZE</span><span class="p">,</span> <span class="n">IPC_CREAT</span> <span class="o">|</span> <span class="mo">0666</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 附加共享内存
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">shmat</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="nf">shmat</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">shm</span> <span class="o">==</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 共享内存写入
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">strcpy</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="s">&#34;HELLO WORLD&#34;</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">strcpy</span><span class="p">(</span><span class="n">shm</span><span class="p">,</span> <span class="s">&#34;HELLO WORLD&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 分离共享内存
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">shmdt</span><span class="p">(</span><span class="n">shm</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">shmdt</span><span class="p">(</span><span class="n">shm</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><ul>
@@ -509,30 +521,30 @@
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/ipc.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;sys/shm.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="cp">#define SHM_SIZE 1024 </span><span class="c1">// 共享内存大小，以字节为单位
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">key_t</span> <span class="n">key</span> <span class="o">=</span> <span class="n">ftok</span><span class="p">(</span><span class="s">&#34;testing-shared-memory&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// 使用同样的键
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="kt">key_t</span> <span class="n">key</span> <span class="o">=</span> <span class="nf">ftok</span><span class="p">(</span><span class="s">&#34;testing-shared-memory&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// 使用同样的键
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 获取共享内存段
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">id</span> <span class="o">=</span> <span class="n">shmget</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">SHM_SIZE</span><span class="p">,</span> <span class="mo">0666</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">id</span> <span class="o">=</span> <span class="nf">shmget</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">SHM_SIZE</span><span class="p">,</span> <span class="mo">0666</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 附加共享内存
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">shmat</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="kt">char</span> <span class="o">*</span><span class="n">shm</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="nf">shmat</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">shm</span> <span class="o">==</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 读取共享内存中的数据
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">shm</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="n">shm</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 分离共享内存
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">shmdt</span><span class="p">(</span><span class="n">shm</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">shmdt</span><span class="p">(</span><span class="n">shm</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 删除共享内存段（可选）
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">shmctl</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">IPC_RMID</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="nf">shmctl</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">IPC_RMID</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>

@@ -4,17 +4,16 @@
     <title>日志 on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/%E6%97%A5%E5%BF%97/</link>
     <description>Recent content in 日志 on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Wed, 05 May 2021 13:58:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 05 May 2021 13:58:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Fluent Bit介绍</title>
       <link>https://huweicai.com/fluent-bit/</link>
       <pubDate>Wed, 05 May 2021 13:58:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/fluent-bit/</guid>
-      <description>Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;amp;过滤&amp;amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。 基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。 Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：</description>
+      <description>&lt;h1 id=&#34;fluent-bit&#34;&gt;Fluent Bit&lt;/h1&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://fluentbit.io/&#34;&gt;&lt;img src=&#34;https://fluentbit.io/assets/img/logo1-default.png&#34; alt=&#34;Logo&#34;&gt;&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;Fluent Bit&lt;/strong&gt; 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;amp;过滤&amp;amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。&lt;/p&gt;&#xA;&lt;h1 id=&#34;基本概念&#34;&gt;基本概念&lt;/h1&gt;&#xA;&lt;p&gt;大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;Fluent Bit&lt;/strong&gt; 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;输入部分负责采集原始日志；&lt;/li&gt;&#xA;&lt;li&gt;解析部分将原始日志结构化，比如提取字段、解转义等操作；&lt;/li&gt;&#xA;&lt;li&gt;过滤部分可以对日志做一些的统一的过滤和修改操作，比如增加一些统一的字段，过滤一些脏日志等等&lt;/li&gt;&#xA;&lt;li&gt;然后日志会被放到缓冲区等待发送&lt;/li&gt;&#xA;&lt;li&gt;路由部分会决策这个包应该发送到哪些输出&lt;/li&gt;&#xA;&lt;li&gt;输出将日志真正转发出去&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Huweicai/images/20210421173801.png&#34; alt=&#34;image-20210421173801544&#34;&gt;&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

@@ -1,47 +1,40 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>cloudnative on Anonymous&#39; Blog</title>
+    <title>Cloudnative on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/cloudnative/</link>
-    <description>Recent content in cloudnative on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <description>Recent content in Cloudnative on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sat, 04 Dec 2021 01:19:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/cloudnative/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 04 Dec 2021 01:19:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/cloudnative/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>镜像仓库Harbor Pull实现原理</title>
       <link>https://huweicai.com/harbor-pull-principle/</link>
       <pubDate>Sat, 04 Dec 2021 01:19:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/harbor-pull-principle/</guid>
-      <description>Harbor简介 Harbor 是 VMWare 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 docker 开源的 registry (后更名为 distribution)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。 Harbor 的系统架构如下图所示，箭头所指方向为数据流向： 一个镜像仓库最核心的功能就是推送和拉取，本文主要讨论 Harbor 镜像拉取具体的实现细节。 在开始之前 我</description>
+      <description>&lt;h1 id=&#34;harbor简介&#34;&gt;Harbor简介&lt;/h1&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://github.com/goharbor/harbor&#34;&gt;Harbor&lt;/a&gt; 是 &lt;a href=&#34;https://www.vmware.com/&#34;&gt;VMWare&lt;/a&gt; 开源的一个镜像仓库平台，镜像分发和存储逻辑是基于 &lt;a href=&#34;https://www.docker.com/&#34;&gt;docker&lt;/a&gt; 开源的 &lt;a href=&#34;https://github.com/distribution/distribution&#34;&gt;registry&lt;/a&gt; (后更名为 &lt;code&gt;distribution&lt;/code&gt;)实现的，Harbor 主要在其之上扩展了权限管理、镜像扫描、可视化管理后台等平台化功能，和大部分的云原生组件一样，Harbor 也是基于 Go 语言开发的。&lt;/p&gt;&#xA;&lt;p&gt;Harbor 的系统架构如下图所示，箭头所指方向为数据流向：&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Huweicai/images/20211119181205.png&#34; alt=&#34;image-20211119181205666&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;一个镜像仓库最核心的功能就是&lt;code&gt;推送&lt;/code&gt;和&lt;code&gt;拉取&lt;/code&gt;，本文主要讨论 &lt;code&gt;Harbor&lt;/code&gt; 镜像拉取具体的实现细节。&lt;/p&gt;&#xA;&lt;h1 id=&#34;在开始之前&#34;&gt;在开始之前&lt;/h1&gt;&#xA;&lt;p&gt;我们先申明一些基本信息，避免版本更迭引入的改动给大家带来困扰：&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Fluent Bit介绍</title>
       <link>https://huweicai.com/fluent-bit/</link>
       <pubDate>Wed, 05 May 2021 13:58:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/fluent-bit/</guid>
-      <description>Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;amp;过滤&amp;amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。 基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。 Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：</description>
+      <description>&lt;h1 id=&#34;fluent-bit&#34;&gt;Fluent Bit&lt;/h1&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://fluentbit.io/&#34;&gt;&lt;img src=&#34;https://fluentbit.io/assets/img/logo1-default.png&#34; alt=&#34;Logo&#34;&gt;&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;Fluent Bit&lt;/strong&gt; 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;amp;过滤&amp;amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。&lt;/p&gt;&#xA;&lt;h1 id=&#34;基本概念&#34;&gt;基本概念&lt;/h1&gt;&#xA;&lt;p&gt;大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;Fluent Bit&lt;/strong&gt; 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;输入部分负责采集原始日志；&lt;/li&gt;&#xA;&lt;li&gt;解析部分将原始日志结构化，比如提取字段、解转义等操作；&lt;/li&gt;&#xA;&lt;li&gt;过滤部分可以对日志做一些的统一的过滤和修改操作，比如增加一些统一的字段，过滤一些脏日志等等&lt;/li&gt;&#xA;&lt;li&gt;然后日志会被放到缓冲区等待发送&lt;/li&gt;&#xA;&lt;li&gt;路由部分会决策这个包应该发送到哪些输出&lt;/li&gt;&#xA;&lt;li&gt;输出将日志真正转发出去&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Huweicai/images/20210421173801.png&#34; alt=&#34;image-20210421173801544&#34;&gt;&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Kubernetes权限管理概述</title>
       <link>https://huweicai.com/kubernetes-permissions-overview/</link>
       <pubDate>Thu, 18 Mar 2021 21:29:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/kubernetes-permissions-overview/</guid>
-      <description>对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。 以 Git 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。 通常在校验权限中分为两个流程，认证和鉴权。 即先判断你是谁：认证，然后再鉴权，判断你有没有这个资源的权限。 毫无疑问，复杂的Kubernetes也具</description>
+      <description>&lt;p&gt;对于一个多用户系统而言，权限管理始终是无法忽略的一环，系统规模越大，权限管理就越重要。&lt;/p&gt;&#xA;&lt;p&gt;以 &lt;code&gt;Git&lt;/code&gt; 系统为例，你有一个代码仓库，你是这个仓库的管理员，你们组的同学具有提交代码的权限，你们部门的同学具有只读权限，公司的其他人全部无法查看，这就是一个典型的权限管理场景。&lt;/p&gt;&#xA;&lt;p&gt;通常在校验权限中分为两个流程，&lt;code&gt;认证&lt;/code&gt;和&lt;code&gt;鉴权&lt;/code&gt;。&lt;/p&gt;&#xA;&lt;p&gt;即先判断你是谁：&lt;code&gt;认证&lt;/code&gt;，然后再&lt;code&gt;鉴权&lt;/code&gt;，判断你有没有这个资源的权限。&lt;/p&gt;&#xA;&lt;p&gt;毫无疑问，复杂的&lt;code&gt;Kubernetes&lt;/code&gt;也具有一套复杂的权限管理系统，如果要用一句话简单介绍一下的话：&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Kubectl基本概念&amp;常用命令</title>
       <link>https://huweicai.com/kubectl-concepts-and-commands/</link>
       <pubDate>Thu, 28 Jan 2021 15:01:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/kubectl-concepts-and-commands/</guid>
-      <description>基本概念 容器化 + Kubernetes 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 kubectl 则提供了一种非常直观和强大的观察操控 k8s集群的方式。 kubectl 是 kubernetes自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 cobra 来解析命令行参数，读取 .kube/config中存储的认证信息经由 k8s restful api 和集群交互。 kubectl 命令基本格式如下： kubectl [子命令] [资源类型] [资源名称] [选项] 和 docker 、git这种复杂的命令行程序一样，kub</description>
+      <description>&lt;h1 id=&#34;基本概念&#34;&gt;基本概念&lt;/h1&gt;&#xA;&lt;p&gt;容器化 + &lt;code&gt;Kubernetes&lt;/code&gt; 逐渐成为云计算领域计算资源编排调度管理的事实标准，而 &lt;code&gt;kubectl&lt;/code&gt; 则提供了一种非常直观和强大的观察操控 k8s集群的方式。&lt;/p&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://github.com/kubernetes/kubectl&#34;&gt;kubectl&lt;/a&gt; 是 &lt;a href=&#34;https://github.com/kubernetes/kubernetes&#34;&gt;kubernetes&lt;/a&gt;自带的 21 个命令行程序中的一个，其本身的逻辑并不复杂，使用 &lt;a href=&#34;https://github.com/spf13/cobra&#34;&gt;cobra&lt;/a&gt; 来解析命令行参数，读取 &lt;code&gt;.kube/config&lt;/code&gt;中存储的认证信息经由 &lt;code&gt;k8s restful api&lt;/code&gt; 和集群交互。&lt;/p&gt;&#xA;&lt;p&gt;kubectl 命令基本格式如下：&lt;/p&gt;&#xA;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;kubectl [子命令] [资源类型] [资源名称] [选项]&#xA;&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;和 &lt;code&gt;docker &lt;/code&gt;、&lt;code&gt;git&lt;/code&gt;这种复杂的命令行程序一样，&lt;code&gt;kubectl&lt;/code&gt;也采用了命令下再分子命令的形式，子命令声明了要执行的动作，如：增删改查，当然 kubeclt 能做的远不止这四个动作，下文会简单介绍一下它们分别都能干什么。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

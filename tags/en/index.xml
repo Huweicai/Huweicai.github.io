@@ -4,24 +4,16 @@
     <title>EN on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/en/</link>
     <description>Recent content in EN on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 17 Jan 2023 00:00:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/en/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 17 Jan 2023 00:00:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/en/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Linux Kernel Debug Tips</title>
       <link>https://huweicai.com/kernel-debug-tips_en/</link>
       <pubDate>Tue, 17 Jan 2023 00:00:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/kernel-debug-tips_en/</guid>
-      <description>Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
-So, knowing more about how the kernel works will contribute to the construction of our user mode system.
-The best method to learn software code is debugging while watching, software = code + data, know more about the runtime data while learning code can help us understand it better.
-However the Kernel is not a normal software system, we can&amp;rsquo;t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb + QEMU, it&amp;rsquo; still too heavy, and not available for online systems.
-This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.
-Kernel Module Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can&amp;rsquo;t snoop the data inside Kernel.
-In that case, why not try to run our code inside the Kernel?
-It&amp;rsquo;s possible to edit the source code of kernel, adding log to print the information we concerned, but it&amp;rsquo;s a long tedious step.</description>
+      <description>&lt;h1 id=&#34;kernel&#34;&gt;Kernel&lt;/h1&gt;&#xA;&lt;p&gt;Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.&lt;/p&gt;&#xA;&lt;p&gt;So, knowing more about how the kernel works will contribute to the construction of our user mode system.&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Huweicai/images/20210625150645.png&#34; alt=&#34;image-20210625150638408&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;The best method to learn software code is debugging while watching, software = code + data, know more about the runtime data while learning code can help us understand it better.&lt;/p&gt;&#xA;&lt;p&gt;However the Kernel is not a normal software system, we can&amp;rsquo;t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb + QEMU, it&amp;rsquo; still too heavy, and not available for online systems.&lt;/p&gt;&#xA;&lt;p&gt;This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.&lt;/p&gt;&#xA;&lt;h1 id=&#34;kernel-module&#34;&gt;Kernel Module&lt;/h1&gt;&#xA;&lt;p&gt;Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level &lt;code&gt;Ring 3&lt;/code&gt; , they do not have the permission to acces the data in level &lt;code&gt;Ring 0&lt;/code&gt; high memory address space, which means that they can&amp;rsquo;t snoop the data inside Kernel.&lt;/p&gt;&#xA;&lt;p&gt;In that case, why not try to run our code inside the Kernel?&lt;/p&gt;&#xA;&lt;p&gt;It&amp;rsquo;s possible to edit the source code of kernel, adding log to print the information we concerned, but it&amp;rsquo;s a long tedious step.&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

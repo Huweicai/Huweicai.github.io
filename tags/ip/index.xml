@@ -4,26 +4,23 @@
     <title>IP on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/ip/</link>
     <description>Recent content in IP on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 22 Dec 2020 23:42:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/ip/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Dec 2020 23:42:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/ip/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>VPN是如何工作的</title>
       <link>https://huweicai.com/how-vpn-works/</link>
       <pubDate>Tue, 22 Dec 2020 23:42:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/how-vpn-works/</guid>
-      <description>VPN 想象一下这两种场景： 你下班家，公司线上一台机器出事故了，这个时候你需要远程到这台机器上来排查并处理问题。 你在其他城市实习，这个时候学校需要选下学期的课了，但是教务网站只对校园网开放。 在这两种场景中，都离不开一种关键的技术：VPN（Virtual Private Network：虚拟局域网）。 VPN提供了一种在公网上安全的加入局域网的方式，可以我们这里就以开源的 OpenConnect VPN 为例，探讨一下 VPN 这种技术是如何安全的将局域网在互</description>
+      <description>&lt;h2 id=&#34;vpn&#34;&gt;VPN&lt;/h2&gt;&#xA;&lt;p&gt;想象一下这两种场景：&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;你下班家，公司线上一台机器出事故了，这个时候你需要远程到这台机器上来排查并处理问题。&lt;/li&gt;&#xA;&lt;li&gt;你在其他城市实习，这个时候学校需要选下学期的课了，但是教务网站只对校园网开放。&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;p&gt;在这两种场景中，都离不开一种关键的技术：VPN（Virtual Private Network：虚拟局域网）。&lt;/p&gt;&#xA;&lt;p&gt;VPN提供了一种在公网上安全的加入局域网的方式，可以我们这里就以开源的 OpenConnect VPN 为例，探讨一下 VPN 这种技术是如何安全的将局域网在互联网中横向扩展的。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>一个网络数据包的深度解剖</title>
       <link>https://huweicai.com/who-network-capture-analysis/</link>
       <pubDate>Wed, 01 Jul 2020 01:47:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/who-network-capture-analysis/</guid>
-      <description>众所周知，网络是分层的，国际标准化组织将网络划分了七层，定义于 ISO/IEC 7498-1，也就是我们所熟知的 ISO 七层模型。 自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。 以我们所熟知的应用层协议，超文本传输协议（HTTP: HyperText Transfer Protocol）为例，它位于这个模型中的最高的一层，应用进程发送 HTTP 请求包发出之后，会一层一层往下叠加头部直到最终变成最底层的物理信号 0 1 0 1 比特流在网线上传输</description>
+      <description>&lt;p&gt;众所周知，网络是分层的，国际标准化组织将网络划分了七层，定义于 &lt;a href=&#34;https://www.iso.org/standard/20269.html&#34;&gt;ISO/IEC 7498-1&lt;/a&gt;，也就是我们所熟知的 ISO 七层模型。&lt;/p&gt;&#xA;&lt;p&gt;自底向上分别是：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Huweicai/images/20200910165651.png&#34; alt=&#34;网络分层 (1)&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;以我们所熟知的应用层协议，超文本传输协议（HTTP: HyperText Transfer Protocol）为例，它位于这个模型中的最高的一层，应用进程发送 HTTP 请求包发出之后，会一层一层往下叠加头部直到最终变成最底层的物理信号 0 1 0 1 比特流在网线上传输，那么最终一层一层裹出来的这一串东西，到底是长什么样呢？这串东西里面每个 0 和 1 分别表示什么意思呢？&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

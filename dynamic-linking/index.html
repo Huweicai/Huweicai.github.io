@@ -7,15 +7,27 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="函数链接 根据函数在编译期间的链接方式， 我们可以将函数分为三种： 直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。 静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。 动态链接（Dynamic Linking">
+  <meta name="description" content="函数链接
+根据函数在编译期间的链接方式， 我们可以将函数分为三种：
 
-  <meta property="og:title" content="动态链接函数调用是如何实现的" />
-<meta property="og:description" content="函数链接 根据函数在编译期间的链接方式， 我们可以将函数分为三种： 直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。 静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。 动态链接（Dynamic Linking" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/dynamic-linking/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2024-06-30T01:26:00+08:00" />
-<meta property="article:modified_time" content="2024-06-30T01:26:00+08:00" />
 
+直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。
+静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。
+动态链接（Dynamic Linking）：函数的地址在编译期间不可知，程序启动后才能通过加载动态库获取到实际的函数代码地址。
+
+前两种实现方式相对简单直接，本文主要分析第三种——动态链接是如何实现的。">
+
+  <meta property="og:url" content="https://huweicai.com/dynamic-linking/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="动态链接函数调用是如何实现的">
+  <meta property="og:description" content="函数链接 根据函数在编译期间的链接方式， 我们可以将函数分为三种：
+直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。 静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。 动态链接（Dynamic Linking）：函数的地址在编译期间不可知，程序启动后才能通过加载动态库获取到实际的函数代码地址。 前两种实现方式相对简单直接，本文主要分析第三种——动态链接是如何实现的。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2024-06-30T01:26:00+08:00">
+    <meta property="article:modified_time" content="2024-06-30T01:26:00+08:00">
+    <meta property="article:tag" content="C&#43;&#43;">
+    <meta property="article:tag" content="Compiler">
 
    
 
@@ -108,7 +120,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +139,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +208,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +216,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -295,7 +307,7 @@
             <li class="middot"></li>
             <li>9 minutes read</li>
         
-        <li>4417 words</li>
+        <li>4418 words</li>
 
     </ul>
     
@@ -318,24 +330,24 @@
 <h1 id="动态链接的-hello-world">动态链接的 Hello World</h1>
 <p>首先让我们从一个最简单的动态链接模型开始，先创建一个提供 <code>say_hello()</code>的动态链接库：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// file: hello.h
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">say_hello</span><span class="p">();</span>
+</span></span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">say_hello</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">// file: hello.c
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&#34;hello.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;hello.h&#34;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">say_hello</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Hello, World!&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span><span class="s">&#34;Hello, World!&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>然后将之编译成一个动态链接库<code>libhello.so</code>:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># -fPIC 代表生成位置无关代码，即使用相对地址而不是绝对地址</span>
 </span></span><span class="line"><span class="cl">gcc -o libhello.so -shared -fPIC hello.c
 </span></span></code></pre></div><p>然后我们再提供一个程序执行入口来调用这个动态链接库：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// file: main.c
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&#34;hello/hello.h&#34;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&#34;hello/hello.h&#34;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">say_hello</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">say_hello</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>编译这个文件并链接上上面生成的动态链接库：</p>

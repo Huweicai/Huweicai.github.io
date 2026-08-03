@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="电池
+充电
+充电原理
+充电协议
+
+  
+      
+          充电协议
+          简介
+          电压/最大电流/最大功率
+      
+  
+  
+      
+          标准 USB
+          USB 规范中涉及了关于供电的相关标准，USB 接口默认会提供 5V 0.5A 的电流输出，这也是我们通常说的慢充，虽然在后续的 USB 3.0 3.1 3.2 中不断提高了这一上限，但也仍然只有最大 1.5A 的电流
+          5V/1.5A/7.5W
+      
+      
+          QC: Quick Charge
+          高通推出的快速充电协议，目前已经推出到了 QC 5.0 版本
+          3.3~20V / 3A 5A / 100W
+      
+      
+          PD: Power Delivery
+          USB-PD 协议是由 USB-IF 推出的充电协议，应用非常广泛，苹果全系都是采用的这种快充协议，而其他各大手机厂商就算有自己的私有快充协议也会额外支持较低功率的 PD 快充
+          20V / 5A / 100W
+      
+      
+          VOOC
+          OPPO 2014 年推出的快充协议，也被一加和 realme 等子品牌使用，各自命名为 Dash / Warp，曾经 OPPO 著名的广告语 “充电5分钟通话2小时” 便于得益于该快充技术
+          -
+      
+  
+">
+
+  <meta property="og:url" content="http://localhost:1313/drafts/battery/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="锂电池工作原理">
+  <meta property="og:description" content="电池 充电 充电原理 充电协议 充电协议 简介 电压/最大电流/最大功率 标准 USB USB 规范中涉及了关于供电的相关标准，USB 接口默认会提供 5V 0.5A 的电流输出，这也是我们通常说的慢充，虽然在后续的 USB 3.0 3.1 3.2 中不断提高了这一上限，但也仍然只有最大 1.5A 的电流 5V/1.5A/7.5W QC: Quick Charge 高通推出的快速充电协议，目前已经推出到了 QC 5.0 版本 3.3~20V / 3A 5A / 100W PD: Power Delivery USB-PD 协议是由 USB-IF 推出的充电协议，应用非常广泛，苹果全系都是采用的这种快充协议，而其他各大手机厂商就算有自己的私有快充协议也会额外支持较低功率的 PD 快充 20V / 5A / 100W VOOC OPPO 2014 年推出的快充协议，也被一加和 realme 等子品牌使用，各自命名为 Dash / Warp，曾经 OPPO 著名的广告语 “充电5分钟通话2小时” 便于得益于该快充技术 -">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="drafts">
+    <meta property="article:published_time" content="2023-12-11T01:20:00+08:00">
+    <meta property="article:modified_time" content="2023-12-11T01:20:00+08:00">
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       锂电池工作原理 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="http://localhost:1313/drafts/battery/">
+
+  
+  
+
+  
+  <link href="http://localhost:1313/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="http://localhost:1313/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="http://localhost:1313/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="http://localhost:1313/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="http://localhost:1313/">
+          
+        <img class="avatar imgRotate" src="http://localhost:1313/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="http://localhost:1313/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="http://localhost:1313/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="http://localhost:1313/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('http://localhost:1313/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="http://localhost:1313/">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="http://localhost:1313/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="http://localhost:1313/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">锂电池工作原理</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2023-12-11</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>One minute read</li>
+        
+        <li>296 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="电池">电池</h1>
+<h1 id="充电">充电</h1>
+<h2 id="充电原理">充电原理</h2>
+<h2 id="充电协议">充电协议</h2>
+<table>
+  <thead>
+      <tr>
+          <th>充电协议</th>
+          <th>简介</th>
+          <th>电压/最大电流/最大功率</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>标准 USB</td>
+          <td>USB 规范中涉及了关于供电的相关标准，USB 接口默认会提供 5V 0.5A 的电流输出，这也是我们通常说的慢充，虽然在后续的 USB 3.0 3.1 3.2 中不断提高了这一上限，但也仍然只有最大 1.5A 的电流</td>
+          <td>5V/1.5A/7.5W</td>
+      </tr>
+      <tr>
+          <td>QC: Quick Charge</td>
+          <td>高通推出的快速充电协议，目前已经推出到了 QC 5.0 版本</td>
+          <td>3.3~20V / 3A 5A / 100W</td>
+      </tr>
+      <tr>
+          <td>PD: Power Delivery</td>
+          <td>USB-PD 协议是由 <em>USB</em>-IF 推出的充电协议，应用非常广泛，苹果全系都是采用的这种快充协议，而其他各大手机厂商就算有自己的私有快充协议也会额外支持较低功率的 PD 快充</td>
+          <td>20V / 5A / 100W</td>
+      </tr>
+      <tr>
+          <td>VOOC</td>
+          <td>OPPO 2014 年推出的快充协议，也被一加和 realme 等子品牌使用，各自命名为 Dash / Warp，曾经 OPPO 著名的广告语 “充电5分钟通话2小时” 便于得益于该快充技术</td>
+          <td>-</td>
+      </tr>
+  </tbody>
+</table>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=http://localhost:1313/drafts/exanic/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Exanic</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=http://localhost:1313/drafts/%E5%86%99%E7%BB%99%E7%A9%BF%E8%B6%8A%E8%80%85%E7%9A%84%E7%8E%B0%E4%BB%A3c&#43;&#43;%E6%8C%87%E5%8D%97/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>写给穿越者的现代C&#43;&#43;指南</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%94%b5%e6%b1%a0">
+												 电池
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%85%e7%94%b5">
+												 充电
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%85%e7%94%b5%e5%8e%9f%e7%90%86">
+												 充电原理
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%85%85%e7%94%b5%e5%8d%8f%e8%ae%ae">
+												 充电协议
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2026 &copy; <a href="http://localhost:1313/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.6.1/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.20.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="http://localhost:1313/js/main.js"></script>
+
+
+
+
+  <script src="http://localhost:1313/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+  </body>
+</html>

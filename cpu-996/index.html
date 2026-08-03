@@ -7,15 +7,21 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="通常当服务端工程师谈论 CPU 核心的时候，更多地时候在乎的是数量而不是质量，比如我们开发了一个 Java 服务的容器需要申请一个 4 核 32 GB 内存的套餐（4C32G），还开发了一个 Golang 服务需要 4C8G 的 quota（我真的不是在黑 Java），但我们绝大多数时候并不会关心底层的 4 个核心来自于 AMD 还是 Intel 品牌的 CPU， 更别说具体什么 Xeon 还是 EPYC 型号了。 因为大部分服务端的问题都可以水平扩容来得到解决，四颗核心不够了，那我们申请六颗核心就好了，">
+  <meta name="description" content="通常当服务端工程师谈论 CPU 核心的时候，更多地时候在乎的是数量而不是质量，比如我们开发了一个 Java 服务的容器需要申请一个 4 核 32 GB 内存的套餐（4C32G），还开发了一个 Golang 服务需要 4C8G 的 quota（我真的不是在黑 Java），但我们绝大多数时候并不会关心底层的 4 个核心来自于 AMD 还是 Intel 品牌的 CPU， 更别说具体什么 Xeon 还是 EPYC  型号了。
+因为大部分服务端的问题都可以水平扩容来得到解决，四颗核心不够了，那我们申请六颗核心就好了，如果不能通过水平扩容解决问题，那就让服务架构变成可以通过水平扩容解决问题。">
 
-  <meta property="og:title" content="如何极致地压榨一颗 CPU 核心" />
-<meta property="og:description" content="通常当服务端工程师谈论 CPU 核心的时候，更多地时候在乎的是数量而不是质量，比如我们开发了一个 Java 服务的容器需要申请一个 4 核 32 GB 内存的套餐（4C32G），还开发了一个 Golang 服务需要 4C8G 的 quota（我真的不是在黑 Java），但我们绝大多数时候并不会关心底层的 4 个核心来自于 AMD 还是 Intel 品牌的 CPU， 更别说具体什么 Xeon 还是 EPYC 型号了。 因为大部分服务端的问题都可以水平扩容来得到解决，四颗核心不够了，那我们申请六颗核心就好了，" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://huweicai.com/cpu-996/" /><meta property="article:section" content="" />
-<meta property="article:published_time" content="2025-05-05T19:58:00+08:00" />
-<meta property="article:modified_time" content="2025-05-05T19:58:00+08:00" />
-
+  <meta property="og:url" content="https://huweicai.com/cpu-996/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="如何极致地压榨一颗 CPU 核心">
+  <meta property="og:description" content="通常当服务端工程师谈论 CPU 核心的时候，更多地时候在乎的是数量而不是质量，比如我们开发了一个 Java 服务的容器需要申请一个 4 核 32 GB 内存的套餐（4C32G），还开发了一个 Golang 服务需要 4C8G 的 quota（我真的不是在黑 Java），但我们绝大多数时候并不会关心底层的 4 个核心来自于 AMD 还是 Intel 品牌的 CPU， 更别说具体什么 Xeon 还是 EPYC 型号了。
+因为大部分服务端的问题都可以水平扩容来得到解决，四颗核心不够了，那我们申请六颗核心就好了，如果不能通过水平扩容解决问题，那就让服务架构变成可以通过水平扩容解决问题。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2025-05-05T19:58:00+08:00">
+    <meta property="article:modified_time" content="2025-05-05T19:58:00+08:00">
+    <meta property="article:tag" content="CPU">
+    <meta property="article:tag" content="操作系统">
+    <meta property="article:tag" content="硬件">
 
    
 
@@ -108,7 +114,7 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com">
+      <a class="navbar-brand" href="https://huweicai.com/">
           
         <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
@@ -127,7 +133,7 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com">Home</a>
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
           </li>
              
             <li class="nav-item ">
@@ -196,7 +202,7 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           
             <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
           
@@ -204,7 +210,7 @@
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com">
+        <a href="https://huweicai.com/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -295,7 +301,7 @@
             <li class="middot"></li>
             <li>9 minutes read</li>
         
-        <li>4470 words</li>
+        <li>4472 words</li>
 
     </ul>
     
@@ -321,51 +327,51 @@
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cc" data-lang="cc"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;time.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// 检查命令行参数
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Usage: %s &lt;iterations&gt;</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 将参数转换为无符号长长整数（循环总数）
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">iterations</span> <span class="o">=</span> <span class="n">strtoull</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">iterations</span> <span class="o">=</span> <span class="n">strtoull</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 使用 volatile 防止编译器优化掉 dummy 运算
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">volatile</span> <span class="kt">double</span> <span class="n">dummy</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+</span></span></span><span class="line"><span class="cl">    <span class="k">volatile</span> <span class="kt">double</span> <span class="n">dummy</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 获取开始时间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">struct</span> <span class="nc">timespec</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">;</span>
+</span></span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="nc">timespec</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">clock_gettime</span><span class="p">(</span><span class="n">CLOCK_MONOTONIC</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">start</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;clock_gettime start&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 执行指定次数的循环，dummy 用于简单的运算
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">iterations</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">iterations</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="n">dummy</span> <span class="o">+=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 获取结束时间
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">clock_gettime</span><span class="p">(</span><span class="n">CLOCK_MONOTONIC</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">end</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">clock_gettime</span><span class="p">(</span><span class="n">CLOCK_MONOTONIC</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">end</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="n">perror</span><span class="p">(</span><span class="s">&#34;clock_gettime end&#34;</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 计算总耗时（秒）
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">double</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="p">(</span><span class="n">end</span><span class="p">.</span><span class="n">tv_sec</span> <span class="o">-</span> <span class="n">start</span><span class="p">.</span><span class="n">tv_sec</span><span class="p">)</span> <span class="o">+</span>
+</span></span></span><span class="line"><span class="cl">    <span class="kt">double</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="p">(</span><span class="n">end</span><span class="p">.</span><span class="n">tv_sec</span> <span class="o">-</span> <span class="n">start</span><span class="p">.</span><span class="n">tv_sec</span><span class="p">)</span> <span class="o">+</span>
 </span></span><span class="line"><span class="cl">                     <span class="p">(</span><span class="n">end</span><span class="p">.</span><span class="n">tv_nsec</span> <span class="o">-</span> <span class="n">start</span><span class="p">.</span><span class="n">tv_nsec</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 计算每秒平均循环次数 (防止除 0)
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">double</span> <span class="n">iterations_per_second</span> <span class="o">=</span> <span class="p">(</span><span class="n">elapsed</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">iterations</span> <span class="o">/</span> <span class="nl">elapsed</span> <span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
+</span></span></span><span class="line"><span class="cl">    <span class="kt">double</span> <span class="n">iterations_per_second</span> <span class="o">=</span> <span class="p">(</span><span class="n">elapsed</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">iterations</span> <span class="o">/</span> <span class="nl">elapsed</span> <span class="p">:</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 输出测试结果
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;循环次数: %llu</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">iterations</span><span class="p">);</span>
+</span></span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;循环次数: %llu</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">iterations</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;耗时: %.6f 秒</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;平均每秒循环次数: %.0f</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">iterations_per_second</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;Dummy值: %f</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">dummy</span><span class="p">);</span> <span class="c1">// 防止优化掉 dummy 运算
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><h1 id="硬件层面">硬件层面</h1>
@@ -386,29 +392,29 @@
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>其对应的汇编代码大致如下，一共十二条指令：</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nl">calculate</span><span class="p">:</span>                    <span class="err">#</span> <span class="kt">int</span> <span class="n">calculate</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nl">calculate</span><span class="p">:</span>                    <span class="err">#</span> <span class="kt">int</span> <span class="nf">calculate</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">	<span class="cp"># 函数序言
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">pushq</span>	<span class="o">%</span><span class="n">rbp</span>            <span class="err">#</span> <span class="err">保存前一个函数的基址指针</span>
+</span></span></span><span class="line"><span class="cl">	<span class="n">pushq</span>	<span class="o">%</span><span class="n">rbp</span>            <span class="err">#</span> <span class="err">保存前一个函数的基址指针</span>
 </span></span><span class="line"><span class="cl">	<span class="n">movq</span>	<span class="o">%</span><span class="n">rsp</span><span class="p">,</span> <span class="o">%</span><span class="n">rbp</span>      <span class="err">#</span> <span class="err">设置新的基址指针</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">	<span class="cp"># 保存参数
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">movl</span>	<span class="o">%</span><span class="n">edi</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">)</span> <span class="err">#</span> <span class="err">保存参数</span><span class="n">a</span> <span class="p">(</span><span class="err">来自</span><span class="n">edi寄存器</span><span class="p">)</span>
+</span></span></span><span class="line"><span class="cl">	<span class="n">movl</span>	<span class="o">%</span><span class="n">edi</span><span class="p">,</span> <span class="o">-</span><span class="mi">20</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">)</span> <span class="err">#</span> <span class="err">保存参数</span><span class="n">a</span> <span class="p">(</span><span class="err">来自</span><span class="n">edi寄存器</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">	<span class="n">movl</span>	<span class="o">%</span><span class="n">esi</span><span class="p">,</span> <span class="o">-</span><span class="mi">24</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">)</span> <span class="err">#</span> <span class="err">保存参数</span><span class="n">b</span> <span class="p">(</span><span class="err">来自</span><span class="n">esi寄存器</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">	<span class="cp"># int c = a + b;
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">movl</span>	<span class="o">-</span><span class="mi">20</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">),</span> <span class="o">%</span><span class="n">edx</span> <span class="err">#</span> <span class="err">加载</span><span class="n">a到edx</span>
+</span></span></span><span class="line"><span class="cl">	<span class="n">movl</span>	<span class="o">-</span><span class="mi">20</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">),</span> <span class="o">%</span><span class="n">edx</span> <span class="err">#</span> <span class="err">加载</span><span class="n">a到edx</span>
 </span></span><span class="line"><span class="cl">	<span class="n">movl</span>	<span class="o">-</span><span class="mi">24</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">),</span> <span class="o">%</span><span class="n">eax</span> <span class="err">#</span> <span class="err">加载</span><span class="n">b到eax</span>
 </span></span><span class="line"><span class="cl">	<span class="n">addl</span>	<span class="o">%</span><span class="n">edx</span><span class="p">,</span> <span class="o">%</span><span class="n">eax</span>      <span class="err">#</span> <span class="err">执行</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="err">，结果在</span><span class="n">eax</span>
 </span></span><span class="line"><span class="cl">	<span class="n">movl</span>	<span class="o">%</span><span class="n">eax</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">)</span>  <span class="err">#</span> <span class="err">保存结果到</span><span class="n">c</span> <span class="p">(</span><span class="err">栈上位置为</span><span class="n">rbp</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">	<span class="cp"># c = c * 2;
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">sall</span>	<span class="o">-</span><span class="mi">4</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">)</span>        <span class="err">#</span> <span class="err">对</span><span class="n">c做左移1位操作</span> <span class="p">(</span><span class="err">等价于</span><span class="n">c</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+</span></span></span><span class="line"><span class="cl">	<span class="n">sall</span>	<span class="o">-</span><span class="mi">4</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">)</span>        <span class="err">#</span> <span class="err">对</span><span class="n">c做左移1位操作</span> <span class="p">(</span><span class="err">等价于</span><span class="n">c</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">	<span class="cp"># return c;
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">movl</span>	<span class="o">-</span><span class="mi">4</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">),</span> <span class="o">%</span><span class="n">eax</span>  <span class="err">#</span> <span class="err">加载</span><span class="n">c到eax寄存器作为返回值</span>
+</span></span></span><span class="line"><span class="cl">	<span class="n">movl</span>	<span class="o">-</span><span class="mi">4</span><span class="p">(</span><span class="o">%</span><span class="n">rbp</span><span class="p">),</span> <span class="o">%</span><span class="n">eax</span>  <span class="err">#</span> <span class="err">加载</span><span class="n">c到eax寄存器作为返回值</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">	<span class="cp"># 函数尾声
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>	<span class="n">popq</span>	<span class="o">%</span><span class="n">rbp</span>            <span class="err">#</span> <span class="err">恢复之前保存的基址指针</span>
+</span></span></span><span class="line"><span class="cl">	<span class="n">popq</span>	<span class="o">%</span><span class="n">rbp</span>            <span class="err">#</span> <span class="err">恢复之前保存的基址指针</span>
 </span></span><span class="line"><span class="cl">	<span class="n">ret</span>                      <span class="err">#</span> <span class="err">返回到调用函数</span>
 </span></span></code></pre></div><p>按 <code>8592+ </code>和 <code>14900KS</code>  IPC 均为 3.5 考虑，最大睿频的情况下：</p>
 <ul>

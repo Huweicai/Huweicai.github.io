@@ -1,117 +1,89 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>linux on Anonymous&#39; Blog</title>
+    <title>Linux on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/linux/</link>
-    <description>Recent content in linux on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <description>Recent content in Linux on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sat, 07 Oct 2023 13:58:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 07 Oct 2023 13:58:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Executable and Linkable Format</title>
       <link>https://huweicai.com/elf/</link>
       <pubDate>Sat, 07 Oct 2023 13:58:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/elf/</guid>
-      <description>ELF Executable and Linkable Format，可执行与可链接格式，其一个很熟悉的身份就是 Linux 操作系统的标准可执行文件格式，在 Linux 上运行我们编写的代码时，就需要将其编译成 ELF 格式。 另外它还定义了共享库和核心转储文件的结构和布局。 ELF 文件格式在操作系统中起着重要的作用，它使得我们编写的代码能够被正确地编译、链接和执行。 此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采用 ELF 作为其可执行文件格式。 ELF 文件格式被设计为可扩展和灵活的</description>
+      <description>&lt;h1 id=&#34;elf&#34;&gt;ELF&lt;/h1&gt;&#xA;&lt;p&gt;Executable and Linkable Format，&lt;strong&gt;可执行与可链接格式&lt;/strong&gt;，其一个很熟悉的身份就是 Linux 操作系统的标准可执行文件格式，在 Linux 上运行我们编写的代码时，就需要将其编译成 ELF 格式。&lt;/p&gt;&#xA;&lt;p&gt;另外它还定义了共享库和核心转储文件的结构和布局。&lt;/p&gt;&#xA;&lt;p&gt;ELF 文件格式在操作系统中起着重要的作用，它使得我们编写的代码能够被正确地编译、链接和执行。&lt;/p&gt;&#xA;&lt;p&gt;此外，部分 Unix 系统，如: Solaris、FreeBSD 等也采用  ELF 作为其可执行文件格式。&lt;/p&gt;&#xA;&lt;p&gt;ELF 文件格式被设计为可扩展和灵活的，以适应不同类型的程序和库。它可以容纳各种类型的数据和指令，包括机器代码、全局和局部符号表、重定位表、调试信息等。这种灵活性使得 ELF 文件格式能够适应不同的编程语言和编译器，并支持各种操作系统特性和功能。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>很快的共享内存</title>
       <link>https://huweicai.com/shared-memory/</link>
       <pubDate>Tue, 08 Aug 2023 13:42:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/shared-memory/</guid>
-      <description>WHY 共享内存 进程间通信有许多种方式，不同的场景有不同的选择。 当通信内容非常简单的时候，可以考虑信号、信号量甚至 flock() 这种最基础的通信方式。 当需要传递不仅仅是信号这种规模的数据时，可以考虑 FIFO、MQ 等内核 API，也非常的简单易用 。 当我们的传输内容再进一步复杂，需要用“协议”去抽象这种复杂度的时候，Unix Domain Socket 会是一个不错的选择，比如常见的 gRPC over UDS；或者牺牲一点网络栈开销，直接使用基于 TCP / UDP 的 Socket 也非常</description>
+      <description>&lt;h1 id=&#34;why-共享内存&#34;&gt;WHY 共享内存&lt;/h1&gt;&#xA;&lt;p&gt;进程间通信有许多种方式，不同的场景有不同的选择。&lt;/p&gt;&#xA;&lt;p&gt;当通信内容非常简单的时候，可以考虑&lt;code&gt;信号&lt;/code&gt;、&lt;code&gt;信号量&lt;/code&gt;甚至 &lt;code&gt;flock()&lt;/code&gt; 这种最基础的通信方式。&lt;/p&gt;&#xA;&lt;p&gt;当需要传递不仅仅是信号这种规模的数据时，可以考虑 &lt;code&gt;FIFO&lt;/code&gt;、&lt;code&gt;MQ&lt;/code&gt; 等内核 API，也非常的简单易用 。&lt;/p&gt;&#xA;&lt;p&gt;当我们的传输内容再进一步复杂，需要用“协议”去抽象这种复杂度的时候，&lt;code&gt;Unix Domain Socket&lt;/code&gt; 会是一个不错的选择，比如常见的 gRPC over UDS；或者牺牲一点网络栈开销，直接使用基于 &lt;code&gt;TCP / UDP&lt;/code&gt; 的 Socket 也非常方便。&lt;/p&gt;&#xA;&lt;p&gt;十八般兵器各有神通，但本文主角——共享内存，光凭零数据拷贝这一特性就能稳坐最快进程间通信方式这一宝座。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Linux Kernel Debug Tips</title>
       <link>https://huweicai.com/kernel-debug-tips_en/</link>
       <pubDate>Tue, 17 Jan 2023 00:00:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/kernel-debug-tips_en/</guid>
-      <description>Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
-So, knowing more about how the kernel works will contribute to the construction of our user mode system.
-The best method to learn software code is debugging while watching, software = code + data, know more about the runtime data while learning code can help us understand it better.
-However the Kernel is not a normal software system, we can&amp;rsquo;t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb + QEMU, it&amp;rsquo; still too heavy, and not available for online systems.
-This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.
-Kernel Module Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can&amp;rsquo;t snoop the data inside Kernel.
-In that case, why not try to run our code inside the Kernel?
-It&amp;rsquo;s possible to edit the source code of kernel, adding log to print the information we concerned, but it&amp;rsquo;s a long tedious step.</description>
+      <description>&lt;h1 id=&#34;kernel&#34;&gt;Kernel&lt;/h1&gt;&#xA;&lt;p&gt;Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.&lt;/p&gt;&#xA;&lt;p&gt;So, knowing more about how the kernel works will contribute to the construction of our user mode system.&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Huweicai/images/20210625150645.png&#34; alt=&#34;image-20210625150638408&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;The best method to learn software code is debugging while watching, software = code + data, know more about the runtime data while learning code can help us understand it better.&lt;/p&gt;&#xA;&lt;p&gt;However the Kernel is not a normal software system, we can&amp;rsquo;t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb + QEMU, it&amp;rsquo; still too heavy, and not available for online systems.&lt;/p&gt;&#xA;&lt;p&gt;This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.&lt;/p&gt;&#xA;&lt;h1 id=&#34;kernel-module&#34;&gt;Kernel Module&lt;/h1&gt;&#xA;&lt;p&gt;Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level &lt;code&gt;Ring 3&lt;/code&gt; , they do not have the permission to acces the data in level &lt;code&gt;Ring 0&lt;/code&gt; high memory address space, which means that they can&amp;rsquo;t snoop the data inside Kernel.&lt;/p&gt;&#xA;&lt;p&gt;In that case, why not try to run our code inside the Kernel?&lt;/p&gt;&#xA;&lt;p&gt;It&amp;rsquo;s possible to edit the source code of kernel, adding log to print the information we concerned, but it&amp;rsquo;s a long tedious step.&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>聊一聊磁盘</title>
       <link>https://huweicai.com/something-about-disk/</link>
       <pubDate>Mon, 13 Jun 2022 18:20:55 +0800</pubDate>
-      
       <guid>https://huweicai.com/something-about-disk/</guid>
-      <description>磁盘 在计算机发展的历程中，存储设备的演进一直是一个引人入胜的故事。 从最早的打孔纸带，到磁性存储，再到今天的固态硬盘，人们一直在追求更快、更大、更可靠的数据存储方案。 在这个演进过程中，磁盘凭借着断电数据不丢失、容量大、价格实惠等优势，成为了最重要的存储设备之一。 虽然最初 &amp;lsquo;磁盘&amp;rsquo; 狭义上的概念专指使用磁性材料的存储设备，但在今天，这个词已经泛指所有的持久化存储设备。让我们一起来探</description>
+      <description>&lt;h1 id=&#34;磁盘&#34;&gt;磁盘&lt;/h1&gt;&#xA;&lt;p&gt;在计算机发展的历程中，存储设备的演进一直是一个引人入胜的故事。&lt;/p&gt;&#xA;&lt;p&gt;从最早的打孔纸带，到磁性存储，再到今天的固态硬盘，人们一直在追求更快、更大、更可靠的数据存储方案。&lt;/p&gt;&#xA;&lt;p&gt;在这个演进过程中，磁盘凭借着断电数据不丢失、容量大、价格实惠等优势，成为了最重要的存储设备之一。&lt;/p&gt;&#xA;&lt;p&gt;虽然最初 &amp;lsquo;磁盘&amp;rsquo; 狭义上的概念专指使用磁性材料的存储设备，但在今天，这个词已经泛指所有的持久化存储设备。让我们一起来探索这个既熟悉又神秘的计算机组件。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Linux 内核轻量级调试小技巧</title>
       <link>https://huweicai.com/kernel-debug-tips/</link>
       <pubDate>Sun, 13 Mar 2022 00:00:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/kernel-debug-tips/</guid>
-      <description>Kernel 内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。 学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 + 数据，看代码的同时了解其运行时数据能让我们更好的理解整体逻辑。 但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，虽然也可以通过 kgdb + qemu 实现在 IDE 中的断点调式，不过这样实在是太重了，而且也不能分析正在运行中的线上</description>
+      <description>&lt;h1 id=&#34;kernel&#34;&gt;Kernel&lt;/h1&gt;&#xA;&lt;p&gt;内核承担了核心的操作系统工作，是当今软件生态的基石，因此了解内核是如何工作的能极大的帮助我们更好地构建用户态系统。&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://cdn.jsdelivr.net/gh/Huweicai/images/20210625150645.png&#34; alt=&#34;image-20210625150638408&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;学习软件源代码最好的方式就是边看边 DEBUG，软件 = 代码 + 数据，看代码的同时了解其运行时数据能让我们更好的理解整体逻辑。&lt;/p&gt;&#xA;&lt;p&gt;但内核毕竟不是普通的软件系统，并不是简单的在 IDE 里面一点就能断点调试的，虽然也可以通过 kgdb + qemu 实现在 IDE 中的断点调式，不过这样实在是太重了，而且也不能分析正在运行中的线上系统，本文分享两种比较轻量级的内核调试小技巧，帮助我们快速地观测其运行时状态。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>手动实现一个Linux容器</title>
       <link>https://huweicai.com/run-linux-container-manual/</link>
       <pubDate>Wed, 14 Apr 2021 16:20:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/run-linux-container-manual/</guid>
-      <description>容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了： Accelerate how you build, share and run modern applications. 容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打</description>
+      <description>&lt;h1 id=&#34;容器&#34;&gt;容器&lt;/h1&gt;&#xA;&lt;p&gt;容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 &lt;code&gt;run everywhere&lt;/code&gt; 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了：&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;Accelerate how you build, share and run modern applications.&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了&lt;code&gt;jdk 14.0.1&lt;/code&gt;以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 &lt;code&gt;debian buster&lt;/code&gt;发行版上，那么我们可以把这些通通打入一个镜像中，或者叫一个静态的容器，任何会影响运行时的东西我们都可以打入镜像中，这使得其具有非常高的可移植性。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>如何准确的获取CPU占用率[Linux][Go]</title>
       <link>https://huweicai.com/go-linux-get-cpu-usage/</link>
       <pubDate>Fri, 01 Jan 2021 01:20:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/go-linux-get-cpu-usage/</guid>
-      <description>如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统“要”的方式都不太一样，我们这里主要基于 Linux 场景来分析。 虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，但是代码解析时就不那么方便了。 PROCESS 文件系统 在许多 Unix 类系统中，都存在一个 procfs (Process File System) 进程文件系统的概念，用于将内</description>
+      <description>&lt;p&gt;如果我们想要获取系统的 CPU 占用率，首先，Go 语言本身是没有帮我们封装这样的 API 的，所以我们只能自己通过其他方式直接向操作系统要，而不同的操作系统&lt;code&gt;“要”&lt;/code&gt;的方式都不太一样，我们这里主要基于 Linux 场景来分析。&lt;/p&gt;&#xA;&lt;p&gt;虽然有现成的 ps 和 top 等工具我们可以读到现成的值，但是这些工具也是基于 proc 文件解析的，对于人眼可读性较友好，但是代码解析时就不那么方便了。&lt;/p&gt;&#xA;&lt;h1 id=&#34;process-文件系统&#34;&gt;PROCESS 文件系统&lt;/h1&gt;&#xA;&lt;p&gt;在许多 Unix 类系统中，都存在一个 &lt;code&gt;procfs&lt;/code&gt; &lt;strong&gt;(Process File System)&lt;/strong&gt; 进程文件系统的概念，用于将内核中的一些信息通过文件的形式开放出来供用户使用，不过这个文件并不是我们平常指的狭义上的文件，这些信息是只存在于内存中的，所以也不用担心性能问题，类似内存文件系统的还有 sysfs、tmpfs 等。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>小米路由器4A百兆版刷OpenWRT</title>
       <link>https://huweicai.com/run-openwrt-on-xiaomi4a100m/</link>
       <pubDate>Tue, 08 Dec 2020 23:47:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/run-openwrt-on-xiaomi4a100m/</guid>
-      <description>我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此系统性的捋一下，分享给有缘人，我手上的型号是百兆版的，4A千兆版刷OpenWRT的流程也基本一样，不过需要注意镜像地址什么的自行替换一下。 前提：需要安装 git、python3 以及熟悉基本的终端操作。 OpenWRT 首先我们要对 OpenWRT 有一些最基本的概念，OpenWRT 是一种 Linux 发行版，本质上是一个操作系统，和我们的常见的 Windows、And</description>
+      <description>&lt;p&gt;我其实不怎么喜欢写这种教程类的博客，不过苦于刷机过程中资料过少，踩坑过多，特此系统性的捋一下，分享给有缘人，我手上的型号是百兆版的，4A千兆版刷OpenWRT的流程也基本一样，不过需要注意镜像地址什么的自行替换一下。&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;前提：需要安装 &lt;code&gt;git&lt;/code&gt;、&lt;code&gt;python3&lt;/code&gt; 以及熟悉基本的终端操作。&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;h2 id=&#34;openwrt&#34;&gt;OpenWRT&lt;/h2&gt;&#xA;&lt;p&gt;首先我们要对 OpenWRT 有一些最基本的概念，OpenWRT 是一种 Linux 发行版，本质上是一个&lt;strong&gt;操作系统&lt;/strong&gt;，和我们的常见的 &lt;strong&gt;Windows&lt;/strong&gt;、&lt;strong&gt;Android&lt;/strong&gt; 等概念是一类的，只是针对路由器这种场景做了特殊的优化。&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>Linux 是如何启动的</title>
       <link>https://huweicai.com/most-frequently-command/</link>
       <pubDate>Fri, 20 Mar 2020 19:58:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/most-frequently-command/</guid>
-      <description>inux系统是如何启动的？</description>
+      <description>&lt;p&gt;inux系统是如何启动的？&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>找出使用最频繁的Shell命令</title>
       <link>https://huweicai.com/most-frequently-command/</link>
       <pubDate>Fri, 20 Mar 2020 19:58:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/most-frequently-command/</guid>
-      <description>使用最频繁 TOP 10命令： history | awk &amp;#39;{map[$2]++} END { for (a in map )print map[ a ]&amp;#34; &amp;#34; map[ a ]/NR*100 &amp;#34;% &amp;#34; a }&amp;#39;| sort -rn | nl | head 先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。 Shell 首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？ Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种： 图形界面类：Graphi</description>
+      <description>&lt;p&gt;使用最频繁 TOP 10命令：&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;history&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; awk &lt;span class=&#34;s1&#34;&gt;&amp;#39;{map[$2]++} END { for (a in map )print map[ a ]&amp;#34; &amp;#34; map[ a ]/NR*100 &amp;#34;% &amp;#34; a }&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; sort -rn &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; nl &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; head&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;先上成品，然后，我们一步一步分析这行语句都涉及到了命令，它们又是如何拼凑到一块儿完成我们的目的的。&lt;/p&gt;&#xA;&lt;h2 id=&#34;shell&#34;&gt;Shell&lt;/h2&gt;&#xA;&lt;p&gt;首先我们需要明确一下 shell 的定义，大家可能经常听到 shell ，shell 脚本这些词，那么 shell 到底是什么呢？&lt;/p&gt;&#xA;&lt;p&gt;Shell 翻译成中文的意思就是壳，和操作系统内核的核相对应，就是一个基于内核的可操作界面。可操作性界面又分为两种：&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;图形界面类：Graphical User Interface &lt;strong&gt;GUI&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Windows Exploer&lt;/li&gt;&#xA;&lt;li&gt;GNOME：Unbuntu 17.0 所使用的GUI&lt;/li&gt;&#xA;&lt;li&gt;KDE&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;命令行类：Comand Line Interface &lt;strong&gt;CLI&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
-    
     <item>
       <title>进程线程协程的本质区别</title>
       <link>https://huweicai.com/process-thread-goroutine/</link>
       <pubDate>Tue, 17 Mar 2020 01:20:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/process-thread-goroutine/</guid>
-      <description>现代多任务操作系统通常都会有进程的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少进程创建的开销，通常又都会引入更细粒度的调度单元：线程。 我们经常能在教科书上看到对于进程和线程的定义： 进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。 这句话没错，但是只是从职责上给出的定义，而不是基于底层实现出发的。 广义上的线程分为内核态线程和用户态线程两种，内核态线程受操作系统直接调度可以充</description>
+      <description>&lt;p&gt;现代多任务操作系统通常都会有&lt;code&gt;进程&lt;/code&gt;的概念来对任务进行隔离，而为了充分利用多核处理器性能同时又减少&lt;code&gt;进程&lt;/code&gt;创建的开销，通常又都会引入更细粒度的调度单元：&lt;code&gt;线程&lt;/code&gt;。&lt;/p&gt;&#xA;&lt;p&gt;我们经常能在教科书上看到对于进程和线程的定义：&lt;/p&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;&lt;em&gt;进程是操作系统分配资源的最小单位，线程是进行调度的最小单元。&lt;/em&gt;&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;这句话没错，但是只是从职责上给出的定义，而不是基于底层实现出发的。&lt;/p&gt;&#xA;&lt;p&gt;广义上的线程分为&lt;code&gt;内核态线程&lt;/code&gt;和&lt;code&gt;用户态线程&lt;/code&gt;两种，内核态线程受操作系统直接调度可以充分利用硬件资源，而用户态线程实现简单上下文切换开销小，后者也被称作我们所熟知的：&lt;code&gt;协程&lt;/code&gt;。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>

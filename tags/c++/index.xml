@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>c&#43;&#43; on Anonymous&#39; Blog</title>
+    <title>C&#43;&#43; on Anonymous&#39; Blog</title>
     <link>https://huweicai.com/tags/c&#43;&#43;/</link>
-    <description>Recent content in c&#43;&#43; on Anonymous&#39; Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <description>Recent content in C&#43;&#43; on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Sun, 30 Jun 2024 01:26:00 +0800</lastBuildDate><atom:link href="https://huweicai.com/tags/c++/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 30 Jun 2024 01:26:00 +0800</lastBuildDate>
+    <atom:link href="https://huweicai.com/tags/c++/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>动态链接函数调用是如何实现的</title>
       <link>https://huweicai.com/dynamic-linking/</link>
       <pubDate>Sun, 30 Jun 2024 01:26:00 +0800</pubDate>
-      
       <guid>https://huweicai.com/dynamic-linking/</guid>
-      <description>函数链接 根据函数在编译期间的链接方式， 我们可以将函数分为三种： 直接调用（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。 静态链接（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。 动态链接（Dynamic Linking</description>
+      <description>&lt;h1 id=&#34;函数链接&#34;&gt;函数链接&lt;/h1&gt;&#xA;&lt;p&gt;根据函数在编译期间的链接方式， 我们可以将函数分为三种：&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://gcore.jsdelivr.net/gh/Huweicai/images/20240701010900.png&#34; alt=&#34;CALL&#34;&gt;&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;直接调用&lt;/strong&gt;（Direct Call）：这是最直接的一种方式，函数地址在编译时就已经确定，调用时直接跳转到目标地址。&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;静态链接&lt;/strong&gt;（Static Linking）：在编译时将库与程序合并，尽管在单个编译单元内不确定函数的具体地址，但在链接阶段会解析所有符号，最终生成的可执行文件包含所有必要的代码，无需依赖外部库。&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;动态链接&lt;/strong&gt;（Dynamic Linking）：函数的地址在编译期间不可知，程序启动后才能通过加载动态库获取到实际的函数代码地址。&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;前两种实现方式相对简单直接，本文主要分析第三种——动态链接是如何实现的。&lt;/p&gt;</description>
     </item>
-    
   </channel>
 </rss>
