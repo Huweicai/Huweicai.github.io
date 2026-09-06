@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>VictoriaMetrics on Anonymous&#39; Blog</title>
+    <link>http://localhost:1313/tags/victoriametrics/</link>
+    <description>Recent content in VictoriaMetrics on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Thu, 28 Apr 2022 22:42:00 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/victoriametrics/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>VMAgent Relabel 实现原理分析</title>
+      <link>http://localhost:1313/vmagent-relabel/</link>
+      <pubDate>Thu, 28 Apr 2022 22:42:00 +0800</pubDate>
+      <guid>http://localhost:1313/vmagent-relabel/</guid>
+      <description>&lt;h1 id=&#34;vmagent&#34;&gt;VMAgent&lt;/h1&gt;&#xA;&lt;p&gt;vmagnet 是 &lt;a href=&#34;https://victoriametrics.com/&#34;&gt;VictoriaMetrics&lt;/a&gt; 旗下一款的开源的指标采集服务，兼容（但不完全） prometheus 采集配置， 可以理解为在 prometheus  的基础上减去了时序数据库的功能，资源占用更少，更加轻量，专注于服务 &lt;code&gt;VictoriaMetircs&lt;/code&gt;这种远端存储。&lt;/p&gt;&#xA;&lt;p&gt;就像 &lt;code&gt;VictoriaMetircs&lt;/code&gt;也支持通过 &lt;code&gt;Graphite&lt;/code&gt;、&lt;code&gt;influxDB&lt;/code&gt;、&lt;code&gt;OpenTSDB&lt;/code&gt; 等协议格式写入存储一样，vmagent 也支持通过这些格式采集，然后写入到 vm 中。&lt;/p&gt;&#xA;&lt;h1 id=&#34;relabel&#34;&gt;Relabel&lt;/h1&gt;&#xA;&lt;h2 id=&#34;prometheus&#34;&gt;Prometheus&lt;/h2&gt;&#xA;&lt;h2 id=&#34;vmagent自己实现的&#34;&gt;VMAgent自己实现的&lt;/h2&gt;</description>
+    </item>
+  </channel>
+</rss>

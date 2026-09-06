@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>CSI on Anonymous&#39; Blog</title>
+    <link>http://localhost:1313/tags/csi/</link>
+    <description>Recent content in CSI on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Wed, 21 Jul 2021 01:47:00 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/csi/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kubernetes CSI实现原理-创建卷全过程</title>
+      <link>http://localhost:1313/drafts/kubernetes-csi-create-volume/</link>
+      <pubDate>Wed, 21 Jul 2021 01:47:00 +0800</pubDate>
+      <guid>http://localhost:1313/drafts/kubernetes-csi-create-volume/</guid>
+      <description>&lt;h1 id=&#34;容器附加存储&#34;&gt;容器附加存储&lt;/h1&gt;&#xA;&lt;p&gt;通常在容器化的系统架构中，我们通常会将服务设计成无状态的，便于更好的动态扩缩容及升级服务。但走整个软件系统中，这个 &lt;code&gt;状态&lt;/code&gt;并不会凭空消失，只是继续转移到了下层，通常来说这个下层会是一层持久化的分布式存储，这个存储可能是结构化的，如: &lt;code&gt;MySQL&lt;/code&gt;、&lt;code&gt;Redis&lt;/code&gt;、&lt;code&gt;ETCD&lt;/code&gt;这种数据库，也有可能是原始的文件系统和块，本文我们主要关注后者，即&lt;em&gt;容器&lt;/em&gt;附加存储（&lt;strong&gt;Container Attached Storage&lt;/strong&gt;）。&lt;/p&gt;&#xA;&lt;p&gt;以容器架构平台的代表者 Kubernetes 为例，为了帮助用户更好的使用分布式存储，引入了卷的概念，这样我们就可以直接通过与 Kubernetes 的 API 交互即可轻松完成分布式存储的申请、挂载卸载和删除，而不至于让我们每次在容器起来的时候手动下载文件系统客户端，然后运行各种命令连接上文件存储后端再挂载才能实现访问。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

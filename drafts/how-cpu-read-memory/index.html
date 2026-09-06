@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="书接上回，我们探讨了如何极致地压榨一颗 CPU 核心，但是当 CPU 自身的计算瓶颈被逐步突破之后，真正限制程序继续变快的，往往不再是 CPU，而是内存。
+在代码执行过程中，内存几乎贯穿始终：指令要从内存中取出，数据要从内存中读入，计算结果也要再写回内存。
+然而内存的速度远慢于 CPU，CPU 很多时候并不是不想干活，也不是算不过来，只是受累于内存的缓慢在空转等待被拖了后腿。
+所以理解程序性能，不能只看 CPU，也要看 CPU 是如何访问内存的。
+不同的 CPU 内部架构并不完全一样，尤其是跟早期 CPU 架构相比，这次我们继续仍以当下地表最快商业 CPU i9-14900KS 为例进行分析。">
+
+  <meta property="og:url" content="http://localhost:1313/drafts/how-cpu-read-memory/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="现代 CPU 是如何访问内存的">
+  <meta property="og:description" content="书接上回，我们探讨了如何极致地压榨一颗 CPU 核心，但是当 CPU 自身的计算瓶颈被逐步突破之后，真正限制程序继续变快的，往往不再是 CPU，而是内存。
+在代码执行过程中，内存几乎贯穿始终：指令要从内存中取出，数据要从内存中读入，计算结果也要再写回内存。
+然而内存的速度远慢于 CPU，CPU 很多时候并不是不想干活，也不是算不过来，只是受累于内存的缓慢在空转等待被拖了后腿。
+所以理解程序性能，不能只看 CPU，也要看 CPU 是如何访问内存的。
+不同的 CPU 内部架构并不完全一样，尤其是跟早期 CPU 架构相比，这次我们继续仍以当下地表最快商业 CPU i9-14900KS 为例进行分析。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="drafts">
+    <meta property="article:published_time" content="2026-01-06T20:47:00+08:00">
+    <meta property="article:modified_time" content="2026-01-06T20:47:00+08:00">
+    <meta property="article:tag" content="Cpu">
+    <meta property="article:tag" content="内存">
+    <meta property="article:tag" content="硬件">
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       现代 CPU 是如何访问内存的 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="http://localhost:1313/drafts/how-cpu-read-memory/">
+
+  
+  
+
+  
+  <link href="http://localhost:1313/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="http://localhost:1313/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="http://localhost:1313/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="http://localhost:1313/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="http://localhost:1313/">
+          
+        <img class="avatar imgRotate" src="http://localhost:1313/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="http://localhost:1313/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="http://localhost:1313/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="http://localhost:1313/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('http://localhost:1313/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="http://localhost:1313/">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="http://localhost:1313/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="http://localhost:1313/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">现代 CPU 是如何访问内存的</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2026-01-06</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>8 minutes read</li>
+        
+        <li>3529 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <p>书接上回，我们探讨了<a href="https://huweicai.com/cpu-996/">如何极致地压榨一颗 CPU 核心</a>，但是<strong>当 CPU 自身的计算瓶颈被逐步突破之后，真正限制程序继续变快的，往往不再是 CPU，而是内存</strong>。</p>
+<p>在代码执行过程中，内存几乎贯穿始终：指令要从内存中取出，数据要从内存中读入，计算结果也要再写回内存。</p>
+<p>然而内存的速度远慢于 CPU，CPU 很多时候并不是不想干活，也不是算不过来，只是受累于内存的缓慢在空转等待被拖了后腿。</p>
+<p>所以理解程序性能，不能只看 CPU，也要看 CPU 是如何访问内存的。</p>
+<p>不同的 CPU 内部架构并不完全一样，尤其是跟早期 CPU 架构相比，这次我们继续仍以当下地表最快商业 CPU i9-14900KS 为例进行分析。</p>
+<h1 id="假如我有一个虚拟内存地址">假如我有一个虚拟内存地址</h1>
+<p>假设我们有一个在 14900KS 性能核心（P-core）上运行的线程，在内存中申请了一块 8 字节的内存，返回的起始虚拟内存地址（Virtual Address，VA）是（0x00007fb46b5ff010）。</p>
+<p><code>0x00007fb46b5ff010</code> 将是我们今天这趟旅途的起点，首先，我们先强调一下这是一个<strong>虚拟地址</strong>，而不是物理地址，早期计算机是只使用物理地址的，虚拟地址这一机制的引入的历史博弈，这里就不赘述了，简单一句话就是：虚实结合更方便，更安全。</p>
+<p>后面的篇幅将围绕这一个虚拟地址展开分为两部分：</p>
+<ol>
+<li>怎么把它翻译成物理地址</li>
+<li>接着怎么读取这个物理地址里的数据。</li>
+</ol>
+<p>首先我们先回顾一下 Linux 的虚拟地址内存地址划分：在 64 位操作系统下，理论上内存地址就是 2^64，但是由于这个数字实在是太大了，浪费影响性能，所以 Linux 将高 16 位暂时封存了，只启用了剩下的 2^48 位，并且剩下的内存划分成了用户空间和内存空间两部分，我们申请的这个虚拟地址则位于用户空间：</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20260315025555.png" alt="linux_va_kernel_user_split"></p>
+<p>物理内存的最小单元是字节，每个内存地址对应都是一个字节，直接管理 2^48 个字节是项非常庞大的工程，操作系统通常会引入页的概念来管理一个连续的内存字节块；</p>
+<p>过小的页会有更大的寻址开销，而过大的页则往往伴随着更严重的内存碎片问题，权衡之下 Linux 的默认页大小定在了 <code>4096 字节 =&gt; 4KB</code>。</p>
+<p>我们可以将一个虚拟内存地址分为页号和页内偏移（哪一层楼的 + 多少号）：</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20260315030609.png" alt="va_breakdown_clean"></p>
+<h1 id="开始访问">开始访问</h1>
+<p>现在我们来写段代码访问它：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">uint64_t</span> <span class="n">x</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="k">volatile</span> <span class="kt">uint64_t</span> <span class="o">*</span><span class="p">)</span><span class="mh">0x00007fb46b5ff010ULL</span><span class="p">;</span>
+</span></span></code></pre></div><p>这行代码底层会是一条 MOV 指令，将对应的 <code>VA</code> 的数据读取 load 到 rax 寄存器中：</p>
+<pre tabindex="0"><code class="language-assembly" data-lang="assembly">mov rax, [0x7fb46b5ff010]
+</code></pre><p>CPU 核心内部，前端（Front-End）取到这条指令，将其译码成内部的 load 微操作（uop），派发给后端。</p>
+<p>后端识别到是 load uop，就将该操作调度到 LSU（Load/Store Unit）相关通路去执行。</p>
+<h1 id="loadstore-unit">Load/Store Unit</h1>
+<p>在大学操作系统教材里面大家应该都学过虚拟地址 -&gt; 物理地址映射的多级页表，但是内存实在太慢了，根据局部性原理，现代 CPU 出于性能的考虑引入了 <code>TLB（Translation Lookaside Buffer）</code>对页面映射进行缓存，如果缓存命中就会直接返回对应的物理地址，无需再一级一级查页表了。</p>
+<p>i9-14900KS 每个性能核心内部有一套设计到极致的非常精细复杂的 TLB 系统，根据数据类型/读写/页面大小/层级分为多种：</p>
+<ul>
+<li><strong>L1 ITLB</strong>
+<ul>
+<li>4KB: <strong>256</strong></li>
+<li>2MB/4MB: <strong>32</strong></li>
+</ul>
+</li>
+<li><strong>L1 load-only DTLB</strong>
+<ul>
+<li>4KB: <strong>64</strong></li>
+<li>2MB/4MB: <strong>32</strong></li>
+<li>1GB: <strong>8</strong></li>
+</ul>
+</li>
+<li><strong>L1 store-only DTLB</strong>
+<ul>
+<li>2MB/4MB/1GB: <strong>16</strong></li>
+</ul>
+</li>
+<li><strong>L2 unified TLB</strong>
+<ul>
+<li>4KB + 2MB/4MB: <strong>1024</strong></li>
+<li>4KB + 1GB: <strong>1024</strong></li>
+</ul>
+</li>
+</ul>
+<p>具体到我们这次查询，查询的是普通页面的数据而非指令，LSU 会先查询: 4KB L1 load-only TLB，如果 miss 的话会再查询通用的 4KB L2 unified TLB。</p>
+<p>操作系统默认的页面大小是 4KB，在 L1 数据中只有 64 个 entry，相当于只有 256KB 的数据能享受最极致的速度，L2 也只有 4*1024 = 4096 KB；但是如果使用巨页（Huge Page），两个 2 MB 的巨页就能顶整个普通页面的 cache 大小了，能极大地缓解 TLB entry 压力，所以这也是为什么在一些需要极致优化性能的场景，往往都会考虑将一些大块内存使用巨页分配。</p>
+<h1 id="页表">页表</h1>
+<p>如果 L1/L2 TLB 全部 miss 了，那么 hardware page walker 单元就会进行 page walk 去保存有全量地址映射的内存页表中查询。</p>
+<p>页表这个结构本质上是要针对 2^36 的<strong>稀疏</strong>输入，查询对应的 1:1 映射输出；</p>
+<p>如果是在实际工作中面对这样的场景我们可能第一个会想到哈希表，map&lt;虚拟页地址, 物理页地址&gt;，但是这是最底层的 CPU 基础设施，哈希表的查询不稳定，另外逻辑复杂很难硬件化，我们肯定不可能用这么不负责任的方案，虽然真有 CPU 方案用过（IBM Power PC）。</p>
+<p>X86 的选择是前缀基数树，这也是目前的主流方案，就是按照虚拟地址从左到右依次拆开，拆成五段，</p>
+<p>Linux 给这五段各自起了名字，但是其实没有必要记，只需要知道会拆成：</p>
+<ul>
+<li>第一级、第二级、第三级、第四级、页内 Offset</li>
+</ul>
+<p>这五个部分就行，可以简单理解成省、市、区、街道这种，查地址的时候从左往右开始查；</p>
+<p>每一级页表的大小是 512，正好装在一个 4KB 页面中，4096 / 8 = 512，每一个页表里面的表项装着一个 8B = 64bit 的指针，指向下一级页表；这样从左往右一直查就能在最终的第四级页表中查到最终的物理页框号。</p>
+<p>物理页框号 + 页内 Offset 一拼，就是最终的物理地址了。</p>
+<p>以我们的 <code>0x7fb46b5ff010</code> 为例，这个 64 位虚拟地址只有低 48 位有效（高 16 位是符号扩展，全 0），拆开来看：</p>
+<pre tabindex="0"><code>0x00007fb46b5ff010
+</code></pre><p>转成二进制后从 bit 47 开始，每 9 位（2^9 = 512）切一刀：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">第一级 <span class="o">[</span>47:39<span class="o">]</span>  <span class="o">=</span>  <span class="nv">011111111</span>  <span class="o">=</span>  <span class="m">255</span>
+</span></span><span class="line"><span class="cl">第二级 <span class="o">[</span>38:30<span class="o">]</span>  <span class="o">=</span>  <span class="nv">011010001</span>  <span class="o">=</span>  <span class="m">209</span>
+</span></span><span class="line"><span class="cl">第三级 <span class="o">[</span>29:21<span class="o">]</span>  <span class="o">=</span>  <span class="nv">101011010</span>  <span class="o">=</span>  <span class="m">346</span>
+</span></span><span class="line"><span class="cl">第四级 <span class="o">[</span>20:12<span class="o">]</span>  <span class="o">=</span>  <span class="nv">111111111</span>  <span class="o">=</span>  <span class="m">511</span>
+</span></span><span class="line"><span class="cl">页内偏移 <span class="o">[</span>11:0<span class="o">]</span> <span class="o">=</span>  <span class="nv">000000010000</span> <span class="o">=</span>  0x010
+</span></span></code></pre></div><p>另外 <code>CPU</code> 里面会有一个特殊的寄存器，保存第一级页表的地址，Intel 里面叫 CR3，ARM 叫 TTBR0/TTBR1（Translation Table Base Register），RISC-V 叫 satp，功能都是一样的；从这里开始顺着查过去。</p>
+<p>于是 hardware page walker 的查询路径就是：</p>
+<ol>
+<li>从寄存器拿到第一级页表的物理基地址，跳到第 255 个表项，读出第二级页表的物理基地址</li>
+<li>跳到第二级页表的第 209 个表项，读出第三级页表的物理基地址</li>
+<li>跳到第三级页表的第 346 个表项，读出第四级页表的物理基地址</li>
+<li>跳到第四级页表的第 511 个表项，读出物理页框号（PFN）</li>
+</ol>
+<p>最后 <code>(PFN &lt;&lt; 12) | 0x010</code> = 物理地址。四次内存访问，确定性地完成翻译。</p>
+<p>物理地址每次运行可能结果都不一样，这里我们拿到了：PA = <code>0x0000000d3258d010</code></p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20260629220127.png" alt="image-20260629220127670"></p>
+<h1 id="cpu-cache-的引入">CPU Cache 的引入</h1>
+<p>拿到了物理地址之后，下一步要做的事情，就是加载对应的数据了。</p>
+<p>早期的计算机架构中，CPU 主频比较低，运行一条指令需要的时间比较久，以 1980 年代的 Intel 8086 CPU 为例：</p>
+<ul>
+<li>8086 @ 5MHz =&gt; 一个 cycle 需要 200ns</li>
+<li>DRAM 访问当时需要 =&gt; 250ns</li>
+</ul>
+<p>访问 DRAM 只需要 1-2 两个 CPU cycle 的时间就能完成，完全不需要 Cache。</p>
+<p>但是后面 CPU 随着摩尔定律制程不断进化，主频一路狂奔，而内存几乎原地踏步；导致直接访问内存会非常非常拖 CPU 后腿：</p>
+<ul>
+<li>1980 年 <code>8086 CPU</code>          访问一次内存 250ns ➗ 200ns/cycle = <strong>1.25 cycle</strong></li>
+<li>2026 年 <code>14900KS CPU</code>   访问一次内存 80ns ➗ 0.16ns/cycle = <strong>480 cycle</strong></li>
+</ul>
+<p>当年速度几乎差不多，现在 CPU 访问一次内存，需要停滞等待 480 个时钟周期啥也不能干，这个期间可以做太多的事情了；这就是上个世纪提出来的 <code>Memory Wall</code> 问题。</p>
+<p>后面大家发现 99% 的情况下，CPU 需要访问到的数据其实都具有明显的局部性：</p>
+<ol>
+<li>刚刚访问过的东西，可能马上还要再访问（时间局部性）</li>
+<li>访问过的数据，大概率它旁边的数据也要被访问（空间局部性）</li>
+</ol>
+<p>于是 CPU 内部引入了缓存，来缓解这个问题，用一小块昂贵但是比内存快很多的内存，放在 CPU 内部，就能极大缓解 99% 的情况下 CPU 流水线阻塞问题。</p>
+<p>至于为什么不直接用这种很快的芯片当主存，主要的原因还是贵，CPU Cache 是用的基于复杂锁存器的 SRAM，一个 bit 要 6 个晶体管，而基于电容的 DRAM 一个 bit 只需要 1 个晶体管 + 1 个电容；</p>
+<p>而且还有一个非常致命的问题，<strong>面积</strong>！</p>
+<p>同样大小的 SRAM 内存条，如果要做到 32GB 的话，可能会有一个脸盆那么大。</p>
+<p>另外还有一个问题是，cache 越大，那么在电路设计上延迟也会越高，所以也并非越大越好，尤其是在需要最最最极致性能的时候，所以最后逐渐演变就形成了我们现在熟悉的三级 cache 结构，95% 的内存访问请求可能都被性能最极致， 延迟最低的 L1 拦住了；然后再漏给 L2 cache，L2 cache 又漏 5% 给 L3，以此类推。</p>
+<p>当然我们也可以把寄存器视为一个超 mini 的 cache～ 那就是总共五层的存储器层次结构（<strong>Memory Hierarchy</strong>）。</p>
+<p><img src="../../../../Downloads/memory_hierarchy_pyramid_compact.png" alt="memory_hierarchy_pyramid_compact"></p>
+<h1 id="l1l2l3-cache">L1/L2/L3 Cache</h1>
+<p>以 14900KS 为例，该  CPU 内部，有如下 Cache；</p>
+<p>冯诺依曼架构的灵魂就是，指令即数据，但是现代 CPU 在设计的时候也很大的参考了<code>哈佛架构</code>的思想，在最接近运算单元的 L1 层，把指令和数据分开处理；</p>
+<p>指令和数据的访问模式具有很大的差异，为了追求最极致的速度，现代 CPU 通常会为两者的使用模式分别设计一种 Cache 结构，e.g. 指令是只读的，那么 L1 I-Cache 就不需要考虑写场景。</p>
+<p>甚至为了进一步优化指令运行速度，还引入了 uOp Cache，缓存指令解码结果。</p>
+<table>
+  <thead>
+      <tr>
+          <th>层级</th>
+          <th>类型</th>
+          <th>容量</th>
+          <th>组织方式（Associativity）</th>
+          <th>作用范围</th>
+          <th>备注</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>L0</td>
+          <td>uOp Cache（微指令缓存）</td>
+          <td>~4K µops / P-Core</td>
+          <td><strong>8-way</strong></td>
+          <td>每个 P-Core 独享</td>
+          <td>存已经解码的微指令，避免重复 decode</td>
+      </tr>
+      <tr>
+          <td>L1 I-Cache</td>
+          <td>指令缓存</td>
+          <td>32KB / P-Core</td>
+          <td><strong>8-way</strong></td>
+          <td>每个 P-Core 独享</td>
+          <td>指令读取</td>
+      </tr>
+      <tr>
+          <td>L1 D-Cache</td>
+          <td>数据缓存</td>
+          <td>48KB / P-Core</td>
+          <td><strong>12-way</strong></td>
+          <td>每个 P-Core 独享</td>
+          <td>数据读取，Intel 特有的 48KB设计</td>
+      </tr>
+      <tr>
+          <td>L1 I-Cache</td>
+          <td>指令缓存</td>
+          <td>64KB / E-Core</td>
+          <td><strong>8-way</strong></td>
+          <td>每个 E-Core 独享</td>
+          <td>Gracemont架构</td>
+      </tr>
+      <tr>
+          <td>L1 D-Cache</td>
+          <td>数据缓存</td>
+          <td>32KB / E-Core</td>
+          <td><strong>8-way</strong></td>
+          <td>每个 E-Core 独享</td>
+          <td>Gracemont架构</td>
+      </tr>
+      <tr>
+          <td>L2</td>
+          <td>P-Core 二级缓存</td>
+          <td>2MB / P-Core</td>
+          <td><strong>16-way</strong></td>
+          <td>每个 P-Core 独享</td>
+          <td>Raptor Cove 最大升级点</td>
+      </tr>
+      <tr>
+          <td>L2</td>
+          <td>E-Core Cluster 二级缓存</td>
+          <td>4MB / Cluster</td>
+          <td><strong>16-way</strong></td>
+          <td>4个E-Core共享</td>
+          <td>一个E-Core cluster共享</td>
+      </tr>
+      <tr>
+          <td>L3</td>
+          <td>Intel Smart Cache</td>
+          <td>36MB</td>
+          <td><strong>12-way</strong></td>
+          <td>所有核心共享</td>
+          <td>LLC（Last Level Cache）</td>
+      </tr>
+  </tbody>
+</table>
+<h1 id="访问-cache">访问 Cache</h1>
+<p>所以，当我们访问物理地址的时候，查找流程如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">L1 D-Cache -&gt; L2 -&gt; L3 -&gt; Memory
+</span></span></code></pre></div>
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="http://localhost:1313/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="http://localhost:1313/tags/cpu" role="button">CPU </a></li>
+      
+    
+      <li><a href="http://localhost:1313/tags/%E5%86%85%E5%AD%98" role="button">内存 </a></li>
+      
+    
+      <li><a href="http://localhost:1313/tags/%E7%A1%AC%E4%BB%B6" role="button">硬件 </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=http://localhost:1313/drafts/read%E8%83%8C%E5%90%8E%E7%9A%84%E6%95%85%E4%BA%8B/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>READ 背后的故事</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=http://localhost:1313/drafts/%E4%B8%80%E4%B8%AA%E7%BD%91%E7%BB%9C%E5%8C%85%E6%98%AF%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E7%BD%91%E5%8D%A1%E5%8F%91%E5%87%BA%E7%9A%84/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>一个网络包是如何通过网卡发出的</span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%81%87%e5%a6%82%e6%88%91%e6%9c%89%e4%b8%80%e4%b8%aa%e8%99%9a%e6%8b%9f%e5%86%85%e5%ad%98%e5%9c%b0%e5%9d%80">
+												 假如我有一个虚拟内存地址
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%bc%80%e5%a7%8b%e8%ae%bf%e9%97%ae">
+												 开始访问
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#loadstore-unit">
+												 Load/Store Unit
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%a1%b5%e8%a1%a8">
+												 页表
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#cpu-cache-%e7%9a%84%e5%bc%95%e5%85%a5">
+												 CPU Cache 的引入
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#l1l2l3-cache">
+												 L1/L2/L3 Cache
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e8%ae%bf%e9%97%ae-cache">
+												 访问 Cache
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2026 &copy; <a href="http://localhost:1313/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.6.1/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.20.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="http://localhost:1313/js/main.js"></script>
+
+
+
+
+  <script src="http://localhost:1313/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+  </body>
+</html>

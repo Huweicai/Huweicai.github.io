@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="基本命令
+Netstat: Network status
+Netstat: Network Status， 顾名思义，这个命令就是用来查看网络状态的，既然名称没有特指那一层网络，那当然是都支持的，从数据链路到网络再到传输层的信息都可以查看。
+netstat 有五种输出模式：
+
+默认：输出所有的 socket 信息，可以搭配各种过滤参数来筛选
+-r &ndash;route：输出内核路由表信息
+-g &ndash;groups: 输出多播组成员信息
+-i &ndash;interfaces: 输出网卡信息
+-M &ndash;masquerade: 输出无效连接信息
+-s &ndash;statistics: 展示所有协议的统计信息
+
+SS: Socket Statistics
+SS 命令是可以用于查看套接字信息（TCP、UDP等等），相较于 netstat，它的实现更加高效而且可以输出更多的信息。">
+
+  <meta property="og:url" content="http://localhost:1313/personal/linux%E4%B8%8B%E6%8E%8C%E6%8E%A7tcp%E5%8D%8F%E8%AE%AE/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="Anonymous&#39; Blog">
+  <meta property="og:description" content="基本命令 Netstat: Network status Netstat: Network Status， 顾名思义，这个命令就是用来查看网络状态的，既然名称没有特指那一层网络，那当然是都支持的，从数据链路到网络再到传输层的信息都可以查看。
+netstat 有五种输出模式：
+默认：输出所有的 socket 信息，可以搭配各种过滤参数来筛选 -r –route：输出内核路由表信息 -g –groups: 输出多播组成员信息 -i –interfaces: 输出网卡信息 -M –masquerade: 输出无效连接信息 -s –statistics: 展示所有协议的统计信息 SS: Socket Statistics SS 命令是可以用于查看套接字信息（TCP、UDP等等），相较于 netstat，它的实现更加高效而且可以输出更多的信息。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="personal">
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+        | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="http://localhost:1313/personal/linux%E4%B8%8B%E6%8E%8C%E6%8E%A7tcp%E5%8D%8F%E8%AE%AE/">
+
+  
+  
+
+  
+  <link href="http://localhost:1313/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="http://localhost:1313/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="http://localhost:1313/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="http://localhost:1313/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="http://localhost:1313/">
+          
+        <img class="avatar imgRotate" src="http://localhost:1313/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="http://localhost:1313/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="http://localhost:1313/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="http://localhost:1313/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('http://localhost:1313/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="http://localhost:1313/">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="http://localhost:1313/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="http://localhost:1313/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="container pr-5">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading"></div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>0001-01-01</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>2 minutes read</li>
+        
+        <li>581 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <h1 id="基本命令">基本命令</h1>
+<h2 id="netstat-network-status">Netstat: Network status</h2>
+<p>Netstat: Network Status， 顾名思义，这个命令就是用来查看网络状态的，既然名称没有特指那一层网络，那当然是都支持的，从数据链路到网络再到传输层的信息都可以查看。</p>
+<p>netstat 有五种输出模式：</p>
+<ul>
+<li>默认：输出所有的 socket 信息，可以搭配各种过滤参数来筛选</li>
+<li>-r &ndash;route：输出内核路由表信息</li>
+<li>-g &ndash;groups: 输出多播组成员信息</li>
+<li>-i &ndash;interfaces: 输出网卡信息</li>
+<li>-M &ndash;masquerade: 输出无效连接信息</li>
+<li>-s &ndash;statistics: 展示所有协议的统计信息</li>
+</ul>
+<h2 id="ss-socket-statistics">SS: Socket Statistics</h2>
+<p>SS 命令是可以用于查看套接字信息（TCP、UDP等等），相较于 netstat，它的实现更加高效而且可以输出更多的信息。</p>
+<h2 id="nc--net-cat">NC:  Net Cat</h2>
+<p>NC 是一个 TCP/IP 协议族的瑞士工具刀，可以用于创建和监听TCP连接，并传输数据。可以理解为 socket、bind、listen、connect 等方法的命令行封装版，非常实用。</p>
+<h1 id="常见操作">常见操作</h1>
+<h2 id="查看所有监听中的tcp端口">查看所有监听中的TCP端口</h2>
+<pre tabindex="0"><code>netstat -lnt4
+# -l listen: 监控中的连接
+# -n numeric: 显示IP数字而不是域名
+# -t tcp: 只展示TCP的连接
+# -4 ipv4: 只展示基于IPv4的TCP连接
+</code></pre><p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200912161325.png" alt="image-20200912161325266"></p>
+<h2 id="统计tcp连接各状态数量">统计TCP连接各状态数量</h2>
+<pre tabindex="0"><code>netstat -tn4 | awk &#39;{map[$6]++} END { for (a in map) print map[ a ] &#34; &#34; a}&#39; | sort -nr
+
+# netstat -tn4 找出满足：是TCP、IPv4的 socket
+# awk 把状态信息统计出来
+# sort 排序
+</code></pre><p>输出：可以看到我的系统中有大半的TCP连接是出于CLOSE_WAIT状态的。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200912174146.png" alt="image-20200912174146405"></p>
+<h2 id="判断一个主机的某个端口是否开放">判断一个主机的某个端口是否开放</h2>
+<pre tabindex="0"><code>nc -v host port
+</code></pre><p>使用nc命令尝试往指定端口建立一个TCP连接，如果能连通，那么就会出现如下的提升：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20200912174458.png" alt="image-20200912174458465"></p>
+<p>如果一直没有成功，那就是失败了。</p>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+            </div>
+            
+          </div>
+          
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=http://localhost:1313/personal/linux%E6%BA%90%E7%A0%81%E4%B8%AD%E7%9A%84tcp%E8%A1%A8%E7%A4%BA/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span></span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+                <a href=http://localhost:1313/personal/go%E5%90%8C%E6%AD%A5%E5%8E%9F%E8%AF%ADmutex%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span></span>
+                  </div>
+                </a>
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2026 &copy; <a href="http://localhost:1313/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.6.1/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.20.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="http://localhost:1313/js/main.js"></script>
+
+
+
+
+  <script src="http://localhost:1313/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+  </body>
+</html>

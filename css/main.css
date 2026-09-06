@@ -314,24 +314,85 @@ Markdown
 .markdown h1, .markdown h2, .markdown h3,
 .markdown h4, .markdown h5, .markdown h6 {
     font-weight: 500;
+    scroll-margin-top: 5rem;   /* 锚点跳转不被 fixed 导航栏遮住 */
+}
+
+.markdown {
+    counter-reset: h1sec h2sec h3sec;
 }
 
 .markdown h1 {
     font-size: 2.5rem;
+    letter-spacing: .02em;
+    margin-top: 2.6rem;
     margin-bottom: 1.8rem;
-    margin-top: 2.3rem;
+    padding-bottom: .5rem;
+    position: relative;
+    border-bottom: 1px solid var(--grey-l2);
+    counter-increment: h1sec;
+    counter-reset: h2sec h3sec;
 }
+
+/* 双线：第二条更浅，间距 3px */
+.markdown h1::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 1px;
+    background: var(--grey-l3);
+}
+
+/* 章节编号 01 / 1.2 / 1.2.3：等宽、淡灰、略上提 */
+.markdown h1::before,
+.markdown h2::before,
+.markdown h3::before {
+    display: inline-block;
+    font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+    font-weight: 400;
+    letter-spacing: .1em;
+    color: var(--grey-l1);
+    margin-right: .8rem;
+}
+
+.markdown h1::before {
+    content: counter(h1sec, decimal-leading-zero);
+    font-size: 1.35rem;
+    transform: translateY(-.3em);
+}
+
+.markdown h2::before {
+    content: counter(h1sec) "." counter(h2sec);
+    font-size: 1.05rem;
+    transform: translateY(-.2em);
+}
+
+.markdown h3::before {
+    content: counter(h1sec) "." counter(h2sec) "." counter(h3sec);
+    font-size: .95rem;
+    transform: translateY(-.15em);
+}
+
+/* 没有 h1 的文章：h2 当顶级 */
+.markdown:not(:has(h1)) h2::before { content: counter(h2sec, decimal-leading-zero); }
+.markdown:not(:has(h1)) h3::before { content: counter(h2sec) "." counter(h3sec); }
+/* 有 h1 没 h2 的文章：h3 直接挂 h1 下 */
+.markdown:has(h1):not(:has(h2)) h3::before { content: counter(h1sec) "." counter(h3sec); }
 
 .markdown h2 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
     margin-top: 2rem;
+    counter-increment: h2sec;
+    counter-reset: h3sec;
 }
 
 .markdown h3 {
     font-size: 1.75rem;
     margin-bottom: 1.2rem;
     margin-top: 1.7rem;
+    counter-increment: h3sec;
 }
 
 .markdown h4 {
@@ -433,7 +494,7 @@ Markdown
 }
 
 .markdown table {
-    margin: 0 auto;
+    margin: 0;
     margin-bottom: 1rem;
     /* width: 100%; */
     vertical-align: middle;
@@ -458,8 +519,12 @@ Markdown
 }
 
 .markdown img {
+    display: block;
     margin: 1rem 0;
-    max-width: 100%;
+    max-width: min(100%, 800px);
+    max-height: min(60vh, 480px);
+    width: auto;
+    height: auto;
     -webkit-border-radius: .25rem;
     border-radius: .25rem;
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
@@ -804,6 +869,27 @@ toc-nav  scrollspy
     -webkit-border-radius: 0;
     border-radius: 0;
 }
+
+/* TOC 章节编号，与正文编号一致。
+   toc.html 的结构：每个标题各自套 N 层 <ul class="nav">，N = 标题级别 */
+.toc-nav > ul { counter-reset: toc1 toc2 toc3; }
+.toc-nav > ul > ul.nav:has(> li)                   { counter-increment: toc1; counter-reset: toc2 toc3; }
+.toc-nav > ul > ul.nav:has(> ul.nav > li)          { counter-increment: toc2; counter-reset: toc3; }
+.toc-nav > ul > ul.nav:has(> ul.nav > ul.nav > li) { counter-increment: toc3; }
+
+.toc-nav ul.nav .nav-link::before {
+    font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: .7rem;
+    font-weight: 400;
+    letter-spacing: .05em;
+    color: var(--grey-l1);
+    margin-right: .45em;
+}
+.toc-nav > ul > ul.nav > li > .nav-link::before                     { content: counter(toc1, decimal-leading-zero); }
+.toc-nav > ul > ul.nav > ul.nav > li > .nav-link::before            { content: counter(toc1) "." counter(toc2); }
+.toc-nav > ul > ul.nav > ul.nav > ul.nav > li > .nav-link::before   { content: counter(toc1) "." counter(toc2) "." counter(toc3); }
+/* 有一级没二级：三级直接挂一级下 */
+.toc-nav > ul:not(:has(> ul.nav > ul.nav > li)) > ul.nav > ul.nav > ul.nav > li > .nav-link::before { content: counter(toc1) "." counter(toc3); }
 
 .toc-nav a.nav-link:hover {
     background-color: transparent;
