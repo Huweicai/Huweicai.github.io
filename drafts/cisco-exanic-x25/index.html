@@ -7,19 +7,26 @@
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
   <meta name="author" content="Huweicai">
-  <meta name="description" content="">
+  <meta name="description" content="Exablaze Exanic X25
+Exanic X25 是目前金融交易领域常见的一款 FPGA 加速网卡，通常被用在行情接收侧用极致的速度接收来自交易所的行情组播（交易侧几乎已经被 Solarflare 一统天下了）。
+X25 其实还有一个名字，K3PS (Cisco Nexus K3P-S FPGA SmartNIC)，Exablaze 是澳洲一家专门做 HFT 网络设备的公司，后面被 Cisco 收购了，Cisco 收购之后就给 X25 改了个新名字叫 K3PS，  甚至现在卡上面没有任何一个地方印了 X25 的字样，不过大家仍然习惯叫它 X25～
+虽然 Exablaze 网卡线被收购之后就有点摆烂，很久没有新产品和新 feature 了，但是 X25 仍然是一款非常优秀的遗产！">
 
-  <meta property="og:url" content="http://localhost:1313/drafts/cpp-pointers/">
+  <meta property="og:url" content="http://localhost:1313/drafts/cisco-exanic-x25/">
   <meta property="og:site_name" content="Anonymous&#39; Blog">
-  <meta property="og:title" content="大脑是如何思考的">
-  <meta property="og:description" content="好奇心探索世界，善意假设，做最酷的事情">
+  <meta property="og:title" content="Exablaze Exanic X25 网卡介绍">
+  <meta property="og:description" content="Exablaze Exanic X25 Exanic X25 是目前金融交易领域常见的一款 FPGA 加速网卡，通常被用在行情接收侧用极致的速度接收来自交易所的行情组播（交易侧几乎已经被 Solarflare 一统天下了）。
+X25 其实还有一个名字，K3PS (Cisco Nexus K3P-S FPGA SmartNIC)，Exablaze 是澳洲一家专门做 HFT 网络设备的公司，后面被 Cisco 收购了，Cisco 收购之后就给 X25 改了个新名字叫 K3PS， 甚至现在卡上面没有任何一个地方印了 X25 的字样，不过大家仍然习惯叫它 X25～
+虽然 Exablaze 网卡线被收购之后就有点摆烂，很久没有新产品和新 feature 了，但是 X25 仍然是一款非常优秀的遗产！">
   <meta property="og:locale" content="zn_Hans">
   <meta property="og:type" content="article">
     <meta property="article:section" content="drafts">
-    <meta property="article:published_time" content="2023-05-21T19:58:00+08:00">
-    <meta property="article:modified_time" content="2023-05-21T19:58:00+08:00">
-    <meta property="article:tag" content="Cpp">
-    <meta property="article:tag" content="Programing">
+    <meta property="article:published_time" content="2026-09-07T13:58:00+08:00">
+    <meta property="article:modified_time" content="2026-09-07T13:58:00+08:00">
+    <meta property="article:tag" content="Linux">
+    <meta property="article:tag" content="计算机网络">
+    <meta property="article:tag" content="硬件">
+    <meta property="article:tag" content="HFT">
 
    
 
@@ -45,11 +52,11 @@
 
   <title>
   
-       大脑是如何思考的 | Anonymous&#39; Blog 
+       Exablaze Exanic X25 网卡介绍 | Anonymous&#39; Blog 
   
   </title>
 
-  <link rel="canonical" href="http://localhost:1313/drafts/cpp-pointers/">
+  <link rel="canonical" href="http://localhost:1313/drafts/cisco-exanic-x25/">
 
   
   
@@ -288,18 +295,18 @@
         
     </ul>
 
-    <div class="px-4 post-heading">大脑是如何思考的</div>
+    <div class="px-4 post-heading">Exablaze Exanic X25 网卡介绍</div>
 
     <ul class="post-meta li-x mt-1">
         
-            <li>2023-05-21</li>
+            <li>2026-09-07</li>
         
 
         
             <li class="middot"></li>
-            <li>0 minutes read</li>
+            <li>3 minutes read</li>
         
-        <li>0 words</li>
+        <li>1239 words</li>
 
     </ul>
     
@@ -308,7 +315,99 @@
 
 
           <div class="post-content markdown">
-            
+            <h1 id="exablaze-exanic-x25">Exablaze Exanic X25</h1>
+<p><strong>Exanic X25</strong> 是目前金融交易领域常见的一款 FPGA 加速网卡，通常被用在行情接收侧用极致的速度接收来自交易所的行情组播（交易侧几乎已经被 Solarflare 一统天下了）。</p>
+<p><strong>X25</strong> 其实还有一个名字，<code>K3PS (Cisco Nexus K3P-S FPGA SmartNIC)</code>，Exablaze 是澳洲一家专门做 HFT 网络设备的公司，后面被 Cisco 收购了，Cisco 收购之后就给 X25 改了个新名字叫 K3PS，  甚至现在卡上面没有任何一个地方印了 X25 的字样，不过大家仍然习惯叫它 X25～</p>
+<p>虽然 Exablaze 网卡线被收购之后就有点摆烂，很久没有新产品和新 feature 了，但是 X25 仍然是一款非常优秀的遗产！</p>
+<p>X25 的核心卖点就是，极致的低延迟，双向穿透延迟只要 <strong>568ns</strong>！</p>
+<p>普通的网卡双向穿透延迟大概是在几十微秒级别，而普通的低延迟卡，通常也只能做到 1-2us 量级；即使是 X25 最强有力的竞争对手，X4522 也需要 590ns，上一代的 X2522 则更慢一点需要 750ns。</p>
+<p>除了 568 ns 的穿透延迟，官方介绍的核心卖点还有这些：</p>
+<ul>
+<li>
+<p>FDK 可编程（Solarfare 系列卡就是纯 ASIC 不能编程）</p>
+</li>
+<li>
+<p>Cut-through 流式 RX</p>
+</li>
+<li>
+<p>TX 模板预加载</p>
+</li>
+<li>
+<p>exasock socket 库（当然其实这个算是个减分项。。。）</p>
+</li>
+<li>
+<p>4ns 精度硬件时间戳</p>
+</li>
+</ul>
+<p>总的来说，是一款既性能极致又功能丰富的网卡。</p>
+<h1 id="网卡收包路径">网卡收包路径</h1>
+<p>从光信号 -&gt; 用户态字节，X25 的收包路径大概是：</p>
+<ol>
+<li>光信号</li>
+<li>SFP28 模块光电转换，把光信号转化为电信号</li>
+<li>收发器 CDR 恢复时钟、解串成 66b 字</li>
+<li>PCS 块同步 66b 解码</li>
+<li>MAC 分帧</li>
+<li>（optional）用户自定义 FPGA 开发逻辑处理</li>
+<li>flow steering 选环</li>
+<li>攒够 120B 数据 or 帧结束</li>
+<li>PCIe 直接把 128B 数据写入 Host 内存 2MB Ring （卡上不缓冲、无流控）</li>
+<li>exanic_receive_chunk 用户态轮询到数据</li>
+<li>返回给用户态程序自行读取处理</li>
+</ol>
+<p>相较于常规网卡，X25 收包不一样的部分在于，首先 X25 支持 Cut-through 流式，阶段 8 的时候，假设收到一个 1200B 的以太网帧，常规的网卡是 Store-and-Forward 模式，需要等这个 1200B 全部处理完，然后才能发起 DMA 写入，而 X25 收到前 120 字节之后就可以发出，流式读取，一边网卡上还在收着帧呢，一边用户态就已经可以开始处理了，可以极大减少网络包前部的延迟；不过代价是用户可能全部处理完之后才发现 CRC 校验没过～</p>
+<p>另外第 9 阶段，常规网卡通常是在用户态会有一个 RX Descriptor Ring，每次网卡需要先取一些 descriptor，然后再写入到 descriptor 指向的内存，写完还得回写 descriptor 的状态，然后通过中断通知 CPU 写完了，<strong>descriptor 存在的意义本质是上“内存归软件管”</strong>，网卡只有使用权，网卡需要为这套灵活性的机制付出一些性能税。</p>
+<p>而 X25 则只有一个简单的 RX Ring，非常非常粗暴，ring 固定 2MB、chunk 固定 128B、地址由 base 加计数器直接算出， 也没有节流机制，网卡就粗暴的来了包就 Cut-Through 搬过去，溢出了就直接覆盖了，用户态进程要是消费不过来，那是你自己问题，反思一下是不是消费的不够快，是不是哪里有 bug。</p>
+<p>甚至 X25 也不支持中断 or 通知机制，你只能一直轮询那个 ring，一直不断地轮询，这样 CPU 开销会非常巨大，不过会用这种卡的用户为了延迟通常是不会吝啬一个 isolated CPU 核心的。</p>
+<h1 id="网卡发包路径">网卡发包路径</h1>
+<p>从用户态发出去 -&gt; 网卡设备光信号进入光纤，流程如下：</p>
+<ul>
+<li>exanic_transmit_frame</li>
+<li>DMA 封装 chunk 通过 mmap 的 write-combining 映射写进卡上</li>
+<li>CPU 每 64B 一个 PCIe 写入网卡上的 buffer</li>
+<li>doorbell -&gt; PCIe -&gt; 通知网卡写完了</li>
+</ul>
+<h1 id="用户态-api">用户态 API</h1>
+<ul>
+<li>exanic_receive_frame</li>
+<li>exanic_receive_chunk</li>
+</ul>
+<h1 id="参数对比">参数对比</h1>
+<table>
+  <thead>
+      <tr>
+          <th></th>
+          <th>X25</th>
+          <th>X10</th>
+          <th>X4522</th>
+          <th>U50</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>穿透延迟</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+
           </div>
 
           
@@ -321,10 +420,16 @@
   <li class="pr-0"><a href="http://localhost:1313/tags/"><i class="fas fa-tags"></i></a></li>
   <div class="tags-sm">
     
-      <li><a href="http://localhost:1313/tags/cpp" role="button">cpp </a></li>
+      <li><a href="http://localhost:1313/tags/linux" role="button">linux </a></li>
       
     
-      <li><a href="http://localhost:1313/tags/programing" role="button">programing </a></li>
+      <li><a href="http://localhost:1313/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
+      
+    
+      <li><a href="http://localhost:1313/tags/%E7%A1%AC%E4%BB%B6" role="button">硬件 </a></li>
+      
+    
+      <li><a href="http://localhost:1313/tags/hft" role="button">HFT </a></li>
       
     
   </div>
@@ -340,23 +445,16 @@
           <div class="row pt-3">
             <div class="col-md-6">
               
-                <a href=http://localhost:1313/drafts/cpp-pointers/ class="post-meta">Previous
+                <a href=http://localhost:1313/drafts/%E4%B8%80%E4%B8%AA%E7%BD%91%E7%BB%9C%E5%8C%85%E6%98%AF%E5%A6%82%E4%BD%95%E9%80%9A%E8%BF%87%E7%BD%91%E5%8D%A1%E5%8F%91%E5%87%BA%E7%9A%84/ class="post-meta">Previous
                   <div class="pt-2 pb-5 d-flex">
                     <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
-                    <span>神奇的C&#43;&#43;指针</span>
+                    <span>一个网络包是如何通过网卡发出的</span>
                   </div>
                 </a>
               
             </div>
             
             <div class="col-md-6 text-right" >
-              
-                <a href=http://localhost:1313/drafts/cpp-storage-class/ class="post-meta">Next
-                  <div class="pt-2 pb-5 flex-reverse">
-                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
-                    <span>C&#43;&#43; 存储类</span>
-                  </div>
-                </a>
               
             </div>
           </div>
@@ -373,6 +471,142 @@
 	
 	
 	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#exablaze-exanic-x25">
+												 Exablaze Exanic X25
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bd%91%e5%8d%a1%e6%94%b6%e5%8c%85%e8%b7%af%e5%be%84">
+												 网卡收包路径
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%bd%91%e5%8d%a1%e5%8f%91%e5%8c%85%e8%b7%af%e5%be%84">
+												 网卡发包路径
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e7%94%a8%e6%88%b7%e6%80%81-api">
+												 用户态 API
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e5%8f%82%e6%95%b0%e5%af%b9%e6%af%94">
+												 参数对比
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
 	
 
     </div>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>HFT on Anonymous&#39; Blog</title>
+    <link>http://localhost:1313/tags/hft/</link>
+    <description>Recent content in HFT on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Mon, 07 Sep 2026 13:58:00 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/hft/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exablaze Exanic X25 网卡介绍</title>
+      <link>http://localhost:1313/drafts/cisco-exanic-x25/</link>
+      <pubDate>Mon, 07 Sep 2026 13:58:00 +0800</pubDate>
+      <guid>http://localhost:1313/drafts/cisco-exanic-x25/</guid>
+      <description>&lt;h1 id=&#34;exablaze-exanic-x25&#34;&gt;Exablaze Exanic X25&lt;/h1&gt;&#xA;&lt;p&gt;Exanic X25 是目前金融交易领域常见的一款 FPGA 加速网卡，通常被用在行情接收侧用极致的速度接收来自交易所的行情组播（交易侧几乎已经被 Solarflare 一统天下了）。&lt;/p&gt;&#xA;&lt;p&gt;X25 其实还有一个名字，K3PS (Cisco Nexus K3P-S FPGA SmartNIC)，Exablaze 是澳洲一家专门做 HFT 网络设备的公司，后面被 Cisco 收购了，Cisco 收购之后就给 X25 改了个新名字叫 K3PS，  甚至现在卡上面没有任何一个地方印了 X25 的字样，不过大家仍然习惯叫它 X25～&lt;/p&gt;&#xA;&lt;p&gt;虽然 Exablaze 网卡线被收购之后就有点摆烂，很久没有新产品和新 feature 了，但是 X25 仍然是一款非常优秀的遗产！&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
