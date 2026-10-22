@@ -6,8 +6,15 @@
     <description>Recent content in HFT on Anonymous&#39; Blog</description>
     <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 06 Oct 2026 13:58:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 20 Oct 2026 18:58:00 +0800</lastBuildDate>
     <atom:link href="https://huweicai.com/tags/hft/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Solarflare X2522-&gt;X4522 报单路径的静默退化</title>
+      <link>https://huweicai.com/solarflare-x2522tox4522/</link>
+      <pubDate>Tue, 20 Oct 2026 18:58:00 +0800</pubDate>
+      <guid>https://huweicai.com/solarflare-x2522tox4522/</guid>
+      <description>&lt;blockquote&gt;&#xA;&lt;p&gt;一句话总结：当我们从 Solarflare X2522 网卡迁移到 X4522 网卡的时候，如果原样套用之前的代码，报单路径会出现静默退化，显式选择 Express datapath 来启用 CTPIO 能力&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;h1 id=&#34;问题代码&#34;&gt;问题代码&lt;/h1&gt;&#xA;&lt;p&gt;背景是这样的，一开始我们是大量使用 X2522 网卡报单，走 EFVI 的  CTPIO，后面 Solarflare 发新卡了，就逐渐引入了 X4522，用 onload 自带的测试工具 eflatency 单独做端到端延迟测试，测下来比 X2522 快个 400ns，也没啥别的问题，就一点点灰度，引入生产环境了（详细的测试数据放在文末）。&lt;/p&gt;&#xA;&lt;p&gt;复用了之前 X2522 的代码，报单、撤单、回报，也都能丝滑平移跑起来，编译、启动、运行，日志里一条错误都没有，给人一种像是  Exanic x25 之于 x10 那样无缝迁移的感觉，但是问题就出在这里了。。。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Exablaze Exanic X25 网卡介绍</title>
       <link>https://huweicai.com/exablaze-exanic-x25/</link>

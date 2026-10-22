@@ -442,6 +442,8 @@
 
   
 
+  
+
 
 
 
@@ -477,9 +479,9 @@
         
             <li><a href="https://huweicai.com/tags/cloudnative" role="button"><span>cloudnative (4)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (4)</span></a></li>
+            <li><a href="https://huweicai.com/tags/cpp" role="button"><span>cpp (4)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/cpp" role="button"><span>cpp (3)</span></a></li>
+            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (4)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6" role="button"><span>硬件 (3)</span></a></li>
         
@@ -490,6 +492,8 @@
             <li><a href="https://huweicai.com/tags/docker" role="button"><span>docker (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/ebpf" role="button"><span>ebpf (2)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/hft" role="button"><span>hft (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/ip" role="button"><span>ip (2)</span></a></li>
         
@@ -515,8 +519,6 @@
         
             <li><a href="https://huweicai.com/tags/harbor" role="button"><span>harbor (1)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/hft" role="button"><span>hft (1)</span></a></li>
-        
             <li><a href="https://huweicai.com/tags/http" role="button"><span>http (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/innodb" role="button"><span>innodb (1)</span></a></li>
@@ -524,6 +526,10 @@
             <li><a href="https://huweicai.com/tags/jvm" role="button"><span>jvm (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/mysql" role="button"><span>mysql (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/nic" role="button"><span>nic (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/onload" role="button"><span>onload (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/pprof" role="button"><span>pprof (1)</span></a></li>
         
@@ -552,6 +558,8 @@
             <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button"><span>权限管理 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E7%A3%81%E7%9B%98" role="button"><span>磁盘 (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/%E7%BD%91%E7%BB%9C" role="button"><span>网络 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F" role="button"><span>镜像 (1)</span></a></li>
         
@@ -617,6 +625,62 @@
       </li>
     </ul>
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/redis-faq/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">Redis FAQ</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2019-01-04</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>6 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      Redis 官网 FAQ 翻译以及部分自己生产实践总结的问题 官网FAQ地址
+Redos持久化策略：RDB和AOF RDB：数据快照，数据整体快照，吞吐量较大，但单次耗时较长，如果在dump的时候宕机可能会导致数据丢失。 AOF：日志追加，占空间比RDB大，但安全性更好，每秒追加一次日志，丢失数据的可能性会小很多，但是宕机恢复很慢。
+而在实际生产环境中，我们通常会将两种持久化策略共同使用，定期进行数据快照，同时保留 AOF 日志，在快照之前的日志就可以删除了，这样既节省了空间，同时又能加快恢复速度，还能保证解决的数据持久可靠性。
+......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/redis" role="button">redis </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E5%AD%98%E5%82%A8" role="button">存储 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">

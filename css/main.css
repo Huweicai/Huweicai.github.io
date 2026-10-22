@@ -1427,3 +1427,22 @@ toc-nav  scrollspy
         text-shadow: none;
     }
 }
+/* Human-made badges (notbyai.fyi / madebyhuman.work) */
+.human-badges {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 18px 0 28px;
+    border-top: 1px solid #eee;
+}
+
+.human-badges img {
+    height: 36px;
+    width: auto;
+    transition: opacity 0.2s ease;
+}
+
+.human-badges a:hover img {
+    opacity: 0.6;
+}

@@ -442,6 +442,8 @@
 
   
 
+  
+
 
 
 
@@ -477,9 +479,9 @@
         
             <li><a href="https://huweicai.com/tags/cloudnative" role="button"><span>cloudnative (4)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (4)</span></a></li>
+            <li><a href="https://huweicai.com/tags/cpp" role="button"><span>cpp (4)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/cpp" role="button"><span>cpp (3)</span></a></li>
+            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (4)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6" role="button"><span>硬件 (3)</span></a></li>
         
@@ -490,6 +492,8 @@
             <li><a href="https://huweicai.com/tags/docker" role="button"><span>docker (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/ebpf" role="button"><span>ebpf (2)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/hft" role="button"><span>hft (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/ip" role="button"><span>ip (2)</span></a></li>
         
@@ -515,8 +519,6 @@
         
             <li><a href="https://huweicai.com/tags/harbor" role="button"><span>harbor (1)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/hft" role="button"><span>hft (1)</span></a></li>
-        
             <li><a href="https://huweicai.com/tags/http" role="button"><span>http (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/innodb" role="button"><span>innodb (1)</span></a></li>
@@ -524,6 +526,10 @@
             <li><a href="https://huweicai.com/tags/jvm" role="button"><span>jvm (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/mysql" role="button"><span>mysql (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/nic" role="button"><span>nic (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/onload" role="button"><span>onload (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/pprof" role="button"><span>pprof (1)</span></a></li>
         
@@ -552,6 +558,8 @@
             <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button"><span>权限管理 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E7%A3%81%E7%9B%98" role="button"><span>磁盘 (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/%E7%BD%91%E7%BB%9C" role="button"><span>网络 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F" role="button"><span>镜像 (1)</span></a></li>
         
@@ -617,6 +625,71 @@
       </li>
     </ul>
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/solarflare-x2522tox4522/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">Solarflare X2522-&gt;X4522 报单路径的静默退化</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2026-10-20</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>4 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+       一句话总结：当我们从 Solarflare X2522 网卡迁移到 X4522 网卡的时候，如果原样套用之前的代码，报单路径会出现静默退化，显式选择 Express datapath 来启用 CTPIO 能力
+问题代码 背景是这样的，一开始我们是大量使用 X2522 网卡报单，走 EFVI 的 CTPIO，后面 Solarflare 发新卡了，就逐渐引入了 X4522，用 onload 自带的测试工具 eflatency 单独做端到端延迟测试，测下来比 X2522 快个 400ns，也没啥别的问题，就一点点灰度，引入生产环境了（详细的测试数据放在文末）。
+复用了之前 X2522 的代码，报单、撤单、回报，也都能丝滑平移跑起来，编译、启动、运行，日志里一条错误都没有，给人一种像是 Exanic x25 之于 x10 那样无缝迁移的感觉，但是问题就出在这里了。。。
+......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/cpp" role="button">cpp </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/onload" role="button">onload </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/nic" role="button">nic </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E7%BD%91%E7%BB%9C" role="button">网络 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/hft" role="button">HFT </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -1121,77 +1194,6 @@ ELF 文件格式被设计为可扩展和灵活的，以适应不同类型的程�
       
     
       <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/kernel-debug-tips_en/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Linux Kernel Debug Tips</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2023-01-17</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>9 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
-So, knowing more about how the kernel works will contribute to the construction of our user mode system.
-The best method to learn software code is debugging while watching, software = code &#43; data, know more about the runtime data while learning code can help us understand it better.
-However the Kernel is not a normal software system, we can’t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb &#43; QEMU, it’ still too heavy, and not available for online systems.
-This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.
-Kernel Module Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can’t snoop the data inside Kernel.
-In that case, why not try to run our code inside the Kernel?
-It’s possible to edit the source code of kernel, adding log to print the information we concerned, but it’s a long tedious step.
-......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-        
-          <li><a href="https://huweicai.com/categories/english"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> english </a></li>
-        
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/linux" role="button">linux </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/kernel" role="button">kernel </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/ebpf" role="button">ebpf </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/en" role="button">EN </a></li>
       
     
   </div>

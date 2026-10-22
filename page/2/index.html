@@ -442,6 +442,8 @@
 
   
 
+  
+
 
 
 
@@ -477,9 +479,9 @@
         
             <li><a href="https://huweicai.com/tags/cloudnative" role="button"><span>cloudnative (4)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (4)</span></a></li>
+            <li><a href="https://huweicai.com/tags/cpp" role="button"><span>cpp (4)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/cpp" role="button"><span>cpp (3)</span></a></li>
+            <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (4)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6" role="button"><span>硬件 (3)</span></a></li>
         
@@ -490,6 +492,8 @@
             <li><a href="https://huweicai.com/tags/docker" role="button"><span>docker (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/ebpf" role="button"><span>ebpf (2)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/hft" role="button"><span>hft (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/ip" role="button"><span>ip (2)</span></a></li>
         
@@ -515,8 +519,6 @@
         
             <li><a href="https://huweicai.com/tags/harbor" role="button"><span>harbor (1)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/hft" role="button"><span>hft (1)</span></a></li>
-        
             <li><a href="https://huweicai.com/tags/http" role="button"><span>http (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/innodb" role="button"><span>innodb (1)</span></a></li>
@@ -524,6 +526,10 @@
             <li><a href="https://huweicai.com/tags/jvm" role="button"><span>jvm (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/mysql" role="button"><span>mysql (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/nic" role="button"><span>nic (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/onload" role="button"><span>onload (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/pprof" role="button"><span>pprof (1)</span></a></li>
         
@@ -552,6 +558,8 @@
             <li><a href="https://huweicai.com/tags/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86" role="button"><span>权限管理 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E7%A3%81%E7%9B%98" role="button"><span>磁盘 (1)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/%E7%BD%91%E7%BB%9C" role="button"><span>网络 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F" role="button"><span>镜像 (1)</span></a></li>
         
@@ -617,6 +625,77 @@
       </li>
     </ul>
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/kernel-debug-tips_en/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">Linux Kernel Debug Tips</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2023-01-17</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>9 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      Kernel Kernel undertakes the core Operating System job, which is the foundation of the current software ecosystem.
+So, knowing more about how the kernel works will contribute to the construction of our user mode system.
+The best method to learn software code is debugging while watching, software = code &#43; data, know more about the runtime data while learning code can help us understand it better.
+However the Kernel is not a normal software system, we can’t add breakpoint and debug it through IDE debug button like other normal software, though we can implement it by kgdb &#43; QEMU, it’ still too heavy, and not available for online systems.
+This article shares two lightweight kernel debugging tips, helps us observing it runtime status rapidly.
+Kernel Module Usally, our codes are runing in user mode. In Linux operating systems, the instruction of user mode program will run in level Ring 3 , they do not have the permission to acces the data in level Ring 0 high memory address space, which means that they can’t snoop the data inside Kernel.
+In that case, why not try to run our code inside the Kernel?
+It’s possible to edit the source code of kernel, adding log to print the information we concerned, but it’s a long tedious step.
+......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+        
+          <li><a href="https://huweicai.com/categories/english"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> english </a></li>
+        
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/linux" role="button">linux </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/kernel" role="button">kernel </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/ebpf" role="button">ebpf </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/en" role="button">EN </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -1163,71 +1242,6 @@ Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区
       
     
       <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/run-linux-container-manual/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">手动实现一个Linux容器</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2021-04-14</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>12 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      容器 容器技术的出现，彻底颠覆了传统的应用交付部署方式，交付的边界不再仅限于代码，而是一整套能 run everywhere 的基础设施，正如容器化领域的集大成者 Docker 的标语所言，这是一个新的时代了：
-Accelerate how you build, share and run modern applications.
-容器本质上就是一个软件包，包含了业务服务及其依赖组件，比如我有一个Java服务，依赖了jdk 14.0.1以及几个外部 jar包，同时我们还依赖发行版的一些特性，需要运行在 debian buster发行版上，那么我们可以把这些通通打入一个镜像中，或者叫一个静态的容器，任何会影响运行时的东西我们都可以打入镜像中，这使得其具有非常高的可移植性。
-......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/docker" role="button">Docker </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button">计算机网络 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C" role="button">命令行 </a></li>
       
     
   </div>

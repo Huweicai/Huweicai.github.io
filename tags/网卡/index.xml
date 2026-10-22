@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>网卡 on Anonymous&#39; Blog</title>
+    <link>http://localhost:1313/tags/%E7%BD%91%E5%8D%A1/</link>
+    <description>Recent content in 网卡 on Anonymous&#39; Blog</description>
+    <generator>Hugo</generator>
+    <language>zn-Hans</language>
+    <lastBuildDate>Thu, 08 Oct 2026 22:43:00 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/%E7%BD%91%E5%8D%A1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Solarflare EFVI</title>
+      <link>http://localhost:1313/drafts/solarflare-efvi/</link>
+      <pubDate>Thu, 08 Oct 2026 22:43:00 +0800</pubDate>
+      <guid>http://localhost:1313/drafts/solarflare-efvi/</guid>
+      <description>&lt;h1 id=&#34;efvi&#34;&gt;EFVI&lt;/h1&gt;&#xA;&lt;p&gt;EFVI&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

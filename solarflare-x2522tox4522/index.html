@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zn-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, maximum-scale=1" />
+  <meta name="author" content="Huweicai">
+  <meta name="description" content="
+一句话总结：当我们从 Solarflare X2522 网卡迁移到 X4522 网卡的时候，如果原样套用之前的代码，报单路径会出现静默退化，显式选择 Express datapath 来启用 CTPIO 能力
+
+问题代码
+背景是这样的，一开始我们是大量使用 X2522 网卡报单，走 EFVI 的  CTPIO，后面 Solarflare 发新卡了，就逐渐引入了 X4522，用 onload 自带的测试工具 eflatency 单独做端到端延迟测试，测下来比 X2522 快个 400ns，也没啥别的问题，就一点点灰度，引入生产环境了（详细的测试数据放在文末）。
+复用了之前 X2522 的代码，报单、撤单、回报，也都能丝滑平移跑起来，编译、启动、运行，日志里一条错误都没有，给人一种像是  Exanic x25 之于 x10 那样无缝迁移的感觉，但是问题就出在这里了。。。">
+
+  <meta property="og:url" content="https://huweicai.com/solarflare-x2522tox4522/">
+  <meta property="og:site_name" content="Anonymous&#39; Blog">
+  <meta property="og:title" content="Solarflare X2522-&gt;X4522 报单路径的静默退化">
+  <meta property="og:description" content="一句话总结：当我们从 Solarflare X2522 网卡迁移到 X4522 网卡的时候，如果原样套用之前的代码，报单路径会出现静默退化，显式选择 Express datapath 来启用 CTPIO 能力
+问题代码 背景是这样的，一开始我们是大量使用 X2522 网卡报单，走 EFVI 的 CTPIO，后面 Solarflare 发新卡了，就逐渐引入了 X4522，用 onload 自带的测试工具 eflatency 单独做端到端延迟测试，测下来比 X2522 快个 400ns，也没啥别的问题，就一点点灰度，引入生产环境了（详细的测试数据放在文末）。
+复用了之前 X2522 的代码，报单、撤单、回报，也都能丝滑平移跑起来，编译、启动、运行，日志里一条错误都没有，给人一种像是 Exanic x25 之于 x10 那样无缝迁移的感觉，但是问题就出在这里了。。。">
+  <meta property="og:locale" content="zn_Hans">
+  <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2026-10-20T18:58:00+08:00">
+    <meta property="article:modified_time" content="2026-10-20T18:58:00+08:00">
+    <meta property="article:tag" content="Cpp">
+    <meta property="article:tag" content="Onload">
+    <meta property="article:tag" content="Nic">
+    <meta property="article:tag" content="网络">
+    <meta property="article:tag" content="HFT">
+
+   
+
+
+
+
+
+
+
+
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-175035126-1');
+    window.addEventListener('load', function(){
+      var s = document.createElement('script');
+      s.src = "https://www.googletagmanager.com/gtag/js?id=UA-175035126-1";
+      document.body.appendChild(s);
+    });
+  </script>
+
+  <title>
+  
+       Solarflare X2522-&gt;X4522 报单路径的静默退化 | Anonymous&#39; Blog 
+  
+  </title>
+
+  <link rel="canonical" href="https://huweicai.com/solarflare-x2522tox4522/">
+
+  
+  
+
+  
+  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+
+  
+  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+
+  
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+
+
+  
+  <link rel="shortcut icon"
+  
+      href="https://huweicai.com/img/profile.svg"
+  
+  >
+
+
+  <link href="" rel="alternate" type="application/rss+xml" title="Anonymous&#39; Blog" />
+
+  <style type="text/css">
+      @media (min-width: 800px) and (max-width: 850px) {
+              .navbar:not(.top-nav-collapse) {
+                  background: #000000!important;
+              }
+          }
+  </style>
+
+
+  
+  
+    <link rel="stylesheet" href="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.css">
+  
+  
+
+  
+  
+    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+  
+
+</head>
+
+  <body class="bg-light" data-spy="scroll" data-target="#page-scrollspy" data-offset="90">
+  
+    
+    
+
+    
+      
+
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark scrolling-navbar">
+    <div class="container">
+
+      
+      <a class="navbar-brand" href="https://huweicai.com/">
+          
+        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        
+        <strong> Huweicai</strong>
+      </a>
+
+      
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        
+        <ul class="navbar-nav mr-auto ">
+          <li class="nav-item ">
+            <a class="nav-link" href="https://huweicai.com/">Home</a>
+          </li>
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+            </li>
+          
+             
+            <li class="nav-item ">
+              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+            </li>
+          
+          
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+  
+ 
+      
+ 
+
+
+
+
+
+
+<div id="site-header" class="carousel slide carousel-fade" data-ride="carousel" style="height: 18rem;" >  
+
+  
+  
+  
+
+  
+  <div class="carousel-inner" role="listbox">
+    
+      
+
+        
+        <div class="carousel-item active">
+          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+
+            
+            <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+
+              
+              
+              
+
+            </div>
+            
+
+          </div>
+        </div>
+        
+      
+    
+
+  
+  </div>
+  
+
+  
+  <div class="carousel-content text-center white-text wow fadeIn">
+    <div class="row mx-0 headfont mt-3 pt-4">
+      
+      <div class="col-12 col-sm-5 align-middle">
+        <a href="https://huweicai.com/">
+          
+            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+          
+        </a>
+      </div>
+      
+      <div class="col-12 col-sm-7 text-left pl-2">
+        <a href="https://huweicai.com/">
+          <h1 class="mb-2 h1" style="font-weight: 300;" >
+            <strong>Anonymous&#39; Blog</strong>
+          </h1>
+        </a>
+        
+
+             
+        <div class="mt-2" style="font-size: 1rem; color: white;">
+            
+              <a href="//github.com/Huweicai" target="_blank" rel="noopener"><i class="fab fa-github pr-1" aria-hidden="true"></i></a>    
+            
+            
+              <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin pr-1" aria-hidden="true"></i></a>
+            
+
+            
+              <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook pr-1" aria-hidden="true"></i></a>
+            
+
+            
+            <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter pr-1" aria-hidden="true"></i></a>
+            
+
+            
+                <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram pr-1" aria-hidden="true"></i></a>
+            
+    
+            
+                <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px pr-1" aria-hidden="true"></i></a>
+            
+    
+        
+            
+                <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open pr-1" aria-hidden="true"></i></a>
+            
+    
+                <a href=""><i class="fas fa-rss pr-1" aria-hidden="true"></i></a>
+
+            
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  
+  
+
+</div>
+  
+    
+
+    
+  
+  <main class="post-main-wrapper">
+    
+    
+    <div class="row">
+
+      
+
+      
+      <div class="col-md-10">
+      
+
+        
+        <div class="z-depth-1  post-wrapper white-bg single-post">
+
+          <div class="post-header text-center">
+    <ul class="post-meta li-x">
+        
+        
+    </ul>
+
+    <div class="px-4 post-heading">Solarflare X2522-&gt;X4522 报单路径的静默退化</div>
+
+    <ul class="post-meta li-x mt-1">
+        
+            <li>2026-10-20</li>
+        
+
+        
+            <li class="middot"></li>
+            <li>4 minutes read</li>
+        
+        <li>1785 words</li>
+
+    </ul>
+    
+
+</div>
+
+
+          <div class="post-content markdown">
+            <blockquote>
+<p>一句话总结：当我们从 Solarflare X2522 网卡迁移到 X4522 网卡的时候，如果原样套用之前的代码，报单路径会出现静默退化，显式选择 Express datapath 来启用 CTPIO 能力</p>
+</blockquote>
+<h1 id="问题代码">问题代码</h1>
+<p>背景是这样的，一开始我们是大量使用 X2522 网卡报单，走 EFVI 的  CTPIO，后面 Solarflare 发新卡了，就逐渐引入了 X4522，用 onload 自带的测试工具 eflatency 单独做端到端延迟测试，测下来比 X2522 快个 400ns，也没啥别的问题，就一点点灰度，引入生产环境了（详细的测试数据放在文末）。</p>
+<p>复用了之前 X2522 的代码，报单、撤单、回报，也都能丝滑平移跑起来，编译、启动、运行，日志里一条错误都没有，给人一种像是  Exanic x25 之于 x10 那样无缝迁移的感觉，但是问题就出在这里了。。。</p>
+<p>问题代码大致如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">setup</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ef_driver_open</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dh_</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ef_pd_alloc_by_name</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pd_</span><span class="p">,</span> <span class="n">dh_</span><span class="p">,</span> <span class="n">nic_</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="n">EF_PD_DEFAULT</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ef_vi_alloc_from_pd</span><span class="p">(</span><span class="o">&amp;</span><span class="n">vi_</span><span class="p">,</span> <span class="p">...);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">mmap</span><span class="p">(...);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ef_memreg_alloc</span><span class="p">(...);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">send</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ef_vi_transmit_ctpio</span><span class="p">(</span><span class="o">&amp;</span><span class="n">vi_</span><span class="p">,</span> <span class="n">pkt</span><span class="p">,</span> <span class="n">frame_len</span><span class="p">,</span> <span class="mi">64</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ef_vi_transmit_ctpio_fallback</span><span class="p">(</span><span class="o">&amp;</span><span class="n">vi_</span><span class="p">,</span> <span class="n">pkt_dma</span><span class="p">,</span> <span class="n">frame_len</span><span class="p">,</span> <span class="n">idx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ef_eventq_poll</span><span class="p">(</span><span class="o">&amp;</span><span class="n">vi_</span><span class="p">,...);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这一段代码在之前 X2522 工作的很好，搬到 X4522 上也 &ldquo;工作得很好&rdquo;，报单正常，也没有错误日志。</p>
+<p>直到后面重新看这一段代码，网卡开了 PTP，然后同步到系统时间戳，统计这个开销才发现问题，报单时间  -&gt; 网卡 TX timestamp (Host To Wire) 花了  760ns，明显太高了，不符合预期。</p>
+<p>重新让 AI 看了一遍代码，才发现问题出在这一行：</p>
+<pre tabindex="0"><code class="language- c++" data-lang=" c++">ef_pd_alloc_by_name(&amp;pd_, dh_, nic_.c_str(), EF_PD_DEFAULT);
+</code></pre><p>出在这个宏：<code>EF_PD_DEFAULT</code>。</p>
+<p>这个函数的最后一个参数的含义是说申请这个 PD 的时候要带哪些特性，EF_PD_DEFAULT 顾名思义就是默认能力，在 X2522 上默认能力就是包含 CTPIO 的，但是到了 4522，默认能力里面可就没有这一项了，所以如果还用 Default，那么就会走 Enterprise Data Path，走 fallback 的 DMA 报单，就常规网卡那一套，写个 ring buffer，发个 doorbell，网卡再通过 DMA 拉过去，这样就会有一次额外的 PCIe 往返读开销（以前在机器上实测的 Gen3 400ns，Gen5 300ns）。</p>
+<p>需要显式启用才能正常 work：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">ef_pd_alloc_by_name</span><span class="p">(</span><span class="o">&amp;</span><span class="n">pd_</span><span class="p">,</span> <span class="n">dh_</span><span class="p">,</span> <span class="n">nic_</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="n">EF_PD_DEFAULT</span> <span class="o">|</span> <span class="n">EF_PD_EXPRESS</span><span class="p">);</span>
+</span></span></code></pre></div><p>不过其实也不完全是静默失败，代码迁移过去之后，<code>ef_vi_alloc_from_pd</code>，其实会返回 <code>-95</code>但是之前被我忽略掉了。。 。</p>
+<p>我一开始还纳闷，怎么会不支持 CTPIO 呢，后面想了一下，觉得返回 -95 是代表&quot;X4 是 EFCT 架构，CTPIO 本来就是默认发送模式，不需要、也不允许显式打开。。。 所以改成用 <code>EF_VI_FLAGS_DEFAULT</code>来 allocate vi 了，后续报单发包也都完全正常。</p>
+<p>修复这个问题之后，实测穿透耗时降到了大约 219ns，<strong>760ns -&gt; 219ns</strong>，快了 540ns !!!</p>
+<p>量级上差不多正好一次 PCIe 往返读开销再加一点额外的开销，</p>
+<p>是报撤单路径 hotpath 上相当大的优化了。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Huweicai/images/20261020193414.png" alt="X4522 Express 修复前后穿透耗时"></p>
+<p>其实这个问题在官方的 <a href="https://docs.amd.com/api/khub/documents/YUDpjop2UySM2YKb5ryPcA/content">Migration Guide</a> 里面是有提到的，如果事先好好把迁移文档看一遍，是也能提前发现这个问题的。</p>
+<h1 id="两条-datapath">两条 DataPath</h1>
+<p>这个问题背后的原因在于，X4522 的两套引擎。</p>
+<p>X4522 网卡一定程度上我们可以视为 2522 和 3522 的一个缝合产物～</p>
+<p>这个卡的内部在软件（onload）和硬件（ASIC 电路） 上，整出来了两套 DataPath，并不只是软件 API 上的区别，它在 ASIC 芯片上也是两套，彻底独立的两套。</p>
+<p>他把 2522 那一套基本原封不动地继承了，然后呢，整了个名字叫 Enterprise Data Path，主打的是企业级全功能场景，巨帧、组播复制、卸载，以前 3522 没有的高级功能，在这个上面都得到了保留，但是代价呢，就是延迟会不那么极致一点，另外 4522 在 2522 的基础上把 CTPIO 功能给拆掉了，CTPIO 是留给了另外一套去做。</p>
+<p>X4522 在 3522 EFCT 架构的基础上，单独弄了一套 Data Path 叫做 Express，主打的就是一个极致低延迟，只能通过 CTPIO 报单，只有这一条报单路径。</p>
+<p>两条 Data Path 是完全独立的，使用两条 Data Path 要申请完全独立的 PD 和 VI，数据内存也不能在两套引擎之间共享。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20261022002327.png" alt="x4522-dual-datapath"></p>
+<h2 id="onload-版本兼容性">Onload 版本兼容性</h2>
+<p>还有一个问题也顺带聊一下，就是 onload 版本在 4522 和 2522 上的兼容性的问题。</p>
+<p>老版本也能跑 X4522，但是即使在老版本（onload 9.0）上使用 <code>ef_vi_transmit_ctpio()</code>报单，能正常跑通，但是 4522 的数据结构其实跟 2522 完全不一样了，不可能正常走 Express 的 CTPIO。</p>
+<p>但是这里底层内部还是能 fall back 到 DMA 低速报单，所以也能跑起来。</p>
+<p>onload 9.1 是 2025 年年底跟着 4522 一起发布的，这是第一个能正式支持 4522 的 onload 版本，所以要使用  X4522 的话必须要升级到 9.1 及以上。</p>
+<p>官网的要求也是必须 9.1，老版本能跑是凑巧。</p>
+<blockquote>
+<p>The minimum Onload version required for X4 is Onload-9.1. Users of earlier versions must update Onload.</p>
+</blockquote>
+<p>向后兼容做的很不错，目前实测，onload 9.1 9.2 其实是能完全兼容 X2522 的正常运行的，我们线上已经有大量 X2522 的机器运行在 onload 9.2 版本了，一切正常。</p>
+<p>所以反正统一升级最新的版本就好了，两套卡都能跑。</p>
+<h1 id="附eflatency-实测数据">附：eflatency 实测数据</h1>
+<p>X2522 / X4522 端到端 RTT（单位 µs）：</p>
+<table>
+  <thead>
+      <tr>
+          <th>链路</th>
+          <th style="text-align: right">32B (mean/p50/p99/max)</th>
+          <th style="text-align: right">1000B (mean/p50/p99/max)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>X2 → X2</td>
+          <td style="text-align: right">2.415/2.390/2.520/4.97</td>
+          <td style="text-align: right">4.795/4.770/4.940/6.20</td>
+      </tr>
+      <tr>
+          <td>X4 → X2</td>
+          <td style="text-align: right">1.984/1.970/2.040/4.23</td>
+          <td style="text-align: right">3.966/3.950/4.090/5.30</td>
+      </tr>
+      <tr>
+          <td>X2 → X4</td>
+          <td style="text-align: right">1.981/1.960/2.060/4.25</td>
+          <td style="text-align: right">3.962/3.940/4.070/5.79</td>
+      </tr>
+  </tbody>
+</table>
+
+          </div>
+
+          
+          <div class="row">
+            <div class="col-md-8">
+            
+              <div class="mb-5">
+                
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/cpp" role="button">cpp </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/onload" role="button">onload </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/nic" role="button">nic </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E7%BD%91%E7%BB%9C" role="button">网络 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/hft" role="button">HFT </a></li>
+      
+    
+  </div>
+</div>
+              </div>
+            
+            </div>
+            
+          </div>
+          
+
+          
+<div class="human-badges">
+  <a href="https://notbyai.fyi/" target="_blank" rel="noopener noreferrer"
+     title="Written by Human, Not by AI">
+    <img src="https://huweicai.com/img/badges/written-by-human-not-by-ai.svg"
+         alt="Written by Human, Not by AI" width="112" height="36" loading="lazy">
+  </a>
+  <a href="https://madebyhuman.work/" target="_blank" rel="noopener noreferrer"
+     title="Made by Human">
+    <img src="https://huweicai.com/img/badges/made-by-human.svg"
+         alt="Made by Human" width="100" height="36" loading="lazy">
+  </a>
+</div>
+
+
+          
+          <div class="row pt-3">
+            <div class="col-md-6">
+              
+                <a href=https://huweicai.com/exablaze-exanic-x25/ class="post-meta">Previous
+                  <div class="pt-2 pb-5 d-flex">
+                    <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
+                    <span>Exablaze Exanic X25 网卡介绍</span>
+                  </div>
+                </a>
+              
+            </div>
+            
+            <div class="col-md-6 text-right" >
+              
+            </div>
+          </div>
+
+          
+
+        </div>
+        
+
+      </div>
+      
+
+      
+	
+	
+	
+	
+		
+		
+		
+	
+
+		
+		<div class="col-md-2 pl-0">
+
+			
+			<div id="page-scrollspy" class="toc-nav">
+				
+				<ul class="nav nav-pills ml-0">
+					
+					<li class="nav-item pb-3 text-center">
+						<span class="font-weight-bold mb-2">- CATALOG - </span>
+					</li>
+
+					
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%97%ae%e9%a2%98%e4%bb%a3%e7%a0%81">
+												 问题代码
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e4%b8%a4%e6%9d%a1-datapath">
+												 两条 DataPath
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#onload-%e7%89%88%e6%9c%ac%e5%85%bc%e5%ae%b9%e6%80%a7">
+												 Onload 版本兼容性
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+									</ul>
+								
+							
+						
+				 
+						
+						
+							
+								
+								
+									<ul class="nav">
+								
+								
+
+										<li class="nav-item">
+						 					<a class="nav-link" href="#%e9%99%84eflatency-%e5%ae%9e%e6%b5%8b%e6%95%b0%e6%8d%ae">
+												 附：eflatency 实测数据
+											</a>
+										</li>
+						 
+								
+								
+									</ul>
+								
+							
+						
+				 
+
+				</ul>
+			</div>
+			
+
+		</div>
+		
+	
+
+    </div>
+    
+
+
+  </main>
+  
+
+
+    
+    
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+
+
+  
+  <div class="pb-2 mt-5 pt-5">
+    
+      <a href="//github.com/Huweicai " target="_blank" rel="noopener"><i class="fab fa-github mr-3" aria-hidden="true"></i></a>    
+    
+    
+      <a href="//linkedin.com/in/you" target="_blank" rel="noopener"><i class="fab fa-linkedin-in mr-3" aria-hidden="true"></i></a>
+    
+
+    
+      <a href="//facebook.com/you" target="_blank" rel="noopener"><i class="fab fa-facebook-f mr-3" aria-hidden="true"></i></a>
+    
+
+    
+    <a href="//google.com/you" target="_blank" rel="noopener"><i class="fab fa-google-plus-g mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//twitter.com/you" target="_blank" rel="noopener"><i class="fab fa-twitter mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//instagram.com/you" target="_blank" rel="noopener"><i class="fab fa-instagram mr-3" aria-hidden="true"></i></a>
+    
+
+    
+        <a href="//px500" target="_blank" rel="noopener"><i class="fab fa-500px mr-3" aria-hidden="true"></i></a>
+    
+
+
+    
+        <a href="mailto:i@huweicai.com"><i class="far fa-envelope-open mr-3" aria-hidden="true"></i></a>
+    
+
+      <a href=""><i class="fas fa-rss mr-3" aria-hidden="true"></i></a>
+
+    
+
+  </div>
+  
+
+  
+  <div class="copyright py-4">
+    
+    <span>  2016 - 2026 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+  </div>
+  
+
+</footer>
+
+
+    
+
+
+
+
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://s3.pstatp.com/cdn/expire-1-M/jquery-smooth-scroll/2.2.0/jquery.smooth-scroll.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/popper.js/1.15.0/esm/popper.min.js"></script>
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.6.1/js/bootstrap.js" ></script>
+
+<script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.20.0/js/mdb.min.js"></script>
+
+<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+
+
+
+
+  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/katex.min.js"> </script>
+  <script src="https://s0.pstatp.com/cdn/expire-1-M/KaTeX/0.13.0/contrib/auto-render.min.js"></script>
+
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          renderMathInElement(document.body);
+      });
+  </script>
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+  
+  new WOW().init();
+</script>
+
+
+  </body>
+</html>
