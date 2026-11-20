@@ -323,6 +323,7 @@
 <h1 id="问题代码">问题代码</h1>
 <p>背景是这样的，一开始我们是大量使用 X2522 网卡报单，走 EFVI 的  CTPIO，后面 Solarflare 发新卡了，就逐渐引入了 X4522，用 onload 自带的测试工具 eflatency 单独做端到端延迟测试，测下来比 X2522 快个 400ns，也没啥别的问题，就一点点灰度，引入生产环境了（详细的测试数据放在文末）。</p>
 <p>复用了之前 X2522 的代码，报单、撤单、回报，也都能丝滑平移跑起来，编译、启动、运行，日志里一条错误都没有，给人一种像是  Exanic x25 之于 x10 那样无缝迁移的感觉，但是问题就出在这里了。。。</p>
+<p><img src="https://gcore.jsdelivr.net/gh/Huweicai/images/20261022213257.png" alt="X2522 vs X4522 datapath"></p>
 <p>问题代码大致如下：</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">setup</span><span class="p">(){</span>
 </span></span><span class="line"><span class="cl">  <span class="n">ef_driver_open</span><span class="p">(</span><span class="o">&amp;</span><span class="n">dh_</span><span class="p">);</span>
@@ -465,6 +466,13 @@
             </div>
             
             <div class="col-md-6 text-right" >
+              
+                <a href=https://huweicai.com/solarflare-ptp-5us-offset/ class="post-meta">Next
+                  <div class="pt-2 pb-5 flex-reverse">
+                    <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
+                    <span>你的表不准：Solarflare 老驱动下 PTP 对时的 5 微秒偏差</span>
+                  </div>
+                </a>
               
             </div>
           </div>

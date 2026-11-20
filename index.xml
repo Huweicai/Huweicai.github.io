@@ -6,8 +6,15 @@
     <description>Recent content on Anonymous&#39; Blog</description>
     <generator>Hugo</generator>
     <language>zn-Hans</language>
-    <lastBuildDate>Tue, 20 Oct 2026 18:58:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 10 Nov 2026 13:58:00 +0800</lastBuildDate>
     <atom:link href="https://huweicai.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>你的表不准：Solarflare 老驱动下 PTP 对时的 5 微秒偏差</title>
+      <link>https://huweicai.com/solarflare-ptp-5us-offset/</link>
+      <pubDate>Tue, 10 Nov 2026 13:58:00 +0800</pubDate>
+      <guid>https://huweicai.com/solarflare-ptp-5us-offset/</guid>
+      <description>&lt;blockquote&gt;&#xA;&lt;p&gt;TL;DR：一句话结论，Solarflare 系列网卡，在使用旧版驱动进行 PTP 对时的情况下，会有实测额外 5us 左右的误差，需要升级到 sfc 驱动版本 5.3.14.1011，对应 onload 8.1.0 版本及以上。&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://gcore.jsdelivr.net/gh/Huweicai/images@b90c8f9/20261121013840.png&#34; alt=&#34;cover&#34;&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;为什么对时会有误差&#34;&gt;为什么对时会有误差？&lt;/h2&gt;&#xA;&lt;p&gt;计算机的时间是通过主板上面的晶振来实现的，晶振是一种特殊切割的石英制品，通电之后可以产生固定频率高低振荡的电压，这就是时钟的物理基础。&lt;/p&gt;&#xA;&lt;p&gt;但是石英振荡的频率本身不可能做到像专业原子钟那样完全固定，会随着温度、物理老化以及制造误差等因素影响，有误差，也就是说时钟每天会快慢个几秒钟都是很正常的，包括我们的手表也是。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Solarflare X2522-&gt;X4522 报单路径的静默退化</title>
       <link>https://huweicai.com/solarflare-x2522tox4522/</link>
@@ -322,6 +329,13 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>https://huweicai.com/drafts/insomnia/</guid>
       <description>&lt;h1 id=&#34;insomnia&#34;&gt;INSOMNIA&lt;/h1&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;p&gt;​    失眠是进化遗产与现代文明的碰撞——石器时代的大脑操作系统，运行在21世纪的信息爆炸社会必然产生系统冲突。&lt;/p&gt;&#xA;&lt;/blockquote&gt;&#xA;&lt;p&gt;&lt;strong&gt;夜深人静，身体疲惫却无法入眠，这是现代人最普遍的困扰之一。我们常觉得失眠是大脑&amp;quot;不配合&amp;quot;的结果，却不知这恰恰是大脑过度工作的表现。失眠不是休息的缺失，而是另一种形式的脑力活动。理解了大脑在失眠时的运作机制，我们才能真正与它达成和解，找回那份与生俱来却被现代生活剥夺的安眠能力。当你躺在床上数绵羊时，大脑其实正在为你上演一部复杂而精彩的神经科学大戏。&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title></title>
+      <link>https://huweicai.com/drafts/untitled/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://huweicai.com/drafts/untitled/</guid>
+      <description></description>
     </item>
     <item>
       <title></title>

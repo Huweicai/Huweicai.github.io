@@ -444,6 +444,8 @@
 
   
 
+  
+
 
 
 
@@ -463,11 +465,11 @@
       <div class="li-x post-meta tags-md" style="margin-left: -8px;">
 
         
-            <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (12)</span></a></li>
+            <li><a href="https://huweicai.com/tags/linux" role="button"><span>linux (13)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (8)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button"><span>操作系统 (7)</span></a></li>
-        
-            <li><a href="https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C" role="button"><span>计算机网络 (7)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/go" role="button"><span>go (6)</span></a></li>
         
@@ -559,6 +561,8 @@
         
             <li><a href="https://huweicai.com/tags/%E7%A3%81%E7%9B%98" role="button"><span>磁盘 (1)</span></a></li>
         
+            <li><a href="https://huweicai.com/tags/%E7%BD%91%E5%8D%A1" role="button"><span>网卡 (1)</span></a></li>
+        
             <li><a href="https://huweicai.com/tags/%E7%BD%91%E7%BB%9C" role="button"><span>网络 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F" role="button"><span>镜像 (1)</span></a></li>
@@ -625,6 +629,65 @@
       </li>
     </ul>
           </div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/fluent-bit/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">Fluent Bit介绍</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2021-05-05</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>6 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。
+基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。
+Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：
+输入部分负责采集原始日志； 解析部分将原始日志结构化，比如提取字段、解转义等操作； 过滤部分可以对日志做一些的统一的过滤和修改操作，比如增加一些统一的字段，过滤一些脏日志等等 然后日志会被放到缓冲区等待发送 路由部分会决策这个包应该发送到哪些输出 输出将日志真正转发出去 ......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97" role="button">日志 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -1149,68 +1212,6 @@ commit 的上层还有一个概念叫分支，分支是一个指向 commit 的�
       
     
       <li><a href="https://huweicai.com/tags/ip" role="button">IP </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/troubleshotting-goroutine-leeking/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">Golang 如何排查协程泄漏问题</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2020-05-29</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>3 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      背景 周所周知，内存泄漏是一个很严重的问题，会导致系统运行占用资源越来越多，无法释放，直至崩溃。所幸 Go 语言是一门 具有垃圾回收的语言，能大大降低遇到内存泄漏的概率，而我们今天要说的是另外一个棘手的问题：协程泄漏。
-协程泄漏：顾名思义就是出现了应该释放而没有被释放的协程，导致系统协程数量一直上升。不像对象回收需要引用计数、三色标记等手段，协程的回收是相当简单的，等待协程将代码从头到尾执行完毕之后这一块儿空间就会自动回收，通常协程泄漏问题都是因为某段代码卡住了，陷入了死循环或者再等待一个不可能的条件等原因。
-......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-        
-          <li><a href="https://huweicai.com/categories/go"><i class="fas fa-folder-open pr-1" aria-hidden="true"></i> go </a></li>
-        
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/go" role="button">go </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/pprof" role="button">pprof </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" role="button">编程语言 </a></li>
       
     
   </div>

@@ -3,7 +3,32 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://huweicai.com/</loc>
-    <lastmod>2026-10-20T18:58:00+08:00</lastmod>
+    <lastmod>2026-11-10T13:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/tags/linux/</loc>
+    <lastmod>2026-11-10T13:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/tags/</loc>
+    <lastmod>2026-11-10T13:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/solarflare-ptp-5us-offset/</loc>
+    <lastmod>2026-11-10T13:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/tags/%E7%BD%91%E5%8D%A1/</loc>
+    <lastmod>2026-11-10T13:58:00+08:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
+    <lastmod>2026-11-10T13:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>
@@ -32,11 +57,6 @@
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://huweicai.com/tags/</loc>
-    <lastmod>2026-10-20T18:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://huweicai.com/tags/%E7%BD%91%E7%BB%9C/</loc>
     <lastmod>2026-10-20T18:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
@@ -47,17 +67,7 @@
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://huweicai.com/tags/linux/</loc>
-    <lastmod>2026-10-06T13:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6/</loc>
-    <lastmod>2026-10-06T13:58:00+08:00</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url><url>
-    <loc>https://huweicai.com/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
     <lastmod>2026-10-06T13:58:00+08:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
@@ -510,6 +520,10 @@
     <priority>0.5</priority>
   </url><url>
     <loc>https://huweicai.com/drafts/insomnia/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://huweicai.com/drafts/untitled/</loc>
     <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url><url>
