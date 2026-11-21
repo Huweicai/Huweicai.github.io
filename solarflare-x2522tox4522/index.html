@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zn-Hans">
-  <head>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
   <meta name="HandheldFriendly" content="True">
@@ -14,7 +14,7 @@
 背景是这样的，一开始我们是大量使用 X2522 网卡报单，走 EFVI 的  CTPIO，后面 Solarflare 发新卡了，就逐渐引入了 X4522，用 onload 自带的测试工具 eflatency 单独做端到端延迟测试，测下来比 X2522 快个 400ns，也没啥别的问题，就一点点灰度，引入生产环境了（详细的测试数据放在文末）。
 复用了之前 X2522 的代码，报单、撤单、回报，也都能丝滑平移跑起来，编译、启动、运行，日志里一条错误都没有，给人一种像是  Exanic x25 之于 x10 那样无缝迁移的感觉，但是问题就出在这里了。。。">
 
-  <meta property="og:url" content="https://huweicai.com/solarflare-x2522tox4522/">
+  <meta property="og:url" content="http://localhost:1313/solarflare-x2522tox4522/">
   <meta property="og:site_name" content="Anonymous&#39; Blog">
   <meta property="og:title" content="Solarflare X2522-&gt;X4522 报单路径的静默退化">
   <meta property="og:description" content="一句话总结：当我们从 Solarflare X2522 网卡迁移到 X4522 网卡的时候，如果原样套用之前的代码，报单路径会出现静默退化，显式选择 Express datapath 来启用 CTPIO 能力
@@ -58,28 +58,28 @@
   
   </title>
 
-  <link rel="canonical" href="https://huweicai.com/solarflare-x2522tox4522/">
+  <link rel="canonical" href="http://localhost:1313/solarflare-x2522tox4522/">
 
   
   
 
   
-  <link href="https://huweicai.com/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/vendors-extensions/fontawesome/all.min.css" rel="stylesheet">
 
   
-  <link href="https://huweicai.com/css/font.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/font.css" rel="stylesheet">
 
   
   <link href="https://s0.pstatp.com/cdn/expire-1-M/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.9.0/css/mdb.min.css" rel="stylesheet">
-  <link href="https://huweicai.com/css/vendors/mdb/style.min.css" rel="stylesheet">
-  <link href="https://huweicai.com/css/main.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/vendors/mdb/style.min.css" rel="stylesheet">
+  <link href="http://localhost:1313/css/main.css" rel="stylesheet">
 
 
   
   <link rel="shortcut icon"
   
-      href="https://huweicai.com/img/profile.svg"
+      href="http://localhost:1313/img/profile.svg"
   
   >
 
@@ -103,7 +103,7 @@
 
   
   
-    <link rel="stylesheet" href="https://huweicai.com/css/vendors/highlight/github-gist.css">
+    <link rel="stylesheet" href="http://localhost:1313/css/vendors/highlight/github-gist.css">
   
 
 </head>
@@ -121,9 +121,9 @@
     <div class="container">
 
       
-      <a class="navbar-brand" href="https://huweicai.com/">
+      <a class="navbar-brand" href="http://localhost:1313/">
           
-        <img class="avatar imgRotate" src="https://huweicai.com/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
+        <img class="avatar imgRotate" src="http://localhost:1313/img/profile.svg" style="width: 40px!important;height: auto;"  class="d-inline-block align-top" alt="" >
         
         <strong> Huweicai</strong>
       </a>
@@ -140,16 +140,16 @@
         
         <ul class="navbar-nav mr-auto ">
           <li class="nav-item ">
-            <a class="nav-link" href="https://huweicai.com/">Home</a>
+            <a class="nav-link" href="http://localhost:1313/">Home</a>
           </li>
              
             <li class="nav-item ">
-              <a class="nav-link" href="https://huweicai.com/about/" >About  </a>
+              <a class="nav-link" href="http://localhost:1313/about/" >About  </a>
             </li>
           
              
             <li class="nav-item ">
-              <a class="nav-link" href="https://huweicai.com/archives/" >Archives  </a>
+              <a class="nav-link" href="http://localhost:1313/archives/" >Archives  </a>
             </li>
           
           
@@ -182,7 +182,7 @@
 
         
         <div class="carousel-item active">
-          <div class="view" style="background-image: url('https://huweicai.com/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
+          <div class="view" style="background-image: url('http://localhost:1313/img/header-slides/core.png'); background-repeat: no-repeat; background-size: cover;">
 
             
             <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
@@ -209,15 +209,15 @@
     <div class="row mx-0 headfont mt-3 pt-4">
       
       <div class="col-12 col-sm-5 align-middle">
-        <a href="https://huweicai.com/">
+        <a href="http://localhost:1313/">
           
-            <img class="pull-right avatar avatar-md imgRotate" src="https://huweicai.com/img/profile.svg" alt="" >
+            <img class="pull-right avatar avatar-md imgRotate" src="http://localhost:1313/img/profile.svg" alt="" >
           
         </a>
       </div>
       
       <div class="col-12 col-sm-7 text-left pl-2">
-        <a href="https://huweicai.com/">
+        <a href="http://localhost:1313/">
           <h1 class="mb-2 h1" style="font-weight: 300;" >
             <strong>Anonymous&#39; Blog</strong>
           </h1>
@@ -410,22 +410,22 @@
               <div class="mb-5">
                 
 <div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <li class="pr-0"><a href="http://localhost:1313/tags/"><i class="fas fa-tags"></i></a></li>
   <div class="tags-sm">
     
-      <li><a href="https://huweicai.com/tags/cpp" role="button">cpp </a></li>
+      <li><a href="http://localhost:1313/tags/cpp" role="button">cpp </a></li>
       
     
-      <li><a href="https://huweicai.com/tags/onload" role="button">onload </a></li>
+      <li><a href="http://localhost:1313/tags/onload" role="button">onload </a></li>
       
     
-      <li><a href="https://huweicai.com/tags/nic" role="button">nic </a></li>
+      <li><a href="http://localhost:1313/tags/nic" role="button">nic </a></li>
       
     
-      <li><a href="https://huweicai.com/tags/%E7%BD%91%E7%BB%9C" role="button">网络 </a></li>
+      <li><a href="http://localhost:1313/tags/%E7%BD%91%E7%BB%9C" role="button">网络 </a></li>
       
     
-      <li><a href="https://huweicai.com/tags/hft" role="button">HFT </a></li>
+      <li><a href="http://localhost:1313/tags/hft" role="button">HFT </a></li>
       
     
   </div>
@@ -441,12 +441,12 @@
 <div class="human-badges">
   <a href="https://notbyai.fyi/" target="_blank" rel="noopener noreferrer"
      title="Written by Human, Not by AI">
-    <img src="https://huweicai.com/img/badges/written-by-human-not-by-ai.svg"
+    <img src="http://localhost:1313/img/badges/written-by-human-not-by-ai.svg"
          alt="Written by Human, Not by AI" width="112" height="36" loading="lazy">
   </a>
   <a href="https://madebyhuman.work/" target="_blank" rel="noopener noreferrer"
      title="Made by Human">
-    <img src="https://huweicai.com/img/badges/made-by-human.svg"
+    <img src="http://localhost:1313/img/badges/made-by-human.svg"
          alt="Made by Human" width="100" height="36" loading="lazy">
   </a>
 </div>
@@ -456,7 +456,7 @@
           <div class="row pt-3">
             <div class="col-md-6">
               
-                <a href=https://huweicai.com/exablaze-exanic-x25/ class="post-meta">Previous
+                <a href=http://localhost:1313/exablaze-exanic-x25/ class="post-meta">Previous
                   <div class="pt-2 pb-5 d-flex">
                     <i class="fas fa-angle-left text-grey font-weight-bold mr-2 active-color"></i>
                     <span>Exablaze Exanic X25 网卡介绍</span>
@@ -467,7 +467,7 @@
             
             <div class="col-md-6 text-right" >
               
-                <a href=https://huweicai.com/solarflare-ptp-5us-offset/ class="post-meta">Next
+                <a href=http://localhost:1313/solarflare-ptp-5us-offset/ class="post-meta">Next
                   <div class="pt-2 pb-5 flex-reverse">
                     <i class="fas fa-angle-right text-grey font-weight-bold ml-2 active-color"></i>
                     <span>你的表不准：Solarflare 老驱动下 PTP 对时的 5 微秒偏差</span>
@@ -667,7 +667,7 @@
   
   <div class="copyright py-4">
     
-    <span>  2016 - 2026 &copy; <a href="https://huweicai.com/">Huweicai</a>  </span>
+    <span>  2016 - 2026 &copy; <a href="http://localhost:1313/">Huweicai</a>  </span>
   </div>
   
 
@@ -692,12 +692,12 @@
 
 <script type="text/javascript" src="https://s0.pstatp.com/cdn/expire-1-M/mdbootstrap/4.20.0/js/mdb.min.js"></script>
 
-<script type="text/javascript" src="https://huweicai.com/js/main.js"></script>
+<script type="text/javascript" src="http://localhost:1313/js/main.js"></script>
 
 
 
 
-  <script src="https://huweicai.com/js/vendors/highlight.pack.js"> </script>
+  <script src="http://localhost:1313/js/vendors/highlight.pack.js"> </script>
   <script>hljs.initHighlightingOnLoad();</script>
 
 

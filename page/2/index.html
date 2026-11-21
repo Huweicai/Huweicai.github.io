@@ -444,8 +444,6 @@
 
   
 
-  
-
 
 
 
@@ -481,9 +479,9 @@
         
             <li><a href="https://huweicai.com/tags/cloudnative" role="button"><span>cloudnative (4)</span></a></li>
         
-            <li><a href="https://huweicai.com/tags/cpp" role="button"><span>cpp (4)</span></a></li>
-        
             <li><a href="https://huweicai.com/tags/kubernetes" role="button"><span>kubernetes (4)</span></a></li>
+        
+            <li><a href="https://huweicai.com/tags/cpp" role="button"><span>cpp (3)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E7%A1%AC%E4%BB%B6" role="button"><span>硬件 (3)</span></a></li>
         
@@ -494,8 +492,6 @@
             <li><a href="https://huweicai.com/tags/docker" role="button"><span>docker (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/ebpf" role="button"><span>ebpf (2)</span></a></li>
-        
-            <li><a href="https://huweicai.com/tags/hft" role="button"><span>hft (2)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/ip" role="button"><span>ip (2)</span></a></li>
         
@@ -521,6 +517,8 @@
         
             <li><a href="https://huweicai.com/tags/harbor" role="button"><span>harbor (1)</span></a></li>
         
+            <li><a href="https://huweicai.com/tags/hft" role="button"><span>hft (1)</span></a></li>
+        
             <li><a href="https://huweicai.com/tags/http" role="button"><span>http (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/innodb" role="button"><span>innodb (1)</span></a></li>
@@ -528,10 +526,6 @@
             <li><a href="https://huweicai.com/tags/jvm" role="button"><span>jvm (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/mysql" role="button"><span>mysql (1)</span></a></li>
-        
-            <li><a href="https://huweicai.com/tags/nic" role="button"><span>nic (1)</span></a></li>
-        
-            <li><a href="https://huweicai.com/tags/onload" role="button"><span>onload (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/pprof" role="button"><span>pprof (1)</span></a></li>
         
@@ -562,8 +556,6 @@
             <li><a href="https://huweicai.com/tags/%E7%A3%81%E7%9B%98" role="button"><span>磁盘 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E7%BD%91%E5%8D%A1" role="button"><span>网卡 (1)</span></a></li>
-        
-            <li><a href="https://huweicai.com/tags/%E7%BD%91%E7%BB%9C" role="button"><span>网络 (1)</span></a></li>
         
             <li><a href="https://huweicai.com/tags/%E9%95%9C%E5%83%8F" role="button"><span>镜像 (1)</span></a></li>
         
@@ -629,64 +621,6 @@
       </li>
     </ul>
           </div>
-
-          
-          <div class="post-wrapper white-bg post-card">
-  
-  <a href="https://huweicai.com/shared-memory/">
-    <div class="post-header text-center">
-      <div class="px-4 post-heading">很快的共享内存</div>
-      <ul class="post-meta li-x mt-1">
-        
-          <li>2023-08-08</li>
-        
-    
-        
-          <li class="middot"></li>
-          <li>8 minutes read</li>
-        
-      </ul>
-    </div>
-    
-
-    
-      WHY 共享内存 进程间通信有许多种方式，不同的场景有不同的选择。
-当通信内容非常简单的时候，可以考虑信号、信号量甚至 flock() 这种最基础的通信方式。
-当需要传递不仅仅是信号这种规模的数据时，可以考虑 FIFO、MQ 等内核 API，也非常的简单易用 。
-当我们的传输内容再进一步复杂，需要用“协议”去抽象这种复杂度的时候，Unix Domain Socket 会是一个不错的选择，比如常见的 gRPC over UDS；或者牺牲一点网络栈开销，直接使用基于 TCP / UDP 的 Socket 也非常方便。
-十八般兵器各有神通，但本文主角——共享内存，光凭零数据拷贝这一特性就能稳坐最快进程间通信方式这一宝座。
-......
-    
-  </a>
-
-  
-  
-  <div class="post-meta li-x mt-2 div-x">
-    <div>
-      
-      
-    </div>
-   
-    <div>
-      
-        
-<div class="li-x div-x post-meta">
-  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
-  <div class="tags-sm">
-    
-      <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
-      
-    
-      <li><a href="https://huweicai.com/tags/linux" role="button">Linux </a></li>
-      
-    
-  </div>
-</div>
-      
-    </div>
-  </div>
-
-</div>
 
           
           <div class="post-wrapper white-bg post-card">
@@ -1245,6 +1179,65 @@ Harbor 的系统架构如下图所示，箭头所指方向为数据流向：
   <div class="tags-sm">
     
       <li><a href="https://huweicai.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F" role="button">操作系统 </a></li>
+      
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+</div>
+
+          
+          <div class="post-wrapper white-bg post-card">
+  
+  <a href="https://huweicai.com/fluent-bit/">
+    <div class="post-header text-center">
+      <div class="px-4 post-heading">Fluent Bit介绍</div>
+      <ul class="post-meta li-x mt-1">
+        
+          <li>2021-05-05</li>
+        
+    
+        
+          <li class="middot"></li>
+          <li>6 minutes read</li>
+        
+      </ul>
+    </div>
+    
+
+    
+      Fluent Bit Fluent Bit 是一款开源的日志收集组件，资源开销非常小，小到甚至能在嵌入式系统上运行，支持日志解析&amp;过滤&amp;转发，同时作为云原生基金会下的一个子项目，天然支持容器和 k8s 场景。
+基本概念 大部分日志收集组件都将系统大致分为输入、缓冲区、输出三大部分，输入部分负责采集日志，采集了之后放在缓冲区，然后输出部分将其再转发到其他系统。
+Fluent Bit 将这三大部分细分成了：输入、解析、过滤、缓冲区、路由、输出六个部分：
+输入部分负责采集原始日志； 解析部分将原始日志结构化，比如提取字段、解转义等操作； 过滤部分可以对日志做一些的统一的过滤和修改操作，比如增加一些统一的字段，过滤一些脏日志等等 然后日志会被放到缓冲区等待发送 路由部分会决策这个包应该发送到哪些输出 输出将日志真正转发出去 ......
+    
+  </a>
+
+  
+  
+  <div class="post-meta li-x mt-2 div-x">
+    <div>
+      
+      
+    </div>
+   
+    <div>
+      
+        
+<div class="li-x div-x post-meta">
+  <li class="pr-0"><a href="https://huweicai.com/tags/"><i class="fas fa-tags"></i></a></li>
+  <div class="tags-sm">
+    
+      <li><a href="https://huweicai.com/tags/%E5%AE%B9%E5%99%A8" role="button">容器 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/%E6%97%A5%E5%BF%97" role="button">日志 </a></li>
+      
+    
+      <li><a href="https://huweicai.com/tags/cloudnative" role="button">cloudnative </a></li>
       
     
   </div>
